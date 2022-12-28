@@ -1,0 +1,10 @@
+.bukazu_reviews {
+    .reviews__ {
+        &summary {
+            &_rating {
+                font-size: 22px;
+                font-weight: bold;
+            }
+        }
+    }
+}

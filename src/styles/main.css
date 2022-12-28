@@ -9,6 +9,7 @@
 @import "results.css";
 @import "filters.css";
 @import "pagination.css";
+@import "reviews.css";
 
 #bukazu-app {
   #search-page {

@@ -128,9 +128,8 @@ class App extends Component {
               return (
                 <ReviewsPage
                   PortalSite={PortalSite}
+                  objectCode={objectCode}
                   locale={locale}
-                  options={options}
-                  filters={filters}
                 />
               );
             } else {
