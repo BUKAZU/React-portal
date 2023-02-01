@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import {
   FormatIntl,
@@ -51,9 +50,4 @@ export const Object = ({ house, values }: Props): React.ReactNode => {
       </div>
     </React.Fragment>
   );
-};
-
-Object.propTypes = {
-  house: PropTypes.object.isRequired,
-  values: PropTypes.object.isRequired
 };

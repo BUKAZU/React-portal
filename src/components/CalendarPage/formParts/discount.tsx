@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Field } from 'formik';
 import DiscountCode from './DiscountCode';
@@ -57,11 +56,6 @@ const Discount = ({ errors, house, options, values }: Props) => {
   } else {
     return null;
   }
-};
-
-Discount.propTypes = {
-  house: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
 };
 
 export default Discount;

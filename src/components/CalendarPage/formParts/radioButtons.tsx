@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 // Input feedback
 const InputFeedback = ({ error }) =>
@@ -34,11 +33,6 @@ export const RadioButton = ({
   );
 };
 
-RadioButton.propTypes = {
-  field: PropTypes.object,
-  id: PropTypes.string,
-  label: PropTypes.object,
-};
 
 // Radio group
 export const RadioButtonGroup = ({
@@ -57,10 +51,3 @@ export const RadioButtonGroup = ({
   );
 };
 
-RadioButtonGroup.propTypes = {
-  error: PropTypes.object,
-  touched: PropTypes.object,
-  className: PropTypes.string,
-  label: PropTypes.string,
-  children: PropTypes.node.isRequired,
-};
