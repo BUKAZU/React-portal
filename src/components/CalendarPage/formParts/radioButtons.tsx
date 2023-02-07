@@ -4,10 +4,6 @@ import React from 'react';
 const InputFeedback = ({ error }) =>
   error ? <div className="input-feedback">{error}</div> : null;
 
-InputFeedback.propTypes = {
-  error: PropTypes.object,
-};
-
 // Radio input
 export const RadioButton = ({
   field: { name, value, onChange, onBlur },
