@@ -13,6 +13,8 @@ interface Props {
 export function validateForm(values, house, bookingFields): [] {
   const { babies_extra, persons } = house;
 
+  const { cancel_insurance } = values
+
   let errors = {};
 
   let babies = Number(values.babies) - Number(babies_extra);
@@ -63,7 +65,7 @@ export function validateForm(values, house, bookingFields): [] {
   }
 
   if (
-    parseInt(values.cancel_insurance) !== 0 &&
+    (parseInt(cancel_insurance) !== 0 || cancel_insurance !== null) &&
     !['nl', 'de', 'be'].includes(values.country)
   ) {
     errors['insurances'] = (

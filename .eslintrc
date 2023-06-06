@@ -16,9 +16,11 @@
       "warn",
       "single"
     ],
-    "prettier/prettier": "warn"
+    "prettier/prettier": "warn",
+    "formatjs/no-offset": "error"
   },
   "plugins": [
+    "formatjs",
     "prettier",
     "jsx-a11y"
   ]

@@ -1,0 +1,104 @@
+{
+  "adults_from": {
+    "defaultMessage": "> {age}"
+  },
+  "agree_with": {
+  },
+  "at_least_18y_old": {
+  },
+  "at_least_1_adult": {
+  },
+  "babies_from": {
+    "defaultMessage": "til {babies_til}"
+  },
+  "based_on_one_person": {
+  },
+  "bathrooms": {
+  },
+  "bedrooms": {
+  },
+  "book": {
+  },
+  "booked": {
+  },
+  "booking": {
+  },
+  "booking_details": {
+  },
+  "calculate": {
+  },
+  "can_only_take_insurance_in_de_be_nl": {
+  },
+  "cancel_insurance": {
+  },
+  "children_from": {
+    "defaultMessage": "{from} - {til}"
+  },
+  "close": {
+  },
+  "comply_insurance_card": {
+  },
+  "costs_on_site": {
+  },
+  "discount": {
+  },
+  "discount_code": {
+  },
+  "discount_reason": {
+  },
+  "extra_costs_bookable": {
+  },
+  "filters": {
+  },
+  "insurance_company_needs_date_of_birth": {
+  },
+  "insurances": {
+  },
+  "max_persons_reached": {
+  },
+  "minimum_nights": {
+    "defaultMessage": "Minimum {minimum} nights"
+  },
+  "minimum_week_price": {
+  },
+  "no": {
+  },
+  "no_discount_code_found": {
+  },
+  "no_house_found": {
+  },
+  "no_results": {
+  },
+  "option": {
+  },
+  "personal_details": {
+  },
+  "persons": {
+  },
+  "price_from": {
+  },
+  "required": {
+  },
+  "results": {
+  },
+  "return_to_calendar": {
+  },
+  "reviews": {
+  },
+  "something_went_wrong_please_try_again": {
+  },
+  "stay_details": {
+  },
+  "terms": {
+  },
+  "thank_you_for_your_request": {
+  },
+  "total": {
+  },
+  "we_sent_confirmation_check_email": {
+  },
+  "yes": {
+  },
+  "you_need_to_give_reason": {
+  }
+}
