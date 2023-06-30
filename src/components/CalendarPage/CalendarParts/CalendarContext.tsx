@@ -34,7 +34,6 @@ function calendarReducer(
   bookingState: BookingType,
   action: { type: string; house: HouseType; day: BuDate; persons: number }
 ): BookingType {
-  console.log({ action });
   switch (action.type) {
     case 'clicked': {
       const { day, house } = action;
