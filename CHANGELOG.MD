@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.1.0
+- Added review page
+- Updated general styling of cards
+
 ## 3.0.28
 - Pagination update css
 
