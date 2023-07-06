@@ -1,5 +1,4 @@
 .bu_single_review {
-  border-bottom: 1px solid #cecece;
   padding: 16px;
   margin: 0 0 16px;
   & .bu_review_summary {
@@ -33,33 +32,36 @@
   padding: 0 0 4px;
   &__rating {
     display: inline-block;
-    padding: 4px 8px;
-    border: 1px solid #cecece;
-    border-radius: 4px;
+    padding: 6px 8px;
+    /* border: 1px solid #cecece; */
     color: #fff;
     font-weight: bold;
     margin: 0 8px 0 0;
     letter-spacing: 2px;
   }
   &__rating.low {
-    background-color: #006B3D;
+    background-color: #006B3D !important;
   }
   &__rating.best {
-    background-color: #006B3D;
+    background-color: #135200 !important;
   }
   &__rating.medium {
-    background-color: #069c56;
+    background-color: #069c56 !important;
   }
   &__rating.good {
-    background-color: #069c56;
+    background-color: #389e0d !important;
   }
 }
 .bu_reviews {
+  /* background-color: rgba(0, 0, 0, 0.02); */
+  padding: 16px;
   &__overview {
-  background: #fefefe;
+    padding: 16px;
+    background: linear-gradient(to right, #ece9e6, #ffffff) !important;
   display: flex;
   align-items: center;
   font-size: 20px;
+  margin: 0 0 16px;
     &__number {
       font-size: 22px;
       padding: 0 16px;

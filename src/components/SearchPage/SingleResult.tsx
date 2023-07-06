@@ -12,7 +12,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
   let thisOptions = options || {};
 
   return (
-    <a className="bukazu-result" href={result.house_url}>
+    <a className="bukazu-result bu_card" href={result.house_url}>
       <div className="bukazu-result-inner">
         <div className="image-holder">
           <img src={result.image_url} alt={result.name} />

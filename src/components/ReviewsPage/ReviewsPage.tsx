@@ -27,7 +27,7 @@ function ReviewsPage(): JSX.Element {
 
   return (
     <div className="bu_reviews">
-      <div className="bu_reviews__overview">
+      <div className="bu_reviews__overview bu_card">
         <Score rating={house.rating} />
         <div className="bu_reviews__overview__number">
           {house.scoreAmount} <FormattedMessage id="reviews" />
