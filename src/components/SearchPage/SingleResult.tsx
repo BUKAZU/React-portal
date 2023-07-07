@@ -46,7 +46,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
             )}
           </div>
           {thisOptions.showRating && result.rating && (
-            <div className="result-rating">
+            <div className="result-rating bu_card">
               <div className="result-rating-inner">
                 {result.rating.toFixed(1)}
               </div>
@@ -82,7 +82,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
             </div>
           )}
           <div className="result-button">
-            <ArrowRight />
+            <FormattedMessage id="view_details" />
           </div>
         </div>
       </div>
