@@ -38,13 +38,14 @@
     font-weight: bold;
     margin: 0 8px 0 0;
     letter-spacing: 2px;
+    &.low {
+      background-color: #006B3D !important;
+    }
+    &.best {
+      background-color: #135200 !important;
+    }
   }
-  &__rating.low {
-    background-color: #006B3D !important;
-  }
-  &__rating.best {
-    background-color: #135200 !important;
-  }
+ 
   &__rating.medium {
     background-color: #069c56 !important;
   }
