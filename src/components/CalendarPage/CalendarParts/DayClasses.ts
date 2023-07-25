@@ -64,10 +64,10 @@ function DayClasses({
       classes.push('selected');
     }
     const minimum =
-      differenceInCalendarDays(day, selectedDate) >= arrivalDate.min_nights;
+      differenceInCalendarDays(day, selectedDate) >= Number(arrivalDate.min_nights);
     const maximum =
-      differenceInCalendarDays(day, selectedDate) <= house.max_nights &&
-      differenceInCalendarDays(day, selectedDate) <= arrivalDate.max_nights;
+      differenceInCalendarDays(day, selectedDate) <= Number(house.max_nights) &&
+      differenceInCalendarDays(day, selectedDate) <= Number(arrivalDate.max_nights);
 
     if (
       buDate.departure &&
