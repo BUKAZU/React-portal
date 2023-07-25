@@ -12,7 +12,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
   let thisOptions = options || {};
 
   return (
-    <a className="bukazu-result" href={result.house_url}>
+    <a className="bukazu-result bu_card" href={result.house_url}>
       <div className="bukazu-result-inner">
         <div className="image-holder">
           <img src={result.image_url} alt={result.name} />
@@ -46,7 +46,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
             )}
           </div>
           {thisOptions.showRating && result.rating && (
-            <div className="result-rating">
+            <div className="result-rating bu_card">
               <div className="result-rating-inner">
                 {result.rating.toFixed(1)}
               </div>
@@ -82,7 +82,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
             </div>
           )}
           <div className="result-button">
-            <ArrowRight />
+            <FormattedMessage id="view_details" />
           </div>
         </div>
       </div>

@@ -202,7 +202,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 <FormattedMessage id="comply_insurance_card" />
               </div>
             ) : null}
-            <button className="button" type="submit" disabled={isSubmitting}>
+            <button className="bu-calendar-button" type="submit" disabled={isSubmitting}>
               <FormattedMessage id="book" />
             </button>
           </div>

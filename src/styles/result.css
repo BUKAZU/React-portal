@@ -5,11 +5,11 @@
   appearance: none;
   text-decoration: none;
   display: block;
-  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.25);
-  border-radius: 16px;
+  /* box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.25); */
+  /* border-radius: 16px; */
   transition: all 0.5s ease;
   &:hover {
-    box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.25);
+    /* box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.25); */
     text-decoration: none;
   }
   &-inner {
@@ -62,32 +62,16 @@
       }
       &-rating {
         position: absolute;
-        right: 4px;
-        top: 4px;
+        right: 8px;
+        top: 8px;
         &-inner {
           background: var(--bukazu-button);
           position: relative;
-          color: #fff;
+          color: #000;
           font-weight: bold;
           padding: 6px 10px;
-          border-radius: 0.4em;
           font-size: 14px;
-          line-height: 14px;
-          box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
-          &:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border: 10px solid transparent;
-            border-top-color: var(--bukazu-button);
-            border-bottom: 0;
-            border-left: 0;
-            margin-left: -5px;
-            margin-bottom: -10px;
-          }
+          line-height: 14px;          
         }
       }
       &-price {
@@ -111,9 +95,7 @@
         display:flex;
         align-items: center;
         justify-content: center;
-        svg {
-          width: 18px;
-        }
+        font-weight: bold;
         &:before {
           position: absolute;
           height: 100%;
@@ -127,6 +109,7 @@
           transition: all 0.8s ease;
         }
         &:hover {
+          mix-blend-mode: multiply;
           &:before {
             width: 100%;
           }

@@ -1,10 +1,13 @@
+#bukazu-app {
 .bu-pagination {
   display: -ms-flexbox;
   display: flex;
   padding-left: 0;
   list-style: none;
   border-radius: 0.25rem;
+  margin: 0;
   li {
+    margin: 0;
     a {
       display: block;
       padding: 0.5rem 0.75rem;
@@ -85,4 +88,5 @@
 .bu-pagination-sm li:last-child a {
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;
+}
 }

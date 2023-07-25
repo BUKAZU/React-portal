@@ -28,7 +28,7 @@ function CalendarHeader({
   return (
     <div className="calendars-header">
       <div
-        className="col bu-prev"
+        className="bu-calendar-col bu-prev"
         style={{ textAlign: 'center' }}
         onClick={prev}
         tabIndex={0}
@@ -40,7 +40,7 @@ function CalendarHeader({
         </div>
       </div>
       <div
-        className="col bu-reset"
+        className="bu-calendar-col bu-reset"
         onClick={() => {
           dispatch({
             type: 'reset'
@@ -55,7 +55,7 @@ function CalendarHeader({
         </div>
       </div>
       <div
-        className="col bu-next"
+        className="bu-calendar-col bu-next"
         onClick={next}
         style={{ textAlign: 'center' }}
         tabIndex={0}

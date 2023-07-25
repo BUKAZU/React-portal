@@ -56,7 +56,7 @@ function SingleMonth({
   const discounts = data.Discounts;
 
   return (
-    <div className={`calendar calendar-${numberOfMonthsInARow}`} key={month}>
+    <div className={`bu-calendar calendar calendar-${numberOfMonthsInARow}`} key={month}>
       <MonthHeader month={month} />
       <WeekDays month={month} />
       <RenderCells

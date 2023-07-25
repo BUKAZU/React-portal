@@ -82,7 +82,7 @@ function RenderCells({
       day = addDays(day, 1);
     }
     rows.push(
-      <div className="row" key={day}>
+      <div className="bu-calendar-row" key={day}>
         {days}
       </div>
     );

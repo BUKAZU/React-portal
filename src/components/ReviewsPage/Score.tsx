@@ -16,7 +16,7 @@ function Score({ rating, name }: Props) {
   }
   return (
     <div className="bu_score">
-      <div className={`bu_score__rating ${color}`}>{rating.toFixed(1)} /10</div>
+      <div className={`bu_score__rating bu_card ${color}`}>{rating.toFixed(1)}</div>
       <div>{name}</div>
     </div>
   );

@@ -29,6 +29,10 @@
     }
 }
 
+#bukazu-app input, #bukazu-app select {
+    min-height: inherit;
+}
+
 #bukazu-app input[type=radio],
 #bukazu-app input[type=checkbox] {
     width: 8px;

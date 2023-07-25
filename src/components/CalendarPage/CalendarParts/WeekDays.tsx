@@ -14,13 +14,13 @@ const dateFormat = 'E';
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div className="col col-center" key={i}>
+        <div className="bu-calendar-col col-center" key={i}>
           {FormatIntl(addDays(startDate, i), dateFormat)}
         </div>
       );
     }
 
-    return <div className="days row">{days}</div>;
+    return <div className="days bu-calendar-row">{days}</div>;
     
 }
 

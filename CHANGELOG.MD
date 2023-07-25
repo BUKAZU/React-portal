@@ -1,6 +1,19 @@
 # CHANGELOG
 
-## Next release
+## 3.1.0
+- Added review page
+- Updated general styling of cards
+
+## 3.0.28
+- Pagination update css
+
+## 3.0.27
+- Updated styling of form items
+
+## 3.0.26
+- Added translations for tents
+
+## 3.0.0
 - Refactored app to typescript
 
 

@@ -42,11 +42,11 @@
     justify-content: space-around;
     @media screen and (max-width: 992px) {
       /* flex-direction: column; */
-      .col {
+      .col, .bu-calendar-col {
         margin: 4px 8px;
       }
     }
-    .col {
+    .col, .bu-calendar-col {
       .icon {
         padding: 8px 40px;
         background-color: rgb(23, 190, 187);
@@ -82,7 +82,10 @@
     .bu-smaller .calendar .col {
       padding: 16px 4px;
     }
-  .calendar {
+    .bu-smaller .calendar .bu-calendar-col {
+      padding: 16px 4px;
+    }
+  .bu-calendar, .calendar {
     min-width: 48%;
     padding: 16px 1%;
     box-sizing: border-box;
@@ -103,9 +106,9 @@
     }
     
     .header {
-      background-color: rgba(211, 211, 211, 0.2);
+      background-color: rgba(211, 211, 211, 0.5);
     }
-    .row {
+    .row, .bu-calendar-row {
       width: 100%;
       display: flex;
       flex: 1 1 auto;
@@ -113,9 +116,8 @@
         border-bottom: 1px solid rgba(211, 211, 211, 0.5);
       }
     }
-    .col {
+    .col, .bu-calendar-col {
       width: 100%;
-      /* border: solid 1px #fff; */
       padding: 4px;
       text-transform: capitalize;
       text-align: center;
@@ -291,7 +293,7 @@
       appearance: none;
       font-size: 16px;
     }
-    .button {
+    .button, .bu-calendar-button {
       width: 20%;
       background: var(--bukazu-button_cta);
       color: #fff;
