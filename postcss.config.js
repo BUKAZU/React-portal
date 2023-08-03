@@ -1,13 +1,17 @@
-const postcssPresetEnv = require('postcss-preset-env');
-const postCssImport = require('postcss-import');
-const postCssNested = require('postcss-nested');
-const autoprefixer = require('autoprefixer');
+// const postcssPresetEnv = require('postcss-preset-env');
 
 module.exports = {
   plugins: [
-    postcssPresetEnv(),
-    postCssImport(),
-    postCssNested(),
-    autoprefixer()
-  ],
+    require('postcss-import'),
+    require('postcss-nested'),
+    require('autoprefixer')
+
+    // postcssPresetEnv({
+    //   /* use stage 3 features + css nesting rules */
+    //   stage: 3,
+    //   features: {
+    //     'nesting-rules': true
+    //   }
+    // })
+  ]
 };
