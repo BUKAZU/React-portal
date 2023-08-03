@@ -1,5 +1,4 @@
 import React, { CSSProperties, useContext } from 'react';
-import pjson from '../../package.json';
 import { AppContext } from './AppContext';
 
 const style: CSSProperties = {
@@ -73,7 +72,6 @@ function SafeBooking(): JSX.Element {
             bottom: 0
           }}
         >
-          {/* v{pjson.version} */}
         </span>
       </a>
     </div>

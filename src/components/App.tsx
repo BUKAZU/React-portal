@@ -15,8 +15,6 @@ import ErrorBoundary from './ErrorBoundary';
 import { useQuery } from '@apollo/client';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
-import { appsignal } from "./appsignal";
-import { ErrorBoundary as AppsignalBoundary } from "@appsignal/react";
 
 const getWidth = () =>
   window.innerWidth ||
@@ -124,13 +122,8 @@ function App({ pageType, locale, filters }: Props): JSX.Element {
     );
   }
 
-  return <AppsignalBoundary instance={appsignal} fallback={(error) => <FallbackComponent />}><div className={width < 875 ? 'bu-smaller' : ''}>{page}</div></AppsignalBoundary>;
+  return <div className={width < 875 ? 'bu-smaller' : ''}>{page}</div>;
 }
-
-const FallbackComponent = () => (
-  <div>Uh oh! There was an error :(</div>
-);
- 
 
 App.defaultProps = {
   filters: {}

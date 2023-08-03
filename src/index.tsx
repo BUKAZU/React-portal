@@ -17,6 +17,8 @@ import { IntegrationError } from './components/Error';
 import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
+import { appsignal } from "./_lib/appsignal";
+import { ErrorBoundary as AppsignalBoundary } from "@appsignal/react";
 
 interface Props {
   portalCode: string;
@@ -62,15 +64,22 @@ function Portal({
   window.__localeId__ = locale;
 
   return (
-    <ApolloProvider client={client}>
-      <IntlProvider locale={locale} messages={messages[locale]}>
-        <AppContext.Provider value={{ portalCode, objectCode, locale }}>
-          <App pageType={pageType} locale={locale} filters={filters} />
-        </AppContext.Provider>
-      </IntlProvider>
-    </ApolloProvider>
+    <AppsignalBoundary instance={appsignal} tags={{ portalCode, pageType, locale, objectCode }} fallback={() => <FallbackComponent />}>
+      <ApolloProvider client={client}>
+        <IntlProvider locale={locale} messages={messages[locale]}>
+          <AppContext.Provider value={{ portalCode, objectCode, locale }}>
+            <App pageType={pageType} locale={locale} filters={filters} />
+          </AppContext.Provider>
+        </IntlProvider>
+      </ApolloProvider>
+    </AppsignalBoundary>
   );
 }
+
+
+const FallbackComponent = () => (
+  <div>Uh oh! There was an error :(</div>
+);
 
 Portal.defaultProps = {
   pageType: null,
