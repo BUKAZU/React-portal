@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import App from './components/App';
 import { IntlProvider } from 'react-intl';
 // import registerServiceWorker from './registerServiceWorker';
@@ -44,6 +44,15 @@ function Portal({
     locale = 'en';
   }
 
+  const [width, setWidth] = useState(0);
+  const ref = useRef();
+
+  useEffect(() => {
+    if (ref.current) {
+      setWidth(ref.current.getBoundingClientRect().width);
+    }
+  }, [ref.current]);
+
   const client = new ApolloClient({
     uri: api_url,
     cache: new InMemoryCache(),
@@ -65,7 +74,9 @@ function Portal({
     <ApolloProvider client={client}>
       <IntlProvider locale={locale} messages={messages[locale]}>
         <AppContext.Provider value={{ portalCode, objectCode, locale }}>
-          <App pageType={pageType} locale={locale} filters={filters} />
+          <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
+            <App pageType={pageType} locale={locale} filters={filters}  />
+          </div>
         </AppContext.Provider>
       </IntlProvider>
     </ApolloProvider>
