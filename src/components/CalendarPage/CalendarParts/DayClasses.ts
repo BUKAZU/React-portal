@@ -43,8 +43,10 @@ function DayClasses({
     return classes.join(' ');
   }
   if (buDate) {
+    console.log(buDate, prevBooked);
+    
     if (buDate.arrival && isAfter(day, new Date()) && buDate.max_nights !== 0) {
-      if (prevBooked.max_nights === 0) {
+      if (prevBooked.max_nights == 0) {
         classes.push('departure-arrival');
       } else {
         classes.push('arrival');
@@ -56,6 +58,8 @@ function DayClasses({
       } else {
         classes.push('booked');
       }
+    } else if (buDate.max_nights > 0 && prevBooked.max_nights === 0 && !buDate.arrival) {
+      classes.push('booked');
     }
   }
 
