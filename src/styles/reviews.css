@@ -68,6 +68,17 @@
       padding: 0 16px;
     }
   }
+  .bu_reviews__note {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 16px;
+    width: 100%;
+    text-align: center;
+    a {
+      color: #808080;
+      text-decoration: none;
+    }
+  }
 }
 
 .bu-smaller {

@@ -73,7 +73,6 @@ function SafeBooking(): JSX.Element {
             bottom: 0
           }}
         >
-          {/* v{pjson.version} */}
         </span>
       </a>
     </div>

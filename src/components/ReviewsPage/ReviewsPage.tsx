@@ -7,6 +7,7 @@ import Loading from '../icons/loading.svg';
 import { REVIEWS_QUERY } from './Queries';
 import Score from './Score';
 import SingleReview from './SingleReview';
+import Note from './note';
 
 function ReviewsPage(): JSX.Element {
   const { objectCode, portalCode } = useContext(AppContext);
@@ -36,6 +37,7 @@ function ReviewsPage(): JSX.Element {
       {reviews.map((review) => {
         return <SingleReview review={review} key={review.id} />;
       })}
+        <Note />
     </div>
   );
 }
