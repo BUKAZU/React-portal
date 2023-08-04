@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import Loading from './icons/loading.svg';
 
 import 'react-date-picker/dist/DatePicker.css';
@@ -16,11 +16,6 @@ import { useQuery } from '@apollo/client';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 
-const getWidth = () =>
-  window.innerWidth ||
-  document.documentElement.clientWidth ||
-  document.body.clientWidth;
-
 interface Props {
   pageType?: string;
   filters?: FiltersType;
@@ -28,26 +23,7 @@ interface Props {
 }
 
 function App({ pageType, locale, filters }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
-
-  let [width, setWidth] = useState(getWidth());
-
-  // in this case useEffect will execute only once because
-  // it does not have any dependencies.
-  useEffect(() => {
-    const resizeListener = () => {
-      // change width from the state object
-      setWidth(getWidth());
-    };
-    // set resize listener
-    window.addEventListener('resize', resizeListener);
-
-    // clean up function
-    return () => {
-      // remove resize listener
-      window.removeEventListener('resize', resizeListener);
-    };
-  }, []);
+  const { portalCode, objectCode } = useContext(AppContext);  
 
   const { loading, error, data } = useQuery(PORTAL_QUERY, {
     variables: { id: portalCode }
@@ -122,7 +98,7 @@ function App({ pageType, locale, filters }: Props): JSX.Element {
     );
   }
 
-  return <div className={width < 875 ? 'bu-smaller' : ''}>{page}</div>;
+  return <>{page}</>;
 }
 
 App.defaultProps = {

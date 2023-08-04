@@ -103,3 +103,9 @@
 
   }
 }
+
+#bukazu-app > .bu-smaller > .price-overview {
+  width: 100%;
+  flex-direction: column;
+}
+  
