@@ -3,7 +3,7 @@
   display: flex;
   flex-wrap: wrap;
   background-color: #fff;
-  @media screen and (max-width: 992px),  {
+  @media screen and (max-width: 992px) {
     flex-direction: column;
   }
   table {
@@ -106,5 +106,6 @@
 
 #bukazu-app > .bu-smaller > .price-overview {
   width: 100%;
+  flex-direction: column;
 }
   
