@@ -42,11 +42,9 @@ function DayClasses({
     classes.push('disabled');
     return classes.join(' ');
   }
-  if (buDate) {
-    console.log(buDate, prevBooked);
-    
+  if (buDate) {    
     if (buDate.arrival && isAfter(day, new Date()) && buDate.max_nights !== 0) {
-      if (prevBooked.max_nights == 0) {
+      if (prevBooked.max_nights === 0) {
         classes.push('departure-arrival');
       } else {
         classes.push('arrival');
