@@ -57,7 +57,7 @@
     "date-fns": "^2.29.3",
     "formik": "^2.2.9",
     "graphql": "^15.6.0",
-    "react-date-picker": "^8.1.1",
+    "react-date-picker": "^10.5.0",
     "react-intl": "^6.2.5",
     "react-paginate": "^8.1.4"
   },
