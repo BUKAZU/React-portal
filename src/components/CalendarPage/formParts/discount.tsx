@@ -41,7 +41,9 @@ const Discount = ({ errors, house, options, values }: Props) => {
               </label>
               <Field name="discount_reason" />
               {errors.discount_reason && (
-                <div className="error-message">{errors.discount_reason}</div>
+                <div className="error-message bu-error-message">
+                  {errors.discount_reason}
+                </div>
               )}
             </div>
             <div>

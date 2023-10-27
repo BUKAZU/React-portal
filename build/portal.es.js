@@ -26971,7 +26971,7 @@ function zi({ label: e, description: t, count: n, ...r }) {
     /* @__PURE__ */ f("label", { htmlFor: r.name, children: /* @__PURE__ */ f(J, { id: e }) }),
     /* @__PURE__ */ f("select", { ...i, ...r, children: a.map((s) => /* @__PURE__ */ f("option", { value: s, children: s }, s)) }),
     t,
-    o.touched && o.error && /* @__PURE__ */ f("div", { className: "error-message", children: o.error })
+    o.touched && o.error && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: o.error })
   ] }) });
 }
 zi.defaultProps = {
@@ -27001,7 +27001,7 @@ function od({ label: e, description: t, name: n, inline: r }) {
             }
           ),
           /* @__PURE__ */ f("span", { className: "bu-input-description", children: t }),
-          i.touched && i.error && /* @__PURE__ */ f("div", { className: "error-message", children: i.error })
+          i.touched && i.error && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: i.error })
         ]
       }
     );
@@ -27091,7 +27091,7 @@ const QV = wt`
         /* @__PURE__ */ F("div", { className: "form-row inline", children: [
           /* @__PURE__ */ f("label", { htmlFor: "discount_reason", children: /* @__PURE__ */ f(J, { id: "discount_reason" }) }),
           /* @__PURE__ */ f(It, { name: "discount_reason" }),
-          e.discount_reason && /* @__PURE__ */ f("div", { className: "error-message", children: e.discount_reason })
+          e.discount_reason && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: e.discount_reason })
         ] }),
         /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f("i", { style: { fontSize: 14 }, children: t.discounts_info }) })
       ] }),
@@ -33664,17 +33664,11 @@ function F_({
           (l) => l.id === s.id
         );
         return /* @__PURE__ */ F("div", { className: "form-row", children: [
-          /* @__PURE__ */ F(
-            "label",
-            {
-              htmlFor: `extra_fields.booking_field_${u.id}`,
-              children: [
-                u.label,
-                " ",
-                s.required && /* @__PURE__ */ f("span", { children: "*" })
-              ]
-            }
-          ),
+          /* @__PURE__ */ F("label", { htmlFor: `extra_fields.booking_field_${u.id}`, children: [
+            u.label,
+            " ",
+            s.required && /* @__PURE__ */ f("span", { children: "*" })
+          ] }),
           /* @__PURE__ */ f(
             It,
             {
@@ -33687,7 +33681,7 @@ function F_({
               name: `extra_fields.booking_field_${u.id}`
             }
           ),
-          t[s.id] && (n.extra_fields && n.extra_fields[`booking_field_${u.id}`] || n[s.id]) && /* @__PURE__ */ f("div", { className: "error-message", children: t[s.id] })
+          t[s.id] && (n.extra_fields && n.extra_fields[`booking_field_${u.id}`] || n[s.id]) && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: t[s.id] })
         ] }, u.id);
       } else
         return s.id === "country" ? /* @__PURE__ */ F("div", { className: "form-row", children: [
@@ -33697,7 +33691,7 @@ function F_({
             s.required && /* @__PURE__ */ f("span", { children: "*" })
           ] }),
           /* @__PURE__ */ f(It, { component: "select", name: s.id, children: pU[window.__localeId__].map((u) => /* @__PURE__ */ f("option", { value: u.alpha2, children: u.name }, u.alpha2)) }),
-          t[s.id] && /* @__PURE__ */ f("div", { className: "error-message", children: t[s.id] })
+          t[s.id] && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: t[s.id] })
         ] }, s.id) : s.type === "date" ? /* @__PURE__ */ f("div", { className: "form-row", children: /* @__PURE__ */ f(od, { name: s.id, label: s.id, inline: !1 }) }, s.id) : /* @__PURE__ */ F("div", { className: "form-row", children: [
           /* @__PURE__ */ F(
             "label",
@@ -33721,7 +33715,7 @@ function F_({
               }
             }
           ),
-          t[s.id] && n[s.id] && /* @__PURE__ */ f("div", { className: "error-message", children: t[s.id] })
+          t[s.id] && n[s.id] && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: t[s.id] })
         ] }, s.id);
     })
   ] });
@@ -33976,7 +33970,7 @@ function bU({ house: e, PortalSite: t }) {
             ),
             /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "stay_details" }) }),
             /* @__PURE__ */ f(vU, { options: l, house: e }),
-            y.max_persons && /* @__PURE__ */ f("div", { className: "error-message persons", children: y.max_persons })
+            y.max_persons && /* @__PURE__ */ f("div", { className: "error-message bu-error-message persons", children: y.max_persons })
           ] }),
           /* @__PURE__ */ f(
             R_,
@@ -34027,7 +34021,15 @@ function bU({ house: e, PortalSite: t }) {
             ) }) })
           ] }),
           [1, 2].includes(Number(w.cancel_insurance)) ? /* @__PURE__ */ f("div", { className: "terms", children: /* @__PURE__ */ f(J, { id: "comply_insurance_card" }) }) : null,
-          /* @__PURE__ */ f("button", { className: "bu-calendar-button", type: "submit", disabled: C, children: /* @__PURE__ */ f(J, { id: "book" }) })
+          /* @__PURE__ */ f(
+            "button",
+            {
+              className: "bu-calendar-button",
+              type: "submit",
+              disabled: C,
+              children: /* @__PURE__ */ f(J, { id: "book" })
+            }
+          )
         ] })
       ] })
     }

@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## 3.1.7
+
 ## 3.1.6
 - Set a new default persons if house is less than 2
 - Allow persons to be zero if house max is zero
@@ -36,7 +38,7 @@
 - Show actual prices for searched period instead of min_weekprice
 
 ## 2.1.0
-- Add reviews page
+- Ad reviews page
 - Show review score on house in search results
 
 ## 2.0.12

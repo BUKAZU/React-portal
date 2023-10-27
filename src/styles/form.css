@@ -19,7 +19,8 @@
   > div {
     /* flex: 1; */
   }
-  .error-message {
+  .error-message, .bu-error-message {
+    position: relative;
     width: 100%;
     color: red;
     font-size: 14px;

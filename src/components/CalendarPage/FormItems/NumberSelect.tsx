@@ -25,7 +25,7 @@ export default function NumberSelect({ label, description, count, ...props }) {
             </select>
             {description}
             {meta.touched && meta.error && (
-              <div className="error-message">{meta.error}</div>
+              <div className="error-message bu-error-message">{meta.error}</div>
             )}
           </div>
         );
@@ -35,5 +35,5 @@ export default function NumberSelect({ label, description, count, ...props }) {
 }
 
 NumberSelect.defaultProps = {
-  count: 2,
+  count: 2
 };

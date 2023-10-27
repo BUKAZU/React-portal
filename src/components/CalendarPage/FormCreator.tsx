@@ -102,9 +102,13 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               options.bookingForm &&
               options.bookingForm[`redirectUrl_${locale}`] &&
               options.bookingForm[`redirectUrl_${locale}`] !== ''
-            ) {              
+            ) {
               window.location = options.bookingForm[`redirectUrl_${locale}`];
-            } else if (options.bookingForm && options.bookingForm.redirectUrl && options.bookingForm.redirectUrl !== '') {
+            } else if (
+              options.bookingForm &&
+              options.bookingForm.redirectUrl &&
+              options.bookingForm.redirectUrl !== ''
+            ) {
               window.location = options.bookingForm.redirectUrl;
             } else {
               setTimeout(() => {
@@ -146,7 +150,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               <Guests options={options} house={house} />
 
               {errors.max_persons && (
-                <div className="error-message persons">
+                <div className="error-message bu-error-message persons">
                   {errors.max_persons}
                 </div>
               )}
@@ -202,7 +206,11 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 <FormattedMessage id="comply_insurance_card" />
               </div>
             ) : null}
-            <button className="bu-calendar-button" type="submit" disabled={isSubmitting}>
+            <button
+              className="bu-calendar-button"
+              type="submit"
+              disabled={isSubmitting}
+            >
               <FormattedMessage id="book" />
             </button>
           </div>

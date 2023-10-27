@@ -9,7 +9,6 @@ export default function Select({
   name,
   ...props
 }) {
-
   return (
     <Field name={name}>
       {({ field, meta }) => {
@@ -29,7 +28,7 @@ export default function Select({
             </select>
             {description}
             {meta.touched && meta.error && (
-              <div className="error-message">{meta.error}</div>
+              <div className="error-message bu-error-message">{meta.error}</div>
             )}
           </div>
         );

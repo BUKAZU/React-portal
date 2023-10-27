@@ -5,14 +5,14 @@ import DatePicker from 'react-date-picker';
 import { format } from 'date-fns';
 
 interface Props {
-  label: string
-  description: string | React.ReactNode
-  name: string
-  inline: boolean
-  required: boolean
+  label: string;
+  description: string | React.ReactNode;
+  name: string;
+  inline: boolean;
+  required: boolean;
 }
 
-function DateField({ label, description, name, inline }:Props) {
+function DateField({ label, description, name, inline }: Props) {
   return (
     <Field name={name}>
       {({ field, meta, form }) => {
@@ -45,7 +45,7 @@ function DateField({ label, description, name, inline }:Props) {
             />
             <span className="bu-input-description">{description}</span>
             {meta.touched && meta.error && (
-              <div className="error-message">{meta.error}</div>
+              <div className="error-message bu-error-message">{meta.error}</div>
             )}
           </div>
         );
