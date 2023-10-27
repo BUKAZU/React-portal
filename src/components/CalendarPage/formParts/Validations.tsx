@@ -4,13 +4,11 @@ import { HouseType } from '../../../types';
 import { byString, validateAge } from './BookingHelpers';
 import { isInt } from './OptionalBookingFields';
 
-interface Props {
-  values: object;
-  house: HouseType;
-  bookingFields: [];
-}
-
-export function validateForm(values, house, bookingFields): [] {
+export function validateForm(
+  values: object,
+  house: HouseType,
+  bookingFields: []
+): [] {
   const { babies_extra, persons } = house;
 
   let errors = {};

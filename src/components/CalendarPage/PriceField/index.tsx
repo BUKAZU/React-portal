@@ -20,12 +20,14 @@ interface Props {
 }
 
 function PriceField({ house }: Props) {
-  const [persons, setPersons] = useState(2);
+  const defaultMaxPersons = house.persons > 2 ? 2 : house.persons;
+  const [persons, setPersons] = useState(defaultMaxPersons);
 
   const { arrivalDate, departureDate } = useContext(CalendarContext);
   const dispatch = useContext(CalendarContextDispatch);
 
   let adults = createPeronsArray(house.persons);
+
 
   return (
     <div className="calendar--picker">

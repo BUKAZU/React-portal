@@ -35,5 +35,5 @@ export default function NumberSelect({ label, description, count, ...props }) {
 }
 
 NumberSelect.defaultProps = {
-  count: 2
+  count: 0
 };

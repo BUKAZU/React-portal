@@ -4,11 +4,11 @@ FN:1,createNumberArray
 FN:5,createPriceArray
 FNF:2
 FNH:2
-FNDA:2,createNumberArray
+FNDA:1,createNumberArray
 FNDA:1,createPriceArray
 DA:1,1
-DA:2,2
-DA:3,2
+DA:2,1
+DA:3,1
 DA:4,1
 DA:5,1
 DA:6,1
@@ -27,8 +27,8 @@ DA:18,1
 DA:19,1
 LF:19
 LH:19
-BRDA:1,0,0,2
-BRDA:2,1,0,24
+BRDA:1,0,0,1
+BRDA:2,1,0,3
 BRDA:5,2,0,1
 BRDA:7,3,0,5
 BRF:4

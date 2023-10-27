@@ -9,7 +9,7 @@ const initialBooking: BookingType = {
   arrivalDate: null,
   departureDate: null,
   bookingStarted: false,
-  persons: 2
+  persons: 0
 };
 
 export const CalendarContext = createContext<BookingType>(initialBooking);
@@ -39,7 +39,7 @@ function calendarReducer(
       const { day, house } = action;
       const { selectedDate, arrivalDate } = bookingState;
       const date = Parse_EN_US(day.date);
-      const defaultMaxPersons = house.persons > 2 ? house.persons : 2;
+      const defaultMaxPersons = house.persons > 2 ? 2 : house.persons;
 
       if (
         day.departure &&
