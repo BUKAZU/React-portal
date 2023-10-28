@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {
-  children: React.ReactNode
-  show?: boolean
+  children: React.ReactNode;
+  show?: boolean;
   buttonText?: string | React.ReactNode;
 }
 
-function Modal({ children, buttonText }: Props) {
-  const [visible, setVisible] = useState(false);
+function Modal({ children, buttonText, show }: Props) {
+  const [visible, setVisible] = useState(show);
 
   if (!visible) {
     return (

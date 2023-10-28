@@ -46,17 +46,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     costs[val.id] = '0';
   }
 
-  const [createBooking, { loading, error, data }] = useMutation(
+  const [createBooking, { loading, error, data, reset }] = useMutation(
     CREATE_BOOKING_MUTATION
   );
-
-  if (data) {
-    return (
-      <Modal show={true}>
-        <SuccessMessage />
-      </Modal>
-    );
-  }
 
   const optBookingFieldsInitialized = initializeBookingFields(bookingFields);
 
@@ -96,37 +88,40 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           extra_fields: JSON.stringify(values.extra_fields)
         };
 
-        createBooking({ variables })
-          .then(() => {
-            if (
-              options.bookingForm &&
-              options.bookingForm[`redirectUrl_${locale}`] &&
-              options.bookingForm[`redirectUrl_${locale}`] !== ''
-            ) {
-              window.location = options.bookingForm[`redirectUrl_${locale}`];
-            } else if (
-              options.bookingForm &&
-              options.bookingForm.redirectUrl &&
-              options.bookingForm.redirectUrl !== ''
-            ) {
-              window.location = options.bookingForm.redirectUrl;
-            } else {
-              setTimeout(() => {
-                dispatch({
-                  type: 'return'
-                });
-              }, 15000);
-            }
-          })
-          .catch((err) => {});
+        createBooking({ variables }).then(() => {
+          if (
+            options.bookingForm &&
+            options.bookingForm[`redirectUrl_${locale}`] &&
+            options.bookingForm[`redirectUrl_${locale}`] !== ''
+          ) {
+            window.location = options.bookingForm[`redirectUrl_${locale}`];
+          } else if (
+            options.bookingForm &&
+            options.bookingForm.redirectUrl &&
+            options.bookingForm.redirectUrl !== ''
+          ) {
+            window.location = options.bookingForm.redirectUrl;
+          } else {
+            setTimeout(() => {
+              dispatch({
+                type: 'return'
+              });
+            }, 15000);
+          }
+        });
       }}
     >
       {({ errors, touched, values, status, isSubmitting }) => (
         <Form className="form">
-          {loading && <div className="return-message">Loading...</div>}
+          {loading && <div className="return-message">Creating booking...</div>}
           {error && (
-            <Modal show={true}>
+            <Modal show={true} onClose={reset}>
               <ApiError errors={error} modal={true} />
+            </Modal>
+          )}
+          {data && (
+            <Modal show={true}>
+              <SuccessMessage />
             </Modal>
           )}
 
