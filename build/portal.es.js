@@ -145,9 +145,9 @@ function K_() {
         return `
     in ` + (E || "Unknown") + pe;
       }
-      var K = 1;
+      var J = 1;
       function ee(E) {
-        return E._status === K ? E._result : null;
+        return E._status === J ? E._result : null;
       }
       function ne(E, V, X) {
         var pe = V.displayName || V.name || "";
@@ -220,7 +220,7 @@ function K_() {
             }
         }
       }
-      var I = $.ReactCurrentOwner, B = Object.prototype.hasOwnProperty, W = {
+      var M = $.ReactCurrentOwner, B = Object.prototype.hasOwnProperty, W = {
         key: !0,
         ref: !0,
         __self: !0,
@@ -243,10 +243,10 @@ function K_() {
         }
         return E.key !== void 0;
       }
-      function M(E, V) {
-        if (typeof E.ref == "string" && I.current && V && I.current.stateNode !== V) {
-          var X = ie(I.current.type);
-          se[X] || (D('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', ie(I.current.type), E.ref), se[X] = !0);
+      function F(E, V) {
+        if (typeof E.ref == "string" && M.current && V && M.current.stateNode !== V) {
+          var X = ie(M.current.type);
+          se[X] || (D('Component "%s" contains the string ref "%s". Support for string refs will be removed in a future major release. This case cannot be automatically converted to an arrow function. We ask you to manually fix this case by using useRef() or createRef() instead. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-string-ref', ie(M.current.type), E.ref), se[X] = !0);
         }
       }
       function A(E, V) {
@@ -303,7 +303,7 @@ function K_() {
       function ve(E, V, X, pe, Pe) {
         {
           var Te, _e = {}, Se = null, ze = null;
-          X !== void 0 && (Se = "" + X), N(V) && (Se = "" + V.key), x(V) && (ze = V.ref, M(V, Pe));
+          X !== void 0 && (Se = "" + X), N(V) && (Se = "" + V.key), x(V) && (ze = V.ref, F(V, Pe));
           for (Te in V)
             B.call(V, Te) && !W.hasOwnProperty(Te) && (_e[Te] = V[Te]);
           if (E && E.defaultProps) {
@@ -315,7 +315,7 @@ function K_() {
             var Ot = typeof E == "function" ? E.displayName || E.name || "Unknown" : E;
             Se && A(_e, Ot), ze && G(_e, Ot);
           }
-          return L(E, Se, ze, Pe, pe, I.current, _e);
+          return L(E, Se, ze, Pe, pe, M.current, _e);
         }
       }
       var oe = $.ReactCurrentOwner;
@@ -477,7 +477,7 @@ Check the top-level render call using <` + X + ">.");
 (function(e) {
   process.env.NODE_ENV === "production" ? e.exports = Q_() : e.exports = K_();
 })(Y_);
-const pt = na.Fragment, f = na.jsx, F = na.jsxs, Dn = () => /* @__PURE__ */ F(
+const pt = na.Fragment, f = na.jsx, I = na.jsxs, Dn = () => /* @__PURE__ */ I(
   "svg",
   {
     version: "1.1",
@@ -492,7 +492,7 @@ const pt = na.Fragment, f = na.jsx, F = na.jsxs, Dn = () => /* @__PURE__ */ F(
     enableBackground: "new 0 0 50 50",
     xmlSpace: "preserve",
     children: [
-      /* @__PURE__ */ F("rect", { x: "0", y: "10", width: "4", height: "10", fill: "#333", opacity: "0.2", children: [
+      /* @__PURE__ */ I("rect", { x: "0", y: "10", width: "4", height: "10", fill: "#333", opacity: "0.2", children: [
         /* @__PURE__ */ f(
           "animate",
           {
@@ -527,7 +527,7 @@ const pt = na.Fragment, f = na.jsx, F = na.jsxs, Dn = () => /* @__PURE__ */ F(
           }
         )
       ] }),
-      /* @__PURE__ */ F("rect", { x: "8", y: "10", width: "4", height: "10", fill: "#333", opacity: "0.2", children: [
+      /* @__PURE__ */ I("rect", { x: "8", y: "10", width: "4", height: "10", fill: "#333", opacity: "0.2", children: [
         /* @__PURE__ */ f(
           "animate",
           {
@@ -562,7 +562,7 @@ const pt = na.Fragment, f = na.jsx, F = na.jsxs, Dn = () => /* @__PURE__ */ F(
           }
         )
       ] }),
-      /* @__PURE__ */ F("rect", { x: "16", y: "10", width: "4", height: "10", fill: "#333", opacity: "0.2", children: [
+      /* @__PURE__ */ I("rect", { x: "16", y: "10", width: "4", height: "10", fill: "#333", opacity: "0.2", children: [
         /* @__PURE__ */ f(
           "animate",
           {
@@ -4454,8 +4454,8 @@ var Ld = Lt(function() {
     }
     var me;
     if (!D.signal) {
-      var ge = dO(), Y = ge.controller, K = ge.signal;
-      me = Y, me && (D.signal = K);
+      var ge = dO(), Y = ge.controller, J = ge.signal;
+      me = Y, me && (D.signal = J);
     }
     var ee = function(ce) {
       return ce.kind === "OperationDefinition" && ce.operation === "mutation";
@@ -4476,9 +4476,9 @@ var Ld = Lt(function() {
         return fetch;
       }) || Ld;
       return z(v, D).then(function(S) {
-        var I;
+        var M;
         p.setContext({ response: S });
-        var B = (I = S.headers) === null || I === void 0 ? void 0 : I.get("content-type");
+        var B = (M = S.headers) === null || M === void 0 ? void 0 : M.get("content-type");
         return B !== null && /^multipart\/mixed/i.test(B) ? eO(S, ce) : nO(S, p, ce);
       }).catch(function(S) {
         return ef(S, ce);
@@ -6976,13 +6976,13 @@ var fS = Object.prototype.hasOwnProperty, dS = function() {
               update: h,
               keepRootFields: g
             }), this.broadcastQueries(), Z = this, [2, new Promise(function(ge, Y) {
-              return Os(Z.getObservableFromLink(a, T(T({}, O), { optimisticResponse: o }), i, !1), function(K) {
-                if (ni(K) && b === "none")
+              return Os(Z.getObservableFromLink(a, T(T({}, O), { optimisticResponse: o }), i, !1), function(J) {
+                if (ni(J) && b === "none")
                   throw new an({
-                    graphQLErrors: yu(K)
+                    graphQLErrors: yu(J)
                   });
                 U && (U.loading = !1, U.error = null);
-                var ee = T({}, K);
+                var ee = T({}, J);
                 return typeof l == "function" && (l = l(ee)), b === "ignore" && ni(ee) && delete ee.errors, Z.markMutationResult({
                   mutationId: w,
                   result: ee,
@@ -7000,12 +7000,12 @@ var fS = Object.prototype.hasOwnProperty, dS = function() {
                   keepRootFields: g
                 });
               }).subscribe({
-                next: function(K) {
-                  Z.broadcastQueries(), (!("hasNext" in K) || K.hasNext === !1) && ge(K);
+                next: function(J) {
+                  Z.broadcastQueries(), (!("hasNext" in J) || J.hasNext === !1) && ge(J);
                 },
-                error: function(K) {
-                  U && (U.loading = !1, U.error = K), o && Z.cache.removeOptimistic(w), Z.broadcastQueries(), Y(K instanceof an ? K : new an({
-                    networkError: K
+                error: function(J) {
+                  U && (U.loading = !1, U.error = J), o && Z.cache.removeOptimistic(w), Z.broadcastQueries(), Y(J instanceof an ? J : new an({
+                    networkError: J
                   }));
                 }
               });
@@ -8241,7 +8241,7 @@ function IS({
   }, s = (u) => {
     r(t.id, u);
   };
-  return ["cities", "regions"].includes(t.id) ? /* @__PURE__ */ f("ul", { className: "radioList", children: n.map((u) => /* @__PURE__ */ F(
+  return ["cities", "regions"].includes(t.id) ? /* @__PURE__ */ f("ul", { className: "radioList", children: n.map((u) => /* @__PURE__ */ I(
     "li",
     {
       className: `bu-list-item ${i && !i.includes(u.country_id) ? "bu-disabled" : "bu-open"}`,
@@ -8263,7 +8263,7 @@ function IS({
       ]
     },
     u.id
-  )) }) : /* @__PURE__ */ f("ul", { className: "radioList", children: n.map((u) => /* @__PURE__ */ F("li", { className: "bu-list-item bu-open", children: [
+  )) }) : /* @__PURE__ */ f("ul", { className: "radioList", children: n.map((u) => /* @__PURE__ */ I("li", { className: "bu-list-item bu-open", children: [
     /* @__PURE__ */ f(
       "input",
       {
@@ -8306,7 +8306,7 @@ function LS({
   const i = (u) => {
     a(t.id, u.currentTarget.value);
   }, o = n.countries, s = Array.isArray(n.regions) ? n.regions : [n.regions].filter((u) => String(u).trim());
-  return e && ["countries", "cities", "regions"].includes(t.id) ? /* @__PURE__ */ F(
+  return e && ["countries", "cities", "regions"].includes(t.id) ? /* @__PURE__ */ I(
     "select",
     {
       name: t.id,
@@ -8331,7 +8331,7 @@ function LS({
         })
       ]
     }
-  ) : /* @__PURE__ */ F(
+  ) : /* @__PURE__ */ I(
     "select",
     {
       name: t.id,
@@ -8362,9 +8362,9 @@ function jS({ PortalSite: e, filters: t, onChange: n }) {
   };
   return e.categories.map((s) => {
     a.includes(s.id) && i.push(
-      /* @__PURE__ */ F("div", { className: "bu-properties", children: [
+      /* @__PURE__ */ I("div", { className: "bu-properties", children: [
         /* @__PURE__ */ f("strong", { children: s.name }),
-        /* @__PURE__ */ f("ul", { children: s.properties.map((u) => /* @__PURE__ */ f("li", { children: /* @__PURE__ */ F("label", { htmlFor: u.id.toString(), children: [
+        /* @__PURE__ */ f("ul", { children: s.properties.map((u) => /* @__PURE__ */ f("li", { children: /* @__PURE__ */ I("label", { htmlFor: u.id.toString(), children: [
           /* @__PURE__ */ f(
             "input",
             {
@@ -8385,7 +8385,7 @@ function BS({ options: e, filters: t, onChange: n, field: r }) {
   const a = t.countries, i = (o) => {
     n(r.id, o.currentTarget.value);
   };
-  return /* @__PURE__ */ f("ul", { className: "radioList", children: e.map((o) => /* @__PURE__ */ F(
+  return /* @__PURE__ */ f("ul", { className: "radioList", children: e.map((o) => /* @__PURE__ */ I(
     "li",
     {
       className: `bu-list-item ${a && !a.includes(o.country_id) ? "bu-disabled" : ""}`,
@@ -9723,7 +9723,7 @@ function la(e, t, n) {
   var me = qe(e);
   if (!QS(me))
     throw new RangeError("Invalid time value");
-  var ge = Ki(me), Y = Dy(me, ge), K = {
+  var ge = Ki(me), Y = Dy(me, ge), J = {
     firstWeekContainsDate: U,
     weekStartsOn: Z,
     locale: D,
@@ -9743,7 +9743,7 @@ function la(e, t, n) {
       return G2(ne);
     var fe = a2[ie];
     if (fe)
-      return !(n != null && n.useAdditionalWeekYearTokens) && Ny(ne) && Xi(ne, t, String(e)), !(n != null && n.useAdditionalDayOfYearTokens) && Ay(ne) && Xi(ne, t, String(e)), fe(Y, ne, D.localize, K);
+      return !(n != null && n.useAdditionalWeekYearTokens) && Ny(ne) && Xi(ne, t, String(e)), !(n != null && n.useAdditionalDayOfYearTokens) && Ay(ne) && Xi(ne, t, String(e)), fe(Y, ne, D.localize, J);
     if (ie.match(W2))
       throw new RangeError("Format string contains an unescaped latin alphabet character `" + ie + "`");
     return ne;
@@ -13751,19 +13751,19 @@ function Wy(e, t, n, r) {
     firstWeekContainsDate: me,
     weekStartsOn: ge,
     locale: Z
-  }, K = [new Z2()], ee = D.match(fD).map(function(N) {
-    var M = N[0];
-    if (M in Au) {
-      var A = Au[M];
+  }, J = [new Z2()], ee = D.match(fD).map(function(N) {
+    var F = N[0];
+    if (F in Au) {
+      var A = Au[F];
       return A(N, Z.formatLong);
     }
     return N;
   }).join("").match(cD), ne = [], ie = Dp(ee), fe;
   try {
     var ce = function() {
-      var M = fe.value;
-      !(r != null && r.useAdditionalWeekYearTokens) && Ny(M) && Xi(M, D, e), !(r != null && r.useAdditionalDayOfYearTokens) && Ay(M) && Xi(M, D, e);
-      var A = M[0], G = uD[A];
+      var F = fe.value;
+      !(r != null && r.useAdditionalWeekYearTokens) && Ny(F) && Xi(F, D, e), !(r != null && r.useAdditionalDayOfYearTokens) && Ay(F) && Xi(F, D, e);
+      var A = F[0], G = uD[A];
       if (G) {
         var L = G.incompatibleTokens;
         if (Array.isArray(L)) {
@@ -13771,24 +13771,24 @@ function Wy(e, t, n, r) {
             return L.includes(ye.token) || ye.token === A;
           });
           if (ve)
-            throw new RangeError("The format string mustn't contain `".concat(ve.fullToken, "` and `").concat(M, "` at the same time"));
+            throw new RangeError("The format string mustn't contain `".concat(ve.fullToken, "` and `").concat(F, "` at the same time"));
         } else if (G.incompatibleTokens === "*" && ne.length > 0)
-          throw new RangeError("The format string mustn't contain `".concat(M, "` and any other token at the same time"));
+          throw new RangeError("The format string mustn't contain `".concat(F, "` and any other token at the same time"));
         ne.push({
           token: A,
-          fullToken: M
+          fullToken: F
         });
-        var oe = G.run($, M, Z.match, Y);
+        var oe = G.run($, F, Z.match, Y);
         if (!oe)
           return {
             v: new Date(NaN)
           };
-        K.push(oe.setter), $ = oe.rest;
+        J.push(oe.setter), $ = oe.rest;
       } else {
         if (A.match(mD))
           throw new RangeError("Format string contains an unescaped latin alphabet character `" + A + "`");
-        if (M === "''" ? M = "'" : A === "'" && (M = vD(M)), $.indexOf(M) === 0)
-          $ = $.slice(M.length);
+        if (F === "''" ? F = "'" : A === "'" && (F = vD(F)), $.indexOf(F) === 0)
+          $ = $.slice(F.length);
         else
           return {
             v: new Date(NaN)
@@ -13807,24 +13807,24 @@ function Wy(e, t, n, r) {
   }
   if ($.length > 0 && pD.test($))
     return new Date(NaN);
-  var S = K.map(function(N) {
+  var S = J.map(function(N) {
     return N.priority;
-  }).sort(function(N, M) {
-    return M - N;
-  }).filter(function(N, M, A) {
-    return A.indexOf(N) === M;
+  }).sort(function(N, F) {
+    return F - N;
+  }).filter(function(N, F, A) {
+    return A.indexOf(N) === F;
   }).map(function(N) {
-    return K.filter(function(M) {
-      return M.priority === N;
-    }).sort(function(M, A) {
-      return A.subPriority - M.subPriority;
+    return J.filter(function(F) {
+      return F.priority === N;
+    }).sort(function(F, A) {
+      return A.subPriority - F.subPriority;
     });
   }).map(function(N) {
     return N[0];
-  }), I = qe(n);
-  if (isNaN(I.getTime()))
+  }), M = qe(n);
+  if (isNaN(M.getTime()))
     return new Date(NaN);
-  var B = Dy(I, Ki(I)), W = {}, Q = Dp(S), ue;
+  var B = Dy(M, Ki(M)), W = {}, Q = Dp(S), ue;
   try {
     for (Q.s(); !(ue = Q.n()).done; ) {
       var se = ue.value;
@@ -14002,14 +14002,14 @@ function OD() {
         }
       }
     }
-    var _ = u, $ = l, D = s, U = o, Z = t, me = c, ge = r, Y = v, K = p, ee = n, ne = i, ie = a, fe = d, ce = !1;
+    var _ = u, $ = l, D = s, U = o, Z = t, me = c, ge = r, Y = v, J = p, ee = n, ne = i, ie = a, fe = d, ce = !1;
     function z(L) {
       return ce || (ce = !0, console.warn("The ReactIs.isAsyncMode() alias has been deprecated, and will be removed in React 17+. Update your code to use ReactIs.isConcurrentMode() instead. It has the exact same API.")), S(L) || w(L) === u;
     }
     function S(L) {
       return w(L) === l;
     }
-    function I(L) {
+    function M(L) {
       return w(L) === s;
     }
     function B(L) {
@@ -14033,7 +14033,7 @@ function OD() {
     function N(L) {
       return w(L) === n;
     }
-    function M(L) {
+    function F(L) {
       return w(L) === i;
     }
     function A(L) {
@@ -14042,7 +14042,7 @@ function OD() {
     function G(L) {
       return w(L) === d;
     }
-    Fe.AsyncMode = _, Fe.ConcurrentMode = $, Fe.ContextConsumer = D, Fe.ContextProvider = U, Fe.Element = Z, Fe.ForwardRef = me, Fe.Fragment = ge, Fe.Lazy = Y, Fe.Memo = K, Fe.Portal = ee, Fe.Profiler = ne, Fe.StrictMode = ie, Fe.Suspense = fe, Fe.isAsyncMode = z, Fe.isConcurrentMode = S, Fe.isContextConsumer = I, Fe.isContextProvider = B, Fe.isElement = W, Fe.isForwardRef = Q, Fe.isFragment = ue, Fe.isLazy = se, Fe.isMemo = x, Fe.isPortal = N, Fe.isProfiler = M, Fe.isStrictMode = A, Fe.isSuspense = G, Fe.isValidElementType = O, Fe.typeOf = w;
+    Fe.AsyncMode = _, Fe.ConcurrentMode = $, Fe.ContextConsumer = D, Fe.ContextProvider = U, Fe.Element = Z, Fe.ForwardRef = me, Fe.Fragment = ge, Fe.Lazy = Y, Fe.Memo = J, Fe.Portal = ee, Fe.Profiler = ne, Fe.StrictMode = ie, Fe.Suspense = fe, Fe.isAsyncMode = z, Fe.isConcurrentMode = S, Fe.isContextConsumer = M, Fe.isContextProvider = B, Fe.isElement = W, Fe.isForwardRef = Q, Fe.isFragment = ue, Fe.isLazy = se, Fe.isMemo = x, Fe.isPortal = N, Fe.isProfiler = F, Fe.isStrictMode = A, Fe.isSuspense = G, Fe.isValidElementType = O, Fe.typeOf = w;
   }()), Fe;
 }
 (function(e) {
@@ -14183,9 +14183,9 @@ function PD() {
   return Bs = function(s, u) {
     var l = typeof Symbol == "function" && Symbol.iterator, c = "@@iterator";
     function d(S) {
-      var I = S && (l && S[l] || S[c]);
-      if (typeof I == "function")
-        return I;
+      var M = S && (l && S[l] || S[c]);
+      if (typeof M == "function")
+        return M;
     }
     var h = "<<anonymous>>", p = {
       array: b("array"),
@@ -14206,19 +14206,19 @@ function PD() {
       oneOf: D,
       oneOfType: Z,
       shape: Y,
-      exact: K
+      exact: J
     };
-    function v(S, I) {
-      return S === I ? S !== 0 || 1 / S === 1 / I : S !== S && I !== I;
+    function v(S, M) {
+      return S === M ? S !== 0 || 1 / S === 1 / M : S !== S && M !== M;
     }
-    function m(S, I) {
-      this.message = S, this.data = I && typeof I == "object" ? I : {}, this.stack = "";
+    function m(S, M) {
+      this.message = S, this.data = M && typeof M == "object" ? M : {}, this.stack = "";
     }
     m.prototype = Error.prototype;
     function y(S) {
       if (process.env.NODE_ENV !== "production")
-        var I = {}, B = 0;
-      function W(ue, se, x, N, M, A, G) {
+        var M = {}, B = 0;
+      function W(ue, se, x, N, F, A, G) {
         if (N = N || h, A = A || x, G !== n) {
           if (u) {
             var L = new Error(
@@ -14227,21 +14227,21 @@ function PD() {
             throw L.name = "Invariant Violation", L;
           } else if (process.env.NODE_ENV !== "production" && typeof console < "u") {
             var ve = N + ":" + x;
-            !I[ve] && // Avoid spamming the console because they are often not actionable except for lib authors
+            !M[ve] && // Avoid spamming the console because they are often not actionable except for lib authors
             B < 3 && (i(
               "You are manually calling a React.PropTypes validation function for the `" + A + "` prop on `" + N + "`. This is deprecated and will throw in the standalone `prop-types` package. You may be seeing this warning due to a third-party PropTypes library. See https://fb.me/react-warning-dont-call-proptypes for details."
-            ), I[ve] = !0, B++);
+            ), M[ve] = !0, B++);
           }
         }
-        return se[x] == null ? ue ? se[x] === null ? new m("The " + M + " `" + A + "` is marked as required " + ("in `" + N + "`, but its value is `null`.")) : new m("The " + M + " `" + A + "` is marked as required in " + ("`" + N + "`, but its value is `undefined`.")) : null : S(se, x, N, M, A);
+        return se[x] == null ? ue ? se[x] === null ? new m("The " + F + " `" + A + "` is marked as required " + ("in `" + N + "`, but its value is `null`.")) : new m("The " + F + " `" + A + "` is marked as required in " + ("`" + N + "`, but its value is `undefined`.")) : null : S(se, x, N, F, A);
       }
       var Q = W.bind(null, !1);
       return Q.isRequired = W.bind(null, !0), Q;
     }
     function b(S) {
-      function I(B, W, Q, ue, se, x) {
-        var N = B[W], M = ie(N);
-        if (M !== S) {
+      function M(B, W, Q, ue, se, x) {
+        var N = B[W], F = ie(N);
+        if (F !== S) {
           var A = fe(N);
           return new m(
             "Invalid " + ue + " `" + se + "` of type " + ("`" + A + "` supplied to `" + Q + "`, expected ") + ("`" + S + "`."),
@@ -14250,13 +14250,13 @@ function PD() {
         }
         return null;
       }
-      return y(I);
+      return y(M);
     }
     function g() {
       return y(o);
     }
     function O(S) {
-      function I(B, W, Q, ue, se) {
+      function M(B, W, Q, ue, se) {
         if (typeof S != "function")
           return new m("Property `" + se + "` of component `" + Q + "` has invalid PropType notation inside arrayOf.");
         var x = B[W];
@@ -14264,18 +14264,18 @@ function PD() {
           var N = ie(x);
           return new m("Invalid " + ue + " `" + se + "` of type " + ("`" + N + "` supplied to `" + Q + "`, expected an array."));
         }
-        for (var M = 0; M < x.length; M++) {
-          var A = S(x, M, Q, ue, se + "[" + M + "]", n);
+        for (var F = 0; F < x.length; F++) {
+          var A = S(x, F, Q, ue, se + "[" + F + "]", n);
           if (A instanceof Error)
             return A;
         }
         return null;
       }
-      return y(I);
+      return y(M);
     }
     function w() {
-      function S(I, B, W, Q, ue) {
-        var se = I[B];
+      function S(M, B, W, Q, ue) {
+        var se = M[B];
         if (!s(se)) {
           var x = ie(se);
           return new m("Invalid " + Q + " `" + ue + "` of type " + ("`" + x + "` supplied to `" + W + "`, expected a single ReactElement."));
@@ -14285,8 +14285,8 @@ function PD() {
       return y(S);
     }
     function _() {
-      function S(I, B, W, Q, ue) {
-        var se = I[B];
+      function S(M, B, W, Q, ue) {
+        var se = M[B];
         if (!e.isValidElementType(se)) {
           var x = ie(se);
           return new m("Invalid " + Q + " `" + ue + "` of type " + ("`" + x + "` supplied to `" + W + "`, expected a single ReactElement type."));
@@ -14296,106 +14296,106 @@ function PD() {
       return y(S);
     }
     function $(S) {
-      function I(B, W, Q, ue, se) {
+      function M(B, W, Q, ue, se) {
         if (!(B[W] instanceof S)) {
           var x = S.name || h, N = z(B[W]);
           return new m("Invalid " + ue + " `" + se + "` of type " + ("`" + N + "` supplied to `" + Q + "`, expected ") + ("instance of `" + x + "`."));
         }
         return null;
       }
-      return y(I);
+      return y(M);
     }
     function D(S) {
       if (!Array.isArray(S))
         return process.env.NODE_ENV !== "production" && (arguments.length > 1 ? i(
           "Invalid arguments supplied to oneOf, expected an array, got " + arguments.length + " arguments. A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z])."
         ) : i("Invalid argument supplied to oneOf, expected an array.")), o;
-      function I(B, W, Q, ue, se) {
+      function M(B, W, Q, ue, se) {
         for (var x = B[W], N = 0; N < S.length; N++)
           if (v(x, S[N]))
             return null;
-        var M = JSON.stringify(S, function(G, L) {
+        var F = JSON.stringify(S, function(G, L) {
           var ve = fe(L);
           return ve === "symbol" ? String(L) : L;
         });
-        return new m("Invalid " + ue + " `" + se + "` of value `" + String(x) + "` " + ("supplied to `" + Q + "`, expected one of " + M + "."));
+        return new m("Invalid " + ue + " `" + se + "` of value `" + String(x) + "` " + ("supplied to `" + Q + "`, expected one of " + F + "."));
       }
-      return y(I);
+      return y(M);
     }
     function U(S) {
-      function I(B, W, Q, ue, se) {
+      function M(B, W, Q, ue, se) {
         if (typeof S != "function")
           return new m("Property `" + se + "` of component `" + Q + "` has invalid PropType notation inside objectOf.");
         var x = B[W], N = ie(x);
         if (N !== "object")
           return new m("Invalid " + ue + " `" + se + "` of type " + ("`" + N + "` supplied to `" + Q + "`, expected an object."));
-        for (var M in x)
-          if (r(x, M)) {
-            var A = S(x, M, Q, ue, se + "." + M, n);
+        for (var F in x)
+          if (r(x, F)) {
+            var A = S(x, F, Q, ue, se + "." + F, n);
             if (A instanceof Error)
               return A;
           }
         return null;
       }
-      return y(I);
+      return y(M);
     }
     function Z(S) {
       if (!Array.isArray(S))
         return process.env.NODE_ENV !== "production" && i("Invalid argument supplied to oneOfType, expected an instance of array."), o;
-      for (var I = 0; I < S.length; I++) {
-        var B = S[I];
+      for (var M = 0; M < S.length; M++) {
+        var B = S[M];
         if (typeof B != "function")
           return i(
-            "Invalid argument supplied to oneOfType. Expected an array of check functions, but received " + ce(B) + " at index " + I + "."
+            "Invalid argument supplied to oneOfType. Expected an array of check functions, but received " + ce(B) + " at index " + M + "."
           ), o;
       }
       function W(Q, ue, se, x, N) {
-        for (var M = [], A = 0; A < S.length; A++) {
+        for (var F = [], A = 0; A < S.length; A++) {
           var G = S[A], L = G(Q, ue, se, x, N, n);
           if (L == null)
             return null;
-          L.data && r(L.data, "expectedType") && M.push(L.data.expectedType);
+          L.data && r(L.data, "expectedType") && F.push(L.data.expectedType);
         }
-        var ve = M.length > 0 ? ", expected one of type [" + M.join(", ") + "]" : "";
+        var ve = F.length > 0 ? ", expected one of type [" + F.join(", ") + "]" : "";
         return new m("Invalid " + x + " `" + N + "` supplied to " + ("`" + se + "`" + ve + "."));
       }
       return y(W);
     }
     function me() {
-      function S(I, B, W, Q, ue) {
-        return ee(I[B]) ? null : new m("Invalid " + Q + " `" + ue + "` supplied to " + ("`" + W + "`, expected a ReactNode."));
+      function S(M, B, W, Q, ue) {
+        return ee(M[B]) ? null : new m("Invalid " + Q + " `" + ue + "` supplied to " + ("`" + W + "`, expected a ReactNode."));
       }
       return y(S);
     }
-    function ge(S, I, B, W, Q) {
+    function ge(S, M, B, W, Q) {
       return new m(
-        (S || "React class") + ": " + I + " type `" + B + "." + W + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + Q + "`."
+        (S || "React class") + ": " + M + " type `" + B + "." + W + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + Q + "`."
       );
     }
     function Y(S) {
-      function I(B, W, Q, ue, se) {
+      function M(B, W, Q, ue, se) {
         var x = B[W], N = ie(x);
         if (N !== "object")
           return new m("Invalid " + ue + " `" + se + "` of type `" + N + "` " + ("supplied to `" + Q + "`, expected `object`."));
-        for (var M in S) {
-          var A = S[M];
+        for (var F in S) {
+          var A = S[F];
           if (typeof A != "function")
-            return ge(Q, ue, se, M, fe(A));
-          var G = A(x, M, Q, ue, se + "." + M, n);
+            return ge(Q, ue, se, F, fe(A));
+          var G = A(x, F, Q, ue, se + "." + F, n);
           if (G)
             return G;
         }
         return null;
       }
-      return y(I);
+      return y(M);
     }
-    function K(S) {
-      function I(B, W, Q, ue, se) {
+    function J(S) {
+      function M(B, W, Q, ue, se) {
         var x = B[W], N = ie(x);
         if (N !== "object")
           return new m("Invalid " + ue + " `" + se + "` of type `" + N + "` " + ("supplied to `" + Q + "`, expected `object`."));
-        var M = t({}, B[W], S);
-        for (var A in M) {
+        var F = t({}, B[W], S);
+        for (var A in F) {
           var G = S[A];
           if (r(S, A) && typeof G != "function")
             return ge(Q, ue, se, A, fe(G));
@@ -14410,7 +14410,7 @@ Valid keys: ` + JSON.stringify(Object.keys(S), null, "  ")
         }
         return null;
       }
-      return y(I);
+      return y(M);
     }
     function ee(S) {
       switch (typeof S) {
@@ -14425,10 +14425,10 @@ Valid keys: ` + JSON.stringify(Object.keys(S), null, "  ")
             return S.every(ee);
           if (S === null || s(S))
             return !0;
-          var I = d(S);
-          if (I) {
-            var B = I.call(S), W;
-            if (I !== S.entries) {
+          var M = d(S);
+          if (M) {
+            var B = M.call(S), W;
+            if (M !== S.entries) {
               for (; !(W = B.next()).done; )
                 if (!ee(W.value))
                   return !1;
@@ -14445,37 +14445,37 @@ Valid keys: ` + JSON.stringify(Object.keys(S), null, "  ")
           return !1;
       }
     }
-    function ne(S, I) {
-      return S === "symbol" ? !0 : I ? I["@@toStringTag"] === "Symbol" || typeof Symbol == "function" && I instanceof Symbol : !1;
+    function ne(S, M) {
+      return S === "symbol" ? !0 : M ? M["@@toStringTag"] === "Symbol" || typeof Symbol == "function" && M instanceof Symbol : !1;
     }
     function ie(S) {
-      var I = typeof S;
-      return Array.isArray(S) ? "array" : S instanceof RegExp ? "object" : ne(I, S) ? "symbol" : I;
+      var M = typeof S;
+      return Array.isArray(S) ? "array" : S instanceof RegExp ? "object" : ne(M, S) ? "symbol" : M;
     }
     function fe(S) {
       if (typeof S > "u" || S === null)
         return "" + S;
-      var I = ie(S);
-      if (I === "object") {
+      var M = ie(S);
+      if (M === "object") {
         if (S instanceof Date)
           return "date";
         if (S instanceof RegExp)
           return "regexp";
       }
-      return I;
+      return M;
     }
     function ce(S) {
-      var I = fe(S);
-      switch (I) {
+      var M = fe(S);
+      switch (M) {
         case "array":
         case "object":
-          return "an " + I;
+          return "an " + M;
         case "boolean":
         case "date":
         case "regexp":
-          return "a " + I;
+          return "a " + M;
         default:
-          return I;
+          return M;
       }
     }
     function z(S) {
@@ -15350,13 +15350,13 @@ var xa = {
   tileDisabled: k.func
 }, zt = "react-calendar__navigation";
 function Bg(e) {
-  var t = e.activeStartDate, n = e.drillUp, r = e.formatMonthYear, a = r === void 0 ? Ag : r, i = e.formatYear, o = i === void 0 ? as : i, s = e.locale, u = e.maxDate, l = e.minDate, c = e.navigationAriaLabel, d = c === void 0 ? "" : c, h = e.navigationAriaLive, p = e.navigationLabel, v = e.next2AriaLabel, m = v === void 0 ? "" : v, y = e.next2Label, b = y === void 0 ? "»" : y, g = e.nextAriaLabel, O = g === void 0 ? "" : g, w = e.nextLabel, _ = w === void 0 ? "›" : w, $ = e.prev2AriaLabel, D = $ === void 0 ? "" : $, U = e.prev2Label, Z = U === void 0 ? "«" : U, me = e.prevAriaLabel, ge = me === void 0 ? "" : me, Y = e.prevLabel, K = Y === void 0 ? "‹" : Y, ee = e.setActiveStartDate, ne = e.showDoubleView, ie = e.view, fe = e.views, ce = fe.indexOf(ie) > 0, z = ie !== "century", S = n$(ie, t), I = z && r$(ie, t), B = Ng(ie, t), W = z && a$(ie, t), Q = function() {
+  var t = e.activeStartDate, n = e.drillUp, r = e.formatMonthYear, a = r === void 0 ? Ag : r, i = e.formatYear, o = i === void 0 ? as : i, s = e.locale, u = e.maxDate, l = e.minDate, c = e.navigationAriaLabel, d = c === void 0 ? "" : c, h = e.navigationAriaLive, p = e.navigationLabel, v = e.next2AriaLabel, m = v === void 0 ? "" : v, y = e.next2Label, b = y === void 0 ? "»" : y, g = e.nextAriaLabel, O = g === void 0 ? "" : g, w = e.nextLabel, _ = w === void 0 ? "›" : w, $ = e.prev2AriaLabel, D = $ === void 0 ? "" : $, U = e.prev2Label, Z = U === void 0 ? "«" : U, me = e.prevAriaLabel, ge = me === void 0 ? "" : me, Y = e.prevLabel, J = Y === void 0 ? "‹" : Y, ee = e.setActiveStartDate, ne = e.showDoubleView, ie = e.view, fe = e.views, ce = fe.indexOf(ie) > 0, z = ie !== "century", S = n$(ie, t), M = z && r$(ie, t), B = Ng(ie, t), W = z && a$(ie, t), Q = function() {
     if (S.getFullYear() < 0)
       return !0;
     var oe = i$(ie, t);
     return l && l >= oe;
   }(), ue = z && function() {
-    if (I.getFullYear() < 0)
+    if (M.getFullYear() < 0)
       return !0;
     var oe = o$(ie, t);
     return l && l >= oe;
@@ -15364,8 +15364,8 @@ function Bg(e) {
   function N() {
     ee(S, "prev");
   }
-  function M() {
-    ee(I, "prev2");
+  function F() {
+    ee(M, "prev2");
   }
   function A() {
     ee(B, "next");
@@ -15421,15 +15421,15 @@ function Bg(e) {
     "aria-label": D,
     className: "".concat(zt, "__arrow ").concat(zt, "__prev2-button"),
     disabled: ue,
-    onClick: M,
+    onClick: F,
     type: "button"
-  }, Z), K !== null && /* @__PURE__ */ le.createElement("button", {
+  }, Z), J !== null && /* @__PURE__ */ le.createElement("button", {
     "aria-label": ge,
     className: "".concat(zt, "__arrow ").concat(zt, "__prev-button"),
     disabled: Q,
     onClick: N,
     type: "button"
-  }, K), ve(), _ !== null && /* @__PURE__ */ le.createElement("button", {
+  }, J), ve(), _ !== null && /* @__PURE__ */ le.createElement("button", {
     "aria-label": O,
     className: "".concat(zt, "__arrow ").concat(zt, "__next-button"),
     disabled: se,
@@ -17066,14 +17066,14 @@ var Gs = function(t) {
           }, $));
         }
         case "month": {
-          var Y = this.props, K = Y.formatDay, ee = Y.formatLongDate, ne = Y.formatShortWeekday, ie = Y.onClickWeekNumber, fe = Y.showDoubleView, ce = Y.showFixedNumberOfWeeks, z = Y.showNeighboringMonth, S = Y.showWeekNumbers, I = this.onMouseLeave;
+          var Y = this.props, J = Y.formatDay, ee = Y.formatLongDate, ne = Y.formatShortWeekday, ie = Y.onClickWeekNumber, fe = Y.showDoubleView, ce = Y.showFixedNumberOfWeeks, z = Y.showNeighboringMonth, S = Y.showWeekNumbers, M = this.onMouseLeave;
           return /* @__PURE__ */ le.createElement(Ff, dr({
             calendarType: d,
-            formatDay: K,
+            formatDay: J,
             formatLongDate: ee,
             formatShortWeekday: ne,
             onClickWeekNumber: ie,
-            onMouseLeave: m ? I : null,
+            onMouseLeave: m ? M : null,
             showFixedNumberOfWeeks: typeof ce < "u" ? ce : fe,
             showNeighboringMonth: z,
             showWeekNumbers: S
@@ -17383,30 +17383,30 @@ function cb(e) {
   var t = e.axis, n = e.container, r = e.element, a = e.invertAxis, i = e.secondary, o = e.scrollContainer, s = e.spacing, u = window.getComputedStyle(r), l = n.parentElement, c = bm(l, o), d = bm(l, document.documentElement), h = t === "x", p = h ? "left" : "top", v = h ? "right" : "bottom", m = h ? "width" : "height", y = "overflow".concat(Ua(p)), b = "overflow".concat(Ua(v)), g = "scroll".concat(Ua(p)), O = Ua(m), w = "offset".concat(O), _ = "client".concat(O), $ = "min-".concat(m), D = o[w] - o[_], U = yr(s) === "object" ? s[p] : s, Z = -Math.max(c[y], d[y] + document.documentElement[g]) - U, me = yr(s) === "object" ? s[v] : s, ge = -Math.max(c[b], d[b] - document.documentElement[g]) - me - D;
   i && (Z += l[_], ge += l[_]);
   var Y = r[w];
-  function K() {
+  function J() {
     r.style[p] = "auto", r.style[v] = i ? "0" : "100%";
   }
   function ee() {
     r.style[p] = i ? "0" : "100%", r.style[v] = "auto";
   }
-  function ne(S, I) {
+  function ne(S, M) {
     var B = Y <= S;
-    return B && I(), B;
+    return B && M(), B;
   }
   function ie() {
-    return ne(Z, K);
+    return ne(Z, J);
   }
   function fe() {
     return ne(ge, ee);
   }
   function ce() {
-    var S = Z > ge, I = u[$] && parseInt(u[$], 10);
+    var S = Z > ge, M = u[$] && parseInt(u[$], 10);
     function B(W) {
-      ht(!I || W >= I, "<Fit />'s child will not fit anywhere with its current ".concat($, " of ").concat(I, "px."));
-      var Q = Math.max(W, I || 0);
+      ht(!M || W >= M, "<Fit />'s child will not fit anywhere with its current ".concat($, " of ").concat(M, "px."));
+      var Q = Math.max(W, M || 0);
       ht(!1, "<Fit />'s child needed to have its ".concat(m, " decreased to ").concat(Q, "px.")), r.style[m] = "".concat(Q, "px");
     }
-    S ? (B(Z), K()) : (B(ge), ee());
+    S ? (B(Z), J()) : (B(ge), ee());
   }
   var z;
   a ? z = ie() || fe() : z = fe() || ie(), z || ce();
@@ -17730,8 +17730,8 @@ _t.isRef = wR;
     };
   }
   function b(g) {
-    var O = g.ariaLabel, w = g.autoFocus, _ = g.className, $ = g.disabled, D = g.inputRef, U = g.max, Z = g.min, me = g.name, ge = g.nameForClass, Y = g.onChange, K = g.onKeyDown, ee = g.onKeyUp, ne = g.placeholder, ie = ne === void 0 ? "--" : ne, fe = g.required, ce = g.showLeadingZeros, z = g.step, S = g.value, I = ce && S && S < 10 && (S === "0" || !S.toString().startsWith("0")), B = U ? U.toString().length : null;
-    return [I && /* @__PURE__ */ n.default.createElement("span", {
+    var O = g.ariaLabel, w = g.autoFocus, _ = g.className, $ = g.disabled, D = g.inputRef, U = g.max, Z = g.min, me = g.name, ge = g.nameForClass, Y = g.onChange, J = g.onKeyDown, ee = g.onKeyUp, ne = g.placeholder, ie = ne === void 0 ? "--" : ne, fe = g.required, ce = g.showLeadingZeros, z = g.step, S = g.value, M = ce && S && S < 10 && (S === "0" || !S.toString().startsWith("0")), B = U ? U.toString().length : null;
+    return [M && /* @__PURE__ */ n.default.createElement("span", {
       key: "leadingZero",
       className: "".concat(_, "__leadingZero")
     }, "0"), /* @__PURE__ */ n.default.createElement("input", {
@@ -17739,7 +17739,7 @@ _t.isRef = wR;
       "aria-label": O,
       autoComplete: "off",
       autoFocus: w,
-      className: (0, a.default)("".concat(_, "__input"), "".concat(_, "__").concat(ge || me), I && "".concat(_, "__input--hasLeadingZero")),
+      className: (0, a.default)("".concat(_, "__input"), "".concat(_, "__").concat(ge || me), M && "".concat(_, "__input--hasLeadingZero")),
       "data-input": "true",
       disabled: $,
       inputMode: "numeric",
@@ -17748,7 +17748,7 @@ _t.isRef = wR;
       name: me,
       onChange: Y,
       onFocus: p,
-      onKeyDown: K,
+      onKeyDown: J,
       onKeyPress: y(B),
       onKeyUp: function(Q) {
         (0, o.default)(Q.target), ee && ee(Q);
@@ -18079,19 +18079,19 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     return $;
   }
   function O(w) {
-    var _ = w.ariaLabel, $ = w.className, D = w.inputRef, U = w.locale, Z = w.maxDate, me = w.minDate, ge = w.placeholder, Y = ge === void 0 ? "--" : ge, K = w.short, ee = w.value, ne = w.year, ie = b(w, u);
+    var _ = w.ariaLabel, $ = w.className, D = w.inputRef, U = w.locale, Z = w.maxDate, me = w.minDate, ge = w.placeholder, Y = ge === void 0 ? "--" : ge, J = w.short, ee = w.value, ne = w.year, ie = b(w, u);
     function fe(W) {
       return W && ne === (0, a.getYear)(W).toString();
     }
     var ce = (0, s.safeMin)(12, fe(Z) && (0, a.getMonthHuman)(Z)), z = (0, s.safeMax)(1, fe(me) && (0, a.getMonthHuman)(me)), S = d(Array(12)).map(function(W, Q) {
       return new Date(2019, Q, 1);
-    }), I = "month", B = K ? i.formatShortMonth : i.formatMonth;
+    }), M = "month", B = J ? i.formatShortMonth : i.formatMonth;
     return /* @__PURE__ */ t.default.createElement("select", c({
       "aria-label": _,
-      className: (0, r.default)("".concat($, "__input"), "".concat($, "__").concat(I)),
+      className: (0, r.default)("".concat($, "__input"), "".concat($, "__").concat(M)),
       "data-input": "true",
       "data-select": "true",
-      name: I,
+      name: M,
       ref: D,
       value: ee !== null ? ee : ""
     }, ie), !ee && /* @__PURE__ */ t.default.createElement("option", {
@@ -18409,10 +18409,10 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         ae = Reflect.construct(j, arguments, be);
       } else
         ae = j.apply(this, arguments);
-      return K(this, ae);
+      return J(this, ae);
     };
   }
-  function K(P, R) {
+  function J(P, R) {
     if (R && (t(R) === "object" || typeof R == "function"))
       return R;
     if (R !== void 0)
@@ -18445,7 +18445,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     return R in P ? Object.defineProperty(P, R, { value: H, enumerable: !0, configurable: !0, writable: !0 }) : P[R] = H, P;
   }
   function ce(P) {
-    return B(P) || I(P) || S(P) || z();
+    return B(P) || M(P) || S(P) || z();
   }
   function z() {
     throw new TypeError(`Invalid attempt to spread non-iterable instance.
@@ -18462,7 +18462,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         return W(P, R);
     }
   }
-  function I(P) {
+  function M(P) {
     if (typeof Symbol < "u" && P[Symbol.iterator] != null || P["@@iterator"] != null)
       return Array.from(P);
   }
@@ -18482,7 +18482,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   function N(P) {
     return P instanceof Date ? P : new Date(P);
   }
-  function M(P, R) {
+  function F(P, R) {
     return P && !R || !P && R || P && R && P.getTime() !== R.getTime();
   }
   function A(P) {
@@ -18809,14 +18809,14 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         return (
           // Toggling calendar visibility resets values
           (E.isCalendarOpen || // Flag was toggled
-          M.apply(void 0, ce(X.map(function(pe) {
+          F.apply(void 0, ce(X.map(function(pe) {
             return ve({
               value: pe,
               minDate: Ee,
               maxDate: de,
               maxDetail: Oe
             });
-          }))) || M.apply(void 0, ce(X.map(function(pe) {
+          }))) || F.apply(void 0, ce(X.map(function(pe) {
             return oe({
               value: pe,
               minDate: Ee,
@@ -18877,9 +18877,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   function p(x) {
     if (typeof WeakMap != "function")
       return null;
-    var N = /* @__PURE__ */ new WeakMap(), M = /* @__PURE__ */ new WeakMap();
+    var N = /* @__PURE__ */ new WeakMap(), F = /* @__PURE__ */ new WeakMap();
     return (p = function(G) {
-      return G ? M : N;
+      return G ? F : N;
     })(x);
   }
   function v(x, N) {
@@ -18887,42 +18887,42 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return x;
     if (x === null || t(x) !== "object" && typeof x != "function")
       return { default: x };
-    var M = p(N);
-    if (M && M.has(x))
-      return M.get(x);
+    var F = p(N);
+    if (F && F.has(x))
+      return F.get(x);
     var A = {}, G = Object.defineProperty && Object.getOwnPropertyDescriptor;
     for (var L in x)
       if (L !== "default" && Object.prototype.hasOwnProperty.call(x, L)) {
         var ve = G ? Object.getOwnPropertyDescriptor(x, L) : null;
         ve && (ve.get || ve.set) ? Object.defineProperty(A, L, ve) : A[L] = x[L];
       }
-    return A.default = x, M && M.set(x, A), A;
+    return A.default = x, F && F.set(x, A), A;
   }
   function m(x, N) {
     if (x == null)
       return {};
-    var M = y(x, N), A, G;
+    var F = y(x, N), A, G;
     if (Object.getOwnPropertySymbols) {
       var L = Object.getOwnPropertySymbols(x);
       for (G = 0; G < L.length; G++)
-        A = L[G], !(N.indexOf(A) >= 0) && Object.prototype.propertyIsEnumerable.call(x, A) && (M[A] = x[A]);
+        A = L[G], !(N.indexOf(A) >= 0) && Object.prototype.propertyIsEnumerable.call(x, A) && (F[A] = x[A]);
     }
-    return M;
+    return F;
   }
   function y(x, N) {
     if (x == null)
       return {};
-    var M = {}, A = Object.keys(x), G, L;
+    var F = {}, A = Object.keys(x), G, L;
     for (L = 0; L < A.length; L++)
-      G = A[L], !(N.indexOf(G) >= 0) && (M[G] = x[G]);
-    return M;
+      G = A[L], !(N.indexOf(G) >= 0) && (F[G] = x[G]);
+    return F;
   }
   function b() {
     return b = Object.assign || function(x) {
       for (var N = 1; N < arguments.length; N++) {
-        var M = arguments[N];
-        for (var A in M)
-          Object.prototype.hasOwnProperty.call(M, A) && (x[A] = M[A]);
+        var F = arguments[N];
+        for (var A in F)
+          Object.prototype.hasOwnProperty.call(F, A) && (x[A] = F[A]);
       }
       return x;
     }, b.apply(this, arguments);
@@ -18938,31 +18938,31 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     if (x) {
       if (typeof x == "string")
         return _(x, N);
-      var M = Object.prototype.toString.call(x).slice(8, -1);
-      if (M === "Object" && x.constructor && (M = x.constructor.name), M === "Map" || M === "Set")
+      var F = Object.prototype.toString.call(x).slice(8, -1);
+      if (F === "Object" && x.constructor && (F = x.constructor.name), F === "Map" || F === "Set")
         return Array.from(x);
-      if (M === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(M))
+      if (F === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(F))
         return _(x, N);
     }
   }
   function _(x, N) {
     (N == null || N > x.length) && (N = x.length);
-    for (var M = 0, A = new Array(N); M < N; M++)
-      A[M] = x[M];
+    for (var F = 0, A = new Array(N); F < N; F++)
+      A[F] = x[F];
     return A;
   }
   function $(x, N) {
-    var M = x == null ? null : typeof Symbol < "u" && x[Symbol.iterator] || x["@@iterator"];
-    if (M != null) {
+    var F = x == null ? null : typeof Symbol < "u" && x[Symbol.iterator] || x["@@iterator"];
+    if (F != null) {
       var A = [], G = !0, L = !1, ve, oe;
       try {
-        for (M = M.call(x); !(G = (ve = M.next()).done) && (A.push(ve.value), !(N && A.length === N)); G = !0)
+        for (F = F.call(x); !(G = (ve = F.next()).done) && (A.push(ve.value), !(N && A.length === N)); G = !0)
           ;
       } catch (ye) {
         L = !0, oe = ye;
       } finally {
         try {
-          !G && M.return != null && M.return();
+          !G && F.return != null && F.return();
         } finally {
           if (L)
             throw oe;
@@ -18980,13 +18980,13 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       throw new TypeError("Cannot call a class as a function");
   }
   function Z(x, N) {
-    for (var M = 0; M < N.length; M++) {
-      var A = N[M];
+    for (var F = 0; F < N.length; F++) {
+      var A = N[F];
       A.enumerable = A.enumerable || !1, A.configurable = !0, "value" in A && (A.writable = !0), Object.defineProperty(x, A.key, A);
     }
   }
-  function me(x, N, M) {
-    return N && Z(x.prototype, N), M && Z(x, M), Object.defineProperty(x, "prototype", { writable: !1 }), x;
+  function me(x, N, F) {
+    return N && Z(x.prototype, N), F && Z(x, F), Object.defineProperty(x, "prototype", { writable: !1 }), x;
   }
   function ge(x, N) {
     if (typeof N != "function" && N !== null)
@@ -18998,7 +18998,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       return A.__proto__ = G, A;
     }, Y(x, N);
   }
-  function K(x) {
+  function J(x) {
     var N = ie();
     return function() {
       var A = fe(x), G;
@@ -19035,19 +19035,19 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     }
   }
   function fe(x) {
-    return fe = Object.setPrototypeOf ? Object.getPrototypeOf : function(M) {
-      return M.__proto__ || Object.getPrototypeOf(M);
+    return fe = Object.setPrototypeOf ? Object.getPrototypeOf : function(F) {
+      return F.__proto__ || Object.getPrototypeOf(F);
     }, fe(x);
   }
-  function ce(x, N, M) {
-    return N in x ? Object.defineProperty(x, N, { value: M, enumerable: !0, configurable: !0, writable: !0 }) : x[N] = M, x;
+  function ce(x, N, F) {
+    return N in x ? Object.defineProperty(x, N, { value: F, enumerable: !0, configurable: !0, writable: !0 }) : x[N] = F, x;
   }
-  var z = "react-date-picker", S = ["mousedown", "focusin", "touchstart"], I = ["century", "decade", "year", "month"], B = /* @__PURE__ */ function(x) {
-    ge(M, x);
-    var N = K(M);
-    function M() {
+  var z = "react-date-picker", S = ["mousedown", "focusin", "touchstart"], M = ["century", "decade", "year", "month"], B = /* @__PURE__ */ function(x) {
+    ge(F, x);
+    var N = J(F);
+    function F() {
       var A;
-      U(this, M);
+      U(this, F);
       for (var G = arguments.length, L = new Array(G), ve = 0; ve < G; ve++)
         L[ve] = arguments[ve];
       return A = N.call.apply(N, [this].concat(L)), ce(ne(A), "state", {}), ce(ne(A), "onOutsideAction", function(oe) {
@@ -19087,7 +19087,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         return A.onChange(null);
       }), A;
     }
-    return me(M, [{
+    return me(F, [{
       key: "componentDidMount",
       value: function() {
         this.handleOutsideActionListeners();
@@ -19213,7 +19213,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
           isOpenProps: G.isOpen
         } : null;
       }
-    }]), M;
+    }]), F;
   }(n.PureComponent);
   e.default = B;
   var W = {
@@ -19280,7 +19280,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     isOpen: r.default.bool,
     locale: r.default.string,
     maxDate: l.isMaxDate,
-    maxDetail: r.default.oneOf(I),
+    maxDetail: r.default.oneOf(M),
     minDate: l.isMinDate,
     monthAriaLabel: r.default.string,
     monthPlaceholder: r.default.string,
@@ -22726,7 +22726,7 @@ function t_(e) {
 t_.displayName = "FormattedMessage";
 var n_ = Je.memo(t_, fA);
 n_.displayName = "MemoizedFormattedMessage";
-const J = n_;
+const K = n_;
 Aa("formatDate");
 Aa("formatTime");
 var Pn = Aa("formatNumber");
@@ -22746,16 +22746,16 @@ function dA({
   }
   const [i, o] = Wn(!1), s = r.searchFields || FS;
   let u = r.filtersForm && r.filtersForm.fixedMobile ? "fixed-mobile" : null, l = r.filtersForm ? r.filtersForm.show ? `filters filters-${r.filtersForm.location}` : "filters-hidden" : "filters", c = i && "showOnMobile";
-  return /* @__PURE__ */ F(pt, { children: [
+  return /* @__PURE__ */ I(pt, { children: [
     /* @__PURE__ */ f(
       "button",
       {
         className: `filters-button ${u}`,
         onClick: () => o(!i),
-        children: /* @__PURE__ */ f(J, { id: "filters" })
+        children: /* @__PURE__ */ f(K, { id: "filters" })
       }
     ),
-    /* @__PURE__ */ F("div", { className: `${l} ${u} ${c}`, children: [
+    /* @__PURE__ */ I("div", { className: `${l} ${u} ${c}`, children: [
       /* @__PURE__ */ f(
         "button",
         {
@@ -22769,7 +22769,7 @@ function dA({
           children: /* @__PURE__ */ f(Eb, {})
         }
       ),
-      s.map((d) => /* @__PURE__ */ F("div", { className: "bu-field", id: d.id, children: [
+      s.map((d) => /* @__PURE__ */ I("div", { className: "bu-field", id: d.id, children: [
         /* @__PURE__ */ f(
           "label",
           {
@@ -22797,16 +22797,16 @@ function dA({
 }
 function hA({ result: e, options: t }) {
   let n = t || {};
-  return /* @__PURE__ */ f("a", { className: "bukazu-result bu_card", href: e.house_url, children: /* @__PURE__ */ F("div", { className: "bukazu-result-inner", children: [
+  return /* @__PURE__ */ f("a", { className: "bukazu-result bu_card", href: e.house_url, children: /* @__PURE__ */ I("div", { className: "bukazu-result-inner", children: [
     /* @__PURE__ */ f("div", { className: "image-holder", children: /* @__PURE__ */ f("img", { src: e.image_url, alt: e.name }) }),
-    /* @__PURE__ */ F("div", { className: "result", children: [
+    /* @__PURE__ */ I("div", { className: "result", children: [
       /* @__PURE__ */ f("div", { className: "result-title", children: e.name }),
-      /* @__PURE__ */ F("div", { className: "result-place", children: [
-        n.showCity && /* @__PURE__ */ F("span", { children: [
+      /* @__PURE__ */ I("div", { className: "result-place", children: [
+        n.showCity && /* @__PURE__ */ I("span", { children: [
           e.city,
           ", "
         ] }),
-        n.showRegion && /* @__PURE__ */ F("span", { children: [
+        n.showRegion && /* @__PURE__ */ I("span", { children: [
           e.province,
           ", "
         ] }),
@@ -22819,27 +22819,27 @@ function hA({ result: e, options: t }) {
           dangerouslySetInnerHTML: { __html: e.description }
         }
       ),
-      /* @__PURE__ */ F("div", { className: "result-details", children: [
-        n.showPersons && /* @__PURE__ */ F("div", { children: [
+      /* @__PURE__ */ I("div", { className: "result-details", children: [
+        n.showPersons && /* @__PURE__ */ I("div", { children: [
           e.persons,
           " ",
-          /* @__PURE__ */ f(J, { id: "persons" })
+          /* @__PURE__ */ f(K, { id: "persons" })
         ] }),
-        n.showBedrooms && /* @__PURE__ */ F("div", { children: [
+        n.showBedrooms && /* @__PURE__ */ I("div", { children: [
           e.bedrooms,
           " ",
-          /* @__PURE__ */ f(J, { id: "bedrooms" })
+          /* @__PURE__ */ f(K, { id: "bedrooms" })
         ] }),
-        n.showBathrooms && /* @__PURE__ */ F("div", { children: [
+        n.showBathrooms && /* @__PURE__ */ I("div", { children: [
           e.bathrooms,
           " ",
-          /* @__PURE__ */ f(J, { id: "bathrooms" })
+          /* @__PURE__ */ f(K, { id: "bathrooms" })
         ] })
       ] }),
       n.showRating && e.rating && /* @__PURE__ */ f("div", { className: "result-rating bu_card", children: /* @__PURE__ */ f("div", { className: "result-rating-inner", children: e.rating.toFixed(1) }) }),
-      n.showPrice && /* @__PURE__ */ f("div", { className: "result-price", children: e.booking_price ? /* @__PURE__ */ F(pt, { children: [
-        /* @__PURE__ */ f(J, { id: "price_from" }),
-        /* @__PURE__ */ F("span", { className: "price", children: [
+      n.showPrice && /* @__PURE__ */ f("div", { className: "result-price", children: e.booking_price ? /* @__PURE__ */ I(pt, { children: [
+        /* @__PURE__ */ f(K, { id: "price_from" }),
+        /* @__PURE__ */ I("span", { className: "price", children: [
           "€",
           " ",
           /* @__PURE__ */ f(
@@ -22851,9 +22851,9 @@ function hA({ result: e, options: t }) {
             }
           )
         ] })
-      ] }) : /* @__PURE__ */ F(pt, { children: [
-        /* @__PURE__ */ f(J, { id: "minimum_week_price" }),
-        /* @__PURE__ */ F("span", { className: "price", children: [
+      ] }) : /* @__PURE__ */ I(pt, { children: [
+        /* @__PURE__ */ f(K, { id: "minimum_week_price" }),
+        /* @__PURE__ */ I("span", { className: "price", children: [
           "€",
           " ",
           /* @__PURE__ */ f(
@@ -22866,7 +22866,7 @@ function hA({ result: e, options: t }) {
           )
         ] })
       ] }) }),
-      /* @__PURE__ */ f("div", { className: "result-button", children: /* @__PURE__ */ f(J, { id: "view_details" }) })
+      /* @__PURE__ */ f("div", { className: "result-button", children: /* @__PURE__ */ f(K, { id: "view_details" }) })
     ] })
   ] }) });
 }
@@ -23070,8 +23070,8 @@ var Sc = {}, yA = {
       var s = i(98), u = i.n(s), l = i(697), c = i.n(l);
       function d() {
         return d = Object.assign ? Object.assign.bind() : function(Y) {
-          for (var K = 1; K < arguments.length; K++) {
-            var ee = arguments[K];
+          for (var J = 1; J < arguments.length; J++) {
+            var ee = arguments[J];
             for (var ne in ee)
               Object.prototype.hasOwnProperty.call(ee, ne) && (Y[ne] = ee[ne]);
           }
@@ -23079,15 +23079,15 @@ var Sc = {}, yA = {
         }, d.apply(this, arguments);
       }
       var h = function(Y) {
-        var K = Y.pageClassName, ee = Y.pageLinkClassName, ne = Y.page, ie = Y.selected, fe = Y.activeClassName, ce = Y.activeLinkClassName, z = Y.getEventListener, S = Y.pageSelectedHandler, I = Y.href, B = Y.extraAriaContext, W = Y.pageLabelBuilder, Q = Y.rel, ue = Y.ariaLabel || "Page " + ne + (B ? " " + B : ""), se = null;
-        return ie && (se = "page", ue = Y.ariaLabel || "Page " + ne + " is your current page", K = K !== void 0 ? K + " " + fe : fe, ee !== void 0 ? ce !== void 0 && (ee = ee + " " + ce) : ee = ce), u().createElement("li", { className: K }, u().createElement("a", d({ rel: Q, role: I ? void 0 : "button", className: ee, href: I, tabIndex: ie ? "-1" : "0", "aria-label": ue, "aria-current": se, onKeyPress: S }, z(S)), W(ne)));
+        var J = Y.pageClassName, ee = Y.pageLinkClassName, ne = Y.page, ie = Y.selected, fe = Y.activeClassName, ce = Y.activeLinkClassName, z = Y.getEventListener, S = Y.pageSelectedHandler, M = Y.href, B = Y.extraAriaContext, W = Y.pageLabelBuilder, Q = Y.rel, ue = Y.ariaLabel || "Page " + ne + (B ? " " + B : ""), se = null;
+        return ie && (se = "page", ue = Y.ariaLabel || "Page " + ne + " is your current page", J = J !== void 0 ? J + " " + fe : fe, ee !== void 0 ? ce !== void 0 && (ee = ee + " " + ce) : ee = ce), u().createElement("li", { className: J }, u().createElement("a", d({ rel: Q, role: M ? void 0 : "button", className: ee, href: M, tabIndex: ie ? "-1" : "0", "aria-label": ue, "aria-current": se, onKeyPress: S }, z(S)), W(ne)));
       };
       h.propTypes = { pageSelectedHandler: c().func.isRequired, selected: c().bool.isRequired, pageClassName: c().string, pageLinkClassName: c().string, activeClassName: c().string, activeLinkClassName: c().string, extraAriaContext: c().string, href: c().string, ariaLabel: c().string, page: c().number.isRequired, getEventListener: c().func.isRequired, pageLabelBuilder: c().func.isRequired, rel: c().string };
       const p = h;
       function v() {
         return v = Object.assign ? Object.assign.bind() : function(Y) {
-          for (var K = 1; K < arguments.length; K++) {
-            var ee = arguments[K];
+          for (var J = 1; J < arguments.length; J++) {
+            var ee = arguments[J];
             for (var ne in ee)
               Object.prototype.hasOwnProperty.call(ee, ne) && (Y[ne] = ee[ne]);
           }
@@ -23095,47 +23095,47 @@ var Sc = {}, yA = {
         }, v.apply(this, arguments);
       }
       var m = function(Y) {
-        var K = Y.breakLabel, ee = Y.breakAriaLabel, ne = Y.breakClassName, ie = Y.breakLinkClassName, fe = Y.breakHandler, ce = Y.getEventListener, z = ne || "break";
-        return u().createElement("li", { className: z }, u().createElement("a", v({ className: ie, role: "button", tabIndex: "0", "aria-label": ee, onKeyPress: fe }, ce(fe)), K));
+        var J = Y.breakLabel, ee = Y.breakAriaLabel, ne = Y.breakClassName, ie = Y.breakLinkClassName, fe = Y.breakHandler, ce = Y.getEventListener, z = ne || "break";
+        return u().createElement("li", { className: z }, u().createElement("a", v({ className: ie, role: "button", tabIndex: "0", "aria-label": ee, onKeyPress: fe }, ce(fe)), J));
       };
       m.propTypes = { breakLabel: c().oneOfType([c().string, c().node]), breakAriaLabel: c().string, breakClassName: c().string, breakLinkClassName: c().string, breakHandler: c().func.isRequired, getEventListener: c().func.isRequired };
       const y = m;
       function b(Y) {
-        var K = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "";
-        return Y ?? K;
+        var J = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "";
+        return Y ?? J;
       }
       function g(Y) {
-        return g = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(K) {
-          return typeof K;
-        } : function(K) {
-          return K && typeof Symbol == "function" && K.constructor === Symbol && K !== Symbol.prototype ? "symbol" : typeof K;
+        return g = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(J) {
+          return typeof J;
+        } : function(J) {
+          return J && typeof Symbol == "function" && J.constructor === Symbol && J !== Symbol.prototype ? "symbol" : typeof J;
         }, g(Y);
       }
       function O() {
         return O = Object.assign ? Object.assign.bind() : function(Y) {
-          for (var K = 1; K < arguments.length; K++) {
-            var ee = arguments[K];
+          for (var J = 1; J < arguments.length; J++) {
+            var ee = arguments[J];
             for (var ne in ee)
               Object.prototype.hasOwnProperty.call(ee, ne) && (Y[ne] = ee[ne]);
           }
           return Y;
         }, O.apply(this, arguments);
       }
-      function w(Y, K) {
-        for (var ee = 0; ee < K.length; ee++) {
-          var ne = K[ee];
+      function w(Y, J) {
+        for (var ee = 0; ee < J.length; ee++) {
+          var ne = J[ee];
           ne.enumerable = ne.enumerable || !1, ne.configurable = !0, "value" in ne && (ne.writable = !0), Object.defineProperty(Y, ne.key, ne);
         }
       }
-      function _(Y, K) {
+      function _(Y, J) {
         return _ = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function(ee, ne) {
           return ee.__proto__ = ne, ee;
-        }, _(Y, K);
+        }, _(Y, J);
       }
-      function $(Y, K) {
-        if (K && (g(K) === "object" || typeof K == "function"))
-          return K;
-        if (K !== void 0)
+      function $(Y, J) {
+        if (J && (g(J) === "object" || typeof J == "function"))
+          return J;
+        if (J !== void 0)
           throw new TypeError("Derived constructors may only return object or undefined");
         return D(Y);
       }
@@ -23145,12 +23145,12 @@ var Sc = {}, yA = {
         return Y;
       }
       function U(Y) {
-        return U = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function(K) {
-          return K.__proto__ || Object.getPrototypeOf(K);
+        return U = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function(J) {
+          return J.__proto__ || Object.getPrototypeOf(J);
         }, U(Y);
       }
-      function Z(Y, K, ee) {
-        return K in Y ? Object.defineProperty(Y, K, { value: ee, enumerable: !0, configurable: !0, writable: !0 }) : Y[K] = ee, Y;
+      function Z(Y, J, ee) {
+        return J in Y ? Object.defineProperty(Y, J, { value: ee, enumerable: !0, configurable: !0, writable: !0 }) : Y[J] = ee, Y;
       }
       var me = function(Y) {
         (function(z, S) {
@@ -23158,7 +23158,7 @@ var Sc = {}, yA = {
             throw new TypeError("Super expression must either be null or a function");
           z.prototype = Object.create(S && S.prototype, { constructor: { value: z, writable: !0, configurable: !0 } }), Object.defineProperty(z, "prototype", { writable: !1 }), S && _(z, S);
         })(ce, Y);
-        var K, ee, ne, ie, fe = (ne = ce, ie = function() {
+        var J, ee, ne, ie, fe = (ne = ce, ie = function() {
           if (typeof Reflect > "u" || !Reflect.construct || Reflect.construct.sham)
             return !1;
           if (typeof Proxy == "function")
@@ -23172,14 +23172,14 @@ var Sc = {}, yA = {
         }(), function() {
           var z, S = U(ne);
           if (ie) {
-            var I = U(this).constructor;
-            z = Reflect.construct(S, arguments, I);
+            var M = U(this).constructor;
+            z = Reflect.construct(S, arguments, M);
           } else
             z = S.apply(this, arguments);
           return $(this, z);
         });
         function ce(z) {
-          var S, I;
+          var S, M;
           return function(B, W) {
             if (!(B instanceof W))
               throw new TypeError("Cannot call a class as a function");
@@ -23198,11 +23198,11 @@ var Sc = {}, yA = {
           }), Z(D(S), "getEventListener", function(B) {
             return Z({}, S.props.eventListener, B);
           }), Z(D(S), "handleClick", function(B, W, Q) {
-            var ue = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {}, se = ue.isPrevious, x = se !== void 0 && se, N = ue.isNext, M = N !== void 0 && N, A = ue.isBreak, G = A !== void 0 && A, L = ue.isActive, ve = L !== void 0 && L;
+            var ue = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : {}, se = ue.isPrevious, x = se !== void 0 && se, N = ue.isNext, F = N !== void 0 && N, A = ue.isBreak, G = A !== void 0 && A, L = ue.isActive, ve = L !== void 0 && L;
             B.preventDefault ? B.preventDefault() : B.returnValue = !1;
             var oe = S.state.selected, ye = S.props.onClick, xe = Q;
             if (ye) {
-              var ke = ye({ index: W, selected: oe, nextSelectedPage: Q, event: B, isPrevious: x, isNext: M, isBreak: G, isActive: ve });
+              var ke = ye({ index: W, selected: oe, nextSelectedPage: Q, event: B, isPrevious: x, isNext: F, isBreak: G, isActive: ve });
               if (ke === !1)
                 return;
               Number.isInteger(ke) && (xe = ke);
@@ -23219,7 +23219,7 @@ var Sc = {}, yA = {
             var W = S.state.selected, Q = S.props, ue = Q.nextPageRel, se = Q.prevPageRel, x = Q.selectedPageRel;
             return W - 1 === B ? se : W === B ? x : W + 1 === B ? ue : void 0;
           }), Z(D(S), "pagination", function() {
-            var B = [], W = S.props, Q = W.pageRangeDisplayed, ue = W.pageCount, se = W.marginPagesDisplayed, x = W.breakLabel, N = W.breakClassName, M = W.breakLinkClassName, A = W.breakAriaLabels, G = S.state.selected;
+            var B = [], W = S.props, Q = W.pageRangeDisplayed, ue = W.pageCount, se = W.marginPagesDisplayed, x = W.breakLabel, N = W.breakClassName, F = W.breakLinkClassName, A = W.breakAriaLabels, G = S.state.selected;
             if (ue <= Q)
               for (var L = 0; L < ue; L++)
                 B.push(S.getPageElement(L));
@@ -23239,7 +23239,7 @@ var Sc = {}, yA = {
                   Ce.push({ type: "page", index: ye, display: ke(ye) });
                 else if (x && Ce.length > 0 && Ce[Ce.length - 1].display !== xe && (Q > 0 || se > 0)) {
                   var C = ye < G ? A.backward : A.forward;
-                  xe = u().createElement(y, { key: ye, breakAriaLabel: C, breakLabel: x, breakClassName: N, breakLinkClassName: M, breakHandler: S.handleBreakClick.bind(null, ye), getEventListener: S.getEventListener }), Ce.push({ type: "break", index: ye, display: xe });
+                  xe = u().createElement(y, { key: ye, breakAriaLabel: C, breakLabel: x, breakClassName: N, breakLinkClassName: F, breakHandler: S.handleBreakClick.bind(null, ye), getEventListener: S.getEventListener }), Ce.push({ type: "break", index: ye, display: xe });
                 }
               }
               Ce.forEach(function(re, P) {
@@ -23249,39 +23249,39 @@ var Sc = {}, yA = {
             }
             return B;
           }), z.initialPage !== void 0 && z.forcePage !== void 0 && console.warn("(react-paginate): Both initialPage (".concat(z.initialPage, ") and forcePage (").concat(z.forcePage, ") props are provided, which is discouraged.") + ` Use exclusively forcePage prop for a controlled component.
-See https://reactjs.org/docs/forms.html#controlled-components`), I = z.initialPage ? z.initialPage : z.forcePage ? z.forcePage : 0, S.state = { selected: I }, S;
+See https://reactjs.org/docs/forms.html#controlled-components`), M = z.initialPage ? z.initialPage : z.forcePage ? z.forcePage : 0, S.state = { selected: M }, S;
         }
-        return K = ce, (ee = [{ key: "componentDidMount", value: function() {
-          var z = this.props, S = z.initialPage, I = z.disableInitialCallback, B = z.extraAriaContext, W = z.pageCount, Q = z.forcePage;
-          S === void 0 || I || this.callCallback(S), B && console.warn("DEPRECATED (react-paginate): The extraAriaContext prop is deprecated. You should now use the ariaLabelBuilder instead."), Number.isInteger(W) || console.warn("(react-paginate): The pageCount prop value provided is not an integer (".concat(W, "). Did you forget a Math.ceil()?")), S !== void 0 && S > W - 1 && console.warn("(react-paginate): The initialPage prop provided is greater than the maximum page index from pageCount prop (".concat(S, " > ").concat(W - 1, ").")), Q !== void 0 && Q > W - 1 && console.warn("(react-paginate): The forcePage prop provided is greater than the maximum page index from pageCount prop (".concat(Q, " > ").concat(W - 1, ")."));
+        return J = ce, (ee = [{ key: "componentDidMount", value: function() {
+          var z = this.props, S = z.initialPage, M = z.disableInitialCallback, B = z.extraAriaContext, W = z.pageCount, Q = z.forcePage;
+          S === void 0 || M || this.callCallback(S), B && console.warn("DEPRECATED (react-paginate): The extraAriaContext prop is deprecated. You should now use the ariaLabelBuilder instead."), Number.isInteger(W) || console.warn("(react-paginate): The pageCount prop value provided is not an integer (".concat(W, "). Did you forget a Math.ceil()?")), S !== void 0 && S > W - 1 && console.warn("(react-paginate): The initialPage prop provided is greater than the maximum page index from pageCount prop (".concat(S, " > ").concat(W - 1, ").")), Q !== void 0 && Q > W - 1 && console.warn("(react-paginate): The forcePage prop provided is greater than the maximum page index from pageCount prop (".concat(Q, " > ").concat(W - 1, ")."));
         } }, { key: "componentDidUpdate", value: function(z) {
           this.props.forcePage !== void 0 && this.props.forcePage !== z.forcePage && (this.props.forcePage > this.props.pageCount - 1 && console.warn("(react-paginate): The forcePage prop provided is greater than the maximum page index from pageCount prop (".concat(this.props.forcePage, " > ").concat(this.props.pageCount - 1, ").")), this.setState({ selected: this.props.forcePage })), Number.isInteger(z.pageCount) && !Number.isInteger(this.props.pageCount) && console.warn("(react-paginate): The pageCount prop value provided is not an integer (".concat(this.props.pageCount, "). Did you forget a Math.ceil()?"));
         } }, { key: "getForwardJump", value: function() {
-          var z = this.state.selected, S = this.props, I = S.pageCount, B = z + S.pageRangeDisplayed;
-          return B >= I ? I - 1 : B;
+          var z = this.state.selected, S = this.props, M = S.pageCount, B = z + S.pageRangeDisplayed;
+          return B >= M ? M - 1 : B;
         } }, { key: "getBackwardJump", value: function() {
           var z = this.state.selected - this.props.pageRangeDisplayed;
           return z < 0 ? 0 : z;
         } }, { key: "getElementHref", value: function(z) {
-          var S = this.props, I = S.hrefBuilder, B = S.pageCount, W = S.hrefAllControls;
-          if (I)
-            return W || z >= 0 && z < B ? I(z + 1, B, this.state.selected) : void 0;
+          var S = this.props, M = S.hrefBuilder, B = S.pageCount, W = S.hrefAllControls;
+          if (M)
+            return W || z >= 0 && z < B ? M(z + 1, B, this.state.selected) : void 0;
         } }, { key: "ariaLabelBuilder", value: function(z) {
           var S = z === this.state.selected;
           if (this.props.ariaLabelBuilder && z >= 0 && z < this.props.pageCount) {
-            var I = this.props.ariaLabelBuilder(z + 1, S);
-            return this.props.extraAriaContext && !S && (I = I + " " + this.props.extraAriaContext), I;
+            var M = this.props.ariaLabelBuilder(z + 1, S);
+            return this.props.extraAriaContext && !S && (M = M + " " + this.props.extraAriaContext), M;
           }
         } }, { key: "getPageElement", value: function(z) {
-          var S = this.state.selected, I = this.props, B = I.pageClassName, W = I.pageLinkClassName, Q = I.activeClassName, ue = I.activeLinkClassName, se = I.extraAriaContext, x = I.pageLabelBuilder;
+          var S = this.state.selected, M = this.props, B = M.pageClassName, W = M.pageLinkClassName, Q = M.activeClassName, ue = M.activeLinkClassName, se = M.extraAriaContext, x = M.pageLabelBuilder;
           return u().createElement(p, { key: z, pageSelectedHandler: this.handlePageSelected.bind(null, z), selected: S === z, rel: this.getElementPageRel(z), pageClassName: B, pageLinkClassName: W, activeClassName: Q, activeLinkClassName: ue, extraAriaContext: se, href: this.getElementHref(z), ariaLabel: this.ariaLabelBuilder(z), page: z + 1, pageLabelBuilder: x, getEventListener: this.getEventListener });
         } }, { key: "render", value: function() {
           var z = this.props.renderOnZeroPageCount;
           if (this.props.pageCount === 0 && z !== void 0)
             return z && z(this.props);
-          var S = this.props, I = S.disabledClassName, B = S.disabledLinkClassName, W = S.pageCount, Q = S.className, ue = S.containerClassName, se = S.previousLabel, x = S.previousClassName, N = S.previousLinkClassName, M = S.previousAriaLabel, A = S.prevRel, G = S.nextLabel, L = S.nextClassName, ve = S.nextLinkClassName, oe = S.nextAriaLabel, ye = S.nextRel, xe = this.state.selected, ke = xe === 0, Ce = xe === W - 1, mt = "".concat(b(x)).concat(ke ? " ".concat(b(I)) : ""), C = "".concat(b(L)).concat(Ce ? " ".concat(b(I)) : ""), re = "".concat(b(N)).concat(ke ? " ".concat(b(B)) : ""), P = "".concat(b(ve)).concat(Ce ? " ".concat(b(B)) : ""), R = ke ? "true" : "false", H = Ce ? "true" : "false";
-          return u().createElement("ul", { className: Q || ue, role: "navigation", "aria-label": "Pagination" }, u().createElement("li", { className: mt }, u().createElement("a", O({ className: re, href: this.getElementHref(xe - 1), tabIndex: ke ? "-1" : "0", role: "button", onKeyPress: this.handlePreviousPage, "aria-disabled": R, "aria-label": M, rel: A }, this.getEventListener(this.handlePreviousPage)), se)), this.pagination(), u().createElement("li", { className: C }, u().createElement("a", O({ className: P, href: this.getElementHref(xe + 1), tabIndex: Ce ? "-1" : "0", role: "button", onKeyPress: this.handleNextPage, "aria-disabled": H, "aria-label": oe, rel: ye }, this.getEventListener(this.handleNextPage)), G)));
-        } }]) && w(K.prototype, ee), Object.defineProperty(K, "prototype", { writable: !1 }), ce;
+          var S = this.props, M = S.disabledClassName, B = S.disabledLinkClassName, W = S.pageCount, Q = S.className, ue = S.containerClassName, se = S.previousLabel, x = S.previousClassName, N = S.previousLinkClassName, F = S.previousAriaLabel, A = S.prevRel, G = S.nextLabel, L = S.nextClassName, ve = S.nextLinkClassName, oe = S.nextAriaLabel, ye = S.nextRel, xe = this.state.selected, ke = xe === 0, Ce = xe === W - 1, mt = "".concat(b(x)).concat(ke ? " ".concat(b(M)) : ""), C = "".concat(b(L)).concat(Ce ? " ".concat(b(M)) : ""), re = "".concat(b(N)).concat(ke ? " ".concat(b(B)) : ""), P = "".concat(b(ve)).concat(Ce ? " ".concat(b(B)) : ""), R = ke ? "true" : "false", H = Ce ? "true" : "false";
+          return u().createElement("ul", { className: Q || ue, role: "navigation", "aria-label": "Pagination" }, u().createElement("li", { className: mt }, u().createElement("a", O({ className: re, href: this.getElementHref(xe - 1), tabIndex: ke ? "-1" : "0", role: "button", onKeyPress: this.handlePreviousPage, "aria-disabled": R, "aria-label": F, rel: A }, this.getEventListener(this.handlePreviousPage)), se)), this.pagination(), u().createElement("li", { className: C }, u().createElement("a", O({ className: P, href: this.getElementHref(xe + 1), tabIndex: Ce ? "-1" : "0", role: "button", onKeyPress: this.handleNextPage, "aria-disabled": H, "aria-label": oe, rel: ye }, this.getEventListener(this.handleNextPage)), G)));
+        } }]) && w(J.prototype, ee), Object.defineProperty(J, "prototype", { writable: !1 }), ce;
       }(s.Component);
       Z(me, "propTypes", { pageCount: c().number.isRequired, pageRangeDisplayed: c().number, marginPagesDisplayed: c().number, previousLabel: c().node, previousAriaLabel: c().string, prevPageRel: c().string, prevRel: c().string, nextLabel: c().node, nextAriaLabel: c().string, nextPageRel: c().string, nextRel: c().string, breakLabel: c().oneOfType([c().string, c().node]), breakAriaLabels: c().shape({ forward: c().string, backward: c().string }), hrefBuilder: c().func, hrefAllControls: c().bool, onPageChange: c().func, onPageActive: c().func, onClick: c().func, initialPage: c().number, forcePage: c().number, disableInitialCallback: c().bool, containerClassName: c().string, className: c().string, pageClassName: c().string, pageLinkClassName: c().string, pageLabelBuilder: c().func, activeClassName: c().string, activeLinkClassName: c().string, previousClassName: c().string, nextClassName: c().string, previousLinkClassName: c().string, nextLinkClassName: c().string, disabledClassName: c().string, disabledLinkClassName: c().string, breakClassName: c().string, breakLinkClassName: c().string, extraAriaContext: c().string, ariaLabelBuilder: c().func, eventListener: c().string, renderOnZeroPageCount: c().func, selectedPageRel: c().string }), Z(me, "defaultProps", { pageRangeDisplayed: 2, marginPagesDisplayed: 3, activeClassName: "selected", previousLabel: "Previous", previousClassName: "previous", previousAriaLabel: "Previous page", prevPageRel: "prev", prevRel: "prev", nextLabel: "Next", nextClassName: "next", nextAriaLabel: "Next page", nextPageRel: "next", nextRel: "next", breakLabel: "...", breakAriaLabels: { forward: "Jump forward", backward: "Jump backward" }, disabledClassName: "disabled", disableInitialCallback: !1, pageLabelBuilder: function(Y) {
         return Y;
@@ -23313,11 +23313,11 @@ function bA({
   if (i)
     return /* @__PURE__ */ f("div", { children: "Error" });
   const s = o.PortalSite.houses, u = Math.ceil(s.length / r);
-  return /* @__PURE__ */ F("div", { className: "bu-paginator", children: [
-    /* @__PURE__ */ F("div", { children: [
+  return /* @__PURE__ */ I("div", { className: "bu-paginator", children: [
+    /* @__PURE__ */ I("div", { children: [
       s.length,
       " ",
-      /* @__PURE__ */ f(J, { id: "results" })
+      /* @__PURE__ */ f(K, { id: "results" })
     ] }),
     /* @__PURE__ */ f(
       gA,
@@ -23338,7 +23338,7 @@ function bA({
 }
 function on({ children: e, buttonText: t, show: n }) {
   const [r, a] = Wn(n);
-  return r ? /* @__PURE__ */ f("div", { className: "bukazu-modal-container", children: /* @__PURE__ */ F("div", { className: "bukazu-modal-container-inner", children: [
+  return r ? /* @__PURE__ */ f("div", { className: "bukazu-modal-container", children: /* @__PURE__ */ I("div", { className: "bukazu-modal-container-inner", children: [
     /* @__PURE__ */ f(
       "div",
       {
@@ -23346,9 +23346,9 @@ function on({ children: e, buttonText: t, show: n }) {
         onClick: () => a(!1)
       }
     ),
-    /* @__PURE__ */ F("div", { className: "bukazu-modal", children: [
+    /* @__PURE__ */ I("div", { className: "bukazu-modal", children: [
       /* @__PURE__ */ f("div", { className: "bukazu-modal-content", children: e }),
-      /* @__PURE__ */ f("div", { className: "bukazu-modal-footer", children: /* @__PURE__ */ f("a", { onClick: () => a(!1), children: /* @__PURE__ */ f(J, { id: "close" }) }) })
+      /* @__PURE__ */ f("div", { className: "bukazu-modal-footer", children: /* @__PURE__ */ f("a", { onClick: () => a(!1), children: /* @__PURE__ */ f(K, { id: "close" }) }) })
     ] })
   ] }) }) : /* @__PURE__ */ f("a", { className: "info-button", onClick: () => a(!0), children: t });
 }
@@ -23356,8 +23356,8 @@ on.defaultProps = {
   show: !1
 };
 function Zn(e, t) {
-  const n = /* @__PURE__ */ F("div", { className: "bukazu-error-message", children: [
-    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "something_went_wrong_please_try_again" }) }),
+  const n = /* @__PURE__ */ I("div", { className: "bukazu-error-message", children: [
+    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "something_went_wrong_please_try_again" }) }),
     /* @__PURE__ */ f("ul", { children: e.errors.graphQLErrors.map((r) => /* @__PURE__ */ f("li", { children: r.message }, r.message)) })
   ] });
   return t == !0 ? /* @__PURE__ */ f(on, { show: !0, children: n }) : n;
@@ -23380,7 +23380,7 @@ function _A({
     let i = `'${t}' is not a valid page`;
     console.error(i), a.push(i);
   }
-  return n ? ["nl", "de", "en", "fr", "it", "es"].includes(n) || a.push("Invalid locale") : console.warn("No locale is set default to English"), r && !wA(r) && console.error("Filters variable is not an object", r), a.length == 0 ? !1 : /* @__PURE__ */ F("div", { children: [
+  return n ? ["nl", "de", "en", "fr", "it", "es"].includes(n) || a.push("Invalid locale") : console.warn("No locale is set default to English"), r && !wA(r) && console.error("Filters variable is not an object", r), a.length == 0 ? !1 : /* @__PURE__ */ I("div", { children: [
     /* @__PURE__ */ f("h2", { children: "Something went wrong please try again " }),
     /* @__PURE__ */ f("ul", { children: a.map((i) => /* @__PURE__ */ f("li", { children: i })) })
   ] });
@@ -25162,14 +25162,14 @@ function QM({
       onPageChange: a
     }
   ), y = v.PortalSite.houses;
-  return /* @__PURE__ */ F(
+  return /* @__PURE__ */ I(
     "div",
     {
       id: "results",
       className: t.options.filtersForm ? t.options.filtersForm.mode : "",
       children: [
         m,
-        y.length === 0 ? /* @__PURE__ */ f("div", { className: "bu-noresults", children: /* @__PURE__ */ f(J, { id: "no_results" }) }) : null,
+        y.length === 0 ? /* @__PURE__ */ f("div", { className: "bu-noresults", children: /* @__PURE__ */ f(K, { id: "no_results" }) }) : null,
         y.map((b) => /* @__PURE__ */ f(
           hA,
           {
@@ -25216,7 +25216,7 @@ class KM extends ba {
   }
   render() {
     const { filters: t, activePage: n, limit: r, skip: a } = this.state, { options: i, PortalSite: o } = this.props;
-    return /* @__PURE__ */ F(
+    return /* @__PURE__ */ I(
       "div",
       {
         id: "search-page",
@@ -26288,7 +26288,7 @@ function $V(e) {
       payload: h.initialStatus
     }));
   }, [l, h.initialStatus, h.initialTouched]);
-  var K = Ft(function(C) {
+  var J = Ft(function(C) {
     if (g.current[C] && Et(g.current[C].validate)) {
       var re = bt(w.values, C), P = g.current[C].validate(re);
       return nu(P) ? (_({
@@ -26378,7 +26378,7 @@ function $V(e) {
     });
     var R = P === void 0 ? n : P;
     return R ? ge(en(w.values, C, re)) : Promise.resolve();
-  }), I = nt(function(C, re) {
+  }), M = nt(function(C, re) {
     var P = re, R = C, H;
     if (!tu(C)) {
       C.persist && C.persist();
@@ -26393,9 +26393,9 @@ function $V(e) {
   }, [S, w.values]), B = Ft(function(C) {
     if (tu(C))
       return function(re) {
-        return I(re, C);
+        return M(re, C);
       };
-    I(C);
+    M(C);
   }), W = Ft(function(C, re, P) {
     re === void 0 && (re = !0), _({
       type: "SET_FIELD_TOUCHED",
@@ -26440,7 +26440,7 @@ function $V(e) {
       type: "SET_ISSUBMITTING",
       payload: C
     });
-  }, []), M = Ft(function() {
+  }, []), F = Ft(function() {
     return _({
       type: "SUBMIT_ATTEMPT"
     }), ge().then(function(C) {
@@ -26473,13 +26473,13 @@ function $V(e) {
       var re = kV();
       re !== null && re instanceof HTMLButtonElement && (re.attributes && re.attributes.getNamedItem("type") || (process.env.NODE_ENV !== "production" ? ht(!1, 'You submitted a Formik form using a button with an unspecified `type` attribute.  Most browsers default button elements to `type="submit"`. If this is not a submit button, please add `type="button"`.') : ht(!1)));
     }
-    M().catch(function(P) {
+    F().catch(function(P) {
       console.warn("Warning: An unhandled error was caught from submitForm()", P);
     });
   }), G = {
     resetForm: Y,
     validateForm: ge,
-    validateField: K,
+    validateField: J,
     setErrors: fe,
     setFieldError: z,
     setFieldTouched: W,
@@ -26489,7 +26489,7 @@ function $V(e) {
     setTouched: ie,
     setValues: ce,
     setFormikState: se,
-    submitForm: M
+    submitForm: F
   }, L = Ft(function() {
     return c(w.values, G);
   }), ve = Ft(function(C) {
@@ -26550,9 +26550,9 @@ function $V(e) {
     setSubmitting: N,
     setTouched: ie,
     setValues: ce,
-    submitForm: M,
+    submitForm: F,
     validateForm: ge,
-    validateField: K,
+    validateField: J,
     isValid: Ce,
     dirty: ke,
     unregisterField: ne,
@@ -26882,7 +26882,7 @@ var LV = function(t, n, r) {
 VV.defaultProps = {
   validateOnChange: !0
 };
-const Vo = ({ height: e = "16px", width: t = "16px" }) => /* @__PURE__ */ F(
+const Vo = ({ height: e = "16px", width: t = "16px" }) => /* @__PURE__ */ I(
   "svg",
   {
     xmlns: "http://www.w3.org/2000/svg",
@@ -26912,39 +26912,39 @@ const Vo = ({ height: e = "16px", width: t = "16px" }) => /* @__PURE__ */ F(
   fr: "https://insurances.bukazu.com/en/Terms%20to%20Cancellation%20Insurance.pdf"
 }, qV = () => {
   const { locale: e } = Xe(Vt);
-  return /* @__PURE__ */ F(pt, { children: [
-    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "cancel_insurance" }) }),
+  return /* @__PURE__ */ I(pt, { children: [
+    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "cancel_insurance" }) }),
     /* @__PURE__ */ f("hr", {}),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "cancel_insurance_desc" }) }),
-    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(J, { id: "cancel_insurance_normal_long" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "cancel_insurance_normal_desc" }) }),
-    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(J, { id: "cancel_insurance_all_risk_long" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "cancel_insurance_all_risk_desc" }) }),
-    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(J, { id: "terms_and_costs" }) }),
-    /* @__PURE__ */ f("h4", { children: /* @__PURE__ */ f(J, { id: "costs_normal_cancel_insurance" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "666_costs" }) }),
-    /* @__PURE__ */ f("h4", { children: /* @__PURE__ */ f(J, { id: "costs_allrisk_cancel_insurance" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "847_costs" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "more_information" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "cancel_insurance_desc" }) }),
+    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(K, { id: "cancel_insurance_normal_long" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "cancel_insurance_normal_desc" }) }),
+    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(K, { id: "cancel_insurance_all_risk_long" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "cancel_insurance_all_risk_desc" }) }),
+    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(K, { id: "terms_and_costs" }) }),
+    /* @__PURE__ */ f("h4", { children: /* @__PURE__ */ f(K, { id: "costs_normal_cancel_insurance" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "666_costs" }) }),
+    /* @__PURE__ */ f("h4", { children: /* @__PURE__ */ f(K, { id: "costs_allrisk_cancel_insurance" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "847_costs" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "more_information" }) }),
     /* @__PURE__ */ f(
       "a",
       {
         href: UV[e],
         target: "_blank",
         rel: "noopener noreferrer",
-        children: /* @__PURE__ */ f(J, { id: "show_terms" })
+        children: /* @__PURE__ */ f(K, { id: "show_terms" })
       }
     ),
-    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(J, { id: "terms" }) }),
-    /* @__PURE__ */ F("ul", { children: [
-      /* @__PURE__ */ f("li", { children: /* @__PURE__ */ f(J, { id: "9persons_9addresses" }) }),
-      /* @__PURE__ */ f("li", { children: /* @__PURE__ */ f("strong", { children: /* @__PURE__ */ f(J, { id: "or" }) }) }),
-      /* @__PURE__ */ f("li", { children: /* @__PURE__ */ f(J, { id: "9persons_4addresses" }) })
+    /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(K, { id: "terms" }) }),
+    /* @__PURE__ */ I("ul", { children: [
+      /* @__PURE__ */ f("li", { children: /* @__PURE__ */ f(K, { id: "9persons_9addresses" }) }),
+      /* @__PURE__ */ f("li", { children: /* @__PURE__ */ f("strong", { children: /* @__PURE__ */ f(K, { id: "or" }) }) }),
+      /* @__PURE__ */ f("li", { children: /* @__PURE__ */ f(K, { id: "9persons_4addresses" }) })
     ] }),
     /* @__PURE__ */ f("hr", {}),
-    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "poliscosts" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "poliscosts_are" }) }),
-    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "youwillrecieve" }) })
+    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "poliscosts" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "poliscosts_are" }) }),
+    /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "youwillrecieve" }) })
   ] });
 };
 function od(e) {
@@ -26968,7 +26968,7 @@ function _v(e, t) {
   return e;
 }
 function Wa(e, t) {
-  return /* @__PURE__ */ f(J, { id: e, children: (n) => /* @__PURE__ */ f("option", { value: t, children: n }) });
+  return /* @__PURE__ */ f(K, { id: e, children: (n) => /* @__PURE__ */ f("option", { value: t, children: n }) });
 }
 function HV(e) {
   const t = new Date(e), n = bD(new Date(), 18);
@@ -26976,8 +26976,8 @@ function HV(e) {
 }
 function zi({ label: e, description: t, count: n, ...r }) {
   const a = od(n);
-  return /* @__PURE__ */ f(It, { name: r.name, children: ({ field: i, meta: o }) => /* @__PURE__ */ F("div", { className: "form-row inline", id: `bukazu_form_${r.name}`, children: [
-    /* @__PURE__ */ f("label", { htmlFor: r.name, children: /* @__PURE__ */ f(J, { id: e }) }),
+  return /* @__PURE__ */ f(It, { name: r.name, children: ({ field: i, meta: o }) => /* @__PURE__ */ I("div", { className: "form-row inline", id: `bukazu_form_${r.name}`, children: [
+    /* @__PURE__ */ f("label", { htmlFor: r.name, children: /* @__PURE__ */ f(K, { id: e }) }),
     /* @__PURE__ */ f("select", { ...i, ...r, children: a.map((s) => /* @__PURE__ */ f("option", { value: s, children: s }, s)) }),
     t,
     o.touched && o.error && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: o.error })
@@ -26990,13 +26990,13 @@ function sd({ label: e, description: t, name: n, inline: r }) {
   return /* @__PURE__ */ f(It, { name: n, children: ({ field: a, meta: i, form: o }) => {
     const { value: s, name: u } = a;
     let l;
-    return s === "" || !s ? l = null : l = new Date(s), /* @__PURE__ */ F(
+    return s === "" || !s ? l = null : l = new Date(s), /* @__PURE__ */ I(
       "div",
       {
         className: `form-row ${r && "inline"}`,
         id: `bukazu_form_${u}`,
         children: [
-          /* @__PURE__ */ f("label", { htmlFor: u, children: /* @__PURE__ */ f(J, { id: e }) }),
+          /* @__PURE__ */ f("label", { htmlFor: u, children: /* @__PURE__ */ f(K, { id: e }) }),
           /* @__PURE__ */ f(
             Sb,
             {
@@ -27021,9 +27021,9 @@ sd.defaultValues = {
 };
 function WV(e) {
   if (e.cancel_insurance)
-    return /* @__PURE__ */ F("div", { className: "form-row inline", children: [
-      /* @__PURE__ */ f("label", { htmlFor: "cancel_insurance", children: /* @__PURE__ */ f(J, { id: "cancel_insurance" }) }),
-      /* @__PURE__ */ F(It, { component: "select", name: "cancel_insurance", required: !0, children: [
+    return /* @__PURE__ */ I("div", { className: "form-row inline", children: [
+      /* @__PURE__ */ f("label", { htmlFor: "cancel_insurance", children: /* @__PURE__ */ f(K, { id: "cancel_insurance" }) }),
+      /* @__PURE__ */ I(It, { component: "select", name: "cancel_insurance", required: !0, children: [
         Wa("choose", ""),
         Wa("cancel_insurance_all_risk", "2"),
         Wa("cancel_insurance_normal", "1"),
@@ -27032,8 +27032,8 @@ function WV(e) {
       /* @__PURE__ */ f(on, { buttonText: /* @__PURE__ */ f(Vo, {}), children: /* @__PURE__ */ f(qV, {}) })
     ] });
 }
-const GV = ({ house: e, values: t }) => e.cancel_insurance ? /* @__PURE__ */ F("div", { className: "form-section", id: "insurances", children: [
-  /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "insurances" }) }),
+const GV = ({ house: e, values: t }) => e.cancel_insurance ? /* @__PURE__ */ I("div", { className: "form-section", id: "insurances", children: [
+  /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "insurances" }) }),
   WV(e),
   t.cancel_insurance && t.cancel_insurance !== "0" && /* @__PURE__ */ f(
     sd,
@@ -27042,14 +27042,14 @@ const GV = ({ house: e, values: t }) => e.cancel_insurance ? /* @__PURE__ */ F("
       name: "extra_fields.date_of_birth",
       required: !0,
       inline: !1,
-      description: /* @__PURE__ */ f(J, { id: "insurance_company_needs_date_of_birth" })
+      description: /* @__PURE__ */ f(K, { id: "insurance_company_needs_date_of_birth" })
     }
   )
 ] }) : /* @__PURE__ */ f("div", {});
 function YV({ house: e }) {
   const [t, { loading: n, error: r, data: a }] = Ey(QV);
-  return /* @__PURE__ */ F("div", { className: "form-row inline", children: [
-    /* @__PURE__ */ f("label", { htmlFor: "discount_code", children: /* @__PURE__ */ f(J, { id: "discount_code" }) }),
+  return /* @__PURE__ */ I("div", { className: "form-row inline", children: [
+    /* @__PURE__ */ f("label", { htmlFor: "discount_code", children: /* @__PURE__ */ f(K, { id: "discount_code" }) }),
     /* @__PURE__ */ f(It, { name: "discount_code", children: ({ field: i, form: o }) => /* @__PURE__ */ f(
       "input",
       {
@@ -27062,13 +27062,13 @@ function YV({ house: e }) {
       }
     ) }),
     n && /* @__PURE__ */ f("div", { className: "bu_discount_code", children: "Loading..." }),
-    r && /* @__PURE__ */ f("div", { className: "bu_discount_code", children: /* @__PURE__ */ f(J, { id: "no_discount_code_found" }) }),
-    a && /* @__PURE__ */ F("div", { className: "bu_discount_code", children: [
+    r && /* @__PURE__ */ f("div", { className: "bu_discount_code", children: /* @__PURE__ */ f(K, { id: "no_discount_code_found" }) }),
+    a && /* @__PURE__ */ I("div", { className: "bu_discount_code", children: [
       /* @__PURE__ */ f("div", { children: a.checkDiscountCode.name }),
-      a.checkDiscountCode.use_price ? /* @__PURE__ */ F("div", { children: [
+      a.checkDiscountCode.use_price ? /* @__PURE__ */ I("div", { children: [
         "€ ",
         a.checkDiscountCode.price
-      ] }) : /* @__PURE__ */ F("div", { children: [
+      ] }) : /* @__PURE__ */ I("div", { children: [
         a.checkDiscountCode.percentage,
         "%"
       ] })
@@ -27088,17 +27088,17 @@ const QV = wt`
   var a, i;
   if (t.discounts && t.discounts !== "0" || (a = n.bookingForm) != null && a.showDiscountCode) {
     let o = t.discounts ? t.discounts.split(",") : [];
-    return /* @__PURE__ */ F("div", { className: "form-section", children: [
-      t.discounts && t.discounts !== "0" && /* @__PURE__ */ F(pt, { children: [
-        /* @__PURE__ */ F("div", { className: "form-row inline", children: [
-          /* @__PURE__ */ f("label", { htmlFor: "discount", children: /* @__PURE__ */ f(J, { id: "discount" }) }),
-          /* @__PURE__ */ f(It, { component: "select", name: "discount", children: o.map((s) => /* @__PURE__ */ F("option", { value: s, children: [
+    return /* @__PURE__ */ I("div", { className: "form-section", children: [
+      t.discounts && t.discounts !== "0" && /* @__PURE__ */ I(pt, { children: [
+        /* @__PURE__ */ I("div", { className: "form-row inline", children: [
+          /* @__PURE__ */ f("label", { htmlFor: "discount", children: /* @__PURE__ */ f(K, { id: "discount" }) }),
+          /* @__PURE__ */ f(It, { component: "select", name: "discount", children: o.map((s) => /* @__PURE__ */ I("option", { value: s, children: [
             s,
             "%"
           ] }, s)) })
         ] }),
-        /* @__PURE__ */ F("div", { className: "form-row inline", children: [
-          /* @__PURE__ */ f("label", { htmlFor: "discount_reason", children: /* @__PURE__ */ f(J, { id: "discount_reason" }) }),
+        /* @__PURE__ */ I("div", { className: "form-row inline", children: [
+          /* @__PURE__ */ f("label", { htmlFor: "discount_reason", children: /* @__PURE__ */ f(K, { id: "discount_reason" }) }),
           /* @__PURE__ */ f(It, { name: "discount_reason" }),
           e.discount_reason && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: e.discount_reason })
         ] }),
@@ -27122,7 +27122,7 @@ const Rc = ({
   id: a,
   label: i,
   ...o
-}) => /* @__PURE__ */ F("div", { children: [
+}) => /* @__PURE__ */ I("div", { children: [
   /* @__PURE__ */ f(
     "input",
     {
@@ -27150,7 +27150,7 @@ const I_ = ({
   label: n,
   className: r,
   children: a
-}) => /* @__PURE__ */ F("div", { className: r, children: [
+}) => /* @__PURE__ */ I("div", { className: r, children: [
   /* @__PURE__ */ f("div", { className: "legend", children: n }),
   a,
   t && /* @__PURE__ */ f(N_, { error: e })
@@ -27163,7 +27163,7 @@ I_.propTypes = {
   children: k.node.isRequired
 };
 function KV({ house: e }) {
-  return /* @__PURE__ */ f(pt, { children: e.allow_option && /* @__PURE__ */ f("div", { children: /* @__PURE__ */ F(I_, { id: "is_option", className: "booking_option", children: [
+  return /* @__PURE__ */ f(pt, { children: e.allow_option && /* @__PURE__ */ f("div", { children: /* @__PURE__ */ I(I_, { id: "is_option", className: "booking_option", children: [
     /* @__PURE__ */ f(
       It,
       {
@@ -27171,7 +27171,7 @@ function KV({ house: e }) {
         name: "is_option",
         id: "true",
         disabled: !e.allow_option,
-        label: /* @__PURE__ */ f(J, { id: "option" })
+        label: /* @__PURE__ */ f(K, { id: "option" })
       }
     ),
     /* @__PURE__ */ f(
@@ -27180,7 +27180,7 @@ function KV({ house: e }) {
         component: Rc,
         name: "is_option",
         id: "false",
-        label: /* @__PURE__ */ f(J, { id: "booking" })
+        label: /* @__PURE__ */ f(K, { id: "booking" })
       }
     )
   ] }) }) });
@@ -27205,15 +27205,15 @@ function Pt({
   formatName: a,
   forceMethod: i
 }) {
-  return /* @__PURE__ */ F("tr", { children: [
-    /* @__PURE__ */ F("td", { children: [
-      a ? /* @__PURE__ */ f(J, { id: e }) : e,
-      n && /* @__PURE__ */ F(pt, { children: [
+  return /* @__PURE__ */ I("tr", { children: [
+    /* @__PURE__ */ I("td", { children: [
+      a ? /* @__PURE__ */ f(K, { id: e }) : e,
+      n && /* @__PURE__ */ I(pt, { children: [
         " ",
         /* @__PURE__ */ f(JV, { description: n })
       ] })
     ] }),
-    /* @__PURE__ */ f("td", { className: "price", children: t && t > 0 ? /* @__PURE__ */ F(pt, { children: [
+    /* @__PURE__ */ f("td", { className: "price", children: t && t > 0 ? /* @__PURE__ */ I(pt, { children: [
       "€",
       " ",
       /* @__PURE__ */ f(
@@ -27224,7 +27224,7 @@ function Pt({
           maximumFractionDigits: 2
         }
       ),
-      i && /* @__PURE__ */ F(pt, { children: [
+      i && /* @__PURE__ */ I(pt, { children: [
         " ",
         r
       ] })
@@ -27239,7 +27239,7 @@ function XV({
   prices: e
 }) {
   const { insurances: t, required_costs: n } = e.total_costs, { not_on_site: r } = n;
-  return /* @__PURE__ */ f("div", { className: "costs-section", children: /* @__PURE__ */ f("table", { children: /* @__PURE__ */ F("tbody", { children: [
+  return /* @__PURE__ */ f("div", { className: "costs-section", children: /* @__PURE__ */ f("table", { children: /* @__PURE__ */ I("tbody", { children: [
     t.cancel_insurance && /* @__PURE__ */ f(pt, { children: Object.keys(t).map((a) => /* @__PURE__ */ f(
       Pt,
       {
@@ -27293,9 +27293,9 @@ const ZV = wt`
 `;
 function eU({ prices: e }) {
   const { rent_price: t, discount: n, discounted_price: r } = e;
-  return /* @__PURE__ */ f("div", { className: "costs-section", children: /* @__PURE__ */ f("table", { children: /* @__PURE__ */ F("tbody", { children: [
+  return /* @__PURE__ */ f("div", { className: "costs-section", children: /* @__PURE__ */ f("table", { children: /* @__PURE__ */ I("tbody", { children: [
     /* @__PURE__ */ f(Pt, { name: "rent_price", formatName: !0, amount: t }),
-    n > 0 ? /* @__PURE__ */ F(pt, { children: [
+    n > 0 ? /* @__PURE__ */ I(pt, { children: [
       /* @__PURE__ */ f(Pt, { name: "discount", formatName: !0, amount: n }),
       /* @__PURE__ */ f(
         Pt,
@@ -27360,9 +27360,9 @@ function nU({ prices: e }) {
 }
 function rU({ prices: e }) {
   const { required_costs: t } = e.total_costs, { on_site: n } = t;
-  return /* @__PURE__ */ F("div", { className: "costs-section", children: [
-    /* @__PURE__ */ f("strong", { children: /* @__PURE__ */ f(J, { id: "costs_on_site" }) }),
-    /* @__PURE__ */ f("table", { children: /* @__PURE__ */ F("tbody", { children: [
+  return /* @__PURE__ */ I("div", { className: "costs-section", children: [
+    /* @__PURE__ */ f("strong", { children: /* @__PURE__ */ f(K, { id: "costs_on_site" }) }),
+    /* @__PURE__ */ f("table", { children: /* @__PURE__ */ I("tbody", { children: [
       e.required_house_costs.map((r) => {
         var a;
         if (r.on_site && r.gl !== "0120") {
@@ -27382,8 +27382,8 @@ function au({ children: e }) {
   return /* @__PURE__ */ f("div", { className: "costs-section", children: /* @__PURE__ */ f("table", { children: /* @__PURE__ */ f("tbody", { children: e }) }) });
 }
 function aU({ prices: e }) {
-  return /* @__PURE__ */ F(pt, { children: [
-    /* @__PURE__ */ f(au, { children: /* @__PURE__ */ F("tr", { children: [
+  return /* @__PURE__ */ I(pt, { children: [
+    /* @__PURE__ */ f(au, { children: /* @__PURE__ */ I("tr", { children: [
       /* @__PURE__ */ f(
         "th",
         {
@@ -27391,10 +27391,10 @@ function aU({ prices: e }) {
             textAlign: "left",
             testTransform: "capitalize"
           },
-          children: /* @__PURE__ */ f(J, { id: "total" })
+          children: /* @__PURE__ */ f(K, { id: "total" })
         }
       ),
-      /* @__PURE__ */ F("th", { className: "price", style: { fontSize: 18 }, children: [
+      /* @__PURE__ */ I("th", { className: "price", style: { fontSize: 18 }, children: [
         "€",
         " ",
         /* @__PURE__ */ f(
@@ -27407,7 +27407,7 @@ function aU({ prices: e }) {
         )
       ] })
     ] }) }),
-    /* @__PURE__ */ F(au, { children: [
+    /* @__PURE__ */ I(au, { children: [
       /* @__PURE__ */ f(
         Ga,
         {
@@ -27437,7 +27437,7 @@ function aU({ prices: e }) {
         }
       )
     ] }),
-    /* @__PURE__ */ f(au, { children: /* @__PURE__ */ F("tr", { children: [
+    /* @__PURE__ */ f(au, { children: /* @__PURE__ */ I("tr", { children: [
       /* @__PURE__ */ f(
         "th",
         {
@@ -27445,10 +27445,10 @@ function aU({ prices: e }) {
             textAlign: "left",
             testTransform: "capitalize"
           },
-          children: /* @__PURE__ */ f(J, { id: "total" })
+          children: /* @__PURE__ */ f(K, { id: "total" })
         }
       ),
-      /* @__PURE__ */ F("td", { className: "price", children: [
+      /* @__PURE__ */ I("td", { className: "price", children: [
         "€",
         " ",
         /* @__PURE__ */ f(
@@ -27492,7 +27492,7 @@ function iU({ values: e, house: t }) {
   if (s)
     return /* @__PURE__ */ f("div", { children: JSON.stringify(s) });
   const l = u.PortalSite.houses[0].booking_price;
-  return /* @__PURE__ */ F(pt, { children: [
+  return /* @__PURE__ */ I(pt, { children: [
     /* @__PURE__ */ f(eU, { prices: l }),
     /* @__PURE__ */ f(XV, { prices: l }),
     /* @__PURE__ */ f(tU, { prices: l }),
@@ -27502,23 +27502,23 @@ function iU({ values: e, house: t }) {
 }
 const M_ = ({ house: e, values: t }) => {
   const { arrivalDate: n, departureDate: r } = t;
-  return /* @__PURE__ */ F(le.Fragment, { children: [
-    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "booking_details" }) }),
-    /* @__PURE__ */ F("div", { className: "house-details", children: [
+  return /* @__PURE__ */ I(le.Fragment, { children: [
+    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "booking_details" }) }),
+    /* @__PURE__ */ I("div", { className: "house-details", children: [
       /* @__PURE__ */ f("div", { children: e.name }),
       /* @__PURE__ */ f("img", { src: e.image_url, alt: "" }),
-      /* @__PURE__ */ f("table", { children: /* @__PURE__ */ F("tbody", { children: [
-        /* @__PURE__ */ F("tr", { children: [
-          /* @__PURE__ */ f("th", { children: /* @__PURE__ */ f(J, { id: `${e.house_type}.arrival` }) }),
+      /* @__PURE__ */ f("table", { children: /* @__PURE__ */ I("tbody", { children: [
+        /* @__PURE__ */ I("tr", { children: [
+          /* @__PURE__ */ f("th", { children: /* @__PURE__ */ f(K, { id: `${e.house_type}.arrival` }) }),
           /* @__PURE__ */ f("td", { className: "price", children: jt($t(n.date), gr) }),
-          /* @__PURE__ */ F("td", { children: [
+          /* @__PURE__ */ I("td", { children: [
             n.arrival_time_from,
             " - ",
             n.arrival_time_to
           ] })
         ] }),
-        /* @__PURE__ */ F("tr", { children: [
-          /* @__PURE__ */ f("th", { children: /* @__PURE__ */ f(J, { id: `${e.house_type}.departure` }) }),
+        /* @__PURE__ */ I("tr", { children: [
+          /* @__PURE__ */ f("th", { children: /* @__PURE__ */ f(K, { id: `${e.house_type}.departure` }) }),
           /* @__PURE__ */ f("td", { className: "price", children: jt($t(r.date), gr) }),
           /* @__PURE__ */ f("td", { children: r.departure_time })
         ] })
@@ -27531,7 +27531,7 @@ M_.propTypes = {
   values: k.object.isRequired
 };
 function oU({ values: e, house: t }) {
-  return /* @__PURE__ */ F("div", { children: [
+  return /* @__PURE__ */ I("div", { children: [
     /* @__PURE__ */ f(M_, { house: t, values: e }),
     /* @__PURE__ */ f(KV, { house: t }),
     /* @__PURE__ */ f(iU, { values: e, house: t })
@@ -27637,7 +27637,7 @@ const Ac = [
     required: !1,
     rows: 10
   }
-], sU = () => /* @__PURE__ */ F("div", { className: "success-message", children: [
+], sU = () => /* @__PURE__ */ I("div", { className: "success-message", children: [
   /* @__PURE__ */ f(
     "svg",
     {
@@ -27656,8 +27656,8 @@ const Ac = [
       children: /* @__PURE__ */ f("path", { d: "M50,5C25.2,5,5,25.1,5,50c0,24.8,20.2,45,45,45s45-20.2,45-45C95,25.1,74.8,5,50,5z M72.7,38.2L44.2,66.7  c-0.4,0.4-0.9,0.6-1.4,0.6s-1-0.2-1.4-0.6l-14-14c-0.8-0.8-0.8-2,0-2.8c0.8-0.8,2-0.8,2.8,0l12.6,12.6l27.1-27.1  c0.8-0.8,2-0.8,2.8,0C73.5,36.1,73.5,37.4,72.7,38.2z" })
     }
   ),
-  /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(J, { id: "thank_you_for_your_request" }) }),
-  /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(J, { id: "we_sent_confirmation_check_email" }) })
+  /* @__PURE__ */ f("h3", { children: /* @__PURE__ */ f(K, { id: "thank_you_for_your_request" }) }),
+  /* @__PURE__ */ f("p", { children: /* @__PURE__ */ f(K, { id: "we_sent_confirmation_check_email" }) })
 ] }), uU = [
   {
     name: "Afghanistan",
@@ -33665,15 +33665,15 @@ function L_({
   return (a.cancel_insurance === "1" || a.cancel_insurance === "2") && o.forEach((s) => {
     let u = e.findIndex((l) => l.id === s);
     u !== -1 ? i[u] = Ac.find((l) => l.id === s) : i.push(Ac.find((l) => l.id === s));
-  }), /* @__PURE__ */ F("div", { className: "form-section", children: [
-    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "personal_details" }) }),
+  }), /* @__PURE__ */ I("div", { className: "form-section", children: [
+    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "personal_details" }) }),
     i.map((s) => {
       if (s.id === "telephone" && (s.id = "phonenumber"), s.type === "booking_field" || F_(s.id)) {
         const u = r.booking_fields.find(
           (l) => l.id === s.id
         );
-        return /* @__PURE__ */ F("div", { className: "form-row", children: [
-          /* @__PURE__ */ F("label", { htmlFor: `extra_fields.booking_field_${u.id}`, children: [
+        return /* @__PURE__ */ I("div", { className: "form-row", children: [
+          /* @__PURE__ */ I("label", { htmlFor: `extra_fields.booking_field_${u.id}`, children: [
             u.label,
             " ",
             s.required && /* @__PURE__ */ f("span", { children: "*" })
@@ -33693,16 +33693,16 @@ function L_({
           t[s.id] && (n.extra_fields && n.extra_fields[`booking_field_${u.id}`] || n[s.id]) && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: t[s.id] })
         ] }, u.id);
       } else
-        return s.id === "country" ? /* @__PURE__ */ F("div", { className: "form-row", children: [
-          /* @__PURE__ */ F("label", { htmlFor: s.id, children: [
+        return s.id === "country" ? /* @__PURE__ */ I("div", { className: "form-row", children: [
+          /* @__PURE__ */ I("label", { htmlFor: s.id, children: [
             r[`${s.id}_label`],
             " ",
             s.required && /* @__PURE__ */ f("span", { children: "*" })
           ] }),
           /* @__PURE__ */ f(It, { component: "select", name: s.id, children: pU[window.__localeId__].map((u) => /* @__PURE__ */ f("option", { value: u.alpha2, children: u.name }, u.alpha2)) }),
           t[s.id] && /* @__PURE__ */ f("div", { className: "error-message bu-error-message", children: t[s.id] })
-        ] }, s.id) : s.type === "date" ? /* @__PURE__ */ f("div", { className: "form-row", children: /* @__PURE__ */ f(sd, { name: s.id, label: s.id, inline: !1 }) }, s.id) : /* @__PURE__ */ F("div", { className: "form-row", children: [
-          /* @__PURE__ */ F(
+        ] }, s.id) : s.type === "date" ? /* @__PURE__ */ f("div", { className: "form-row", children: /* @__PURE__ */ f(sd, { name: s.id, label: s.id, inline: !1 }) }, s.id) : /* @__PURE__ */ I("div", { className: "form-row", children: [
+          /* @__PURE__ */ I(
             "label",
             {
               htmlFor: s.id,
@@ -33735,15 +33735,15 @@ L_.propTypes = {
   PortalSite: k.object.isRequired
 };
 function mU({ costs: e }) {
-  return e.length === 0 ? null : /* @__PURE__ */ F("div", { className: "form-section optional_house_costs", children: [
-    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "extra_costs_bookable" }) }),
-    /* @__PURE__ */ f("div", { children: e.map((t) => !["none", "total"].includes(t.method) && t.max_available > 0 ? t.max_available === 1 ? /* @__PURE__ */ F("div", { className: "form-row inline", children: [
+  return e.length === 0 ? null : /* @__PURE__ */ I("div", { className: "form-section optional_house_costs", children: [
+    /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "extra_costs_bookable" }) }),
+    /* @__PURE__ */ f("div", { children: e.map((t) => !["none", "total"].includes(t.method) && t.max_available > 0 ? t.max_available === 1 ? /* @__PURE__ */ I("div", { className: "form-row inline", children: [
       /* @__PURE__ */ f("label", { htmlFor: t.id, children: t.name }),
-      /* @__PURE__ */ F(It, { component: "select", name: `costs[${t.id}]`, children: [
-        /* @__PURE__ */ f(J, { id: "no", children: (n) => /* @__PURE__ */ f("option", { value: 0, children: n }) }),
-        /* @__PURE__ */ f(J, { id: "yes", children: (n) => /* @__PURE__ */ f("option", { value: 1, children: n }) })
+      /* @__PURE__ */ I(It, { component: "select", name: `costs[${t.id}]`, children: [
+        /* @__PURE__ */ f(K, { id: "no", children: (n) => /* @__PURE__ */ f("option", { value: 0, children: n }) }),
+        /* @__PURE__ */ f(K, { id: "yes", children: (n) => /* @__PURE__ */ f("option", { value: 1, children: n }) })
       ] }),
-      /* @__PURE__ */ F("div", { className: "price_per", children: [
+      /* @__PURE__ */ I("div", { className: "price_per", children: [
         "€",
         " ",
         /* @__PURE__ */ f(
@@ -33758,10 +33758,10 @@ function mU({ costs: e }) {
         t.method_name
       ] }),
       /* @__PURE__ */ f("div", { children: t.description ? /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f(on, { buttonText: /* @__PURE__ */ f(Vo, {}), children: /* @__PURE__ */ f("p", { children: t.description }) }) }) : null })
-    ] }, t.id) : /* @__PURE__ */ F("div", { className: "form-row inline", children: [
+    ] }, t.id) : /* @__PURE__ */ I("div", { className: "form-row inline", children: [
       /* @__PURE__ */ f("label", { htmlFor: t.id, children: t.name }),
       /* @__PURE__ */ f(It, { component: "select", name: `costs[${t.id}]`, children: od(t.max_available).map((n) => /* @__PURE__ */ f("option", { value: n, children: n }, n)) }),
-      /* @__PURE__ */ F("div", { className: "price_per", children: [
+      /* @__PURE__ */ I("div", { className: "price_per", children: [
         "€",
         " ",
         /* @__PURE__ */ f(
@@ -33780,7 +33780,7 @@ function mU({ costs: e }) {
   ] });
 }
 function vU({ options: e, house: t }) {
-  return /* @__PURE__ */ F(pt, { children: [
+  return /* @__PURE__ */ I(pt, { children: [
     /* @__PURE__ */ f(
       zi,
       {
@@ -33788,7 +33788,7 @@ function vU({ options: e, house: t }) {
         label: "adults",
         count: t.persons,
         description: /* @__PURE__ */ f("div", { className: "age-description", children: /* @__PURE__ */ f(
-          J,
+          K,
           {
             id: "adults_from",
             defaultMessage: "> {age}",
@@ -33806,7 +33806,7 @@ function vU({ options: e, house: t }) {
         label: "children",
         count: t.persons - 1,
         description: /* @__PURE__ */ f("div", { className: "age-description", children: /* @__PURE__ */ f(
-          J,
+          K,
           {
             id: "children_from",
             defaultMessage: "{from} - {til}",
@@ -33825,7 +33825,7 @@ function vU({ options: e, house: t }) {
         label: "babies",
         count: t.persons - 1,
         description: /* @__PURE__ */ f("div", { className: "age-description", children: /* @__PURE__ */ f(
-          J,
+          K,
           {
             id: "babies_from",
             defaultMessage: "til {babies_til}",
@@ -33850,12 +33850,12 @@ function yU(e, t, n) {
           e,
           `extra_fields.booking_field_${u.id}`
         );
-        (!l || l === "") && (i[u.id] = /* @__PURE__ */ f(J, { id: "required" }));
+        (!l || l === "") && (i[u.id] = /* @__PURE__ */ f(K, { id: "required" }));
       } else {
         const l = _v(e, u.id);
-        (!l || l === "") && (i[u.id] = /* @__PURE__ */ f(J, { id: "required" }));
+        (!l || l === "") && (i[u.id] = /* @__PURE__ */ f(K, { id: "required" }));
       }
-  return e.adults < 1 && a > 0 && (i.adults = /* @__PURE__ */ f(J, { id: "at_least_1_adult" })), Number(e.discount) > 0 && !e.discount_reason && (i.discount_reason = /* @__PURE__ */ f(J, { id: "you_need_to_give_reason" })), e.persons > a && (i.max_persons = /* @__PURE__ */ f(J, { id: "max_persons_reached" })), e.cancel_insurance !== 0 && HV((s = e.extra_fields) == null ? void 0 : s.date_of_birth) && (i["extra_fields.date_of_birth"] = /* @__PURE__ */ f(J, { id: "at_least_18y_old" }), i.insurances = /* @__PURE__ */ f(J, { id: "at_least_18y_old" })), parseInt(e.cancel_insurance) !== 0 && !["nl", "de", "be"].includes(e.country) && (i.insurances = /* @__PURE__ */ f(J, { id: "can_only_take_insurance_in_de_be_nl" }), i.country = /* @__PURE__ */ f(J, { id: "can_only_take_insurance_in_de_be_nl" })), i;
+  return e.adults < 1 && a > 0 && (i.adults = /* @__PURE__ */ f(K, { id: "at_least_1_adult" })), Number(e.discount) > 0 && !e.discount_reason && (i.discount_reason = /* @__PURE__ */ f(K, { id: "you_need_to_give_reason" })), e.persons > a && (i.max_persons = /* @__PURE__ */ f(K, { id: "max_persons_reached" })), e.cancel_insurance !== 0 && HV((s = e.extra_fields) == null ? void 0 : s.date_of_birth) && (i["extra_fields.date_of_birth"] = /* @__PURE__ */ f(K, { id: "at_least_18y_old" }), i.insurances = /* @__PURE__ */ f(K, { id: "at_least_18y_old" })), parseInt(e.cancel_insurance) !== 0 && !["nl", "de", "be"].includes(e.country) && (i.insurances = /* @__PURE__ */ f(K, { id: "can_only_take_insurance_in_de_be_nl" }), i.country = /* @__PURE__ */ f(K, { id: "can_only_take_insurance_in_de_be_nl" })), i;
 }
 const ud = {
   selectedDate: null,
@@ -33954,12 +33954,12 @@ function bU({ house: e, PortalSite: t }) {
           }, 15e3);
         });
       },
-      children: ({ errors: O, touched: w, values: _, status: $, isSubmitting: D }) => /* @__PURE__ */ F(R_, { className: "form", children: [
+      children: ({ errors: O, touched: w, values: _, status: $, isSubmitting: D }) => /* @__PURE__ */ I(R_, { className: "form", children: [
         v && /* @__PURE__ */ f("div", { className: "return-message", children: "Creating booking..." }),
         m && /* @__PURE__ */ f(on, { show: !0, onClose: b, children: /* @__PURE__ */ f(Zn, { errors: m, modal: !0 }) }),
         y && /* @__PURE__ */ f(on, { show: !0, children: /* @__PURE__ */ f(sU, {}) }),
-        /* @__PURE__ */ F("div", { className: "form-content", children: [
-          /* @__PURE__ */ F("div", { className: "form-section", children: [
+        /* @__PURE__ */ I("div", { className: "form-content", children: [
+          /* @__PURE__ */ I("div", { className: "form-section", children: [
             /* @__PURE__ */ f(
               "a",
               {
@@ -33971,10 +33971,10 @@ function bU({ house: e, PortalSite: t }) {
                     type: "return"
                   });
                 },
-                children: /* @__PURE__ */ f(J, { id: "return_to_calendar" })
+                children: /* @__PURE__ */ f(K, { id: "return_to_calendar" })
               }
             ),
-            /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(J, { id: "stay_details" }) }),
+            /* @__PURE__ */ f("h2", { children: /* @__PURE__ */ f(K, { id: "stay_details" }) }),
             /* @__PURE__ */ f(vU, { options: l, house: e }),
             O.max_persons && /* @__PURE__ */ f("div", { className: "error-message bu-error-message persons", children: O.max_persons })
           ] }),
@@ -34001,13 +34001,13 @@ function bU({ house: e, PortalSite: t }) {
             }
           )
         ] }),
-        /* @__PURE__ */ F("div", { className: "form-sum", children: [
+        /* @__PURE__ */ I("div", { className: "form-sum", children: [
           /* @__PURE__ */ f(oU, { house: e, values: _ }),
           $ && $.msg && /* @__PURE__ */ f("div", { children: $.msg }),
-          /* @__PURE__ */ F("div", { className: "terms", children: [
-            /* @__PURE__ */ f(J, { id: "agree_with" }),
+          /* @__PURE__ */ I("div", { className: "terms", children: [
+            /* @__PURE__ */ f(K, { id: "agree_with" }),
             " ",
-            /* @__PURE__ */ f(J, { id: "terms", children: (U) => /* @__PURE__ */ f(on, { buttonText: U, children: /* @__PURE__ */ f(
+            /* @__PURE__ */ f(K, { id: "terms", children: (U) => /* @__PURE__ */ f(on, { buttonText: U, children: /* @__PURE__ */ f(
               "div",
               {
                 style: {
@@ -34024,16 +34024,20 @@ function bU({ house: e, PortalSite: t }) {
                   }
                 )
               }
-            ) }) })
+            ) }) }),
+            e.allow_option && /* @__PURE__ */ I("span", { children: [
+              ", ",
+              /* @__PURE__ */ f(K, { id: "option_is_free" })
+            ] })
           ] }),
-          [1, 2].includes(Number(_.cancel_insurance)) ? /* @__PURE__ */ f("div", { className: "terms", children: /* @__PURE__ */ f(J, { id: "comply_insurance_card" }) }) : null,
+          [1, 2].includes(Number(_.cancel_insurance)) ? /* @__PURE__ */ f("div", { className: "terms", children: /* @__PURE__ */ f(K, { id: "comply_insurance_card" }) }) : null,
           /* @__PURE__ */ f(
             "button",
             {
               className: "bu-calendar-button",
               type: "submit",
               disabled: D,
-              children: /* @__PURE__ */ f(J, { id: "book" })
+              children: /* @__PURE__ */ f(K, { id: "book" })
             }
           )
         ] })
@@ -34063,7 +34067,7 @@ function _U() {
     }
   );
 }
-const wU = () => /* @__PURE__ */ F(
+const wU = () => /* @__PURE__ */ I(
   "svg",
   {
     xmlns: "http://www.w3.org/2000/svg",
@@ -34102,7 +34106,7 @@ function SU({
   function i() {
     e(gD(t, n));
   }
-  return /* @__PURE__ */ F("div", { className: "calendars-header", children: [
+  return /* @__PURE__ */ I("div", { className: "calendars-header", children: [
     /* @__PURE__ */ f(
       "div",
       {
@@ -34111,7 +34115,7 @@ function SU({
         onClick: i,
         tabIndex: 0,
         role: "button",
-        children: /* @__PURE__ */ F("div", { className: "icon", children: [
+        children: /* @__PURE__ */ I("div", { className: "icon", children: [
           " ",
           /* @__PURE__ */ f(OU, {})
         ] })
@@ -34147,35 +34151,35 @@ function SU({
 }
 function EU({ house: e }) {
   const { departureDate: t, arrivalDate: n } = Xe(ar);
-  return t != null && t.date ? /* @__PURE__ */ F("div", { className: "assistance", children: [
-    /* @__PURE__ */ f(J, { id: `${e.house_type}.you_picked_arrival_date` }),
+  return t != null && t.date ? /* @__PURE__ */ I("div", { className: "assistance", children: [
+    /* @__PURE__ */ f(K, { id: `${e.house_type}.you_picked_arrival_date` }),
     ":",
     " ",
     jt($t(n.date), gr),
     /* @__PURE__ */ f("br", {}),
     /* @__PURE__ */ f(
-      J,
+      K,
       {
         id: `${e.house_type}.you_picked_departure_date`
       }
     ),
     ": ",
     jt($t(t.date), gr)
-  ] }) : n != null && n.date ? /* @__PURE__ */ F("div", { className: "assistance", children: [
-    /* @__PURE__ */ f(J, { id: `${e.house_type}.you_picked_arrival_date` }),
+  ] }) : n != null && n.date ? /* @__PURE__ */ I("div", { className: "assistance", children: [
+    /* @__PURE__ */ f(K, { id: `${e.house_type}.you_picked_arrival_date` }),
     ":",
     " ",
     jt($t(n.date), gr),
     /* @__PURE__ */ f("br", {}),
     /* @__PURE__ */ f(
-      J,
+      K,
       {
         id: `${e.house_type}.pick_your_departure_in_the_calendar`
       }
     ),
     /* @__PURE__ */ f("br", {}),
     /* @__PURE__ */ f(
-      J,
+      K,
       {
         id: "minimum_nights",
         values: { minimum: n.min_nights },
@@ -34183,29 +34187,29 @@ function EU({ house: e }) {
       }
     )
   ] }) : /* @__PURE__ */ f("div", { className: "assistance", children: /* @__PURE__ */ f(
-    J,
+    K,
     {
       id: `${e.house_type}.pick_your_arrivaldate_in_the_calendar`
     }
   ) });
 }
 function PU({ house: e }) {
-  return /* @__PURE__ */ F("div", { className: "legend", children: [
-    /* @__PURE__ */ F("div", { children: [
+  return /* @__PURE__ */ I("div", { className: "legend", children: [
+    /* @__PURE__ */ I("div", { children: [
       /* @__PURE__ */ f("span", { className: "legend-field arrival" }),
-      /* @__PURE__ */ f(J, { id: `${e.house_type}.arrival_date` })
+      /* @__PURE__ */ f(K, { id: `${e.house_type}.arrival_date` })
     ] }),
-    /* @__PURE__ */ F("div", { children: [
+    /* @__PURE__ */ I("div", { children: [
       /* @__PURE__ */ f("span", { className: "legend-field booked" }),
-      /* @__PURE__ */ f(J, { id: "booked" })
+      /* @__PURE__ */ f(K, { id: "booked" })
     ] }),
-    /* @__PURE__ */ F("div", { children: [
+    /* @__PURE__ */ I("div", { children: [
       /* @__PURE__ */ f("span", { className: "legend-field departure" }),
-      /* @__PURE__ */ f(J, { id: `${e.house_type}.departure_date` })
+      /* @__PURE__ */ f(K, { id: `${e.house_type}.departure_date` })
     ] }),
-    /* @__PURE__ */ F("div", { children: [
+    /* @__PURE__ */ I("div", { children: [
       /* @__PURE__ */ f("span", { className: "legend-field last_minute_discount" }),
-      /* @__PURE__ */ f(J, { id: "discount" })
+      /* @__PURE__ */ f(K, { id: "discount" })
     ] })
   ] });
 }
@@ -34311,7 +34315,7 @@ function $U({
   if (d)
     return /* @__PURE__ */ f("div", { children: "Error" });
   const p = h.PortalSite.houses[0].availabilities, v = h.Discounts;
-  return /* @__PURE__ */ F("div", { className: `bu-calendar calendar calendar-${r}`, children: [
+  return /* @__PURE__ */ I("div", { className: `bu-calendar calendar calendar-${r}`, children: [
     /* @__PURE__ */ f(TU, { month: o }),
     /* @__PURE__ */ f(xU, { month: o }),
     /* @__PURE__ */ f(
@@ -34377,8 +34381,8 @@ function AU({ persons: e, variables: t }) {
   if (i)
     return /* @__PURE__ */ f("div", { className: "price-overview--build", children: /* @__PURE__ */ f(Zn, { errors: i }) });
   const s = o.PortalSite.houses[0].booking_price;
-  return /* @__PURE__ */ f(pt, { children: /* @__PURE__ */ F("div", { className: "price-overview--book", children: [
-    /* @__PURE__ */ F("div", { className: "price", children: [
+  return /* @__PURE__ */ f(pt, { children: /* @__PURE__ */ I("div", { className: "price-overview--book", children: [
+    /* @__PURE__ */ I("div", { className: "price", children: [
       "€",
       " ",
       /* @__PURE__ */ f(
@@ -34390,34 +34394,34 @@ function AU({ persons: e, variables: t }) {
         }
       )
     ] }),
-    /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f("i", { children: /* @__PURE__ */ f(J, { id: "based_on_one_person", values: { persons: e } }) }) })
+    /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f("i", { children: /* @__PURE__ */ f(K, { id: "based_on_one_person", values: { persons: e } }) }) })
   ] }) });
 }
 const wv = gr;
 function NU({ house: e }) {
   const t = e.persons > 2 ? 2 : e.persons, [n, r] = Wn(t), { arrivalDate: a, departureDate: i } = Xe(ar), o = Xe(Ma);
   let s = od(e.persons);
-  return /* @__PURE__ */ F("div", { className: "calendar--picker", children: [
-    /* @__PURE__ */ F("div", { className: "calendar--picker--date", children: [
-      /* @__PURE__ */ f("span", { className: "name", children: /* @__PURE__ */ f(J, { id: `${e.house_type}.arrival` }) }),
+  return /* @__PURE__ */ I("div", { className: "calendar--picker", children: [
+    /* @__PURE__ */ I("div", { className: "calendar--picker--date", children: [
+      /* @__PURE__ */ f("span", { className: "name", children: /* @__PURE__ */ f(K, { id: `${e.house_type}.arrival` }) }),
       /* @__PURE__ */ f("span", { className: "detail", children: a != null && a.date ? /* @__PURE__ */ f("span", { children: jt($t(a == null ? void 0 : a.date), wv) }) : /* @__PURE__ */ f(
-        J,
+        K,
         {
           id: `${e.house_type}.pick_your_arrivaldate_in_the_calendar`
         }
       ) })
     ] }),
-    /* @__PURE__ */ F("div", { className: "calendar--picker--date", children: [
-      /* @__PURE__ */ f("span", { className: "name", children: /* @__PURE__ */ f(J, { id: `${e.house_type}.departure` }) }),
-      /* @__PURE__ */ f("span", { className: "detail", children: i != null && i.date ? /* @__PURE__ */ f("span", { children: jt($t(i == null ? void 0 : i.date), wv) }) : /* @__PURE__ */ F("div", { children: [
+    /* @__PURE__ */ I("div", { className: "calendar--picker--date", children: [
+      /* @__PURE__ */ f("span", { className: "name", children: /* @__PURE__ */ f(K, { id: `${e.house_type}.departure` }) }),
+      /* @__PURE__ */ f("span", { className: "detail", children: i != null && i.date ? /* @__PURE__ */ f("span", { children: jt($t(i == null ? void 0 : i.date), wv) }) : /* @__PURE__ */ I("div", { children: [
         /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f(
-          J,
+          K,
           {
             id: `${e.house_type}.pick_your_departure_in_the_calendar`
           }
         ) }),
         a && /* @__PURE__ */ f(
-          J,
+          K,
           {
             id: "minimum_nights",
             defaultMessage: "Minimum {minimum} nights",
@@ -34435,10 +34439,10 @@ function NU({ house: e }) {
           r(u.target.value);
         },
         children: s.map((u) => /* @__PURE__ */ f(
-          J,
+          K,
           {
             id: "persons",
-            children: (l) => /* @__PURE__ */ F("option", { value: u, children: [
+            children: (l) => /* @__PURE__ */ I("option", { value: u, children: [
               u,
               " ",
               l
@@ -34469,7 +34473,7 @@ function NU({ house: e }) {
             persons: n
           });
         },
-        children: /* @__PURE__ */ f(J, { id: "calculate" })
+        children: /* @__PURE__ */ f(K, { id: "calculate" })
       }
     )
   ] });
@@ -34483,9 +34487,9 @@ function B_({
   numberOfMonthsInARow: n
 }) {
   const [r, a] = Wn(new Date());
-  return /* @__PURE__ */ F("div", { className: "calendar-container ", children: [
+  return /* @__PURE__ */ I("div", { className: "calendar-container ", children: [
     /* @__PURE__ */ f(IU, { house: t }),
-    /* @__PURE__ */ F("div", { className: "calendar-section", children: [
+    /* @__PURE__ */ I("div", { className: "calendar-section", children: [
       /* @__PURE__ */ f(
         SU,
         {
@@ -34521,9 +34525,9 @@ function MU({ PortalSite: e }) {
   if (a)
     return /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f(Zn, { errors: a }) });
   const o = i.PortalSite.houses, s = e.options.bookingForm ? e.options.bookingForm.numberOfMonths : 4, u = e.options.bookingForm ? e.options.bookingForm.numberOfMonthsInARow : 4;
-  return /* @__PURE__ */ F("div", { id: "calendar-container", children: [
-    o.length === 0 && /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f(J, { id: "no_house_found" }) }),
-    o.map((l) => /* @__PURE__ */ F("div", { children: [
+  return /* @__PURE__ */ I("div", { id: "calendar-container", children: [
+    o.length === 0 && /* @__PURE__ */ f("div", { children: /* @__PURE__ */ f(K, { id: "no_house_found" }) }),
+    o.map((l) => /* @__PURE__ */ I("div", { children: [
       /* @__PURE__ */ f("div", { className: "house-name", children: l.name }),
       /* @__PURE__ */ f(
         B_,
@@ -34579,17 +34583,17 @@ const LU = wt`
 `;
 function Nc({ rating: e, name: t }) {
   let n = "low";
-  return e > 7 ? n = "best" : e > 6 ? n = "good" : e > 4 && (n = "medium"), /* @__PURE__ */ F("div", { className: "bu_score", children: [
+  return e > 7 ? n = "best" : e > 6 ? n = "good" : e > 4 && (n = "medium"), /* @__PURE__ */ I("div", { className: "bu_score", children: [
     /* @__PURE__ */ f("div", { className: `bu_score__rating bu_card ${n}`, children: e.toFixed(1) }),
     /* @__PURE__ */ f("div", { children: t })
   ] });
 }
 function jU({ review: e }) {
-  return /* @__PURE__ */ F("div", { className: "bu_single_review bu_card", children: [
-    /* @__PURE__ */ F("div", { className: "bu_review_summary", children: [
+  return /* @__PURE__ */ I("div", { className: "bu_single_review bu_card", children: [
+    /* @__PURE__ */ I("div", { className: "bu_review_summary", children: [
       /* @__PURE__ */ f(Nc, { rating: e.score }),
-      /* @__PURE__ */ F("div", { className: "bu_review_summary__date_name", children: [
-        /* @__PURE__ */ F("div", { children: [
+      /* @__PURE__ */ I("div", { className: "bu_review_summary__date_name", children: [
+        /* @__PURE__ */ I("div", { children: [
           e.createdAt,
           ", "
         ] }),
@@ -34602,7 +34606,7 @@ function jU({ review: e }) {
 }
 const BU = W_(jU);
 function VU() {
-  return /* @__PURE__ */ f("div", { className: "bu_reviews__note", children: /* @__PURE__ */ f("a", { href: "https://www.bukazu.com", target: "_blank", rel: "noopener noreferrer", children: /* @__PURE__ */ f(J, { id: "reviews_note_link" }) }) });
+  return /* @__PURE__ */ f("div", { className: "bu_reviews__note", children: /* @__PURE__ */ f("a", { href: "https://www.bukazu.com", target: "_blank", rel: "noopener noreferrer", children: /* @__PURE__ */ f(K, { id: "reviews_note_link" }) }) });
 }
 function UU() {
   const { objectCode: e, portalCode: t } = Xe(Vt), { data: n, error: r, loading: a } = ln(LU, {
@@ -34613,13 +34617,13 @@ function UU() {
   if (r)
     return /* @__PURE__ */ f(Zn, { errors: r });
   const i = n.PortalSite.houses[0], o = i.reviews;
-  return /* @__PURE__ */ F("div", { className: "bu_reviews", children: [
-    /* @__PURE__ */ F("div", { className: "bu_reviews__overview bu_card", children: [
+  return /* @__PURE__ */ I("div", { className: "bu_reviews", children: [
+    /* @__PURE__ */ I("div", { className: "bu_reviews__overview bu_card", children: [
       /* @__PURE__ */ f(Nc, { rating: i.rating }),
-      /* @__PURE__ */ F("div", { className: "bu_reviews__overview__number", children: [
+      /* @__PURE__ */ I("div", { className: "bu_reviews__overview__number", children: [
         i.scoreAmount,
         " ",
-        /* @__PURE__ */ f(J, { id: "reviews" })
+        /* @__PURE__ */ f(K, { id: "reviews" })
       ] })
     ] }),
     o.map((s) => /* @__PURE__ */ f(BU, { review: s }, s.id)),
@@ -34664,7 +34668,7 @@ const qU = {
 };
 function HU() {
   const { locale: e } = Xe(Vt);
-  return /* @__PURE__ */ f("div", { style: qU, children: /* @__PURE__ */ F("a", { href: Ov[e].url, style: zU, children: [
+  return /* @__PURE__ */ f("div", { style: qU, children: /* @__PURE__ */ I("a", { href: Ov[e].url, style: zU, children: [
     /* @__PURE__ */ f(
       "svg",
       {
@@ -34748,7 +34752,7 @@ function U_({ pageType: e, locale: t, filters: n }) {
     `${l.colors ? l.colors.month_background : "#e28413"}`
   );
   let d;
-  return a && a !== null && e !== "reviews" ? d = /* @__PURE__ */ F(WU, { children: [
+  return a && a !== null && e !== "reviews" ? d = /* @__PURE__ */ I(WU, { children: [
     /* @__PURE__ */ f(FU, { PortalSite: u }),
     /* @__PURE__ */ f(HU, {})
   ] }) : a && a !== null && e === "reviews" ? d = /* @__PURE__ */ f(UU, {}) : d = /* @__PURE__ */ f(
@@ -34764,7 +34768,7 @@ function U_({ pageType: e, locale: t, filters: n }) {
 U_.defaultProps = {
   filters: {}
 };
-const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Next", XU = "Book", ZU = "Booked", eq = "Booking", tq = "Last minute discount", nq = "Discount", rq = "Option", aq = "Make a short reservation for this period ", iq = "including", oq = "Rental price", sq = "Extra costs included", uq = "Extra options", lq = "Rental price incl. discount", cq = "Booking dates", fq = "Total", dq = "Travel group", hq = "Babies", pq = "(up to the age of {babies})", mq = "Adults", vq = "(from the age of {age})", yq = "Children", gq = "(from {from} to {til} years inclusive)", bq = "Extra options", _q = "Additional costs on the spot:", wq = "Insurances", Oq = "Choose at least 1 adult.", Sq = "Too many people have been selected.", Eq = "Your information", Pq = "This field is required.", Tq = "All Risk", kq = "Standard", Dq = "None", xq = "Cancellation insurance", $q = "Insurance Costs", Cq = "Choose", Rq = "Yes", Aq = "Booking details", Nq = "Based on {persons} persons", Iq = "Back to calendar", Mq = "Close", Fq = "Standard Cancellation Insurance", Lq = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", jq = "All Risk Cancellation Insurance", Bq = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", Vq = "With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs. But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.", Uq = "Premiums and Conditions", qq = "Standard Cancellation Insurance Premium:", zq = "All Risk Cancellation Insurance Premium:", Hq = "More information:", Wq = "Show conditions", Gq = "Terms", Yq = "Remark", Qq = "or", Kq = "Policy fee", Jq = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", Xq = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", Zq = "Thank you very much for your request.", ez = "A copy of your request has been sent to your e-mail address. If you have not received any mail from us, it may be that it is in your spam box.", tz = "Oops, something went wrong, please try again later.", nz = "persons", rz = "bedrooms", az = "min. weekly price", iz = "No results", oz = "By clicking on 'Book', you agree to the", sz = "Reason discount.", uz = "results", lz = "bathrooms", cz = "You must indicate a valid discount reason", fz = "Filters", dz = "I agree that the cancellation insurance insurance card will be digitally issued to me. I receive this card with my booking confirmation.", hz = "No", pz = "No object found for this combination of PortalCode and ObjectCode", mz = "A date of birth is required for taking out insurance", vz = "No discount found with entered code", yz = "Discount code", gz = "At least {minimum} nights", bz = "You can only take out insurance if you live in the Netherlands, Germany or Belgium.", _z = "Price from", wz = "Reviews", Oz = "BUKAZU Booking System maintains independent reviews. These reviews are collected after guests stay in the accommodation. There is verification of the combination of booking number and email address.", Sz = {
+const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Next", XU = "Book", ZU = "Booked", eq = "Booking", tq = "Last minute discount", nq = "Discount", rq = "Option", aq = "Make a short reservation for this period ", iq = "including", oq = "Rental price", sq = "Extra costs included", uq = "Extra options", lq = "Rental price incl. discount", cq = "Booking dates", fq = "Total", dq = "Travel group", hq = "Babies", pq = "(up to the age of {babies})", mq = "Adults", vq = "(from the age of {age})", yq = "Children", gq = "(from {from} to {til} years inclusive)", bq = "Extra options", _q = "Additional costs on the spot:", wq = "Insurances", Oq = "Choose at least 1 adult.", Sq = "Too many people have been selected.", Eq = "Your information", Pq = "This field is required.", Tq = "All Risk", kq = "Standard", Dq = "None", xq = "Cancellation insurance", $q = "Insurance Costs", Cq = "Choose", Rq = "Yes", Aq = "Booking details", Nq = "Based on {persons} persons", Iq = "Back to calendar", Mq = "Close", Fq = "Standard Cancellation Insurance", Lq = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", jq = "All Risk Cancellation Insurance", Bq = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", Vq = "With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs. But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.", Uq = "Premiums and Conditions", qq = "Standard Cancellation Insurance Premium:", zq = "All Risk Cancellation Insurance Premium:", Hq = "More information:", Wq = "Show conditions", Gq = "Terms", Yq = "Remark", Qq = "or", Kq = "Policy fee", Jq = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", Xq = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", Zq = "Thank you very much for your request.", ez = "A copy of your request has been sent to your e-mail address. If you have not received any mail from us, it may be that it is in your spam box.", tz = "Oops, something went wrong, please try again later.", nz = "persons", rz = "bedrooms", az = "min. weekly price", iz = "No results", oz = "Clicking 'Book' creates a payment obligation when my booking is accepted. I agree to the ", sz = "An option is free of charge and without obligation.", uz = "Reason discount.", lz = "results", cz = "bathrooms", fz = "You must indicate a valid discount reason", dz = "Filters", hz = "I agree that the cancellation insurance insurance card will be digitally issued to me. I receive this card with my booking confirmation.", pz = "No", mz = "No object found for this combination of PortalCode and ObjectCode", vz = "A date of birth is required for taking out insurance", yz = "No discount found with entered code", gz = "Discount code", bz = "At least {minimum} nights", _z = "You can only take out insurance if you live in the Netherlands, Germany or Belgium.", wz = "Price from", Oz = "Reviews", Sz = "BUKAZU Booking System maintains independent reviews. These reviews are collected after guests stay in the accommodation. There is verification of the combination of booking number and email address.", Ez = {
   next: GU,
   previous: YU,
   view_details: QU,
@@ -34845,10 +34849,11 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   minimum_week_price: az,
   no_results: iz,
   agree_with: oz,
-  discount_reason: sz,
-  results: uz,
-  bathrooms: lz,
-  you_need_to_give_reason: cz,
+  option_is_free: sz,
+  discount_reason: uz,
+  results: lz,
+  bathrooms: cz,
+  you_need_to_give_reason: fz,
   "camper.arrival_date": "Start date",
   "camper.departure_date": "End date",
   "camper.arrival": "Start date",
@@ -34861,8 +34866,8 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "caravan.departure_date": "Departure date",
   "caravan.arrival": "Arrival",
   "caravan.departure": "Departure",
-  filters: fz,
-  comply_insurance_card: dz,
+  filters: dz,
+  comply_insurance_card: hz,
   "house.you_picked_arrival_date": "Your arrival date is",
   "house.pick_your_departure_in_the_calendar": "Select a departure date",
   "house.you_picked_departure_date": "Your departure date is",
@@ -34879,101 +34884,102 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "boat.pick_your_departure_in_the_calendar": "Select a return date",
   "boat.you_picked_departure_date": "Your return date is",
   "boat.pick_your_arrivaldate_in_the_calendar": "Choose a pickup date",
-  no: hz,
-  no_house_found: pz,
-  insurance_company_needs_date_of_birth: mz,
+  no: pz,
+  no_house_found: mz,
+  insurance_company_needs_date_of_birth: vz,
   "extra_fields.date_of_birth": "Date of birth",
-  no_discount_code_found: vz,
-  discount_code: yz,
-  minimum_nights: gz,
-  can_only_take_insurance_in_de_be_nl: bz,
-  price_from: _z,
-  reviews: wz,
-  reviews_note_link: Oz
-}, Ez = "Volgende", Pz = "Vorige", Tz = "Bekijk details", kz = "Prijs", Dz = "Volgende", xz = "Boeken", $z = "Geboekt", Cz = "Boeking", Rz = "Last minute korting", Az = "Korting", Nz = "Optie", Iz = "Neem een optie op deze periode", Mz = "inclusief", Fz = "Huurprijs", Lz = "Extra kosten inbegrepen", jz = "Extra opties", Bz = "Huurprijs incl. korting", Vz = "Boekingsdata:", Uz = "Totaal", qz = "Reisgezelschap", zz = "Baby's", Hz = "(t/m {babies} jaar)", Wz = "Volwassenen", Gz = "(vanaf {age} jaar)", Yz = "Kinderen", Qz = "({from} t/m {til} jaar)", Kz = "Extra opties", Jz = "Bijkomende kosten ter plaatse:", Xz = "Verzekeringen", Zz = "Kies minstens 1 volwassene.", eH = "Er zijn te veel personen geselecteerd.", tH = "Uw gegevens", nH = "Dit veld is verplicht.", rH = "All Risk", aH = "Normaal", iH = "Geen", oH = "Annuleringsverzekering", sH = "Poliskosten", uH = "Kies", lH = "Ja", cH = "Boekingsgegevens", fH = "Gebaseerd op {persons} personen", dH = "Terug naar de kalender", hH = "Sluiten", pH = "Standaard Annuleringsverzekering", mH = "Met de Standaard Annuleringsverzekering bent u goed verzekerd, als u uw reis moet annuleren. Naast de kosten van de annulering zijn ook de kosten van de ongebruikte reisdagen verzekerd. Dus mist u een deel van uw reis, bijvoorbeeld omdat u eerder naar huis moet? Dan ontvangt u een vergoeding voor iedere dag dat u niet van uw reis heeft kunnen genieten.", vH = "Allrisk Annuleringsverzekering", yH = "Er kunnen zich helaas altijd situaties voordoen, waardoor u uw vakantie moet afzeggen. Of het kan noodzakelijk zijn dat u later vertrekt of eerder terugkeert. Met een annuleringsverzekering hoeft u zelf niet voor deze kosten op te draaien. Alleen inwoners uit Nederland, België en Duitsland kunnen de verzekeringen afsluiten. U heeft de keuze uit twee annuleringsverzekeringen:", gH = `Met Allrisk Annulering krijg je 100% van de annuleringskosten vergoed als je om een standaard reden annuleert, zoals een ziekte waardoor je niet meer op reis kunt. Of het overlijden van een grootouder. Wil je annuleren om een andere reden die voor jou persoonlijk belangrijk is? Dan krijg je 75% van de annuleringskosten vergoed.
- Maar let op: deze verzekering stelt wel een paar voorwaarden aan het annuleren. Zo moet de reden van annulering ‘onvoorzien’ zijn en ‘buiten je schuld’. De verzekering biedt dus geen dekking voor annuleringsredenen waarvan je vóór het afsluiten van de verzekering al op de hoogte was (niet onvoorzien) of waaraan je zelf iets had kunnen doen (niet buiten eigen schuld). Raadpleeg de voorwaarden voor de uitzonderingen.`, bH = "Premie en voorwaarden", _H = "Premie Standaard annuleringsverzekering:", wH = "Premie Allrisk annuleringsverzekering:", OH = "Meer informatie", SH = "Bekijk de voorwaarden", EH = "Voorwaarden", PH = "BUKAZU Boekingssysteem houdt onafhankelijk reviews bij. Deze reviews zijn verzameld na het verblijf van de gasten in de accommodatie. Er is controle op de combinatie boekingsnummer en e-mailadres.", TH = "De getoonde reviews zijn gecontroleerd op echtheid en voldoen aan de richtlijnen van de ACM. De reviews zijn verzameld na het verblijf van de gasten in de accommodatie. Er is controle op de combinatie boekingsnummer en e-mailadres.", kH = "Opmerking", DH = "of", xH = "Poliskosten", $H = "De kosten voor het opmaken van een verzekeringspolis zijn eenmalig € 6,95. Ongeacht of u 1 of meerdere verzekeringen heeft afgesloten.", CH = "U ontvangt aansluitend op uw boekingsbevestiging de verzekeringspapieren per email toegestuurd. De verzekering treedt in werking zodra u de (aan)betaling gedaan heeft.", RH = "Hartelijk dank voor uw boekings/optie-aanvraag.", AH = "Een kopie van uw aanvraag is naar uw e-mailadres verstuurd. Als u geen mail van ons ontvangen hebt, kan het zijn dat deze in uw spambox zit. ", NH = "Oeps, er is iets mis gegaan, probeert u het later nogmaals.", IH = "personen", MH = "slaapkamers", FH = "min. weekprijs", LH = "Geen resultaten", jH = "Door op 'Boeken' te klikken gaat u akkoord met de", BH = "Reden korting.", VH = "resultaten", UH = "badkamers", qH = "U dient een geldige kortingsreden aan te geven", zH = "Filters", HH = "Ik ga ermee akkoord dat de verzekeringskaart van de annuleringsverzekering digitaal aan mij verstrekt wordt. Ik ontvang deze bij mijn boekingsbevestiging.", WH = "Nee", GH = "Geen object gevonden voor deze combinatie van Portal-code en Object-code", YH = "Voor het afsluiten van een verzekering is een geboortedatum verplicht", QH = "Geen korting gevonden met ingegeven code", KH = "Kortingscode", JH = "Minstens {minimum} nachten", XH = "U kunt alleen een verzekering afsluiten, wanneer u woont in Nederland, Duitsland of België.", ZH = "Prijs vanaf", e3 = "Reviews", t3 = {
-  next: Ez,
-  previous: Pz,
-  view_details: Tz,
-  price: kz,
-  calculate: Dz,
-  book: xz,
-  booked: $z,
-  booking: Cz,
-  last_minute_discount: Rz,
-  discount: Az,
-  option: Nz,
-  choose_for_option: Iz,
-  included_in_price: Mz,
-  rent_price: Fz,
-  extra_costs_included: Lz,
-  optional_costs: jz,
-  price_after_discount: Bz,
-  booking_from_til: Vz,
-  total: Uz,
-  stay_details: qz,
-  babies: zz,
-  babies_from: Hz,
-  adults: Wz,
-  adults_from: Gz,
-  children: Yz,
-  children_from: Qz,
+  no_discount_code_found: yz,
+  discount_code: gz,
+  minimum_nights: bz,
+  can_only_take_insurance_in_de_be_nl: _z,
+  price_from: wz,
+  reviews: Oz,
+  reviews_note_link: Sz
+}, Pz = "Volgende", Tz = "Vorige", kz = "Bekijk details", Dz = "Prijs", xz = "Volgende", $z = "Boeken", Cz = "Geboekt", Rz = "Boeking", Az = "Last minute korting", Nz = "Korting", Iz = "Optie", Mz = "Neem een optie op deze periode", Fz = "inclusief", Lz = "Huurprijs", jz = "Extra kosten inbegrepen", Bz = "Extra opties", Vz = "Huurprijs incl. korting", Uz = "Boekingsdata:", qz = "Totaal", zz = "Reisgezelschap", Hz = "Baby's", Wz = "(t/m {babies} jaar)", Gz = "Volwassenen", Yz = "(vanaf {age} jaar)", Qz = "Kinderen", Kz = "({from} t/m {til} jaar)", Jz = "Extra opties", Xz = "Bijkomende kosten ter plaatse:", Zz = "Verzekeringen", eH = "Kies minstens 1 volwassene.", tH = "Er zijn te veel personen geselecteerd.", nH = "Uw gegevens", rH = "Dit veld is verplicht.", aH = "All Risk", iH = "Normaal", oH = "Geen", sH = "Annuleringsverzekering", uH = "Poliskosten", lH = "Kies", cH = "Ja", fH = "Boekingsgegevens", dH = "Gebaseerd op {persons} personen", hH = "Terug naar de kalender", pH = "Sluiten", mH = "Standaard Annuleringsverzekering", vH = "Met de Standaard Annuleringsverzekering bent u goed verzekerd, als u uw reis moet annuleren. Naast de kosten van de annulering zijn ook de kosten van de ongebruikte reisdagen verzekerd. Dus mist u een deel van uw reis, bijvoorbeeld omdat u eerder naar huis moet? Dan ontvangt u een vergoeding voor iedere dag dat u niet van uw reis heeft kunnen genieten.", yH = "Allrisk Annuleringsverzekering", gH = "Er kunnen zich helaas altijd situaties voordoen, waardoor u uw vakantie moet afzeggen. Of het kan noodzakelijk zijn dat u later vertrekt of eerder terugkeert. Met een annuleringsverzekering hoeft u zelf niet voor deze kosten op te draaien. Alleen inwoners uit Nederland, België en Duitsland kunnen de verzekeringen afsluiten. U heeft de keuze uit twee annuleringsverzekeringen:", bH = `Met Allrisk Annulering krijg je 100% van de annuleringskosten vergoed als je om een standaard reden annuleert, zoals een ziekte waardoor je niet meer op reis kunt. Of het overlijden van een grootouder. Wil je annuleren om een andere reden die voor jou persoonlijk belangrijk is? Dan krijg je 75% van de annuleringskosten vergoed.
+ Maar let op: deze verzekering stelt wel een paar voorwaarden aan het annuleren. Zo moet de reden van annulering ‘onvoorzien’ zijn en ‘buiten je schuld’. De verzekering biedt dus geen dekking voor annuleringsredenen waarvan je vóór het afsluiten van de verzekering al op de hoogte was (niet onvoorzien) of waaraan je zelf iets had kunnen doen (niet buiten eigen schuld). Raadpleeg de voorwaarden voor de uitzonderingen.`, _H = "Premie en voorwaarden", wH = "Premie Standaard annuleringsverzekering:", OH = "Premie Allrisk annuleringsverzekering:", SH = "Meer informatie", EH = "Bekijk de voorwaarden", PH = "Voorwaarden", TH = "BUKAZU Boekingssysteem houdt onafhankelijk reviews bij. Deze reviews zijn verzameld na het verblijf van de gasten in de accommodatie. Er is controle op de combinatie boekingsnummer en e-mailadres.", kH = "De getoonde reviews zijn gecontroleerd op echtheid en voldoen aan de richtlijnen van de ACM. De reviews zijn verzameld na het verblijf van de gasten in de accommodatie. Er is controle op de combinatie boekingsnummer en e-mailadres.", DH = "Opmerking", xH = "of", $H = "Poliskosten", CH = "De kosten voor het opmaken van een verzekeringspolis zijn eenmalig € 6,95. Ongeacht of u 1 of meerdere verzekeringen heeft afgesloten.", RH = "U ontvangt aansluitend op uw boekingsbevestiging de verzekeringspapieren per email toegestuurd. De verzekering treedt in werking zodra u de (aan)betaling gedaan heeft.", AH = "Hartelijk dank voor uw boekings/optie-aanvraag.", NH = "Een kopie van uw aanvraag is naar uw e-mailadres verstuurd. Als u geen mail van ons ontvangen hebt, kan het zijn dat deze in uw spambox zit. ", IH = "Oeps, er is iets mis gegaan, probeert u het later nogmaals.", MH = "personen", FH = "slaapkamers", LH = "min. weekprijs", jH = "Geen resultaten", BH = "Door op 'Boeken' te klikken, ontstaat een betaalverplichting wanneer mijn boeking wordt geaccepteerd. Ik ga akkoord met de", VH = "Een optie is kosteloos en vrijblijvend.", UH = "Reden korting.", qH = "resultaten", zH = "badkamers", HH = "U dient een geldige kortingsreden aan te geven", WH = "Filters", GH = "Ik ga ermee akkoord dat de verzekeringskaart van de annuleringsverzekering digitaal aan mij verstrekt wordt. Ik ontvang deze bij mijn boekingsbevestiging.", YH = "Nee", QH = "Geen object gevonden voor deze combinatie van Portal-code en Object-code", KH = "Voor het afsluiten van een verzekering is een geboortedatum verplicht", JH = "Geen korting gevonden met ingegeven code", XH = "Kortingscode", ZH = "Minstens {minimum} nachten", e3 = "U kunt alleen een verzekering afsluiten, wanneer u woont in Nederland, Duitsland of België.", t3 = "Prijs vanaf", n3 = "Reviews", r3 = {
+  next: Pz,
+  previous: Tz,
+  view_details: kz,
+  price: Dz,
+  calculate: xz,
+  book: $z,
+  booked: Cz,
+  booking: Rz,
+  last_minute_discount: Az,
+  discount: Nz,
+  option: Iz,
+  choose_for_option: Mz,
+  included_in_price: Fz,
+  rent_price: Lz,
+  extra_costs_included: jz,
+  optional_costs: Bz,
+  price_after_discount: Vz,
+  booking_from_til: Uz,
+  total: qz,
+  stay_details: zz,
+  babies: Hz,
+  babies_from: Wz,
+  adults: Gz,
+  adults_from: Yz,
+  children: Qz,
+  children_from: Kz,
   "house.arrival_date": "Aankomstdatum",
   "house.departure_date": "Vertrekdatum",
   "house.arrival": "Aankomst",
   "house.departure": "Vertrek ",
-  extra_costs_bookable: Kz,
-  costs_on_site: Jz,
-  insurances: Xz,
-  at_least_1_adult: Zz,
-  max_persons_reached: eH,
-  personal_details: tH,
-  required: nH,
-  cancel_insurance_all_risk: rH,
-  cancel_insurance_normal: aH,
-  none: iH,
-  cancel_insurance: oH,
-  insurance_costs: sH,
-  choose: uH,
-  yes: lH,
-  booking_details: cH,
-  based_on_one_person: fH,
-  return_to_calendar: dH,
-  close: hH,
-  cancel_insurance_normal_long: pH,
-  cancel_insurance_normal_desc: mH,
-  cancel_insurance_all_risk_long: vH,
-  cancel_insurance_desc: yH,
-  cancel_insurance_all_risk_desc: gH,
-  terms_and_costs: bH,
-  costs_normal_cancel_insurance: _H,
-  costs_allrisk_cancel_insurance: wH,
+  extra_costs_bookable: Jz,
+  costs_on_site: Xz,
+  insurances: Zz,
+  at_least_1_adult: eH,
+  max_persons_reached: tH,
+  personal_details: nH,
+  required: rH,
+  cancel_insurance_all_risk: aH,
+  cancel_insurance_normal: iH,
+  none: oH,
+  cancel_insurance: sH,
+  insurance_costs: uH,
+  choose: lH,
+  yes: cH,
+  booking_details: fH,
+  based_on_one_person: dH,
+  return_to_calendar: hH,
+  close: pH,
+  cancel_insurance_normal_long: mH,
+  cancel_insurance_normal_desc: vH,
+  cancel_insurance_all_risk_long: yH,
+  cancel_insurance_desc: gH,
+  cancel_insurance_all_risk_desc: bH,
+  terms_and_costs: _H,
+  costs_normal_cancel_insurance: wH,
+  costs_allrisk_cancel_insurance: OH,
   "666_costs": "6.66% van de reissom",
   "847_costs": "8.47% van de reissom",
-  more_information: OH,
-  show_terms: SH,
-  terms: EH,
-  reviews_note_link: PH,
-  reviews_note: TH,
-  remark: kH,
+  more_information: SH,
+  show_terms: EH,
+  terms: PH,
+  reviews_note_link: TH,
+  reviews_note: kH,
+  remark: DH,
   "9persons_9addresses": "De verzekering keert uit voor maximaal 9 personen die op 9 verschillende adressen wonen,",
-  or: DH,
+  or: xH,
   "9persons_4addresses": "De verzekering keert uit voor een onbeperkt aantal personen die op maximaal 4 verschillende adressen wonen.",
-  poliscosts: xH,
-  poliscosts_are: $H,
-  youwillrecieve: CH,
-  thank_you_for_your_request: RH,
-  we_sent_confirmation_check_email: AH,
-  something_went_wrong_please_try_again: NH,
-  persons: IH,
-  bedrooms: MH,
-  minimum_week_price: FH,
-  no_results: LH,
-  agree_with: jH,
-  discount_reason: BH,
-  results: VH,
-  bathrooms: UH,
-  you_need_to_give_reason: qH,
+  poliscosts: $H,
+  poliscosts_are: CH,
+  youwillrecieve: RH,
+  thank_you_for_your_request: AH,
+  we_sent_confirmation_check_email: NH,
+  something_went_wrong_please_try_again: IH,
+  persons: MH,
+  bedrooms: FH,
+  minimum_week_price: LH,
+  no_results: jH,
+  agree_with: BH,
+  option_is_free: VH,
+  discount_reason: UH,
+  results: qH,
+  bathrooms: zH,
+  you_need_to_give_reason: HH,
   "camper.arrival_date": "Ophaaldatum",
   "camper.departure_date": "Inleverdatum",
   "camper.arrival": "Ophalen",
@@ -34990,8 +34996,8 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "tent.departure_date": "Vertrekdatum",
   "tent.arrival": "Aankomst",
   "tent.departure": "Vertrek ",
-  filters: zH,
-  comply_insurance_card: HH,
+  filters: WH,
+  comply_insurance_card: GH,
   "house.you_picked_arrival_date": "Uw aankomstdatum is",
   "house.pick_your_departure_in_the_calendar": "Kies een vertrekdatum",
   "house.you_picked_departure_date": "Uw vertrekdatum is",
@@ -35008,45 +35014,45 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "boat.pick_your_departure_in_the_calendar": "Kies een inleverdatum",
   "boat.you_picked_departure_date": "Uw inleverdatum is",
   "boat.pick_your_arrivaldate_in_the_calendar": "Kies een ophaaldatum",
-  no: WH,
-  no_house_found: GH,
-  insurance_company_needs_date_of_birth: YH,
+  no: YH,
+  no_house_found: QH,
+  insurance_company_needs_date_of_birth: KH,
   "extra_fields.date_of_birth": "Geboortedatum",
-  no_discount_code_found: QH,
-  discount_code: KH,
-  minimum_nights: JH,
-  can_only_take_insurance_in_de_be_nl: XH,
-  price_from: ZH,
-  reviews: e3
-}, n3 = "Nächste", r3 = "Vorherige", a3 = "Details anzeigen", i3 = "", o3 = "Preis", s3 = "Nächst", u3 = "Buchen", l3 = "Gebucht", c3 = "Buchung", f3 = "Last Minute Rabatt", d3 = "Option", h3 = "Machen Sie eine kostenlose Option", p3 = "inklusive", m3 = "Reisepreis", v3 = "Rabatt", y3 = "Nebenkosten enthalten", g3 = "Zusätzliche Optionen", b3 = "Mietpreis inkl. Rabatt", _3 = "Buchungsdaten", w3 = "Gesamt", O3 = "Reisegruppe", S3 = "Babys", E3 = "(bis einschl. {babies} Jahre)", P3 = "Erwachsene", T3 = "(ab {age} Jahre)", k3 = "Kinder", D3 = "(von {from} bis einschl. {til} Jahre)", x3 = "Zusätzliche Optionen", $3 = "Zusätzliche Kosten vor Ort:", C3 = "Versicherungen", R3 = "Wählen Sie mindestens einen Erwachsenen aus.", A3 = "Es wurden zu viele Personen ausgewählt.", N3 = "Ihre Daten", I3 = "Dieses Feld wird benötigt.", M3 = "Allrisk", F3 = "Standard", L3 = "Keine", j3 = "Reiserücktrittsversicherung", B3 = "Policekosten", V3 = "Wählen", U3 = "Ja", q3 = "Buchungsdetails", z3 = "Basierend auf {persons} Personen", H3 = "Zurück zum Kalender", W3 = "Schließen", G3 = "Standard-Reiserücktrittsversicherung", Y3 = "Mit der Standard-Reiserücktrittsversicherung sind Sie gut versichert, wenn Sie Ihre Reise stornieren müssen. Neben den Stornokosten sind auch die Kosten der ungenutzten Reisetage versichert. Sie können einen Teil Ihrer Reise nicht antreten, da Sie früher nach Hause müssen? Dann erhalten Sie eine Erstattung für jeden Urlaubstag, den Sie nicht genießen konnten.", Q3 = "Allrisk-Reiserücktrittsversicherung", K3 = "Es können sich leider Umstände ergeben, die einen dazu zwingen, den Urlaub abzusagen. Oder Sie müssen später anreisen oder früher wieder abreisen. Mit einer Reiserücktrittsversicherung müssen Sie nicht selbst für diese Kosten aufkommen. Nur Einwohner aus den Niederlanden, Belgien und Deutschland können die Versicherung abschließen. Sie haben die Wahl zwischen zwei Typen von Reiserücktrittsversicherungen:", J3 = `Bei der All-Risk-Reiserücktrittsversicherung werden Ihnen 100% der Stornierungskosten erstattet, wenn Sie aus einem normalen Grund stornieren, z. B. wegen einer Krankheit, die Sie am Reisen hindert. Oder der Tod eines Großelternteils. Möchten Sie aus einem anderen Grund stornieren, der Ihnen persönlich wichtig ist? Dann werden Ihnen 75% der Stornierungskosten erstattet.
- Aber Vorsicht: Diese Versicherung legt einige Bedingungen für die Stornierung fest. Zum Beispiel muss der Grund für die Stornierung 'unvorhergesehen' und 'unverschuldet' sein. Die Versicherung bietet daher keinen Versicherungsschutz für Stornierungsgründe, die Sie bereits vor Abschluss der Versicherung kannten (nicht unvorhergesehen) oder die Sie möglicherweise gegen sich selbst hätten tun können (nicht durch Ihr eigenes Verschulden). Konsultieren Sie die Bedingungen für die Ausnahmen.`, X3 = "Prämie und Bedingungen", Z3 = "Prämie Standard-Reiserücktrittsversicherung:", eW = "Prämie Allrisk-Reiserücktrittsversicherung:", tW = "Weitere Informationen:", nW = "Siehe Bedingungen", rW = "Terms", aW = "Anmerkung", iW = "oder", oW = "Police Kosten", sW = "Es gibt einmalig € 6,95 Police-Kosten für die Bearbeitung der Versicherungen. Egal ob Sie 1 oder mehrere Versicherungen abschließen.", uW = "Sie erhalten nach der Buchungsbestätigung im Anschluss an Ihre Buchung die Versicherungsbedingungen per E-Mail. Die Versicherung tritt mit der Ihrer Anzahlung in Kraft.", lW = "Vielen Dank für Ihre Buchungs/Options-Anfrage.", cW = "Eine Kopie Ihrer Anfrage wurde an Ihre E-Mail-Adresse gesendet. Wenn Sie keine E-Mail von uns erhalten haben, befindet sich diese möglicherweise in Ihrer Spam-Box.", fW = "Ups, es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.", dW = "Personen", hW = "Schlafzimmer", pW = "min. Wochenpreis", mW = "Keine Ergebnisse", vW = "Indem Sie auf 'Buchen' klicken, akzeptieren Sie die", yW = "Grund für Rabatt", gW = "Ergebnisse", bW = "Badezimmer", _W = "Sie müssen einen gültigen Rabattgrund angeben", wW = "Filter", OW = "Ich bin damit einverstanden, dass die Versicherungskarte der Reiserücktrittsversicherung digital ausgestellt wird. Ich erhalte diese mit meiner Buchungsbestätigung.", SW = "Nein", EW = "Für den Abschluss einer Versicherung wird ein Geburtsdatum benötigt", PW = "Kein Rabatt mit eingegebenem Code gefunden", TW = "Rabatt-Code", kW = "Mindestens {minimum} Nächte", DW = "Sie können sich nur versichern, wenn Sie in den Niederlanden, Deutschland oder Belgien wohnen.", xW = "Preis von", $W = "Bewertungen", CW = "Das BUKAZU Buchungssystem unterhält unabhängige Bewertungen. Diese Bewertungen werden nach dem Aufenthalt der Gäste in der Unterkunft gesammelt. Es gibt eine Überprüfung der Kombination von Buchungsnummer und E-Mail-Adresse.", RW = {
-  next: n3,
-  previous: r3,
-  view_details: a3,
-  reviews_note: i3,
-  price: o3,
-  calculate: s3,
-  book: u3,
-  booked: l3,
-  booking: c3,
-  last_minute_discount: f3,
-  option: d3,
-  choose_for_option: h3,
-  included_in_price: p3,
-  rent_price: m3,
-  discount: v3,
-  extra_costs_included: y3,
-  optional_costs: g3,
-  price_after_discount: b3,
-  booking_from_til: _3,
-  total: w3,
-  stay_details: O3,
-  babies: S3,
-  babies_from: E3,
-  adults: P3,
-  adults_from: T3,
-  children: k3,
-  children_from: D3,
+  no_discount_code_found: JH,
+  discount_code: XH,
+  minimum_nights: ZH,
+  can_only_take_insurance_in_de_be_nl: e3,
+  price_from: t3,
+  reviews: n3
+}, a3 = "Nächste", i3 = "Vorherige", o3 = "Details anzeigen", s3 = "", u3 = "Preis", l3 = "Nächst", c3 = "Buchen", f3 = "Gebucht", d3 = "Buchung", h3 = "Last Minute Rabatt", p3 = "Option", m3 = "Machen Sie eine kostenlose Option", v3 = "inklusive", y3 = "Reisepreis", g3 = "Rabatt", b3 = "Nebenkosten enthalten", _3 = "Zusätzliche Optionen", w3 = "Mietpreis inkl. Rabatt", O3 = "Buchungsdaten", S3 = "Gesamt", E3 = "Reisegruppe", P3 = "Babys", T3 = "(bis einschl. {babies} Jahre)", k3 = "Erwachsene", D3 = "(ab {age} Jahre)", x3 = "Kinder", $3 = "(von {from} bis einschl. {til} Jahre)", C3 = "Zusätzliche Optionen", R3 = "Zusätzliche Kosten vor Ort:", A3 = "Versicherungen", N3 = "Wählen Sie mindestens einen Erwachsenen aus.", I3 = "Es wurden zu viele Personen ausgewählt.", M3 = "Ihre Daten", F3 = "Dieses Feld wird benötigt.", L3 = "Allrisk", j3 = "Standard", B3 = "Keine", V3 = "Reiserücktrittsversicherung", U3 = "Policekosten", q3 = "Wählen", z3 = "Ja", H3 = "Buchungsdetails", W3 = "Basierend auf {persons} Personen", G3 = "Zurück zum Kalender", Y3 = "Schließen", Q3 = "Standard-Reiserücktrittsversicherung", K3 = "Mit der Standard-Reiserücktrittsversicherung sind Sie gut versichert, wenn Sie Ihre Reise stornieren müssen. Neben den Stornokosten sind auch die Kosten der ungenutzten Reisetage versichert. Sie können einen Teil Ihrer Reise nicht antreten, da Sie früher nach Hause müssen? Dann erhalten Sie eine Erstattung für jeden Urlaubstag, den Sie nicht genießen konnten.", J3 = "Allrisk-Reiserücktrittsversicherung", X3 = "Es können sich leider Umstände ergeben, die einen dazu zwingen, den Urlaub abzusagen. Oder Sie müssen später anreisen oder früher wieder abreisen. Mit einer Reiserücktrittsversicherung müssen Sie nicht selbst für diese Kosten aufkommen. Nur Einwohner aus den Niederlanden, Belgien und Deutschland können die Versicherung abschließen. Sie haben die Wahl zwischen zwei Typen von Reiserücktrittsversicherungen:", Z3 = `Bei der All-Risk-Reiserücktrittsversicherung werden Ihnen 100% der Stornierungskosten erstattet, wenn Sie aus einem normalen Grund stornieren, z. B. wegen einer Krankheit, die Sie am Reisen hindert. Oder der Tod eines Großelternteils. Möchten Sie aus einem anderen Grund stornieren, der Ihnen persönlich wichtig ist? Dann werden Ihnen 75% der Stornierungskosten erstattet.
+ Aber Vorsicht: Diese Versicherung legt einige Bedingungen für die Stornierung fest. Zum Beispiel muss der Grund für die Stornierung 'unvorhergesehen' und 'unverschuldet' sein. Die Versicherung bietet daher keinen Versicherungsschutz für Stornierungsgründe, die Sie bereits vor Abschluss der Versicherung kannten (nicht unvorhergesehen) oder die Sie möglicherweise gegen sich selbst hätten tun können (nicht durch Ihr eigenes Verschulden). Konsultieren Sie die Bedingungen für die Ausnahmen.`, eW = "Prämie und Bedingungen", tW = "Prämie Standard-Reiserücktrittsversicherung:", nW = "Prämie Allrisk-Reiserücktrittsversicherung:", rW = "Weitere Informationen:", aW = "Siehe Bedingungen", iW = "Terms", oW = "Anmerkung", sW = "oder", uW = "Police Kosten", lW = "Es gibt einmalig € 6,95 Police-Kosten für die Bearbeitung der Versicherungen. Egal ob Sie 1 oder mehrere Versicherungen abschließen.", cW = "Sie erhalten nach der Buchungsbestätigung im Anschluss an Ihre Buchung die Versicherungsbedingungen per E-Mail. Die Versicherung tritt mit der Ihrer Anzahlung in Kraft.", fW = "Vielen Dank für Ihre Buchungs/Options-Anfrage.", dW = "Eine Kopie Ihrer Anfrage wurde an Ihre E-Mail-Adresse gesendet. Wenn Sie keine E-Mail von uns erhalten haben, befindet sich diese möglicherweise in Ihrer Spam-Box.", hW = "Ups, es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.", pW = "Personen", mW = "Schlafzimmer", vW = "min. Wochenpreis", yW = "Keine Ergebnisse", gW = 'Wenn ich auf "Buchen" klicke, entsteht eine Zahlungsverpflichtung, wenn meine Buchung akzeptiert wird. Ich erkläre mich mit den', bW = "Eine Option ist kostenlos und unverbindlich.", _W = "Grund für Rabatt", wW = "Ergebnisse", OW = "Badezimmer", SW = "Sie müssen einen gültigen Rabattgrund angeben", EW = "Filter", PW = "Ich bin damit einverstanden, dass die Versicherungskarte der Reiserücktrittsversicherung digital ausgestellt wird. Ich erhalte diese mit meiner Buchungsbestätigung.", TW = "Nein", kW = "Für den Abschluss einer Versicherung wird ein Geburtsdatum benötigt", DW = "Kein Rabatt mit eingegebenem Code gefunden", xW = "Rabatt-Code", $W = "Mindestens {minimum} Nächte", CW = "Sie können sich nur versichern, wenn Sie in den Niederlanden, Deutschland oder Belgien wohnen.", RW = "Preis von", AW = "Bewertungen", NW = "Das BUKAZU Buchungssystem unterhält unabhängige Bewertungen. Diese Bewertungen werden nach dem Aufenthalt der Gäste in der Unterkunft gesammelt. Es gibt eine Überprüfung der Kombination von Buchungsnummer und E-Mail-Adresse.", IW = {
+  next: a3,
+  previous: i3,
+  view_details: o3,
+  reviews_note: s3,
+  price: u3,
+  calculate: l3,
+  book: c3,
+  booked: f3,
+  booking: d3,
+  last_minute_discount: h3,
+  option: p3,
+  choose_for_option: m3,
+  included_in_price: v3,
+  rent_price: y3,
+  discount: g3,
+  extra_costs_included: b3,
+  optional_costs: _3,
+  price_after_discount: w3,
+  booking_from_til: O3,
+  total: S3,
+  stay_details: E3,
+  babies: P3,
+  babies_from: T3,
+  adults: k3,
+  adults_from: D3,
+  children: x3,
+  children_from: $3,
   "house.arrival_date": "Anreisedatum",
   "house.departure_date": "Abreisedatum",
   "house.arrival": "Ankunft",
@@ -35055,56 +35061,57 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "tent.departure_date": "Abreisedatum",
   "tent.arrival": "Ankunft",
   "tent.departure": "Abreise",
-  extra_costs_bookable: x3,
-  costs_on_site: $3,
-  insurances: C3,
-  at_least_1_adult: R3,
-  max_persons_reached: A3,
-  personal_details: N3,
-  required: I3,
-  cancel_insurance_all_risk: M3,
-  cancel_insurance_normal: F3,
-  none: L3,
-  cancel_insurance: j3,
-  insurance_costs: B3,
-  choose: V3,
-  yes: U3,
-  booking_details: q3,
-  based_on_one_person: z3,
-  return_to_calendar: H3,
-  close: W3,
-  cancel_insurance_normal_long: G3,
-  cancel_insurance_normal_desc: Y3,
-  cancel_insurance_all_risk_long: Q3,
-  cancel_insurance_desc: K3,
-  cancel_insurance_all_risk_desc: J3,
-  terms_and_costs: X3,
-  costs_normal_cancel_insurance: Z3,
-  costs_allrisk_cancel_insurance: eW,
+  extra_costs_bookable: C3,
+  costs_on_site: R3,
+  insurances: A3,
+  at_least_1_adult: N3,
+  max_persons_reached: I3,
+  personal_details: M3,
+  required: F3,
+  cancel_insurance_all_risk: L3,
+  cancel_insurance_normal: j3,
+  none: B3,
+  cancel_insurance: V3,
+  insurance_costs: U3,
+  choose: q3,
+  yes: z3,
+  booking_details: H3,
+  based_on_one_person: W3,
+  return_to_calendar: G3,
+  close: Y3,
+  cancel_insurance_normal_long: Q3,
+  cancel_insurance_normal_desc: K3,
+  cancel_insurance_all_risk_long: J3,
+  cancel_insurance_desc: X3,
+  cancel_insurance_all_risk_desc: Z3,
+  terms_and_costs: eW,
+  costs_normal_cancel_insurance: tW,
+  costs_allrisk_cancel_insurance: nW,
   "666_costs": "6.66% der Reisekosten",
   "847_costs": "8.47% der Reisekosten",
-  more_information: tW,
-  show_terms: nW,
-  terms: rW,
-  remark: aW,
+  more_information: rW,
+  show_terms: aW,
+  terms: iW,
+  remark: oW,
   "9persons_9addresses": "Die Versicherung ist gültig für maximal 9 Personen, die am 9 verschiedene Adressen wohnen,",
-  or: iW,
+  or: sW,
   "9persons_4addresses": "Die Versicherung ist gültig für eine unbegrenzte Anzahl von Personen, die an maximal 4 verschiedenen Adressen wohnen.",
-  poliscosts: oW,
-  poliscosts_are: sW,
-  youwillrecieve: uW,
-  thank_you_for_your_request: lW,
-  we_sent_confirmation_check_email: cW,
-  something_went_wrong_please_try_again: fW,
-  persons: dW,
-  bedrooms: hW,
-  minimum_week_price: pW,
-  no_results: mW,
-  agree_with: vW,
-  discount_reason: yW,
-  results: gW,
-  bathrooms: bW,
-  you_need_to_give_reason: _W,
+  poliscosts: uW,
+  poliscosts_are: lW,
+  youwillrecieve: cW,
+  thank_you_for_your_request: fW,
+  we_sent_confirmation_check_email: dW,
+  something_went_wrong_please_try_again: hW,
+  persons: pW,
+  bedrooms: mW,
+  minimum_week_price: vW,
+  no_results: yW,
+  agree_with: gW,
+  option_is_free: bW,
+  discount_reason: _W,
+  results: wW,
+  bathrooms: OW,
+  you_need_to_give_reason: SW,
   "camper.arrival_date": "Abholdatum",
   "camper.departure_date": "Rückgabedatum",
   "camper.arrival": "Abholen",
@@ -35117,8 +35124,8 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "caravan.departure_date": "Abreisedatum",
   "caravan.arrival": "Ankunft",
   "caravan.departure": "Abreise",
-  filters: wW,
-  comply_insurance_card: OW,
+  filters: EW,
+  comply_insurance_card: PW,
   "house.you_picked_arrival_date": "Ihre Ankunft ist",
   "house.pick_your_departure_in_the_calendar": "Wählen Sie ein Abreisedatum",
   "house.you_picked_departure_date": "Ihr Abreisedatum ist",
@@ -35135,43 +35142,43 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "boat.pick_your_departure_in_the_calendar": "Wählen Sie ein Rückgabedatum",
   "boat.you_picked_departure_date": "Ihr Rückgabedatum ist",
   "boat.pick_your_arrivaldate_in_the_calendar": "Wählen Sie einen Abholtermin",
-  no: SW,
-  insurance_company_needs_date_of_birth: EW,
+  no: TW,
+  insurance_company_needs_date_of_birth: kW,
   "extra_fields.date_of_birth": "Geburtsdatum",
-  no_discount_code_found: PW,
-  discount_code: TW,
-  minimum_nights: kW,
-  can_only_take_insurance_in_de_be_nl: DW,
-  price_from: xW,
-  reviews: $W,
-  reviews_note_link: CW
-}, AW = "Suivant", NW = "Précédent", IW = "Voir les détails", MW = "Prix", FW = "Suivante", LW = "Réserver", jW = "Réservé", BW = "Réservation", VW = "Réduction de dernière minute", UW = "Option", qW = "Prendre une option pour cette période", zW = "frais", HW = "Prix de location", WW = "Réduction", GW = "Frais supplémentaires inclus", YW = "Options supplémentaires", QW = "Prix de location incl.", KW = "Dates de réservation", JW = "Total", XW = "Composition du groupe", ZW = "Nombre de bébés", e4 = "(jusqu'a {babies} ans)", t4 = "Nombre d'adults", n4 = "(à partir de {age} ans)", r4 = "Nombre d'enfants", a4 = "(de {from} à {til} ans)", i4 = "Options supplémentaires", o4 = "Frais supplémentaires sur place:", s4 = "Insurances", u4 = "Choisissez au moins 1 adulte.", l4 = "Trop de personnes ont été sélectionnées.", c4 = "Vos données", f4 = "Ce champ est requis.", d4 = "All Risk", h4 = "Standard", p4 = "None", m4 = "Cancellation insurance", v4 = "Insurance Costs", y4 = "Choose", g4 = "Yes", b4 = "Détails de la réservation", _4 = "Base {persons} personnes", w4 = "Retour au calendrier", O4 = "Fermer", S4 = "Standard Cancellation Insurance", E4 = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", P4 = "All Risk Cancellation Insurance", T4 = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", k4 = "With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs. But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.", D4 = "Premiums and Conditions", x4 = "Standard Cancellation Insurance Premium:", $4 = "All Risk Cancellation Insurance Premium:", C4 = "More information:", R4 = "Show conditions", A4 = "Terms", N4 = "Remarque", I4 = "or", M4 = "Policy fee", F4 = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", L4 = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", j4 = "Merci beaucoup pour votre demande.", B4 = "Une copie de votre demande a été envoyée à votre adresse e-mail. Si vous n'avez pas reçu de courrier de notre part, il se peut qu'il soit dans votre boîte de courrier indésirable.", V4 = "Oups, quelque chose s'est mal passé, veuillez réessayer plus tard.", U4 = "les gens", q4 = "chambres a coucher", z4 = "min. prix hebdomadaire", H4 = "Aucun résultat", W4 = "En cliquant maintenant sur 'Réserver', vous adhérez aux", G4 = "Raison réduction.", Y4 = "résultats", Q4 = "salle de bain", K4 = "Debe indicar un motivo de descuento válido.", J4 = "Les filtres", X4 = "Je conviens que la carte d’assurance annulation me sera délivrée numériquement. Je reçois ceci avec ma confirmation de réservation.", Z4 = "Non", eG = "Au moins {minimum} nuits", tG = "Vous ne pouvez souscrire une assurance que si vous résidez aux Pays-Bas, en Allemagne ou en Belgique.", nG = "Le prix de", rG = "Critiques", aG = "Le système de réservation BUKAZU conserve des avis indépendants. Ces avis sont recueillis après que les clients ont séjourné dans le logement. La combinaison du numéro de réservation et de l'adresse électronique est vérifiée.", iG = {
-  next: AW,
-  previous: NW,
-  view_details: IW,
-  price: MW,
-  calculate: FW,
-  book: LW,
-  booked: jW,
-  booking: BW,
-  last_minute_discount: VW,
-  option: UW,
-  choose_for_option: qW,
-  included_in_price: zW,
-  rent_price: HW,
-  discount: WW,
-  extra_costs_included: GW,
-  optional_costs: YW,
-  price_after_discount: QW,
-  booking_from_til: KW,
-  total: JW,
-  stay_details: XW,
-  babies: ZW,
-  babies_from: e4,
-  adults: t4,
-  adults_from: n4,
-  children: r4,
-  children_from: a4,
+  no_discount_code_found: DW,
+  discount_code: xW,
+  minimum_nights: $W,
+  can_only_take_insurance_in_de_be_nl: CW,
+  price_from: RW,
+  reviews: AW,
+  reviews_note_link: NW
+}, MW = "Suivant", FW = "Précédent", LW = "Voir les détails", jW = "Prix", BW = "Suivante", VW = "Réserver", UW = "Réservé", qW = "Réservation", zW = "Réduction de dernière minute", HW = "Option", WW = "Prendre une option pour cette période", GW = "frais", YW = "Prix de location", QW = "Réduction", KW = "Frais supplémentaires inclus", JW = "Options supplémentaires", XW = "Prix de location incl.", ZW = "Dates de réservation", e4 = "Total", t4 = "Composition du groupe", n4 = "Nombre de bébés", r4 = "(jusqu'a {babies} ans)", a4 = "Nombre d'adults", i4 = "(à partir de {age} ans)", o4 = "Nombre d'enfants", s4 = "(de {from} à {til} ans)", u4 = "Options supplémentaires", l4 = "Frais supplémentaires sur place:", c4 = "Insurances", f4 = "Choisissez au moins 1 adulte.", d4 = "Trop de personnes ont été sélectionnées.", h4 = "Vos données", p4 = "Ce champ est requis.", m4 = "All Risk", v4 = "Standard", y4 = "None", g4 = "Cancellation insurance", b4 = "Insurance Costs", _4 = "Choose", w4 = "Yes", O4 = "Détails de la réservation", S4 = "Base {persons} personnes", E4 = "Retour au calendrier", P4 = "Fermer", T4 = "Standard Cancellation Insurance", k4 = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", D4 = "All Risk Cancellation Insurance", x4 = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", $4 = "With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs. But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.", C4 = "Premiums and Conditions", R4 = "Standard Cancellation Insurance Premium:", A4 = "All Risk Cancellation Insurance Premium:", N4 = "More information:", I4 = "Show conditions", M4 = "Terms", F4 = "Remarque", L4 = "or", j4 = "Policy fee", B4 = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", V4 = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", U4 = "Merci beaucoup pour votre demande.", q4 = "Une copie de votre demande a été envoyée à votre adresse e-mail. Si vous n'avez pas reçu de courrier de notre part, il se peut qu'il soit dans votre boîte de courrier indésirable.", z4 = "Oups, quelque chose s'est mal passé, veuillez réessayer plus tard.", H4 = "les gens", W4 = "chambres a coucher", G4 = "min. prix hebdomadaire", Y4 = "Aucun résultat", Q4 = `ELe fait de cliquer sur "Réserver" crée une obligation de paiement lorsque ma réservation est acceptée. J'accepte`, K4 = "Une option est gratuite et sans engagement.", J4 = "Raison réduction.", X4 = "résultats", Z4 = "salle de bain", eG = "Debe indicar un motivo de descuento válido.", tG = "Les filtres", nG = "Je conviens que la carte d’assurance annulation me sera délivrée numériquement. Je reçois ceci avec ma confirmation de réservation.", rG = "Non", aG = "Au moins {minimum} nuits", iG = "Vous ne pouvez souscrire une assurance que si vous résidez aux Pays-Bas, en Allemagne ou en Belgique.", oG = "Le prix de", sG = "Critiques", uG = "Le système de réservation BUKAZU conserve des avis indépendants. Ces avis sont recueillis après que les clients ont séjourné dans le logement. La combinaison du numéro de réservation et de l'adresse électronique est vérifiée.", lG = {
+  next: MW,
+  previous: FW,
+  view_details: LW,
+  price: jW,
+  calculate: BW,
+  book: VW,
+  booked: UW,
+  booking: qW,
+  last_minute_discount: zW,
+  option: HW,
+  choose_for_option: WW,
+  included_in_price: GW,
+  rent_price: YW,
+  discount: QW,
+  extra_costs_included: KW,
+  optional_costs: JW,
+  price_after_discount: XW,
+  booking_from_til: ZW,
+  total: e4,
+  stay_details: t4,
+  babies: n4,
+  babies_from: r4,
+  adults: a4,
+  adults_from: i4,
+  children: o4,
+  children_from: s4,
   "house.arrival_date": "Date d'arrivée",
   "house.departure_date": "Date de départ",
   "house.arrival": "Arrivée",
@@ -35180,56 +35187,57 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "tent.departure_date": "Date de départ",
   "tent.arrival": "Arrivée",
   "tent.departure": "Départ",
-  extra_costs_bookable: i4,
-  costs_on_site: o4,
-  insurances: s4,
-  at_least_1_adult: u4,
-  max_persons_reached: l4,
-  personal_details: c4,
-  required: f4,
-  cancel_insurance_all_risk: d4,
-  cancel_insurance_normal: h4,
-  none: p4,
-  cancel_insurance: m4,
-  insurance_costs: v4,
-  choose: y4,
-  yes: g4,
-  booking_details: b4,
-  based_on_one_person: _4,
-  return_to_calendar: w4,
-  close: O4,
-  cancel_insurance_normal_long: S4,
-  cancel_insurance_normal_desc: E4,
-  cancel_insurance_all_risk_long: P4,
-  cancel_insurance_desc: T4,
-  cancel_insurance_all_risk_desc: k4,
-  terms_and_costs: D4,
-  costs_normal_cancel_insurance: x4,
-  costs_allrisk_cancel_insurance: $4,
+  extra_costs_bookable: u4,
+  costs_on_site: l4,
+  insurances: c4,
+  at_least_1_adult: f4,
+  max_persons_reached: d4,
+  personal_details: h4,
+  required: p4,
+  cancel_insurance_all_risk: m4,
+  cancel_insurance_normal: v4,
+  none: y4,
+  cancel_insurance: g4,
+  insurance_costs: b4,
+  choose: _4,
+  yes: w4,
+  booking_details: O4,
+  based_on_one_person: S4,
+  return_to_calendar: E4,
+  close: P4,
+  cancel_insurance_normal_long: T4,
+  cancel_insurance_normal_desc: k4,
+  cancel_insurance_all_risk_long: D4,
+  cancel_insurance_desc: x4,
+  cancel_insurance_all_risk_desc: $4,
+  terms_and_costs: C4,
+  costs_normal_cancel_insurance: R4,
+  costs_allrisk_cancel_insurance: A4,
   "666_costs": "6.66% of the travel costs",
   "847_costs": "8.47% of the travel costs",
-  more_information: C4,
-  show_terms: R4,
-  terms: A4,
-  remark: N4,
+  more_information: N4,
+  show_terms: I4,
+  terms: M4,
+  remark: F4,
   "9persons_9addresses": "The Insurance will pay for up to 9 persons, who live at 9 different addresses,",
-  or: I4,
+  or: L4,
   "9persons_4addresses": "The insurance pays out for an unlimited number of people who live at a maximum of 4 different addresses.",
-  poliscosts: M4,
-  poliscosts_are: F4,
-  youwillrecieve: L4,
-  thank_you_for_your_request: j4,
-  we_sent_confirmation_check_email: B4,
-  something_went_wrong_please_try_again: V4,
-  persons: U4,
-  bedrooms: q4,
-  minimum_week_price: z4,
-  no_results: H4,
-  agree_with: W4,
-  discount_reason: G4,
-  results: Y4,
-  bathrooms: Q4,
-  you_need_to_give_reason: K4,
+  poliscosts: j4,
+  poliscosts_are: B4,
+  youwillrecieve: V4,
+  thank_you_for_your_request: U4,
+  we_sent_confirmation_check_email: q4,
+  something_went_wrong_please_try_again: z4,
+  persons: H4,
+  bedrooms: W4,
+  minimum_week_price: G4,
+  no_results: Y4,
+  agree_with: Q4,
+  option_is_free: K4,
+  discount_reason: J4,
+  results: X4,
+  bathrooms: Z4,
+  you_need_to_give_reason: eG,
   "camper.arrival_date": "Date de collecte",
   "camper.departure_date": "Date de retour",
   "camper.arrival": "Ramasser",
@@ -35242,8 +35250,8 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "caravan.departure_date": "Date de départ",
   "caravan.arrival": "Arrivée",
   "caravan.departure": "Départ",
-  filters: J4,
-  comply_insurance_card: X4,
+  filters: tG,
+  comply_insurance_card: nG,
   "house.you_picked_arrival_date": "Votre date d'arrivée est",
   "house.pick_your_departure_in_the_calendar": "Sélectionnez une date de départ",
   "house.you_picked_departure_date": "Votre date de départ est",
@@ -35260,39 +35268,39 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "boat.pick_your_departure_in_the_calendar": "Select a return date",
   "boat.you_picked_departure_date": "Your return date is",
   "boat.pick_your_arrivaldate_in_the_calendar": "Choose a pickup date",
-  no: Z4,
-  minimum_nights: eG,
-  can_only_take_insurance_in_de_be_nl: tG,
-  price_from: nG,
-  reviews: rG,
-  reviews_note_link: aG
-}, oG = "Siguiente", sG = "Anterior", uG = "Ver detalles", lG = "Precio", cG = "Próximo", fG = "Reservar", dG = "Reservado", hG = "Reserva", pG = "Descuento de ultimo minuto", mG = "Opción", vG = "Tome una opción para este período", yG = "Incluido", gG = "Precio de alquiler", bG = "Reducción", _G = "Costes extras incluidos", wG = "Opciones extra", OG = "Precio de alquiler con descuento.", SG = "Fechas de reserva", EG = "Total", PG = "Grupo de viaje", TG = "Numero de bebes", kG = "(hasta {babies} años)", DG = "Numero de adultos", xG = "(a partir de {age} años)", $G = "Numero de niños", CG = "(de {from} a {til} años)", RG = "Opciones extra", AG = "Costos adicionales en el lugar:", NG = "Insurances", IG = "Elige al menos 1 adulto.", MG = "Demasiadas personas han sido seleccionadas.", FG = "Tus datos", LG = "Este campo es requerido.", jG = "All Risk", BG = "Standard", VG = "None", UG = "Cancellation insurance", qG = "Insurance Costs", zG = "Choose", HG = "Yes", WG = "Detalles de la reserva", GG = "Basado en {persons} personas", YG = "Volver al calendario", QG = "Cerrar", KG = "Standard Cancellation Insurance", JG = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", XG = "All Risk Cancellation Insurance", ZG = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", e5 = "With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs. But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.", t5 = "Premiums and Conditions", n5 = "Standard Cancellation Insurance Premium:", r5 = "All Risk Cancellation Insurance Premium:", a5 = "More information:", i5 = "Show conditions", o5 = "Terms", s5 = "Observación", u5 = "or", l5 = "Policy fee", c5 = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", f5 = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", d5 = "Muchas gracias por su solicitud.", h5 = "Se ha enviado una copia de su solicitud a su dirección de correo electrónico. Si no ha recibido ningún correo de nuestra parte, es posible que esté en su buzón de correo no deseado.", p5 = "Vaya, algo salió mal, inténtalo de nuevo más tarde.", m5 = "personas", v5 = "dormitorios", y5 = "min. precio semanal", g5 = "Sin resultados", b5 = "Al hacer clic en ‘Reservar’, acepta los Términos y condiciones", _5 = "Razón de descuento.", w5 = "resultados", O5 = "baños", S5 = "Vous devez indiquer un motif de réduction valide", E5 = "Filtros", P5 = "Estoy de acuerdo en que la tarjeta de seguro de cancelación será emitida digitalmente para mí. Recibo esto con mi confirmación de reserva.", T5 = "No", k5 = "Al menos {minimum} noches", D5 = "Solo puede contratar un seguro si vive en los Países Bajos, Alemania o Bélgica.", x5 = "Precio de", $5 = "Comentarios", C5 = "BUKAZU Booking System mantiene opiniones independientes. Estas opiniones se recogen después de la estancia de los huéspedes en el alojamiento. Se verifica la combinación del número de reserva y la dirección de correo electrónico.", R5 = {
-  next: oG,
-  previous: sG,
-  view_details: uG,
-  price: lG,
-  calculate: cG,
-  book: fG,
-  booked: dG,
-  booking: hG,
-  last_minute_discount: pG,
-  option: mG,
-  choose_for_option: vG,
-  included_in_price: yG,
-  rent_price: gG,
-  discount: bG,
-  extra_costs_included: _G,
-  optional_costs: wG,
-  price_after_discount: OG,
-  booking_from_til: SG,
-  total: EG,
-  stay_details: PG,
-  babies: TG,
-  babies_from: kG,
-  adults: DG,
-  adults_from: xG,
-  children: $G,
-  children_from: CG,
+  no: rG,
+  minimum_nights: aG,
+  can_only_take_insurance_in_de_be_nl: iG,
+  price_from: oG,
+  reviews: sG,
+  reviews_note_link: uG
+}, cG = "Siguiente", fG = "Anterior", dG = "Ver detalles", hG = "Precio", pG = "Próximo", mG = "Reservar", vG = "Reservado", yG = "Reserva", gG = "Descuento de ultimo minuto", bG = "Opción", _G = "Tome una opción para este período", wG = "Incluido", OG = "Precio de alquiler", SG = "Reducción", EG = "Costes extras incluidos", PG = "Opciones extra", TG = "Precio de alquiler con descuento.", kG = "Fechas de reserva", DG = "Total", xG = "Grupo de viaje", $G = "Numero de bebes", CG = "(hasta {babies} años)", RG = "Numero de adultos", AG = "(a partir de {age} años)", NG = "Numero de niños", IG = "(de {from} a {til} años)", MG = "Opciones extra", FG = "Costos adicionales en el lugar:", LG = "Insurances", jG = "Elige al menos 1 adulto.", BG = "Demasiadas personas han sido seleccionadas.", VG = "Tus datos", UG = "Este campo es requerido.", qG = "All Risk", zG = "Standard", HG = "None", WG = "Cancellation insurance", GG = "Insurance Costs", YG = "Choose", QG = "Yes", KG = "Detalles de la reserva", JG = "Basado en {persons} personas", XG = "Volver al calendario", ZG = "Cerrar", e5 = "Standard Cancellation Insurance", t5 = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", n5 = "All Risk Cancellation Insurance", r5 = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", a5 = "With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs. But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.", i5 = "Premiums and Conditions", o5 = "Standard Cancellation Insurance Premium:", s5 = "All Risk Cancellation Insurance Premium:", u5 = "More information:", l5 = "Show conditions", c5 = "Terms", f5 = "Observación", d5 = "or", h5 = "Policy fee", p5 = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", m5 = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", v5 = "Muchas gracias por su solicitud.", y5 = "Se ha enviado una copia de su solicitud a su dirección de correo electrónico. Si no ha recibido ningún correo de nuestra parte, es posible que esté en su buzón de correo no deseado.", g5 = "Vaya, algo salió mal, inténtalo de nuevo más tarde.", b5 = "personas", _5 = "dormitorios", w5 = "min. precio semanal", O5 = "Sin resultados", S5 = 'Al hacer clic en "Reservar" se crea una obligación de pago cuando se acepta mi reserva. Acepto ', E5 = "Esta opción es gratuita", P5 = "Razón de descuento.", T5 = "resultados", k5 = "baños", D5 = "Vous devez indiquer un motif de réduction valide", x5 = "Filtros", $5 = "Estoy de acuerdo en que la tarjeta de seguro de cancelación será emitida digitalmente para mí. Recibo esto con mi confirmación de reserva.", C5 = "No", R5 = "Al menos {minimum} noches", A5 = "Solo puede contratar un seguro si vive en los Países Bajos, Alemania o Bélgica.", N5 = "Precio de", I5 = "Comentarios", M5 = "BUKAZU Booking System mantiene opiniones independientes. Estas opiniones se recogen después de la estancia de los huéspedes en el alojamiento. Se verifica la combinación del número de reserva y la dirección de correo electrónico.", F5 = {
+  next: cG,
+  previous: fG,
+  view_details: dG,
+  price: hG,
+  calculate: pG,
+  book: mG,
+  booked: vG,
+  booking: yG,
+  last_minute_discount: gG,
+  option: bG,
+  choose_for_option: _G,
+  included_in_price: wG,
+  rent_price: OG,
+  discount: SG,
+  extra_costs_included: EG,
+  optional_costs: PG,
+  price_after_discount: TG,
+  booking_from_til: kG,
+  total: DG,
+  stay_details: xG,
+  babies: $G,
+  babies_from: CG,
+  adults: RG,
+  adults_from: AG,
+  children: NG,
+  children_from: IG,
   "house.arrival_date": "Fecha de llegada",
   "house.departure_date": "Fecha de salida",
   "house.arrival": "llegada",
@@ -35301,56 +35309,57 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "tent.departure_date": "Fecha de salida",
   "tent.arrival": "llegada",
   "tent.departure": "Salida",
-  extra_costs_bookable: RG,
-  costs_on_site: AG,
-  insurances: NG,
-  at_least_1_adult: IG,
-  max_persons_reached: MG,
-  personal_details: FG,
-  required: LG,
-  cancel_insurance_all_risk: jG,
-  cancel_insurance_normal: BG,
-  none: VG,
-  cancel_insurance: UG,
-  insurance_costs: qG,
-  choose: zG,
-  yes: HG,
-  booking_details: WG,
-  based_on_one_person: GG,
-  return_to_calendar: YG,
-  close: QG,
-  cancel_insurance_normal_long: KG,
-  cancel_insurance_normal_desc: JG,
-  cancel_insurance_all_risk_long: XG,
-  cancel_insurance_desc: ZG,
-  cancel_insurance_all_risk_desc: e5,
-  terms_and_costs: t5,
-  costs_normal_cancel_insurance: n5,
-  costs_allrisk_cancel_insurance: r5,
+  extra_costs_bookable: MG,
+  costs_on_site: FG,
+  insurances: LG,
+  at_least_1_adult: jG,
+  max_persons_reached: BG,
+  personal_details: VG,
+  required: UG,
+  cancel_insurance_all_risk: qG,
+  cancel_insurance_normal: zG,
+  none: HG,
+  cancel_insurance: WG,
+  insurance_costs: GG,
+  choose: YG,
+  yes: QG,
+  booking_details: KG,
+  based_on_one_person: JG,
+  return_to_calendar: XG,
+  close: ZG,
+  cancel_insurance_normal_long: e5,
+  cancel_insurance_normal_desc: t5,
+  cancel_insurance_all_risk_long: n5,
+  cancel_insurance_desc: r5,
+  cancel_insurance_all_risk_desc: a5,
+  terms_and_costs: i5,
+  costs_normal_cancel_insurance: o5,
+  costs_allrisk_cancel_insurance: s5,
   "666_costs": "6.66% of the travel costs",
   "847_costs": "8.47% of the travel costs",
-  more_information: a5,
-  show_terms: i5,
-  terms: o5,
-  remark: s5,
+  more_information: u5,
+  show_terms: l5,
+  terms: c5,
+  remark: f5,
   "9persons_9addresses": "The Insurance will pay for up to 9 persons, who live at 9 different addresses,",
-  or: u5,
+  or: d5,
   "9persons_4addresses": "The insurance pays out for an unlimited number of people who live at a maximum of 4 different addresses.",
-  poliscosts: l5,
-  poliscosts_are: c5,
-  youwillrecieve: f5,
-  thank_you_for_your_request: d5,
-  we_sent_confirmation_check_email: h5,
-  something_went_wrong_please_try_again: p5,
-  persons: m5,
-  bedrooms: v5,
-  minimum_week_price: y5,
-  no_results: g5,
-  agree_with: b5,
-  discount_reason: _5,
-  results: w5,
-  bathrooms: O5,
-  you_need_to_give_reason: S5,
+  poliscosts: h5,
+  poliscosts_are: p5,
+  youwillrecieve: m5,
+  thank_you_for_your_request: v5,
+  we_sent_confirmation_check_email: y5,
+  something_went_wrong_please_try_again: g5,
+  persons: b5,
+  bedrooms: _5,
+  minimum_week_price: w5,
+  no_results: O5,
+  agree_with: S5,
+  option_is_free: E5,
+  discount_reason: P5,
+  results: T5,
+  bathrooms: k5,
+  you_need_to_give_reason: D5,
   "camper.arrival_date": "Fecha de recogida",
   "camper.departure_date": "Fecha de regreso",
   "camper.arrival": "Recoger",
@@ -35363,8 +35372,8 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "caravan.departure_date": "Fecha de salida",
   "caravan.arrival": "llegada",
   "caravan.departure": "Salida",
-  filters: E5,
-  comply_insurance_card: P5,
+  filters: x5,
+  comply_insurance_card: $5,
   "house.you_picked_arrival_date": "Su fecha de llegada es",
   "house.pick_your_departure_in_the_calendar": "Seleccione una fecha de salida",
   "house.you_picked_departure_date": "Su fecha de salida es",
@@ -35381,40 +35390,40 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "boat.pick_your_departure_in_the_calendar": "Select a return date",
   "boat.you_picked_departure_date": "Your return date is",
   "boat.pick_your_arrivaldate_in_the_calendar": "Choose a pickup date",
-  no: T5,
-  minimum_nights: k5,
-  can_only_take_insurance_in_de_be_nl: D5,
-  price_from: x5,
-  reviews: $5,
-  reviews_note_link: C5
-}, A5 = "Prossimo", N5 = "Precedente", I5 = "Visualizza dettagli", M5 = "Prezzo", F5 = "Prossimo", L5 = "Prenotare", j5 = "Prenotato", B5 = "Prenotazione", V5 = "Sconto last minute", U5 = "Opzione", q5 = "Prendi un'opzione per questo periodo", z5 = "compreso", H5 = "Prezzo di affitto", W5 = "Riduzione", G5 = "Costi aggiuntivi inclusi", Y5 = "Opzioni extra", Q5 = "Prezzo di affitto incluso sconto", K5 = "Date di prenotazione", J5 = "Total", X5 = "Gruppo di viaggio", Z5 = "Numero di bambini", eY = "(fino a {babies} anni)", tY = "Numero di adulti", nY = "(dai {age} anni)", rY = "Numero di bambini", aY = "(da {from} a {til} anni)", iY = "Opzioni extra", oY = "Possibili costi aggiuntivi sul posto:", sY = "Insurances", uY = "Scegli almeno 1 adulto.", lY = "Sono state selezionate troppe persone.", cY = "I tuoi dati", fY = "Questo campo è obbligatorio.", dY = "All Risk", hY = "Standard", pY = "None", mY = "Cancellation insurance", vY = "Insurance Costs", yY = "Choose", gY = "Yes", bY = "Dettagli della prenotazione", _Y = "Basato su {persons} persone", wY = "Ritorna al calendario", OY = "Vicino", SY = "Standard Cancellation Insurance", EY = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", PY = "All Risk Cancellation Insurance", TY = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", kY = `With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs.
- But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.`, DY = "Premiums and Conditions", xY = "Standard Cancellation Insurance Premium:", $Y = "All Risk Cancellation Insurance Premium:", CY = "More information:", RY = "Show conditions", AY = "Terms", NY = "Osservazione", IY = "or", MY = "Policy fee", FY = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", LY = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", jY = "Grazie mille per la tua richiesta.", BY = "Una copia della tua richiesta è stata inviata al tuo indirizzo e-mail. Se non hai ricevuto alcuna posta da noi, potrebbe essere che sia nella tua casella di spam.", VY = "Oops, qualcosa è andato storto, ti preghiamo di riprovare più tardi.", UY = "persone", qY = "camere da letto", zY = "prezzo settimanale minimo", HY = "Nessun risultato", WY = "Cliccando ora su 'prenotazione definitiva', ti iscrivi", GY = "Sconto di ragione.", YY = "risultati", QY = "bagni", KY = "Devi indicare un motivo di sconto valido", JY = "Filtri", XY = "Sono d'accordo che la carta di assicurazione di annullamento verrà emessa in digitale. Lo ricevo con la mia conferma di prenotazione.", ZY = "No", eQ = "Almeno {minimum} notti", tQ = "Puoi stipulare un'assicurazione solo se vivi nei Paesi Bassi, in Germania o in Belgio.", nQ = "Prezzo da", rQ = "Recensioni", aQ = "Il sistema di prenotazione BUKAZU mantiene recensioni indipendenti. Queste recensioni vengono raccolte dopo il soggiorno degli ospiti nella struttura. Viene verificata la combinazione di numero di prenotazione e indirizzo e-mail.", iQ = {
-  next: A5,
-  previous: N5,
-  view_details: I5,
-  price: M5,
-  calculate: F5,
-  book: L5,
-  booked: j5,
-  booking: B5,
-  last_minute_discount: V5,
-  option: U5,
-  choose_for_option: q5,
-  included_in_price: z5,
-  rent_price: H5,
-  discount: W5,
-  extra_costs_included: G5,
-  optional_costs: Y5,
-  price_after_discount: Q5,
-  booking_from_til: K5,
-  total: J5,
-  stay_details: X5,
-  babies: Z5,
-  babies_from: eY,
-  adults: tY,
-  adults_from: nY,
-  children: rY,
-  children_from: aY,
+  no: C5,
+  minimum_nights: R5,
+  can_only_take_insurance_in_de_be_nl: A5,
+  price_from: N5,
+  reviews: I5,
+  reviews_note_link: M5
+}, L5 = "Prossimo", j5 = "Precedente", B5 = "Visualizza dettagli", V5 = "Prezzo", U5 = "Prossimo", q5 = "Prenotare", z5 = "Prenotato", H5 = "Prenotazione", W5 = "Sconto last minute", G5 = "Opzione", Y5 = "Prendi un'opzione per questo periodo", Q5 = "compreso", K5 = "Prezzo di affitto", J5 = "Riduzione", X5 = "Costi aggiuntivi inclusi", Z5 = "Opzioni extra", eY = "Prezzo di affitto incluso sconto", tY = "Date di prenotazione", nY = "Total", rY = "Gruppo di viaggio", aY = "Numero di bambini", iY = "(fino a {babies} anni)", oY = "Numero di adulti", sY = "(dai {age} anni)", uY = "Numero di bambini", lY = "(da {from} a {til} anni)", cY = "Opzioni extra", fY = "Possibili costi aggiuntivi sul posto:", dY = "Insurances", hY = "Scegli almeno 1 adulto.", pY = "Sono state selezionate troppe persone.", mY = "I tuoi dati", vY = "Questo campo è obbligatorio.", yY = "All Risk", gY = "Standard", bY = "None", _Y = "Cancellation insurance", wY = "Insurance Costs", OY = "Choose", SY = "Yes", EY = "Dettagli della prenotazione", PY = "Basato su {persons} persone", TY = "Ritorna al calendario", kY = "Vicino", DY = "Standard Cancellation Insurance", xY = "Our standard cancellation insurance means that you are properly insured if you have to cancel your trip. In addition to the cancellation charges, the costs of any unused travel days are also covered. If you miss any part of your trip, because you have to go home earlier for example, you will receive an allowance for each day missed.", $Y = "All Risk Cancellation Insurance", CY = "Unfortunately, circumstances may arise which can force you to cancel your holiday. It might also be necessary to leave or return earlier. Cancellation insurance means you do not have to bear the costs involved. Only residents from the Netherlands, Belgium and Germany can take out the insurance. We offer a choice of two types of cancellation insurance:", RY = `With All-Risk Cancellation, you will be reimbursed 100% of the cancellation costs if you cancel for a standard reason, such as an illness that prevents you from traveling. Or the death of a grandparent. Do you want to cancel for another reason that is important to you personally? Then you will be reimbursed 75% of the cancellation costs.
+ But beware: this insurance does set a few conditions for canceling. For example, the reason for cancellation must be 'unforeseen' and 'through no fault of your own'. The insurance therefore does not provide cover for cancellation reasons of which you were already aware before taking out the insurance (not unforeseen) or which you could have done yourself (not through your own fault). Consult the conditions for the exceptions.`, AY = "Premiums and Conditions", NY = "Standard Cancellation Insurance Premium:", IY = "All Risk Cancellation Insurance Premium:", MY = "More information:", FY = "Show conditions", LY = "Terms", jY = "Osservazione", BY = "or", VY = "Policy fee", UY = "The cost for an insurance policy is a one-time charge of € 6,95. No matter if you have one or two insuran", qY = "You will receive the insurance terms separate from you booking confirmation per email. The insurance starts as soon as the (first) payment has been made.", zY = "Grazie mille per la tua richiesta.", HY = "Una copia della tua richiesta è stata inviata al tuo indirizzo e-mail. Se non hai ricevuto alcuna posta da noi, potrebbe essere che sia nella tua casella di spam.", WY = "Oops, qualcosa è andato storto, ti preghiamo di riprovare più tardi.", GY = "persone", YY = "camere da letto", QY = "prezzo settimanale minimo", KY = "Nessun risultato", JY = 'Facendo clic su "Prenota" si crea un obbligo di pagamento quando la mia prenotazione viene accettata. Accetto i termini e le ', XY = " L'opzione è gratuita e senza impegno", ZY = "Sconto di ragione.", eQ = "risultati", tQ = "bagni", nQ = "Devi indicare un motivo di sconto valido", rQ = "Filtri", aQ = "Sono d'accordo che la carta di assicurazione di annullamento verrà emessa in digitale. Lo ricevo con la mia conferma di prenotazione.", iQ = "No", oQ = "Almeno {minimum} notti", sQ = "Puoi stipulare un'assicurazione solo se vivi nei Paesi Bassi, in Germania o in Belgio.", uQ = "Prezzo da", lQ = "Recensioni", cQ = "Il sistema di prenotazione BUKAZU mantiene recensioni indipendenti. Queste recensioni vengono raccolte dopo il soggiorno degli ospiti nella struttura. Viene verificata la combinazione di numero di prenotazione e indirizzo e-mail.", fQ = {
+  next: L5,
+  previous: j5,
+  view_details: B5,
+  price: V5,
+  calculate: U5,
+  book: q5,
+  booked: z5,
+  booking: H5,
+  last_minute_discount: W5,
+  option: G5,
+  choose_for_option: Y5,
+  included_in_price: Q5,
+  rent_price: K5,
+  discount: J5,
+  extra_costs_included: X5,
+  optional_costs: Z5,
+  price_after_discount: eY,
+  booking_from_til: tY,
+  total: nY,
+  stay_details: rY,
+  babies: aY,
+  babies_from: iY,
+  adults: oY,
+  adults_from: sY,
+  children: uY,
+  children_from: lY,
   "house.arrival_date": "Data di arrivo",
   "house.departure_date": "Data di partenza",
   "house.arrival": "Arrivo",
@@ -35423,56 +35432,57 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "tent.departure_date": "Data di partenza",
   "tent.arrival": "Arrivo",
   "tent.departure": "Partenza",
-  extra_costs_bookable: iY,
-  costs_on_site: oY,
-  insurances: sY,
-  at_least_1_adult: uY,
-  max_persons_reached: lY,
-  personal_details: cY,
-  required: fY,
-  cancel_insurance_all_risk: dY,
-  cancel_insurance_normal: hY,
-  none: pY,
-  cancel_insurance: mY,
-  insurance_costs: vY,
-  choose: yY,
-  yes: gY,
-  booking_details: bY,
-  based_on_one_person: _Y,
-  return_to_calendar: wY,
-  close: OY,
-  cancel_insurance_normal_long: SY,
-  cancel_insurance_normal_desc: EY,
-  cancel_insurance_all_risk_long: PY,
-  cancel_insurance_desc: TY,
-  cancel_insurance_all_risk_desc: kY,
-  terms_and_costs: DY,
-  costs_normal_cancel_insurance: xY,
-  costs_allrisk_cancel_insurance: $Y,
+  extra_costs_bookable: cY,
+  costs_on_site: fY,
+  insurances: dY,
+  at_least_1_adult: hY,
+  max_persons_reached: pY,
+  personal_details: mY,
+  required: vY,
+  cancel_insurance_all_risk: yY,
+  cancel_insurance_normal: gY,
+  none: bY,
+  cancel_insurance: _Y,
+  insurance_costs: wY,
+  choose: OY,
+  yes: SY,
+  booking_details: EY,
+  based_on_one_person: PY,
+  return_to_calendar: TY,
+  close: kY,
+  cancel_insurance_normal_long: DY,
+  cancel_insurance_normal_desc: xY,
+  cancel_insurance_all_risk_long: $Y,
+  cancel_insurance_desc: CY,
+  cancel_insurance_all_risk_desc: RY,
+  terms_and_costs: AY,
+  costs_normal_cancel_insurance: NY,
+  costs_allrisk_cancel_insurance: IY,
   "666_costs": "6.66% of the travel costs",
   "847_costs": "8.47% of the travel costs",
-  more_information: CY,
-  show_terms: RY,
-  terms: AY,
-  remark: NY,
+  more_information: MY,
+  show_terms: FY,
+  terms: LY,
+  remark: jY,
   "9persons_9addresses": "The Insurance will pay for up to 9 persons, who live at 9 different addresses,",
-  or: IY,
+  or: BY,
   "9persons_4addresses": "The insurance pays out for an unlimited number of people who live at a maximum of 4 different addresses.",
-  poliscosts: MY,
-  poliscosts_are: FY,
-  youwillrecieve: LY,
-  thank_you_for_your_request: jY,
-  we_sent_confirmation_check_email: BY,
-  something_went_wrong_please_try_again: VY,
-  persons: UY,
-  bedrooms: qY,
-  minimum_week_price: zY,
-  no_results: HY,
-  agree_with: WY,
-  discount_reason: GY,
-  results: YY,
-  bathrooms: QY,
-  you_need_to_give_reason: KY,
+  poliscosts: VY,
+  poliscosts_are: UY,
+  youwillrecieve: qY,
+  thank_you_for_your_request: zY,
+  we_sent_confirmation_check_email: HY,
+  something_went_wrong_please_try_again: WY,
+  persons: GY,
+  bedrooms: YY,
+  minimum_week_price: QY,
+  no_results: KY,
+  agree_with: JY,
+  option_is_free: XY,
+  discount_reason: ZY,
+  results: eQ,
+  bathrooms: tQ,
+  you_need_to_give_reason: nQ,
   "camper.arrival_date": "Data di ritiro",
   "camper.departure_date": "Data di ritorno",
   "camper.arrival": "Pick up",
@@ -35485,8 +35495,8 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "caravan.departure_date": "Data di partenza",
   "caravan.arrival": "Arrivo",
   "caravan.departure": "Partenza",
-  filters: JY,
-  comply_insurance_card: XY,
+  filters: rQ,
+  comply_insurance_card: aQ,
   "house.you_picked_arrival_date": "La vostra data di arrivo è",
   "house.pick_your_departure_in_the_calendar": "Selezionare una data di partenza",
   "house.you_picked_departure_date": "La data di partenza è",
@@ -35503,14 +35513,14 @@ const GU = "Next", YU = "Previous", QU = "View details", KU = "Price", JU = "Nex
   "boat.pick_your_departure_in_the_calendar": "Select a return date",
   "boat.you_picked_departure_date": "Your return date is",
   "boat.pick_your_arrivaldate_in_the_calendar": "Choose a pickup date",
-  no: ZY,
-  minimum_nights: eQ,
-  can_only_take_insurance_in_de_be_nl: tQ,
-  price_from: nQ,
-  reviews: rQ,
-  reviews_note_link: aQ
+  no: iQ,
+  minimum_nights: oQ,
+  can_only_take_insurance_in_de_be_nl: sQ,
+  price_from: uQ,
+  reviews: lQ,
+  reviews_note_link: cQ
 };
-function oQ({
+function dQ({
   portalCode: e,
   objectCode: t,
   pageType: n,
@@ -35537,13 +35547,13 @@ function oQ({
         fetchPolicy: "cache-and-network"
       }
     }
-  }), d = { en: Sz, nl: t3, de: RW, fr: iG, es: R5, it: iQ };
+  }), d = { en: Ez, nl: r3, de: IW, fr: lG, es: F5, it: fQ };
   return window.__localeId__ = r, /* @__PURE__ */ f(OS, { client: c, children: /* @__PURE__ */ f(cA, { locale: r, messages: d[r], children: /* @__PURE__ */ f(Vt.Provider, { value: { portalCode: e, objectCode: t, locale: r }, children: /* @__PURE__ */ f("div", { ref: l, className: s < 875 ? "bu-smaller" : "bu-large", children: /* @__PURE__ */ f(U_, { pageType: n, locale: r, filters: a }) }) }) }) });
 }
-oQ.defaultProps = {
+dQ.defaultProps = {
   pageType: null,
   api_url: "https://api.bukazu.com/graphql"
 };
 export {
-  oQ as default
+  dQ as default
 };

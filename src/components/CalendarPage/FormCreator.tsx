@@ -195,6 +195,12 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                   </Modal>
                 )}
               </FormattedMessage>
+              {house.allow_option && (
+                <span>
+                  {', '}
+                  <FormattedMessage id="option_is_free" />
+                </span>
+              )}
             </div>
             {[1, 2].includes(Number(values.cancel_insurance)) ? (
               <div className="terms">

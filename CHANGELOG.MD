@@ -1,6 +1,7 @@
 # CHANGELOG
 
-## 3.1.7
+## 3.1.12
+- New translations for booking button
 
 ## 3.1.6
 - Set a new default persons if house is less than 2
