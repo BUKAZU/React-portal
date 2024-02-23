@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.1.14
+- Updated german translations
+
 ## 3.1.12
 - New translations for booking button
 
