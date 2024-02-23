@@ -78,7 +78,8 @@
   "bedrooms": "camere da letto",
   "minimum_week_price": "prezzo settimanale minimo",
   "no_results": "Nessun risultato",
-  "agree_with": "Cliccando ora su 'prenotazione definitiva', ti iscrivi",
+  "agree_with": "Facendo clic su \"Prenota\" si crea un obbligo di pagamento quando la mia prenotazione viene accettata. Accetto i termini e le ",
+  "option_is_free": " L'opzione è gratuita e senza impegno",
   "discount_reason": "Sconto di ragione.",
   "results": "risultati",
   "bathrooms": "bagni",
@@ -101,6 +102,10 @@
   "house.pick_your_departure_in_the_calendar": "Selezionare una data di partenza",
   "house.you_picked_departure_date": "La data di partenza è",
   "house.pick_your_arrivaldate_in_the_calendar": "Scegliere una data di arrivo",
+  "group_accommodation.you_picked_arrival_date": "La vostra data di arrivo è",
+  "group_accommodation.pick_your_departure_in_the_calendar": "Selezionare una data di partenza",
+  "group_accommodation.you_picked_departure_date": "La data di partenza è",
+  "group_accommodation.pick_your_arrivaldate_in_the_calendar": "Scegliere una data di arrivo",
   "tent.you_picked_arrival_date": "La vostra data di arrivo è",
   "tent.pick_your_departure_in_the_calendar": "Selezionare una data di partenza",
   "tent.you_picked_departure_date": "La data di partenza è",
@@ -117,5 +122,6 @@
   "minimum_nights": "Almeno {minimum} notti",
   "can_only_take_insurance_in_de_be_nl": "Puoi stipulare un'assicurazione solo se vivi nei Paesi Bassi, in Germania o in Belgio.",
   "price_from": "Prezzo da",
-  "reviews": "Recensioni"
+  "reviews": "Recensioni",
+  "reviews_note_link": "Il sistema di prenotazione BUKAZU mantiene recensioni indipendenti. Queste recensioni vengono raccolte dopo il soggiorno degli ospiti nella struttura. Viene verificata la combinazione di numero di prenotazione e indirizzo e-mail."
 }

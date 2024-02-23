@@ -7,14 +7,9 @@ import {
   startOfWeek,
   subDays,
   isBefore,
-  isAfter,
-  differenceInCalendarDays,
-  addMonths,
-  isSameMonth,
-  parse,
-  isSameDay
+  parse
 } from 'date-fns';
-import { FormatIntl, Parse_EN_US } from '../../../_lib/date_helper';
+import { FormatIntl } from '../../../_lib/date_helper';
 import DayClasses from './DayClasses';
 import { HouseType } from '../../../types';
 import { CalendarContext, CalendarContextDispatch } from './CalendarContext';
@@ -69,6 +64,14 @@ function RenderCells({
           role="button"
           tabIndex={0}
           onClick={() => {
+            if (
+              isBefore(
+                parse(cloneDay.date, 'yyyy-MM-dd', new Date()),
+                new Date()
+              )
+            ) {
+              return;
+            }
             dispatch({
               type: 'clicked',
               day: cloneDay,
