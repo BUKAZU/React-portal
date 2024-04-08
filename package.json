@@ -58,7 +58,8 @@
     "graphql": "^15.6.0",
     "react-date-picker": "^8.1.1",
     "react-intl": "^6.2.5",
-    "react-paginate": "^8.1.4"
+    "react-paginate": "^8.1.4",
+    "ulid": "^2.3.0"
   },
   "main": "./build/portal.umd.js",
   "module": "./build/portal.es.js",
