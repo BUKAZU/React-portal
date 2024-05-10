@@ -27079,15 +27079,18 @@ function UV({
 }) {
   const { insurances: t, required_costs: n } = e.total_costs, { not_on_site: r } = n;
   return /* @__PURE__ */ f("div", { className: "costs-section", children: /* @__PURE__ */ f("table", { children: /* @__PURE__ */ M("tbody", { children: [
-    t.cancel_insurance && /* @__PURE__ */ f(pt, { children: Object.keys(t).map((a) => /* @__PURE__ */ f(
-      St,
-      {
-        name: a,
-        formatName: !0,
-        amount: t[a]
-      },
-      a
-    )) }),
+    t && /* @__PURE__ */ f(pt, { children: Object.keys(t).map((a) => {
+      if (t[a] > 0)
+        return /* @__PURE__ */ f(
+          St,
+          {
+            name: a,
+            formatName: !0,
+            amount: t[a]
+          },
+          a
+        );
+    }) }),
     e.required_house_costs.map((a) => {
       if (!a.on_site && a.gl !== "0120")
         return a.method === "none" ? /* @__PURE__ */ f(St, { ...a }, a.id) : a.amount === 0 ? null : /* @__PURE__ */ f(

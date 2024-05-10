@@ -7,6 +7,7 @@ interface Props {
     total_costs: {
       insurances: {
         cancel_insurance: number;
+        insurance_costs: number;
       };
       required_costs: {
         not_on_site: CostType[];
@@ -21,20 +22,25 @@ export default function InsurancesAndRequired({
 }: Props): React.ReactNode {
   const { insurances, required_costs } = prices.total_costs;
   const { not_on_site } = required_costs;
+
   return (
     <div className="costs-section">
       <table>
         <tbody>
-          {insurances.cancel_insurance && (
+          {insurances && (
             <>
-              {Object.keys(insurances).map((key) => (
-                <CostRow
-                  name={key}
-                  key={key}
-                  formatName={true}
-                  amount={insurances[key]}
-                />
-              ))}
+              {Object.keys(insurances).map((key: string) => {
+                if (insurances[key] > 0) {
+                  return (
+                    <CostRow
+                      name={key}
+                      key={key}
+                      formatName={true}
+                      amount={insurances[key]}
+                    />
+                  );
+                }
+              })}
             </>
           )}
           {prices.required_house_costs.map((cost) => {
