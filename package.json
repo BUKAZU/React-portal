@@ -55,7 +55,7 @@
     "@apollo/client": "^3.7.5",
     "date-fns": "^2.29.3",
     "formik": "^2.2.9",
-    "graphql": "^15.6.0",
+    "graphql": "^16.9.0",
     "react-date-picker": "^8.1.1",
     "react-intl": "^6.2.5",
     "react-paginate": "^8.1.4"
