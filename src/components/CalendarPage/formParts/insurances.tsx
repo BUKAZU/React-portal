@@ -5,14 +5,14 @@ import Modal from '../../Modal';
 import Icon from '../../icons/info.svg';
 import CancelInsuranceText from './CancelInsuranceText';
 import { DateField } from '../FormItems';
-import { translatedOption } from './BookingHelpers'
+import { translatedOption } from './BookingHelpers';
 import { HouseType } from '../../../types';
 import { PossibleValues } from './form_types';
 
 type Props = {
-  house: HouseType
-  values: PossibleValues
-}
+  house: HouseType;
+  values: PossibleValues;
+};
 
 function cancelInsurance(house: HouseType) {
   if (house.cancel_insurance) {
@@ -23,7 +23,7 @@ function cancelInsurance(house: HouseType) {
         </label>
         <Field component="select" name="cancel_insurance" required={true}>
           {translatedOption('choose', '')}
-          {translatedOption('cancel_insurance_all_risk', '2')}
+          {/* {translatedOption('cancel_insurance_all_risk', '2')} */}
           {translatedOption('cancel_insurance_normal', '1')}
           {translatedOption('none', '0')}
         </Field>
@@ -42,7 +42,7 @@ export const Insurances = ({ house, values }: Props) => {
         <h2>
           <FormattedMessage id="insurances" />
         </h2>
-        {cancelInsurance(house)}       
+        {cancelInsurance(house)}
         {values.cancel_insurance && values.cancel_insurance !== '0' && (
           <DateField
             label="extra_fields.date_of_birth"
@@ -60,4 +60,3 @@ export const Insurances = ({ house, values }: Props) => {
     return <div />;
   }
 };
-

@@ -2,24 +2,6 @@ import React, { useContext } from 'react';
 import { FormattedMessage as FM } from 'react-intl';
 import { AppContext } from '../../AppContext';
 
-type localeObject = {
-  nl: string;
-  de: string;
-  en: string;
-  es: string;
-  it: string;
-  fr: string;
-};
-
-const LocalizedAttachment: localeObject = {
-  nl: 'https://insurances.bukazu.com/nl/Voorwaarden%20Annuleringsverzekering.pdf',
-  de: 'https://insurances.bukazu.com/de/Bedingungen%20Reiseruecktrittsversicherung.pdf',
-  en: 'https://insurances.bukazu.com/en/Terms%20to%20Cancellation%20Insurance.pdf',
-  es: 'https://insurances.bukazu.com/en/Terms%20to%20Cancellation%20Insurance.pdf',
-  it: 'https://insurances.bukazu.com/en/Terms%20to%20Cancellation%20Insurance.pdf',
-  fr: 'https://insurances.bukazu.com/en/Terms%20to%20Cancellation%20Insurance.pdf'
-};
-
 const CancelInsuranceText = () => {
   const { locale } = useContext(AppContext);
 
@@ -64,7 +46,7 @@ const CancelInsuranceText = () => {
         <FM id="more_information" />
       </p>
       <a
-        href={LocalizedAttachment[locale]}
+        href={`https://api.bukazu.com/files/${locale}/insurance.pdf`}
         target="_blank"
         rel="noopener noreferrer"
       >
