@@ -8,23 +8,16 @@ const CancelInsuranceText = () => {
   return (
     <>
       <h2>
-        <FM id="cancel_insurance" />
-      </h2>
-      <hr />
-      <p>
-        <FM id="cancel_insurance_desc" />
-      </p>
-      <h3>
         <FM id="cancel_insurance_normal_long" />
-      </h3>
+      </h2>
       <p>
         <FM id="cancel_insurance_normal_desc" />
       </p>
       <h3>
-        <FM id="cancel_insurance_all_risk_long" />
+        <FM id="cancel_insurance_more_insured" />
       </h3>
       <p>
-        <FM id="cancel_insurance_all_risk_desc" />
+        <FM id="cancel_insurance_more_insured_desc" />
       </p>
 
       <h3>
