@@ -60,17 +60,5 @@ export function validateForm(
     errors['insurances'] = <FormattedMessage id="at_least_18y_old" />;
   }
 
-  if (
-    parseInt(values.cancel_insurance) !== 0 &&
-    !['nl', 'de', 'be'].includes(values.country)
-  ) {
-    errors['insurances'] = (
-      <FormattedMessage id="can_only_take_insurance_in_de_be_nl" />
-    );
-    errors['country'] = (
-      <FormattedMessage id="can_only_take_insurance_in_de_be_nl" />
-    );
-  }
-
   return errors;
 }
