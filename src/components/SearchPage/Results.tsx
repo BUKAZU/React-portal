@@ -105,7 +105,7 @@ function Results({
       className={
         PortalSite.options.filtersForm
           ? PortalSite.options.filtersForm.mode
-          : ''
+          : 'grid'
       }
     >
       {Pagination}

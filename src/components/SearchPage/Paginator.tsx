@@ -40,7 +40,7 @@ function Paginator({
 
   const pageCount = Math.ceil(results.length / limit);
   return (
-    <div className="bu-paginator">
+    <div className="navigation">
       <div>
         {results.length} <FormattedMessage id="results" />
       </div>
@@ -52,7 +52,11 @@ function Paginator({
         forcePage={activePage}
         pageRangeDisplayed={5}
         breakLabel="..."
-        className="bu-pagination"
+        className="inline-flex -space-x-px text-sm"
+        pageLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+        activeLinkClassName="text-blue-600 bg-blue-50"
+        previousLinkClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+        nextLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
         nextLabel=">"
         previousLabel="<"
       />
