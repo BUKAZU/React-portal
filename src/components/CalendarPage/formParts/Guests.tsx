@@ -16,7 +16,7 @@ export default function Guests({ options, house }: Props): React.ReactNode {
         label="adults"
         count={house.persons}
         description={
-          <div className="age-description">
+          <div className="mt-2 text-sm text-gray-500 ">
             <FormattedMessage
               id="adults_from"
               defaultMessage="> {age}"
@@ -35,7 +35,7 @@ export default function Guests({ options, house }: Props): React.ReactNode {
           label="children"
           count={house.persons - 1}
           description={
-            <div className="age-description">
+            <div className="mt-2 text-sm text-gray-500 ">
               <FormattedMessage
                 id="children_from"
                 defaultMessage="{from} - {til}"
@@ -58,7 +58,7 @@ export default function Guests({ options, house }: Props): React.ReactNode {
           label="babies"
           count={house.persons - 1}
           description={
-            <div className="age-description">
+            <div className="mt-2 text-sm text-gray-500 ">
               <FormattedMessage
                 id="babies_from"
                 defaultMessage="til {babies_til}"

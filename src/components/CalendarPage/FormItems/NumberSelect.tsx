@@ -10,11 +10,15 @@ export default function NumberSelect({ label, description, count, ...props }) {
     <Field name={props.name}>
       {({ field, meta }) => {
         return (
-          <div className="form-row inline" id={`bukazu_form_${props.name}`}>
+          <div className="mb-4" id={`bukazu_form_${props.name}`}>
             <label htmlFor={props.name}>
               <FormattedMessage id={label} />
             </label>
-            <select {...field} {...props}>
+            <select
+              {...field}
+              {...props}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            >
               {numbers.map((opt) => {
                 return (
                   <option key={opt} value={opt}>
@@ -25,7 +29,7 @@ export default function NumberSelect({ label, description, count, ...props }) {
             </select>
             {description}
             {meta.touched && meta.error && (
-              <div className="error-message bu-error-message">{meta.error}</div>
+              <div className="mt-2 text-sm text-gray-500 ">{meta.error}</div>
             )}
           </div>
         );

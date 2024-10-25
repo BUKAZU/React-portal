@@ -52,8 +52,6 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
   const optBookingFieldsInitialized = initializeBookingFields(bookingFields);
 
-  console.log({ PortalSite });
-
   return (
     <Formik
       validate={(values) => validateForm(values, house, bookingFields)}
@@ -114,7 +112,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
       }}
     >
       {({ errors, touched, values, status, isSubmitting }) => (
-        <Form className="form">
+        <Form className="grid grid-cols-4 gap-4">
           {loading && <div className="return-message">Creating booking...</div>}
           {error && (
             <Modal show={true} onClose={reset}>
@@ -127,7 +125,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             </Modal>
           )}
 
-          <div className="form-content">
+          <div className="col-span-3 p-4">
             <div className="form-section">
               <a
                 className="return-link"
@@ -141,9 +139,11 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               >
                 <FormattedMessage id="return_to_calendar" />
               </a>
-              <h2>
-                <FormattedMessage id="stay_details" />
-              </h2>
+              <div>
+                <h2 className="mb-4 text-lg font-bold text-gray-900">
+                  <FormattedMessage id="stay_details" />
+                </h2>
+              </div>
               <Guests options={options} house={house} />
 
               {errors.max_persons && (
@@ -173,7 +173,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             />
           </div>
 
-          <div className="form-sum">
+          <div className="col-span-1 p-4 mt-6 grow sm:mt-8 lg:mt-0">
             <Summary house={house} values={values} />
             {status && status.msg && <div>{status.msg}</div>}
             <div className="terms">
@@ -212,6 +212,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             <button
               className="bu-calendar-button"
               type="submit"
+              className="bg-primary w-full inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:ring-primary"
               disabled={isSubmitting}
             >
               {PortalSite.form_submit_button_text}

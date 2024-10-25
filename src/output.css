@@ -578,12 +578,32 @@ video {
   position: relative;
 }
 
+#bukazu-app .left-0 {
+  left: 0px;
+}
+
+#bukazu-app .right-0 {
+  right: 0px;
+}
+
+#bukazu-app .top-0 {
+  top: 0px;
+}
+
 #bukazu-app .isolate {
   isolation: isolate;
 }
 
+#bukazu-app .z-50 {
+  z-index: 50;
+}
+
 #bukazu-app .col-span-3 {
   grid-column: span 3 / span 3;
+}
+
+#bukazu-app .col-span-1 {
+  grid-column: span 1 / span 1;
 }
 
 #bukazu-app .mx-auto {
@@ -622,6 +642,14 @@ video {
 
 #bukazu-app .mt-6 {
   margin-top: 1.5rem;
+}
+
+#bukazu-app .mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+#bukazu-app .mb-5 {
+  margin-bottom: 1.25rem;
 }
 
 #bukazu-app .block {
@@ -672,6 +700,18 @@ video {
   height: 100%;
 }
 
+#bukazu-app .h-\[calc\(100\%-1rem\)\] {
+  height: calc(100% - 1rem);
+}
+
+#bukazu-app .h-auto {
+  height: auto;
+}
+
+#bukazu-app .max-h-full {
+  max-height: 100%;
+}
+
 #bukazu-app .w-4 {
   width: 1rem;
 }
@@ -682,6 +722,14 @@ video {
 
 #bukazu-app .w-full {
   width: 100%;
+}
+
+#bukazu-app .max-w-full {
+  max-width: 100%;
+}
+
+#bukazu-app .grow {
+  flex-grow: 1;
 }
 
 #bukazu-app .grid-cols-3 {
@@ -698,6 +746,10 @@ video {
 
 #bukazu-app .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#bukazu-app .grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 #bukazu-app .items-center {
@@ -732,6 +784,20 @@ video {
   --tw-space-x-reverse: 0;
   margin-right: calc(-1px * var(--tw-space-x-reverse));
   margin-left: calc(-1px * calc(1 - var(--tw-space-x-reverse)));
+}
+
+#bukazu-app :is(.space-y-4 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+#bukazu-app .overflow-y-auto {
+  overflow-y: auto;
+}
+
+#bukazu-app .overflow-x-hidden {
+  overflow-x: hidden;
 }
 
 #bukazu-app .rounded {
@@ -776,6 +842,11 @@ video {
 #bukazu-app .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+#bukazu-app .border-gray-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(243 244 246 / var(--tw-border-opacity));
 }
 
 #bukazu-app .bg-blue-50 {
@@ -852,8 +923,16 @@ video {
   padding-top: 1.5rem;
 }
 
+#bukazu-app .pt-4 {
+  padding-top: 1rem;
+}
+
 #bukazu-app .text-center {
   text-align: center;
+}
+
+#bukazu-app .text-right {
+  text-align: right;
 }
 
 #bukazu-app .text-2xl {
@@ -876,6 +955,11 @@ video {
   line-height: 1rem;
 }
 
+#bukazu-app .text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
 #bukazu-app .font-extrabold {
   font-weight: 800;
 }
@@ -890,6 +974,10 @@ video {
 
 #bukazu-app .font-semibold {
   font-weight: 600;
+}
+
+#bukazu-app .font-bold {
+  font-weight: 700;
 }
 
 #bukazu-app .capitalize {
@@ -927,6 +1015,11 @@ video {
 #bukazu-app .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+#bukazu-app .text-gray-50 {
+  --tw-text-opacity: 1;
+  color: rgb(249 250 251 / var(--tw-text-opacity));
 }
 
 #bukazu-app .underline {
@@ -1174,17 +1267,42 @@ video {
 }
 
 @media (min-width: 640px) {
+  #bukazu-app .sm\:mt-8 {
+    margin-top: 2rem;
+  }
+
+  #bukazu-app .sm\:mt-6 {
+    margin-top: 1.5rem;
+  }
+
   #bukazu-app .sm\:grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 
+@media (min-width: 768px) {
+  #bukazu-app .md\:inset-0 {
+    inset: 0px;
+  }
+}
+
 @media (min-width: 1024px) {
+  #bukazu-app .lg\:mt-0 {
+    margin-top: 0px;
+  }
+
   #bukazu-app .lg\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   #bukazu-app .lg\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  #bukazu-app .dark\:text-gray-400 {
+    --tw-text-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-text-opacity));
   }
 }

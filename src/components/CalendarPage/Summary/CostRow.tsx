@@ -20,7 +20,7 @@ function CostRow({
   forceMethod
 }: Props): JSX.Element {
   return (
-    <tr>
+    <tr class="grid grid-cols-2">
       <td>
         {formatName ? <FormattedMessage id={name} /> : name}
         {description && (
@@ -31,7 +31,7 @@ function CostRow({
         )}
       </td>
 
-      <td className="price">
+      <td className="text-right ">
         {amount && amount > 0 ? (
           <>
             €{' '}

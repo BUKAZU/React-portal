@@ -1,9 +1,9 @@
 import React from 'react';
 import { Field } from 'formik';
-import {FormattedMessage, FormattedNumber } from 'react-intl'
-import Modal from '../../Modal'
-import Icon from "../../icons/info.svg";
-import { createPeronsArray } from './BookingHelpers'
+import { FormattedMessage, FormattedNumber } from 'react-intl';
+import Modal from '../../Modal';
+import Icon from '../../icons/info.svg';
+import { createPeronsArray } from './BookingHelpers';
 
 function OptionalCosts({ costs }) {
   if (costs.length === 0) {
@@ -22,9 +22,13 @@ function OptionalCosts({ costs }) {
           ) {
             if (cost.max_available === 1) {
               return (
-                <div className="form-row inline" key={cost.id}>
+                <div className="mb-4" key={cost.id}>
                   <label htmlFor={cost.id}>{cost.name}</label>
-                  <Field component="select" name={`costs[${cost.id}]`}>
+                  <Field
+                    component="select"
+                    name={`costs[${cost.id}]`}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  >
                     <FormattedMessage id="no">
                       {(formattedMessage) => (
                         <option value={0}>{formattedMessage}</option>
@@ -59,9 +63,13 @@ function OptionalCosts({ costs }) {
               );
             }
             return (
-              <div className="form-row inline" key={cost.id}>
+              <div className="mb-4" key={cost.id}>
                 <label htmlFor={cost.id}>{cost.name}</label>
-                <Field component="select" name={`costs[${cost.id}]`}>
+                <Field
+                  component="select"
+                  name={`costs[${cost.id}]`}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                >
                   {createPeronsArray(cost.max_available).map((opt) => {
                     return (
                       <option key={opt} value={opt}>
