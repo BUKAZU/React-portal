@@ -28,11 +28,10 @@ function PriceField({ house }: Props) {
 
   let adults = createPeronsArray(house.persons);
 
-
   return (
-    <div className="calendar--picker">
-      <div className="calendar--picker--date">
-        <span className="name">
+    <div className="p-8 text-center border">
+      <div className="w-full grid grid-cols-1 py-2">
+        <span className="text-lg underline underline-offset-4">
           <FormattedMessage id={`${house.house_type}.arrival`} />
         </span>
         <span className="detail">
@@ -47,8 +46,8 @@ function PriceField({ house }: Props) {
           )}
         </span>
       </div>
-      <div className="calendar--picker--date">
-        <span className="name">
+      <div className="w-full grid grid-cols-1 py-4">
+        <span className="text-lg underline underline-offset-4">
           <FormattedMessage id={`${house.house_type}.departure`} />
         </span>
         <span className="detail">
@@ -77,7 +76,7 @@ function PriceField({ house }: Props) {
       <div className="calendar--picker--date">
         <span className="detail">
           <select
-            className="calendar--picker--persons"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             value={persons}
             onChange={(e) => {
               setPersons(e.target.value);
@@ -97,7 +96,7 @@ function PriceField({ house }: Props) {
           </select>
         </span>
       </div>
-      <div className="calendar--picker--date">
+      <div className="py-4">
         {arrivalDate && departureDate && (
           <Price
             persons={parseInt(persons)}
@@ -109,7 +108,7 @@ function PriceField({ house }: Props) {
         )}
       </div>
       <button
-        className="button"
+        className="w-full bg-primary focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-md px-5 py-2.5 text-center flex justify-center border"
         disabled={!arrivalDate || !departureDate}
         onClick={() => {
           if (arrivalDate && departureDate) {

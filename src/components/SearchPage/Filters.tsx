@@ -37,7 +37,7 @@ function Filters({
   let filterClass = options.filtersForm
     ? options.filtersForm.show
       ? `filters filters-${options.filtersForm.location}`
-      : 'filters-hidden'
+      : 'hidden'
     : 'filters';
 
   let showOn = show && 'showOnMobile';
@@ -45,7 +45,7 @@ function Filters({
   return (
     <>
       <button
-        className={`filters-button ${fixed}`}
+        className={`${fixed} px-3 py-2 text-sm font-medium text-center rounded-md`}
         onClick={() => setShow(!show)}
       >
         <FormattedMessage id="filters" />

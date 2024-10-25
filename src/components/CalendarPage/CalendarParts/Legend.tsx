@@ -9,21 +9,17 @@ interface Props {
 
 function Legend({ house }: Props): JSX.Element {
   return (
-    <div className="legend">
-      <div>
-        <span className="legend-field arrival" />
+    <div className="flex gap-2 p-4">
+      <div className="arrival p-2 text-xs font-normal">
         <FormattedMessage id={`${house.house_type}.arrival_date`} />
       </div>
-      <div>
-        <span className="legend-field booked" />
+      <div className="booked p-2 text-xs font-normal">
         <FormattedMessage id="booked" />
       </div>
-      <div>
-        <span className="legend-field departure" />
+      <div className="departure p-2 text-xs font-normal">
         <FormattedMessage id={`${house.house_type}.departure_date`} />
       </div>
-      <div>
-        <span className="legend-field last_minute_discount" />
+      <div className="discount p-2 text-xs font-normal">
         <FormattedMessage id="discount" />
       </div>
     </div>

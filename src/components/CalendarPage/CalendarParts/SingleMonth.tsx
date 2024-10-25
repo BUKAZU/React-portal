@@ -19,15 +19,9 @@ interface Props {
   count: number;
   currentMonth: Date;
   house: HouseType;
-  numberOfMonthsInARow: Number;
 }
 
-function SingleMonth({
-  count,
-  currentMonth,
-  house,
-  numberOfMonthsInARow
-}: Props): JSX.Element {
+function SingleMonth({ count, currentMonth, house }: Props): JSX.Element {
   const { portalCode, objectCode } = useContext(AppContext);
 
   let month = addMonths(currentMonth, count);
@@ -56,7 +50,7 @@ function SingleMonth({
   const discounts = data.Discounts;
 
   return (
-    <div className={`bu-calendar calendar calendar-${numberOfMonthsInARow}`} key={month}>
+    <div className={``} key={month}>
       <MonthHeader month={month} />
       <WeekDays month={month} />
       <RenderCells

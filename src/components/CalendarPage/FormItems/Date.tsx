@@ -27,14 +27,14 @@ function DateField({ label, description, name, inline }: Props) {
 
         return (
           <div
-            className={`form-row ${inline && 'inline'}`}
+            className={`mb-5 ${inline && 'inline'}`}
             id={`bukazu_form_${name}`}
           >
             <label htmlFor={name}>
               <FormattedMessage id={label} />
             </label>
             <DatePicker
-              className="bukazu-date-picker"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               name={name}
               format="dd-MM-y"
               value={tempval}

@@ -34,7 +34,6 @@ function RenderCells({
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
   const endDate = endOfWeek(monthEnd);
-  const rows: JSX.Element[] = [];
 
   let days: JSX.Element[] = [];
   let day: Date = startDate;
@@ -50,7 +49,7 @@ function RenderCells({
       const cloneDay = daz;
 
       days.push(
-        <div
+        <button
           className={DayClasses({
             day,
             monthStart,
@@ -61,8 +60,6 @@ function RenderCells({
             dates
           })}
           key={daz.date}
-          role="button"
-          tabIndex={0}
           onClick={() => {
             if (
               isBefore(
@@ -79,19 +76,22 @@ function RenderCells({
             });
           }}
         >
-          <span>{FormatIntl(day, 'd')}</span>
-        </div>
+          <time
+            dateTime={cloneDay.date}
+            className="mx-auto flex h-7 w-7 items-center justify-center rounded-full"
+          >
+            {FormatIntl(day, 'd')}
+          </time>
+        </button>
       );
       day = addDays(day, 1);
     }
-    rows.push(
-      <div className="bu-calendar-row" key={day}>
-        {days}
-      </div>
-    );
-    days = [];
   }
-  return <div className="body">{rows}</div>;
+  return (
+    <div className="isolate mt-2 grid grid-cols-7 gap-px rounded-lg bg-gray-200 text-sm shadow ring-1 ring-gray-200">
+      {days}
+    </div>
+  );
 }
 
 export default RenderCells;

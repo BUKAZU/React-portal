@@ -20,9 +20,8 @@ function Calendar({
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   return (
-    <div className="calendar-container ">
-      <StartBooking house={house} />
-      <div className="calendar-section">
+    <div className="grid sm:grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="col-span-3">
         <CalendarHeader
           changeMonth={setCurrentMonth}
           currentMonth={currentMonth}
@@ -37,6 +36,7 @@ function Calendar({
         <Legend house={house} />
         <AssistanceMessage house={house} />
       </div>
+      <StartBooking house={house} />
     </div>
   );
 }

@@ -37,7 +37,7 @@ function Price({ persons, variables }: Props) {
   return (
     <>
       <div className="price-overview--book">
-        <div className="price">
+        <div className="text-2xl font-extrabold leading-tight text-gray-900">
           €{' '}
           <FormattedNumber
             value={Math.round(result.total_price)}

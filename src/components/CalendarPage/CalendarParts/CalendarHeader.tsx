@@ -16,8 +16,8 @@ function CalendarHeader({
   currentMonth,
   numberOfMonths
 }: Props): JSX.Element {
-  const dispatch = useContext(CalendarContextDispatch);  
-  
+  const dispatch = useContext(CalendarContextDispatch);
+
   function next() {
     changeMonth(addMonths(currentMonth, numberOfMonths));
   }
@@ -26,45 +26,37 @@ function CalendarHeader({
   }
 
   return (
-    <div className="calendars-header">
-      <div
-        className="bu-calendar-col bu-prev"
-        style={{ textAlign: 'center' }}
+    <div className="grid grid-cols-3 gap-4 my-4">
+      <button
+        className="bg-primary focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex justify-center border"
         onClick={prev}
         tabIndex={0}
         role="button"
       >
-        <div className="icon">
-          {' '}
+        <div className="h-4 w-4">
           <ArrowLeft />
         </div>
-      </div>
-      <div
-        className="bu-calendar-col bu-reset"
+      </button>
+      <button
+        className="bg-primary focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex justify-center border"
         onClick={() => {
           dispatch({
             type: 'reset'
           });
         }}
-        style={{ textAlign: 'center' }}
-        tabIndex={0}
-        role="button"
       >
-        <div className="icon">
+        <div className="h-4 w-4">
           <Reload />
         </div>
-      </div>
-      <div
-        className="bu-calendar-col bu-next"
+      </button>
+      <button
+        className="bg-primary focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center flex justify-center border"
         onClick={next}
-        style={{ textAlign: 'center' }}
-        tabIndex={0}
-        role="button"
       >
-        <div className="icon">
+        <div className="h-4 w-4">
           <ArrowRight />
         </div>
-      </div>
+      </button>
     </div>
   );
 }

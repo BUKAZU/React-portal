@@ -21,7 +21,12 @@ function cancelInsurance(house: HouseType) {
         <label htmlFor="cancel_insurance">
           <FormattedMessage id="cancel_insurance" />
         </label>
-        <Field component="select" name="cancel_insurance" required={true}>
+        <Field
+          component="select"
+          name="cancel_insurance"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          required={true}
+        >
           {translatedOption('choose', '')}
           {/* {translatedOption('cancel_insurance_all_risk', '2')} */}
           {translatedOption('cancel_insurance_normal', '1')}

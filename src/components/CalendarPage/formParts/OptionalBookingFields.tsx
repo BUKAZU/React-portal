@@ -23,6 +23,7 @@ export default function OptionalBookingFields({
   values
 }) {
   let fields = [].concat(bookingFields);
+  let labelClass = 'block mb-2 text-sm font-medium text-gray-900';
 
   const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
   if (values.cancel_insurance === '1' || values.cancel_insurance === '2') {
@@ -36,8 +37,8 @@ export default function OptionalBookingFields({
     });
   }
   return (
-    <div className="form-section">
-      <h2>
+    <div className="pt-4">
+      <h2 className="mb-4 text-lg font-bold text-gray-900">
         <FormattedMessage id="personal_details" />
       </h2>
       {fields.map((input) => {
@@ -51,11 +52,12 @@ export default function OptionalBookingFields({
           );
 
           return (
-            <div className="form-row" key={bookingField.id}>
+            <div className="mb-5" key={bookingField.id}>
               <label htmlFor={`extra_fields.booking_field_${bookingField.id}`}>
                 {bookingField.label} {input.required && <span>*</span>}
               </label>
               <Field
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 onKeyPress={(e) => {
                   e.which === 13 && e.preventDefault();
                 }}
@@ -84,12 +86,16 @@ export default function OptionalBookingFields({
           );
         } else if (input.id === 'country') {
           return (
-            <div className="form-row" key={input.id}>
-              <label htmlFor={input.id}>
+            <div className="mb-5" key={input.id}>
+              <label htmlFor={input.id} className={labelClass}>
                 {PortalSite[`${input.id}_label`]}{' '}
                 {input.required && <span>*</span>}
               </label>
-              <Field component="select" name={input.id}>
+              <Field
+                component="select"
+                name={input.id}
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              >
                 {Countries[window.__localeId__].map((country) => {
                   return (
                     <option value={country.alpha2} key={country.alpha2}>
@@ -107,14 +113,15 @@ export default function OptionalBookingFields({
           );
         } else if (input.type === 'date') {
           return (
-            <div className="form-row" key={input.id}>
+            <div className="mb-5" key={input.id}>
               <DateField name={input.id} label={input.id} inline={false} />
             </div>
           );
         } else {
           return (
-            <div className="form-row" key={input.id}>
+            <div className="mb-5" key={input.id}>
               <label
+                className={labelClass}
                 htmlFor={input.id}
                 name={`${input.id.replace(/\./g, '_')}_label`}
               >
@@ -122,6 +129,7 @@ export default function OptionalBookingFields({
                 {input.required && <span>*</span>}
               </label>
               <Field
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
                 type={input.type}
                 name={input.id}
                 onKeyPress={(e) => {

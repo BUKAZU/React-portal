@@ -13,7 +13,7 @@ export default function Select({
     <Field name={name}>
       {({ field, meta }) => {
         return (
-          <div className="form-row inline" id={`bukazu_form_${props.name}`}>
+          <div className="mb-4" id={`bukazu_form_${props.name}`}>
             <label htmlFor={props.name}>
               <FormattedMessage id={label} />
             </label>
