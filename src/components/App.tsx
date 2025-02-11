@@ -23,7 +23,7 @@ interface Props {
 }
 
 function App({ pageType, locale, filters }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);  
+  const { portalCode, objectCode } = useContext(AppContext);
 
   const { loading, error, data } = useQuery(PORTAL_QUERY, {
     variables: { id: portalCode }

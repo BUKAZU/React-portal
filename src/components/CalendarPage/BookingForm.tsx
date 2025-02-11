@@ -5,11 +5,12 @@ import { BOOKING_PRICE_QUERY } from '../../_lib/queries';
 import { useQuery } from '@apollo/client';
 import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
-
+import { TrackEvent } from '../../_lib/Tracking';
 
 function BookingForm(): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
-  const { arrivalDate, departureDate } = useContext(CalendarContext)
+  const { portalCode, objectCode, locale } = useContext(AppContext);
+  const { arrivalDate, departureDate } = useContext(CalendarContext);
+
   const { data, loading, error } = useQuery(BOOKING_PRICE_QUERY, {
     variables: {
       portalCode,
@@ -31,12 +32,18 @@ function BookingForm(): JSX.Element {
 
   const result = data.PortalSite.houses[0];
 
-  return (
-    <FormCreator
-      house={result}
-      PortalSite={data.PortalSite}     
-    />
-  );
+  TrackEvent({
+    house_code: objectCode,
+    portal_code: portalCode,
+    locale: locale,
+    interaction_type: 'booking_started',
+    interaction_data: {
+      arrival_date: arrivalDate.date,
+      departure_date: departureDate.date
+    }
+  });
+
+  return <FormCreator house={result} PortalSite={data.PortalSite} />;
 }
 
 export default BookingForm;
