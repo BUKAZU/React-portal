@@ -7,7 +7,7 @@ import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
 import Calendar from '../Calendar';
-import { EnableTracking } from '../../../_lib/Tracking';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 interface Props {
   PortalSite: PortalSiteType;
@@ -19,7 +19,7 @@ function GenerateCalendar({ PortalSite }: Props): JSX.Element {
     variables: { portalCode, objectCode }
   });
 
-  EnableTracking({
+  TrackEvent({
     house_code: objectCode,
     portal_code: portalCode,
     interaction_type: 'calendar_view',

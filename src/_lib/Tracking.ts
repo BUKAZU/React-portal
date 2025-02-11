@@ -1,27 +1,3 @@
-export function EnableTracking(data: any) {
-  const cookie = getCookie('bu_portal_session');
-
-  if (!cookie) {
-    const all_data = {
-        ...data,
-        url: window.location.href
-    }
-
-    fetch("http://localhost:5000/tracking", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Session": cookie,
-      },
-      body: JSON.stringify(all_data)
-    }).then((response) => response.text())
-      .then((data) => { 
-        setCookie('bu_portal_session', data, 1);
-    } );
-
-  }
-}
-
 export async function TrackEvent(data: any) {
     const cookie = getCookie('bu_portal_session');
 
