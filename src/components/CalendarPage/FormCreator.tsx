@@ -22,6 +22,7 @@ import {
   CalendarContext,
   CalendarContextDispatch
 } from './CalendarParts/CalendarContext';
+import { getSessionIdentifier } from '../../_lib/Tracking';
 
 interface Props {
   house: HouseType;
@@ -52,7 +53,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
   const optBookingFieldsInitialized = initializeBookingFields(bookingFields);
 
-  console.log({ PortalSite });
+  const sessionIdentifier = getSessionIdentifier();
+
+  console.log({ sessionIdentifier });
 
   return (
     <Formik
@@ -87,7 +90,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           arrival_date: values.arrivalDate.date,
           departure_date: values.departureDate.date,
           costs: JSON.stringify(values.costs),
-          extra_fields: JSON.stringify(values.extra_fields)
+          extra_fields: JSON.stringify(values.extra_fields),
+          sessionIdentifier: sessionIdentifier
         };
 
         createBooking({ variables }).then(() => {

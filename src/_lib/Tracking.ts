@@ -14,9 +14,18 @@ export async function TrackEvent(data: any) {
         body: JSON.stringify(all_data)
       }).then((response) => response.text())
         .then((data) => { 
-          setCookie('bu_portal_session', data, 1);
+          setCookie('bu_portal_session', data, 14);
       } );
 }
+
+export function getSessionIdentifier() {
+    const sessionIdentifier = getCookie('bu_portal_session');
+    if (sessionIdentifier === '') {
+      return null
+    } else {
+      return sessionIdentifier
+    }
+  }
 
 function setCookie(cname, cvalue, exdays) {
     const d = new Date();

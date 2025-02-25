@@ -181,6 +181,7 @@ export const CREATE_BOOKING_MUTATION = gql`
     $departure_date: String!
     $costs: Json
     $extra_fields: String
+    $sessionIdentifier: String
   ) {
     createBooking(
       first_name: $first_name
@@ -216,6 +217,7 @@ export const CREATE_BOOKING_MUTATION = gql`
       comment: $comment
       costs: $costs
       extra_fields: $extra_fields
+      sessionIdentifier: $sessionIdentifier
     ) {
       booking_nr
     }
