@@ -19,7 +19,8 @@
   > div {
     /* flex: 1; */
   }
-  .error-message, .bu-error-message {
+  .error-message,
+  .bu-error-message {
     position: relative;
     width: 100%;
     color: red;
@@ -67,6 +68,9 @@
       }
       th {
         text-align: left;
+      }
+      table {
+        width: 100%;
       }
     }
     .booking_option {
@@ -165,7 +169,8 @@
     flex-direction: column;
     padding: 8px 0;
     select,
-    input, .bukazu-date-picker {
+    input,
+    .bukazu-date-picker {
       max-width: 50%;
       @media screen and (max-width: 992px) {
         max-width: 100%;
@@ -209,7 +214,7 @@
       }
     }
   }
-  
+
   .return-message {
     position: fixed;
     top: 20%;
