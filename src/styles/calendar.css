@@ -12,7 +12,8 @@
         order: 2;
         .calendar--picker {
           flex-direction: column;
-          &--date, .button {
+          &--date,
+          .button {
             width: auto;
           }
           .button {
@@ -22,19 +23,19 @@
       }
     }
   }
-  @media screen and (max-width: 993px) {    
-      .price-overview {
-        .calendar--picker {
-          flex-direction: column;
-          &--date, .button {
-            width: auto;
-          }
-          .button {
-            padding: 12px;
-          }
+  @media screen and (max-width: 993px) {
+    .price-overview {
+      .calendar--picker {
+        flex-direction: column;
+        &--date,
+        .button {
+          width: auto;
+        }
+        .button {
+          padding: 12px;
         }
       }
-    
+    }
   }
   .calendars-header {
     display: flex;
@@ -42,11 +43,13 @@
     justify-content: space-around;
     @media screen and (max-width: 992px) {
       /* flex-direction: column; */
-      .col, .bu-calendar-col {
+      .col,
+      .bu-calendar-col {
         margin: 4px 8px;
       }
     }
-    .col, .bu-calendar-col {
+    .col,
+    .bu-calendar-col {
       .icon {
         padding: 8px 40px;
         background-color: rgb(23, 190, 187);
@@ -77,15 +80,16 @@
     justify-content: flex-start;
   }
   .bu-smaller .calendar {
-      width: 100%;
-    }
-    .bu-smaller .calendar .col {
-      padding: 16px 4px;
-    }
-    .bu-smaller .calendar .bu-calendar-col {
-      padding: 16px 4px;
-    }
-  .bu-calendar, .calendar {
+    width: 100%;
+  }
+  .bu-smaller .calendar .col {
+    padding: 16px 4px;
+  }
+  .bu-smaller .calendar .bu-calendar-col {
+    padding: 16px 4px;
+  }
+  .bu-calendar,
+  .calendar {
     min-width: 48%;
     padding: 16px 1%;
     box-sizing: border-box;
@@ -104,20 +108,14 @@
     &.calendar-4 {
       min-width: calc(25% - 16px);
     }
-    
-    .header {
-      background-color: rgba(211, 211, 211, 0.5);
-    }
-    .row, .bu-calendar-row {
-      width: 100%;
+    .col,
+    .bu-calendar-col {
+      width: 3.5em;
+      height: 3.5em;
       display: flex;
-      flex: 1 1 auto;
-      &.days {
-        border-bottom: 1px solid rgba(211, 211, 211, 0.5);
-      }
-    }
-    .col, .bu-calendar-col {
-      width: 100%;
+      /* flex: 1 1 auto; */
+      justify-content: center;
+      align-items: center;
       padding: 4px;
       text-transform: capitalize;
       text-align: center;
@@ -132,7 +130,7 @@
         text-align: right;
       }
     }
-    
+
     .cell {
       background: #6eeb83;
       background: var(--bukazu-cell);
@@ -272,8 +270,8 @@
         border-bottom: 1px solid #ccc;
         padding: 4px 0;
         @media screen and (max-width: 1200px) {
-    font-size: 16px;
-  }
+          font-size: 16px;
+        }
       }
       span.detail {
         display: flex;
@@ -282,9 +280,9 @@
         width: 100%;
         justify-content: center;
         align-items: center;
-                      @media screen and (max-width: 1200px) {
-                  font-size: 14px;
-                }
+        @media screen and (max-width: 1200px) {
+          font-size: 14px;
+        }
       }
     }
     &--persons {
@@ -293,7 +291,8 @@
       appearance: none;
       font-size: 16px;
     }
-    .button, .bu-calendar-button {
+    .button,
+    .bu-calendar-button {
       width: 20%;
       background: var(--bukazu-button_cta);
       color: #fff;
@@ -306,8 +305,8 @@
       box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.25);
       cursor: pointer;
       &:disabled {
-       background: #ccc;
-       cursor: not-allowed;
+        background: #ccc;
+        cursor: not-allowed;
       }
       &:hover {
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);

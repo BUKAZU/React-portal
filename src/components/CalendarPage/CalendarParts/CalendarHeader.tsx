@@ -16,8 +16,8 @@ function CalendarHeader({
   currentMonth,
   numberOfMonths
 }: Props): JSX.Element {
-  const dispatch = useContext(CalendarContextDispatch);  
-  
+  const dispatch = useContext(CalendarContextDispatch);
+
   function next() {
     changeMonth(addMonths(currentMonth, numberOfMonths));
   }
@@ -28,7 +28,7 @@ function CalendarHeader({
   return (
     <div className="calendars-header">
       <div
-        className="bu-calendar-col bu-prev"
+        className="bu-calendar-col bu_rounded-md bu-prev"
         style={{ textAlign: 'center' }}
         onClick={prev}
         tabIndex={0}
@@ -40,7 +40,7 @@ function CalendarHeader({
         </div>
       </div>
       <div
-        className="bu-calendar-col bu-reset"
+        className="bu-calendar-col bu_rounded-md bu-reset"
         onClick={() => {
           dispatch({
             type: 'reset'
@@ -55,7 +55,7 @@ function CalendarHeader({
         </div>
       </div>
       <div
-        className="bu-calendar-col bu-next"
+        className="bu-calendar-col bu_rounded-md bu-next"
         onClick={next}
         style={{ textAlign: 'center' }}
         tabIndex={0}

@@ -1,0 +1,38 @@
+#bukazu-app {
+  .bu_flex {
+    display: flex;
+  }
+  .bu_items-center {
+    align-items: center;
+  }
+  .bu_grid {
+    display: grid;
+  }
+  .bu_grid-cols-7 {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  .bu_grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bu_gap-px {
+    gap: 1px;
+  }
+
+  .bu_mt-2 {
+    margin-top: 2rem;
+  }
+
+  .bu_mt-6 {
+    margin-top: 24px;
+  }
+
+  .bu_py-2 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .bu_max-w-fit {
+    max-width: fit-content;
+  }
+}
