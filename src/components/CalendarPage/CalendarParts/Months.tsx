@@ -19,12 +19,6 @@ function Months({
 }: Props): JSX.Element {
   let template: JSX.Element[] = [];
 
-  console.log({ numberOfMonths, numberOfMonthsInARow });
-
-  const rows = Math.ceil(numberOfMonths / numberOfMonthsInARow);
-
-  console.log({ rows });
-
   for (let i = 0; i < numberOfMonths; i++) {
     template.push(
       <SingleMonth
@@ -37,7 +31,11 @@ function Months({
     );
   }
 
-  return <div className={`bu_grid bu_grid-cols-${rows}`}>{template}</div>;
+  return (
+    <div className={`bu_grid bu_grid-cols-${numberOfMonthsInARow}`}>
+      {template}
+    </div>
+  );
 }
 
 export default Months;
