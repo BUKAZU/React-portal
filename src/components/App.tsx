@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import Loading from './icons/loading.svg';
+import { createIntl, createIntlCache } from '@formatjs/intl';
 
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -13,18 +14,23 @@ import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
 import { useQuery } from '@apollo/client';
-import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 
 interface Props {
   pageType?: string;
   filters?: FiltersType;
   locale: string;
+  portalCode: string;
+  objectCode: string;
 }
 
-function App({ pageType, locale, filters }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
-
+function App({
+  pageType,
+  locale,
+  filters,
+  portalCode,
+  objectCode
+}: Props): JSX.Element {
   const { loading, error, data } = useQuery(PORTAL_QUERY, {
     variables: { id: portalCode }
   });
@@ -81,12 +87,16 @@ function App({ pageType, locale, filters }: Props): JSX.Element {
   if (objectCode && objectCode !== null && pageType !== 'reviews') {
     page = (
       <ErrorBoundary>
-        <CalendarPage PortalSite={PortalSite} />
-        <SafeBooking />
+        <CalendarPage
+          PortalSite={PortalSite}
+          objectCode={objectCode}
+          locale={locale}
+        />
+        <SafeBooking locale={locale} />
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
-    page = <ReviewsPage />;
+    page = <ReviewsPage objectCode={objectCode} portalCode={portalCode} />;
   } else {
     page = (
       <SearchPage

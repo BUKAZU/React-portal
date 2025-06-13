@@ -1,9 +1,8 @@
 import { useQuery } from '@apollo/client';
-import React, { useContext } from 'react';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { HouseType, PortalSiteType } from '../../../types';
 import { SINGLE_HOUSE_QUERY } from '../../../_lib/queries';
-import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
 import Calendar from '../Calendar';
@@ -11,10 +10,16 @@ import { TrackEvent } from '../../../_lib/Tracking';
 
 interface Props {
   PortalSite: PortalSiteType;
+  locale: string;
+  objectCode: string;
 }
 
-function GenerateCalendar({ PortalSite }: Props): JSX.Element {
-  const { portalCode, objectCode, locale } = useContext(AppContext);
+function GenerateCalendar({
+  PortalSite,
+  locale,
+  objectCode
+}: Props): JSX.Element {
+  const portalCode = PortalSite.portal_code;
   const { loading, error, data } = useQuery(SINGLE_HOUSE_QUERY, {
     variables: { portalCode, objectCode }
   });
@@ -62,6 +67,9 @@ function GenerateCalendar({ PortalSite }: Props): JSX.Element {
             numberOfMonths={numberOfMonths}
             numberOfMonthsInARow={numberOfMonthsInARow}
             house={result}
+            PortalSite={PortalSite}
+            locale={locale}
+            objectCode={objectCode}
           />
         </div>
       ))}

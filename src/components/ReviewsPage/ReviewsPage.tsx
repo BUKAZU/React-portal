@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
-import React, { useContext } from 'react';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { AppContext } from '../AppContext';
 import { ApiError } from '../Error';
 import Loading from '../icons/loading.svg';
 import { REVIEWS_QUERY } from './Queries';
@@ -9,8 +8,12 @@ import Score from './Score';
 import SingleReview from './SingleReview';
 import Note from './note';
 
-function ReviewsPage(): JSX.Element {
-  const { objectCode, portalCode } = useContext(AppContext);
+interface Props {
+  objectCode: string;
+  portalCode: string;
+}
+
+function ReviewsPage({ objectCode, portalCode }: Props): JSX.Element {
   const { data, error, loading } = useQuery(REVIEWS_QUERY, {
     variables: { id: portalCode, house_id: objectCode }
   });
@@ -37,7 +40,7 @@ function ReviewsPage(): JSX.Element {
       {reviews.map((review) => {
         return <SingleReview review={review} key={review.id} />;
       })}
-        <Note />
+      <Note />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { differenceInCalendarDays } from 'date-fns';
 import Loading from '../icons/loading.svg';
@@ -10,7 +10,6 @@ import { ApiError } from '../Error';
 import { useQuery } from '@apollo/client';
 import { FiltersType } from './filters/filter_types';
 import { Parse_EN_US } from '../../_lib/date_helper';
-import { AppContext } from '../AppContext';
 import { HouseType, PortalSiteType } from '../../types';
 
 interface Props {
@@ -30,8 +29,6 @@ function Results({
   onPageChange,
   activePage
 }: Props): JSX.Element {
-  const { portalCode } = useContext(AppContext);
-
   let min_nights = null;
   let requestPrices = false;
   if (filters.departure_date && filters.arrival_date) {
@@ -51,7 +48,7 @@ function Results({
   let properties = filterProperties.join(',');
 
   let variables = {
-    id: portalCode,
+    id: PortalSite.portal_code,
     country_id: filters.countries || null,
     region_id: filters.regions || null,
     city_id: filters.cities,

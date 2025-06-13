@@ -35,6 +35,7 @@ function DayClasses({
   house,
   discounts
 }: Props): string {
+  // console.debug("DayClasses", dates);
   const { selectedDate, departureDate, arrivalDate } = dates;
   let classes = ['bu-calendar-col', 'cell'];
 
@@ -42,15 +43,14 @@ function DayClasses({
     classes.push('disabled');
     return classes.join(' ');
   }
-  if (buDate) {    
-    if (buDate.arrival && isAfter(day, new Date()) && buDate.max_nights !== 0) {
-      if (prevBooked.max_nights === 0) {
-        classes.push('departure-arrival');
+  if (buDate) {
+    if (buDate.arrival && isAfter(day, subDays(new Date(), 1)) && buDate.max_nights > 0) {
+      if (prevBooked.max_nights > 0) {
+        classes.push('arrival');
       } else {
-        classes.push('arrival');
-        classes.push('arrival');
+        classes.push('departure-arrival');
       }
-    } else if (buDate.max_nights === 0) {
+    } else if (buDate.max_nights == 0) {
       if (prevBooked.max_nights !== 0) {
         classes.push('booked-departure');
       } else {
@@ -106,7 +106,6 @@ function DayClasses({
   if (last_minute || discount || buDate.special_offer > 0) {
     classes.push('discount');
   }
-
   return classes.join(' ');
 }
 

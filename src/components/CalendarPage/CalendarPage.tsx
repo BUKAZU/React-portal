@@ -9,15 +9,29 @@ import {
 
 interface Props {
   PortalSite: PortalSiteType;
+  objectCode: string;
+  locale: string;
 }
 
-function CalendarPage({ PortalSite }: Props): JSX.Element {
+function CalendarPage({ PortalSite, objectCode, locale }: Props): JSX.Element {
   const { bookingStarted } = useContext(CalendarContext);
 
   if (bookingStarted) {
-    return <BookingForm />;
+    return (
+      <BookingForm
+        portalCode={PortalSite.portal_code}
+        objectCode={objectCode}
+        locale={locale}
+      />
+    );
   } else {
-    return <GenerateCalendar PortalSite={PortalSite} />;
+    return (
+      <GenerateCalendar
+        PortalSite={PortalSite}
+        objectCode={objectCode}
+        locale={locale}
+      />
+    );
   }
 }
 
@@ -32,10 +46,18 @@ CalendarPage.DefaultProps = {
   }
 };
 
-function CalendarWrapper({ PortalSite }: Props): JSX.Element {
+function CalendarWrapper({
+  PortalSite,
+  objectCode,
+  locale
+}: Props): JSX.Element {
   return (
     <CalendarProvider>
-      <CalendarPage PortalSite={PortalSite} />
+      <CalendarPage
+        PortalSite={PortalSite}
+        objectCode={objectCode}
+        locale={locale}
+      />
     </CalendarProvider>
   );
 }

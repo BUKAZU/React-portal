@@ -5,6 +5,7 @@
   "repository": "https://github.com/BUKAZU/React-portal",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "test-cypress": "cypress open",
     "build": "vite build",
     "dev": "vite"

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ArrowRight from '../../icons/ArrowRight.svg';
 import ArrowLeft from '../../icons/ArrowLeft.svg';
 import Reload from '../../icons/Reload.svg';
-import { CalendarContextDispatch } from './CalendarContext';
 import { addMonths, subMonths } from 'date-fns';
+import store from '../../../store';
 
 interface Props {
   changeMonth: Function;
@@ -16,8 +16,6 @@ function CalendarHeader({
   currentMonth,
   numberOfMonths
 }: Props): JSX.Element {
-  const dispatch = useContext(CalendarContextDispatch);  
-  
   function next() {
     changeMonth(addMonths(currentMonth, numberOfMonths));
   }
@@ -42,9 +40,7 @@ function CalendarHeader({
       <div
         className="bu-calendar-col bu-reset"
         onClick={() => {
-          dispatch({
-            type: 'reset'
-          });
+          store.dispatch('resetDates', {});
         }}
         style={{ textAlign: 'center' }}
         tabIndex={0}

@@ -7,9 +7,8 @@ import {
   startOfWeek
 } from 'date-fns';
 import React, { useContext } from 'react';
-import { HouseType } from '../../../types';
+import { HouseType, PortalSiteType } from '../../../types';
 import { CALENDAR_QUERY } from '../../../_lib/queries';
-import { AppContext } from '../../AppContext';
 import Loading from '../../icons/loading.svg';
 import MonthHeader from './MonthHeader';
 import RenderCells from './RenderCells';
@@ -20,21 +19,25 @@ interface Props {
   currentMonth: Date;
   house: HouseType;
   numberOfMonthsInARow: Number;
+  PortalSite: PortalSiteType;
+  locale: string;
+  objectCode: string;
 }
 
 function SingleMonth({
   count,
   currentMonth,
   house,
-  numberOfMonthsInARow
+  numberOfMonthsInARow,
+  PortalSite,
+  locale,
+  objectCode
 }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
-
   let month = addMonths(currentMonth, count);
   let monthStart = startOfMonth(month);
   let monthEnd = endOfMonth(month);
   const variables = {
-    id: portalCode,
+    id: PortalSite.portal_code,
     house_id: objectCode,
     starts_at: startOfWeek(monthStart),
     ends_at: endOfWeek(monthEnd)
@@ -55,16 +58,25 @@ function SingleMonth({
   const results = data.PortalSite.houses[0].availabilities;
   const discounts = data.Discounts;
 
+  const cells = new RenderCells({
+    availabilities: results,
+    discounts,
+    month,
+    house
+  }).render();
+
   return (
-    <div className={`bu-calendar calendar calendar-${numberOfMonthsInARow}`} key={month}>
+    <div
+      className={`bu-calendar calendar calendar-${numberOfMonthsInARow}`}
+      key={month}
+    >
       <MonthHeader month={month} />
       <WeekDays month={month} />
-      <RenderCells
-        availabilities={results}
-        discounts={discounts}
-        month={month}
-        house={house}
-      />
+      <div>
+        <div ref={(ref) => ref && ref.appendChild(cells)}></div>
+        {/* {cells.map((cell, index) => (
+        ))} */}
+      </div>
     </div>
   );
 }

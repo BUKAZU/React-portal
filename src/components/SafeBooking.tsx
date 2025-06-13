@@ -1,6 +1,4 @@
-import React, { CSSProperties, useContext } from 'react';
-import pjson from '../../package.json';
-import { AppContext } from './AppContext';
+import React, { CSSProperties } from 'react';
 
 const style: CSSProperties = {
   width: '100%',
@@ -42,9 +40,7 @@ const trans: Trans = {
   }
 };
 
-function SafeBooking(): JSX.Element {
-  const { locale } = useContext(AppContext);
-
+function SafeBooking({ locale }: { locale: string }): JSX.Element {
   return (
     <div style={style}>
       <a href={trans[locale].url} style={styleLink}>
@@ -72,8 +68,7 @@ function SafeBooking(): JSX.Element {
             right: 10,
             bottom: 0
           }}
-        >
-        </span>
+        ></span>
       </a>
     </div>
   );

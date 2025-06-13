@@ -1,6 +1,6 @@
 import { addMonths, format } from 'date-fns';
 import React from 'react';
-import { HouseType } from '../../../types';
+import { HouseType, PortalSiteType } from '../../../types';
 import SingleMonth from './SingleMonth';
 
 interface Props {
@@ -8,13 +8,18 @@ interface Props {
   numberOfMonths: number;
   numberOfMonthsInARow: number;
   currentMonth: Date;
+  PortalSite: PortalSiteType;
+  locale: string;
+  objectCode: string;
 }
 
 function Months({
   numberOfMonthsInARow,
   currentMonth,
   numberOfMonths,
-
+  PortalSite,
+  locale,
+  objectCode,
   house
 }: Props): JSX.Element {
   let template: JSX.Element[] = [];
@@ -27,6 +32,9 @@ function Months({
         numberOfMonthsInARow={numberOfMonthsInARow}
         currentMonth={currentMonth}
         count={i}
+        PortalSite={PortalSite}
+        locale={locale}
+        objectCode={objectCode}
       />
     );
   }

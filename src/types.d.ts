@@ -43,6 +43,7 @@ type PortalOptions = {
 };
 
 export type PortalSiteType = {
+  portal_code: string;
   categories: { id: number; name: string; properties: name_id_type[] }[];
   options: PortalOptions;
   max_persons: number;
