@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Pending
+- Remove cypress
+
 ## 3.3.0
 - Booking message && button dynamic translations
 
