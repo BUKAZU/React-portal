@@ -42,12 +42,11 @@ function DayClasses({
     classes.push('disabled');
     return classes.join(' ');
   }
-  if (buDate) {    
-    if (buDate.arrival && isAfter(day, new Date()) && buDate.max_nights !== 0) {
+  if (buDate) {
+    if (buDate.arrival && isAfter(day, subDays(new Date(), 1)) && buDate.max_nights !== 0) {
       if (prevBooked.max_nights === 0) {
         classes.push('departure-arrival');
       } else {
-        classes.push('arrival');
         classes.push('arrival');
       }
     } else if (buDate.max_nights === 0) {

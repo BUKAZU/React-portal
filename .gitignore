@@ -8,3 +8,6 @@ dist
 /dist
 
 yarn-error.log
+
+coverage
+coverage/*

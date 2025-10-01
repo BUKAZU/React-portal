@@ -5,6 +5,15 @@ import { AppContext } from '../../AppContext';
 const CancelInsuranceText = () => {
   const { locale } = useContext(AppContext);
 
+  const links = {
+    nl: 'https://recreatieverzekeringen.nl/veelgestelde-vragen',
+    de: 'https://recreatieverzekeringen.nl/de/haufig-gestellte-fragen',
+    en: 'https://recreatieverzekeringen.nl/en/frequently-asked-questions',
+    fr: 'https://recreatieverzekeringen.nl/en/frequently-asked-questions',
+    es: 'https://recreatieverzekeringen.nl/en/frequently-asked-questions',
+    it: 'https://recreatieverzekeringen.nl/en/frequently-asked-questions'
+  };
+
   return (
     <>
       <h2>
@@ -37,7 +46,11 @@ const CancelInsuranceText = () => {
         <FM id="cancel_insurance_questions" />
       </h3>
       <p>
-        <FM id="cancel_insurance_questions_explain" />
+        <FM id="cancel_insurance_questions_explain_1" />
+        <a href={links[locale]} target="_blank">
+          <FM id="cancel_insurance_questions_explain_link" />
+        </a>
+        <FM id="cancel_insurance_questions_explain_2" />
       </p>
       <h3>
         <FM id="terms" />

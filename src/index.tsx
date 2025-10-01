@@ -75,7 +75,7 @@ function Portal({
       <IntlProvider locale={locale} messages={messages[locale]}>
         <AppContext.Provider value={{ portalCode, objectCode, locale }}>
           <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
-            <App pageType={pageType} locale={locale} filters={filters}  />
+            <App pageType={pageType} locale={locale} filters={filters} />
           </div>
         </AppContext.Provider>
       </IntlProvider>

@@ -22,6 +22,7 @@ import {
   CalendarContext,
   CalendarContextDispatch
 } from './CalendarParts/CalendarContext';
+import { getSessionIdentifier } from '../../_lib/Tracking';
 
 interface Props {
   house: HouseType;
@@ -51,6 +52,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   );
 
   const optBookingFieldsInitialized = initializeBookingFields(bookingFields);
+
+  const sessionIdentifier = getSessionIdentifier();
+
+  console.log({ sessionIdentifier });
 
   return (
     <Formik
@@ -85,7 +90,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           arrival_date: values.arrivalDate.date,
           departure_date: values.departureDate.date,
           costs: JSON.stringify(values.costs),
-          extra_fields: JSON.stringify(values.extra_fields)
+          extra_fields: JSON.stringify(values.extra_fields),
+          sessionIdentifier: sessionIdentifier
         };
 
         createBooking({ variables }).then(() => {
@@ -175,7 +181,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             <Summary house={house} values={values} />
             {status && status.msg && <div>{status.msg}</div>}
             <div className="terms">
-              <FormattedMessage id="agree_with" />{' '}
+              {PortalSite.form_submit_text}{' '}
               <FormattedMessage id="terms">
                 {(fm) => (
                   <Modal buttonText={fm}>
@@ -212,7 +218,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               type="submit"
               disabled={isSubmitting}
             >
-              <FormattedMessage id="book" />
+              {PortalSite.form_submit_button_text}
             </button>
           </div>
         </Form>
