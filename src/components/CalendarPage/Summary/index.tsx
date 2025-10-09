@@ -25,7 +25,9 @@ function Summary({ values, house }: Props): React.ReactNode {
     if (objectDetailsRef.current) {
       objectDetailsRef.current.updateValues(values);
       if (containerRef.current) {
-        containerRef.current.innerHTML = '';
+        while (containerRef.current.firstChild) {
+          containerRef.current.removeChild(containerRef.current.firstChild);
+        }
         containerRef.current.appendChild(objectDetailsRef.current.render());
       }
     }
