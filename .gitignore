@@ -12,5 +12,8 @@ build
 
 yarn-error.log
 
+tmp
+/tmp
+
 coverage
 coverage/*
