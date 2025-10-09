@@ -3,6 +3,7 @@ import Filters from './Filters';
 import Results from './Results';
 import { PortalOptions, PortalSiteType } from '../../types';
 import { FiltersType } from './filters/filter_types';
+import { TrackEvent } from '../../_lib/Tracking';
 
 type MyProps = {
   options: PortalOptions;
@@ -71,7 +72,13 @@ class SearchPage extends Component<MyProps, MyState> {
 
   render() {
     const { filters, activePage, limit, skip } = this.state;
-    const { options, PortalSite } = this.props;
+    const { options, PortalSite, locale } = this.props;
+
+    TrackEvent({
+      portal_code: PortalSite.portal_code,
+      interaction_type: 'search_view',
+      locale: locale
+    });
 
     return (
       <div

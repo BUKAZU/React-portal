@@ -7,15 +7,23 @@ import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
 import Calendar from '../Calendar';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 interface Props {
   PortalSite: PortalSiteType;
 }
 
 function GenerateCalendar({ PortalSite }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
+  const { portalCode, objectCode, locale } = useContext(AppContext);
   const { loading, error, data } = useQuery(SINGLE_HOUSE_QUERY, {
     variables: { portalCode, objectCode }
+  });
+
+  TrackEvent({
+    house_code: objectCode,
+    portal_code: portalCode,
+    interaction_type: 'calendar_view',
+    locale: locale
   });
 
   if (loading)

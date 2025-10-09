@@ -7,4 +7,13 @@ dev
 dist
 /dist
 
+build
+/build
+
 yarn-error.log
+
+tmp
+/tmp
+
+coverage
+coverage/*

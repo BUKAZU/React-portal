@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## Pending
+- Remove cypress
+
+## 3.3.0
+- Booking message && button dynamic translations
+
+## 3.1.14
+- Updated german translations
+
 ## 3.1.12
 - New translations for booking button
 

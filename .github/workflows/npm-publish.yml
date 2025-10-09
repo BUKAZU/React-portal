@@ -1,33 +1,74 @@
 # This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
-name: Node.js Package
+name: Release npm package
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      update_type:
+        required: true
+        description: patch/minor/major
+        type: string
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+         packages: write
+         contents: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 16
+          node-version: 22
+          cache: 'npm'
+          registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm test
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+         packages: write
+         contents: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
         with:
-          node-version: 16
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
           registry-url: https://registry.npmjs.org/
+      - name: Set Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Bump version
+        run: |
+          npm version ${{inputs.update_type}} --no-git-tag-version          
+      - name: Get new version
+        id: package_version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+      - name: Make branch with new version
+        run: |
+          git checkout -b v${{ env.VERSION }}
+          git add package.json
+          git commit -m "chore: Bump version to v${{ env.VERSION }}"
+          git push -u origin v${{ env.VERSION }}
+          git checkout master
       - run: npm ci
+      - run: npm run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

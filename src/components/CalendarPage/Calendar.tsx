@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { addMonths, subMonths } from 'date-fns';
 import CalendarHeader from './CalendarParts/CalendarHeader';
 import AssistanceMessage from './formParts/AssistanceMessage';
 import Legend from './CalendarParts/Legend';
