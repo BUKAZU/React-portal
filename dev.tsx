@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
 import Portal from './src/index';
 
 runTheApp();
@@ -28,7 +29,8 @@ function runApp(element) {
     filters = {};
   }
 
-  ReactDOM.render(
+  const root = createRoot(element);
+  root.render(
     <Portal
       portalCode={portalCode}
       objectCode={objectCode}
@@ -36,8 +38,7 @@ function runApp(element) {
       locale={locale}
       filters={filters}
       api_url="https://api.bukazu.com/graphql"
-    />,
-    element
+    />
   );
 }
 
