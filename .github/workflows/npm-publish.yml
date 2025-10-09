@@ -46,7 +46,12 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      - run: npm version ${{inputs.update_type}}
+      - name: Bump version
+        run: |
+          npm version ${{inputs.update_type}}--no-git-tag-version
+          git add package.json
+          git commit -m "ACTION: Bump version to $(node -p "require('./package.json').version")"
+          git push --force
       - run: npm ci
       - run: npm run build
       - run: npm publish
