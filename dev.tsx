@@ -29,7 +29,12 @@ function runApp(element) {
     filters = {};
   }
 
-  const root = createRoot(element);
+  // Store the root on the element to avoid recreating it
+  let root = element.__reactRoot;
+  if (!root) {
+    root = createRoot(element);
+    element.__reactRoot = root;
+  }
   root.render(
     <Portal
       portalCode={portalCode}
