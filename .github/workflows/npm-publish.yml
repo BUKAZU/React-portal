@@ -42,13 +42,13 @@ jobs:
           node-version: 22
           cache: 'npm'
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm run build
       - name: Set Git User
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       - run: npm version ${{inputs.update_type}}
+      - run: npm ci
+      - run: npm run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
