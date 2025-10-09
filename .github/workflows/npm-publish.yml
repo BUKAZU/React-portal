@@ -57,7 +57,7 @@ jobs:
           git checkout -b v${{ env.VERSION }}
           git add package.json
           git commit -m "ACTION: Bump version to $(node -p "require('./package.json').version")"
-          git push
+          git push -u origin v${{ env.VERSION }}
           git checkout master
       - run: npm ci
       - run: npm run build
