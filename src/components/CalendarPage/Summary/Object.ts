@@ -14,6 +14,10 @@ export default class ObjectDetails {
         this.t = useLocale();
     }
 
+    public updateValues(newValues: PossibleValues): void {
+        this.values = newValues;
+    }
+
     public render(): HTMLElement {
         const { arrivalDate, departureDate } = this.values;
 
