@@ -81,7 +81,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   if (objectCode && objectCode !== null && pageType !== 'reviews') {
     page = (
       <ErrorBoundary>
-        <CalendarPage portalCode={portalCode} />
+        <CalendarPage />
         <SafeBooking />
       </ErrorBoundary>
     );
