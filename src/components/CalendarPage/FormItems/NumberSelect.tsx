@@ -3,7 +3,12 @@ import { Field } from 'formik';
 import { createPeronsArray } from '../formParts/BookingHelpers';
 import { FormattedMessage } from 'react-intl';
 
-export default function NumberSelect({ label, description, count, ...props }) {
+export default function NumberSelect({
+  label,
+  description,
+  count = 0,
+  ...props
+}) {
   const numbers = createPeronsArray(count);
 
   return (
@@ -33,7 +38,3 @@ export default function NumberSelect({ label, description, count, ...props }) {
     </Field>
   );
 }
-
-NumberSelect.defaultProps = {
-  count: 0
-};

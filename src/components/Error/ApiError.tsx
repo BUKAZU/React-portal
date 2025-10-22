@@ -5,7 +5,7 @@ import { ApolloError } from '@apollo/client';
 
 function ApiError(
   errors: { errors: ApolloError },
-  modal: boolean
+  modal: boolean = false
 ): JSX.Element {
   const errorMessage = (
     <div className="bukazu-error-message">
@@ -25,9 +25,5 @@ function ApiError(
 
   return errorMessage;
 }
-
-ApiError.defaultProps = {
-  modal: false
-};
 
 export default ApiError;

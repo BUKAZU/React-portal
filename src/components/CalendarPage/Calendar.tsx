@@ -41,9 +41,4 @@ function Calendar({
   );
 }
 
-Calendar.defaultProps = {
-  numberOfMonths: 4,
-  numberOfMonthsInARow: 2
-};
-
 export default Calendar;

@@ -22,7 +22,7 @@ interface Props {
   locale: string;
 }
 
-function App({ pageType, locale, filters }: Props): JSX.Element {
+function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   const { portalCode, objectCode } = useContext(AppContext);
 
   const { loading, error, data } = useQuery(PORTAL_QUERY, {
@@ -81,7 +81,7 @@ function App({ pageType, locale, filters }: Props): JSX.Element {
   if (objectCode && objectCode !== null && pageType !== 'reviews') {
     page = (
       <ErrorBoundary>
-        <CalendarPage PortalSite={PortalSite} />
+        <CalendarPage />
         <SafeBooking />
       </ErrorBoundary>
     );
@@ -100,9 +100,5 @@ function App({ pageType, locale, filters }: Props): JSX.Element {
 
   return <>{page}</>;
 }
-
-App.defaultProps = {
-  filters: {}
-};
 
 export default App;
