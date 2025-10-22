@@ -115,6 +115,9 @@
   }
   .bu-grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 992px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
   .bu-grid-cols-4 {
     grid-template-columns: repeat(4, 1fr);
