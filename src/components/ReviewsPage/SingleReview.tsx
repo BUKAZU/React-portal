@@ -17,7 +17,7 @@ interface Props {
 
 function SingleReview({ review }: Props): JSX.Element {
   return (
-    <div className="bu_single_review bu_card">
+    <div className="bu_single_review bup-16 bu_card">
       <div className="bu_review_summary">
         <Score rating={review.score} />
         <div className="bu_review_summary__date_name">

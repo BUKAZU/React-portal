@@ -36,7 +36,7 @@ export default function OptionalBookingFields({
     });
   }
   return (
-    <div className="form-section">
+    <div className="form-section bup-16">
       <h2>
         <FormattedMessage id="personal_details" />
       </h2>

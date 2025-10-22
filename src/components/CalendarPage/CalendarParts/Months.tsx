@@ -24,14 +24,19 @@ function Months({
       <SingleMonth
         key={format(addMonths(currentMonth, i), 'MM-yyyy')}
         house={house}
-        numberOfMonthsInARow={numberOfMonthsInARow}
         currentMonth={currentMonth}
         count={i}
       />
     );
   }
 
-  return <div className="calendars-row">{template}</div>;
+  return (
+    <div
+      className={`bu-grid bu-grid-cols-${numberOfMonthsInARow || 2} bu-gap-16`}
+    >
+      {template}
+    </div>
+  );
 }
 
 export default Months;

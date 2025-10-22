@@ -1,15 +1,15 @@
-@import "calendar.css";
-@import "form.css";
-@import "field.css";
-@import "datepicker.css";
-@import "modal.css";
-@import "price-overview.css";
-@import "success.css";
-@import "result.css";
-@import "results.css";
-@import "filters.css";
-@import "pagination.css";
-@import "reviews.css";
+@import 'calendar.css';
+@import 'form.css';
+@import 'field.css';
+@import 'datepicker.css';
+@import 'modal.css';
+@import 'price-overview.css';
+@import 'success.css';
+@import 'result.css';
+@import 'results.css';
+@import 'filters.css';
+@import 'pagination.css';
+@import 'reviews.css';
 
 #bukazu-app {
   #search-page {
@@ -43,17 +43,20 @@
     display: flex;
     align-items: center;
   }
-  .house-name {
-    padding: 16px;
-  }
   select {
     background: #fff;
-    background-image: linear-gradient(45deg, transparent 50%, gray 50%),
+    background-image:
+      linear-gradient(45deg, transparent 50%, gray 50%),
       linear-gradient(135deg, gray 50%, transparent 50%),
       linear-gradient(to right, #ccc, #ccc);
-    background-position: calc(100% - 20px) calc(1em),
-      calc(100% - 15px) calc(1em), calc(100% - 2.5em);
-    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-position:
+      calc(100% - 20px) calc(1em),
+      calc(100% - 15px) calc(1em),
+      calc(100% - 2.5em);
+    background-size:
+      5px 5px,
+      5px 5px,
+      1px 1.5em;
     background-repeat: no-repeat;
   }
   .info-button {
@@ -74,7 +77,76 @@
   .bu_card {
     background-color: #fefefe;
     border-radius: 6px;
-    box-shadow: 0px 2px 0 rgba(5,145,255,.1);
+    box-shadow: 0px 2px 0 rgba(5, 145, 255, 0.1);
     border: solid 1px #f0f0f0;
+  }
+
+  .bup-4 {
+    padding: 4px;
+  }
+
+  .bup-8 {
+    padding: 8px;
+  }
+
+  bup-x16 {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .bup-16 {
+    padding: 16px;
+  }
+
+  .bu-bold {
+    font-weight: bold;
+  }
+
+  .bu-grid {
+    display: grid;
+  }
+
+  .bu-gap-16 {
+    gap: 16px;
+  }
+
+  .bu-grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .bu-grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bu-grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .bu-grid-cols-7 {
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .bu-rounded {
+    border-radius: 8px;
+  }
+  .bu-rounded-4 {
+    border-radius: 4px;
+  }
+  .bu-rounded-quarter {
+    border-radius: 100%;
+  }
+
+  .bu-h-16 {
+    height: 16px;
+  }
+  .bu-h-32 {
+    height: 32px;
+  }
+  .bu-w-16 {
+    width: 16px;
+  }
+  .bu-w-32 {
+    width: 32px;
+  }
+
+  .bu-text-center {
+    text-align: center;
   }
 }

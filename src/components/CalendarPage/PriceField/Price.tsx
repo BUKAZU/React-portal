@@ -22,13 +22,13 @@ function Price({ persons, variables }: Props) {
 
   if (loading)
     return (
-      <div className="price-overview--build">
+      <div className="price-overview--build bup-16">
         <Loading />
       </div>
     );
   if (error) {
     return (
-      <div className="price-overview--build">
+      <div className="price-overview--build bup-16">
         <ApiError errors={error}></ApiError>
       </div>
     );

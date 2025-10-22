@@ -1,5 +1,4 @@
 .price-overview {
-  padding: 16px;
   display: flex;
   flex-wrap: wrap;
   background-color: #fff;
@@ -49,27 +48,9 @@
     justify-content: center;
     flex-wrap: wrap;
     align-items: flex-start;
-    padding: 16px;
     @media screen and (max-width: 992px) {
       padding: 16px 0;
       min-height: 0px;
-    }
-  }
-  &--extra {
-    display: flex;
-    padding: 16px;
-    flex-direction: column;
-    flex: 1 1 auto;
-    justify-content: center;
-    align-items: center;
-    /* width: 30%; */
-    .data-label {
-      font-size: 18px;
-    }
-    .data {
-      padding: 16px;
-      font-size: 20px;
-      font-weight: bold;
     }
   }
   &--book {
@@ -83,7 +64,7 @@
     @media screen and (max-width: 992px) {
       padding: 16px 0;
     }
-    
+
     & > div {
       padding: 4px 0;
     }
@@ -100,7 +81,6 @@
         font-size: 16px;
       }
     }
-
   }
 }
 
@@ -108,4 +88,3 @@
   width: 100%;
   flex-direction: column;
 }
-  

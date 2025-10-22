@@ -8,7 +8,7 @@ interface Props {
 
 function StartBooking({ house }: Props): JSX.Element {
   return (
-    <div className="price-overview">
+    <div className="price-overview bup-16">
       <PriceField house={house} />
     </div>
   );

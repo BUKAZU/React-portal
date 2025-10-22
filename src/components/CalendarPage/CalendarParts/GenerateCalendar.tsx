@@ -57,7 +57,7 @@ function GenerateCalendar({ PortalSite }: Props): JSX.Element {
       )}
       {Results.map((result: HouseType) => (
         <div key={result.id}>
-          <div className="house-name">{result.name}</div>
+          <div className="bup-16">{result.name}</div>
           <Calendar
             numberOfMonths={numberOfMonths}
             numberOfMonthsInARow={numberOfMonthsInARow}

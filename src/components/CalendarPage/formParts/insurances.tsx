@@ -38,7 +38,7 @@ function cancelInsurance(house: HouseType) {
 export const Insurances = ({ house, values }: Props) => {
   if (house.cancel_insurance) {
     return (
-      <div className="form-section" id="insurances">
+      <div className="form-section bup-16" id="insurances">
         <h2>
           <FormattedMessage id="insurances" />
         </h2>

@@ -27,8 +27,8 @@ function ReviewsPage(): JSX.Element {
   const reviews = house.reviews;
 
   return (
-    <div className="bu_reviews">
-      <div className="bu_reviews__overview bu_card">
+    <div className="bu_reviews bup-16">
+      <div className="bu_reviews__overview bup-16 bu_card">
         <Score rating={house.rating} />
         <div className="bu_reviews__overview__number">
           {house.scoreAmount} <FormattedMessage id="reviews" />
@@ -37,7 +37,7 @@ function ReviewsPage(): JSX.Element {
       {reviews.map((review) => {
         return <SingleReview review={review} key={review.id} />;
       })}
-        <Note />
+      <Note />
     </div>
   );
 }

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Field } from 'formik';
-import {FormattedMessage, FormattedNumber } from 'react-intl'
-import Modal from '../../Modal'
-import Icon from "../../icons/info.svg";
-import { createPeronsArray } from './BookingHelpers'
+import { FormattedMessage, FormattedNumber } from 'react-intl';
+import Modal from '../../Modal';
+import Icon from '../../icons/info.svg';
+import { createPeronsArray } from './BookingHelpers';
 
 function OptionalCosts({ costs }) {
   if (costs.length === 0) {
     return null;
   }
   return (
-    <div className="form-section optional_house_costs">
+    <div className="form-section bup-16 optional_house_costs">
       <h2>
         <FormattedMessage id="extra_costs_bookable" />
       </h2>

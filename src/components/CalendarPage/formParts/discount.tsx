@@ -20,7 +20,7 @@ const Discount = ({ errors, house, options, values }: Props) => {
   ) {
     let discounts = house.discounts ? house.discounts.split(',') : [];
     return (
-      <div className="form-section">
+      <div className="form-section bup-16">
         {house.discounts && house.discounts !== '0' && (
           <>
             <div className="form-row inline">

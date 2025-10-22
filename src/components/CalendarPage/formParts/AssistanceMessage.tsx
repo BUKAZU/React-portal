@@ -17,7 +17,7 @@ function AssistanceMessage({ house }: Props): JSX.Element {
 
   if (departureDate?.date) {
     return (
-      <div className="assistance">
+      <div className="bup-16 bu-bold">
         <FormattedMessage id={`${house.house_type}.you_picked_arrival_date`} />:{' '}
         {FormatIntl(Parse_EN_US(arrivalDate.date), LONG_DATE_FORMAT)}
         <br />
@@ -31,7 +31,7 @@ function AssistanceMessage({ house }: Props): JSX.Element {
 
   if (arrivalDate?.date) {
     return (
-      <div className="assistance">
+      <div className="bup-16 bu-bold">
         <FormattedMessage id={`${house.house_type}.you_picked_arrival_date`} />:{' '}
         {FormatIntl(Parse_EN_US(arrivalDate.date), LONG_DATE_FORMAT)}
         <br />
@@ -49,7 +49,7 @@ function AssistanceMessage({ house }: Props): JSX.Element {
   }
 
   return (
-    <div className="assistance">
+    <div className="bup-16 bu-bold">
       <FormattedMessage
         id={`${house.house_type}.pick_your_arrivaldate_in_the_calendar`}
       />

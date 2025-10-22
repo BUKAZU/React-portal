@@ -132,7 +132,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           )}
 
           <div className="form-content">
-            <div className="form-section">
+            <div className="form-section bup-16">
               <a
                 className="return-link"
                 role="link"
@@ -177,7 +177,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             />
           </div>
 
-          <div className="form-sum">
+          <div className="form-sum bup-16">
             <Summary house={house} values={values} />
             {status && status.msg && <div>{status.msg}</div>}
             <div className="terms">

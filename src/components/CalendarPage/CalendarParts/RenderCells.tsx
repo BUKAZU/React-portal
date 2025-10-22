@@ -26,7 +26,7 @@ function RenderCells({
   month,
   discounts,
   house
-}: CellProps): JSX.Element {
+}: CellProps): Array<JSX.Element> {
   const dispatch = useContext(CalendarContextDispatch);
   const dates = useContext(CalendarContext);
 
@@ -84,14 +84,10 @@ function RenderCells({
       );
       day = addDays(day, 1);
     }
-    rows.push(
-      <div className="bu-calendar-row" key={day}>
-        {days}
-      </div>
-    );
+    rows.push(days);
     days = [];
   }
-  return <div className="body">{rows}</div>;
+  return <div className="bu-grid bu-grid-cols-7">{rows}</div>;
 }
 
 export default RenderCells;
