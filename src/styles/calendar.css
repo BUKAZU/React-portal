@@ -1,17 +1,20 @@
 #bukazu-app {
   @media screen and (min-width: 1400px) {
     div.calendar-container {
-      display: flex;
-      align-items: flex-start;
-      .calendar-section {
-        width: 75%;
-        order: 1;
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 16px;
+      .calendar--picker {
+        grid-row: 1;
+        grid-column: 1;
       }
       .price-overview {
-        width: 25%;
-        order: 2;
+        grid-row: 1;
+        grid-column: 2;
         .calendar--picker {
-          flex-direction: column;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 8px;
           &--date,
           .button {
             width: auto;
@@ -26,7 +29,6 @@
   @media screen and (max-width: 993px) {
     .price-overview {
       .calendar--picker {
-        flex-direction: column;
         &--date,
         .button {
           width: auto;
@@ -38,11 +40,7 @@
     }
   }
   .calendars-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
     @media screen and (max-width: 992px) {
-      /* flex-direction: column; */
       .col,
       .bu-calendar-col {
         margin: 4px 8px;
@@ -59,7 +57,7 @@
         align-items: center;
         justify-content: center;
         svg {
-          height: 18px;
+          height: 16px;
         }
         &:hover {
           box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);

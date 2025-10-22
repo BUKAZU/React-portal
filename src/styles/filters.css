@@ -1,92 +1,91 @@
 #bukazu-app #search-page {
-    display: flex;
-    flex-direction: row;
-    .filters-button {
-        display: none;
-        background: var(--bukazu-button);
-        padding: 8px;
-        border: 0;
-        font-weight: bold;
-        &.fixed-mobile {
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            z-index: 9999;
-        }
+  .filters-button {
+    display: none;
+    background: var(--bukazu-button);
+    padding: 8px;
+    border: 0;
+    font-weight: bold;
+    &.fixed-mobile {
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      z-index: 9999;
     }
+  }
 }
 
 #bukazu-app .bu-smaller #search-page .filters {
-    width: 175px;
-    min-width: 175px;
+  width: 175px;
+  min-width: 175px;
 }
 
 #bukazu-app #search-page .filters {
-    padding: 8px;
-    width: 250px;
+  padding: 8px;
+  width: 250px;
 }
 @media (max-width: 825px) {
-    #bukazu-app #search-page {
-        flex-direction: column;
-        .filters-button {
-            display: block;
-        }
+  #bukazu-app #search-page {
+    flex-direction: column;
+    .filters-button {
+      display: block;
     }
-    #bukazu-app #search-page .filters {
-        width: 100%;
-        display: none;
-        transition: all 0.3s ease;
-        &.showOnMobile {
-            display: block
-        }
-        &.fixed-mobile {
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            z-index: 9998;
-            background: #fff;
-            max-height: 75%;
-            overflow-y: auto;
-            box-shadow: 0 -5px 8px rgba(0, 0, 0, .25);
-        }
+  }
+  #bukazu-app #search-page .filters {
+    width: 100%;
+    display: none;
+    transition: all 0.3s ease;
+    &.showOnMobile {
+      display: block;
     }
-
+    &.fixed-mobile {
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      z-index: 9998;
+      background: #fff;
+      max-height: 75%;
+      overflow-y: auto;
+      box-shadow: 0 -5px 8px rgba(0, 0, 0, 0.25);
+    }
+  }
 }
 
 #bukazu-app {
-    .filters-hidden {
-        display: none;
+  .filters-hidden {
+    display: none;
+  }
+  .filters {
+    min-width: 250px;
+    &-reload {
+      background: var(--bukazu-button);
+      border: 0;
+      border-radius: 5px;
+      padding: 4px 8px;
+      float: right;
     }
-    .filters {
-        min-width: 250px;
-        &-reload {
-            background: var(--bukazu-button);
-            border: 0;
-            border-radius: 5px;
-            padding: 4px 8px;
-            float: right;
+  }
+  .bu-properties {
+    padding: 8px;
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 8px 0 16px;
+      li {
+        padding: 4px 0;
+        label {
+          display: flex;
+          align-items: center;
         }
+      }
     }
-    .bu-properties {
-        padding: 8px;
-        ul {
-            list-style: none;
-            margin: 0;
-            padding: 8px 0 16px;
-            li {
-             padding: 4px 0;
-             label {
-                 display: flex;
-                 align-items: center;
-             }   
-            }
-        }
-    }
-    .SingleDatePicker, .SingleDatePickerInput, .DateInput {
-        width: 100%;
-        display: block;
-        background: rgba(0, 0, 0, 0);
-    }
+  }
+  .SingleDatePicker,
+  .SingleDatePickerInput,
+  .DateInput {
+    width: 100%;
+    display: block;
+    background: rgba(0, 0, 0, 0);
+  }
 }
