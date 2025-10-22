@@ -139,11 +139,17 @@
   .bu-h-32 {
     height: 32px;
   }
+  .bu-h-42 {
+    height: 42px;
+  }
   .bu-w-16 {
     width: 16px;
   }
   .bu-w-32 {
     width: 32px;
+  }
+  .bu-w-42 {
+    width: 42px;
   }
 
   .bu-text-center {

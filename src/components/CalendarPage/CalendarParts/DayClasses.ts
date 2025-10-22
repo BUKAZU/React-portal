@@ -36,7 +36,7 @@ function DayClasses({
   discounts
 }: Props): string {
   const { selectedDate, departureDate, arrivalDate } = dates;
-  let classes = ['bu-text-center','bu-rounded-quarter', "bu-h-32", "bu-w-32", 'bup-8'];
+  let classes = ['bu-text-center','bu-rounded-quarter', "bu-h-42", "bu-w-42", 'bup-8'];
 
   if (!isSameMonth(day, monthStart)) {
     classes.push('disabled');
