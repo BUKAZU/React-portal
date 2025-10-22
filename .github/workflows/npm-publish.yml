@@ -4,12 +4,11 @@
 name: Release npm package
 
 on:
-  workflow_dispatch:
-    inputs:
-      update_type:
-        required: true
-        description: patch/minor/major
-        type: string
+  push:
+    branches:
+      - master
+    labels:
+      - version-bump
 
 jobs:
   build:
@@ -41,25 +40,7 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          registry-url: https://registry.npmjs.org/
-      - name: Set Git User
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Bump version
-        run: |
-          npm version ${{inputs.update_type}} --no-git-tag-version          
-      - name: Get new version
-        id: package_version
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
-      - name: Make branch with new version
-        run: |
-          git checkout -b v${{ env.VERSION }}
-          git add package.json
-          git commit -m "chore: Bump version to v${{ env.VERSION }}"
-          git push -u origin v${{ env.VERSION }}
-          git checkout master
-      - run: npm ci
+          registry-url: https://registry.npmjs.org/      
       - run: npm run build
       - run: npm publish
         env:
