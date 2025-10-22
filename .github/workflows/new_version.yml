@@ -43,7 +43,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Bump version
         run: |
-          npm version ${{inputs.update_type}} --no-git-tag-version    
+          npm version ${{ inputs.update_type }} --no-git-tag-version    
       - name: Get new version
         run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Create Pull Request
