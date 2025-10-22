@@ -56,3 +56,11 @@ jobs:
           commit-message: "chore: Bump version to v${{ env.VERSION }}"
           labels: version-bump, automated-pr
           branch: "v${{ env.VERSION }}"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
