@@ -4,15 +4,14 @@
 name: Release npm package
 
 on:
-  release:
-    types: [published]
+  - workflow_call
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-         packages: write
-         contents: write
+      packages: write
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6
@@ -26,6 +25,7 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    if: 
     permissions:
          packages: write
          contents: write
@@ -41,4 +41,12 @@ jobs:
       - run: npm run build
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}      
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

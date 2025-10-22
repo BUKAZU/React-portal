@@ -55,7 +55,7 @@ jobs:
             "This PR bumps the package version to v${{ env.VERSION }}."
           commit-message: "chore: Bump version to v${{ env.VERSION }}"
           labels: version-bump, automated-pr
-          branch: "v${{ env.VERSION }}"
+          branch: "releases/v${{ env.VERSION }}"
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
