@@ -7,7 +7,7 @@ interface Props {
 
 const MonthHeader = ({ month }: Props): JSX.Element => (
   <div className="bu-bold bup-4">
-    <div className="bu-calendar-col col-center" style={{ textAlign: 'center' }}>
+    <div className="bu-calendar-col bu-text-center">
       <span>{FormatIntl(month, MONTH_FORMAT)}</span>
     </div>
   </div>

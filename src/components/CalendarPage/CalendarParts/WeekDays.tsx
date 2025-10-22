@@ -14,7 +14,7 @@ function WeekDays({ month }: Props): JSX.Element {
 
   for (let i = 0; i < 7; i++) {
     days.push(
-      <div className="bu-calendar-col col-center" key={i}>
+      <div className="bu-calendar-col bu-text-center" key={i}>
         {FormatIntl(addDays(startDate, i), dateFormat)}
       </div>
     );

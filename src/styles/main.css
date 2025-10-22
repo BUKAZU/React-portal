@@ -122,6 +122,10 @@
   .bu-grid-cols-7 {
     grid-template-columns: repeat(7, 1fr);
   }
+  .bu-center {
+    justify-content: center;
+    align-items: center;
+  }
 
   .bu-rounded {
     border-radius: 8px;
@@ -129,8 +133,8 @@
   .bu-rounded-4 {
     border-radius: 4px;
   }
-  .bu-rounded-quarter {
-    border-radius: 100%;
+  .bu-rounded-half {
+    border-radius: 50%;
   }
 
   .bu-h-16 {
@@ -154,5 +158,9 @@
 
   .bu-text-center {
     text-align: center;
+  }
+
+  .bu-hover-bright:hover {
+    filter: brightness(1.2);
   }
 }

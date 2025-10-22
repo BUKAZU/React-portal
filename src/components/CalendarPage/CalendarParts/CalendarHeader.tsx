@@ -33,7 +33,7 @@ function CalendarHeader({
         tabIndex={0}
         role="button"
       >
-        <div className="icon bu-rounded-4">
+        <div className="icon bu-rounded bu-hover-bright">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -59,7 +59,7 @@ function CalendarHeader({
         tabIndex={0}
         role="button"
       >
-        <div className="icon bu-rounded-4">
+        <div className="icon bu-rounded bu-hover-bright">
           <Reload />
         </div>
       </div>
@@ -70,7 +70,7 @@ function CalendarHeader({
         tabIndex={0}
         role="button"
       >
-        <div className="icon bu-rounded-4">
+        <div className="icon bu-rounded bu-hover-bright">
           <ArrowRight />
         </div>
       </div>

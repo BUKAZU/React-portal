@@ -36,7 +36,7 @@ function DayClasses({
   discounts
 }: Props): string {
   const { selectedDate, departureDate, arrivalDate } = dates;
-  let classes = ['bu-text-center','bu-rounded-quarter', "bu-h-42", "bu-w-42", 'bup-8'];
+  let classes = ['bu-grid', 'bu-center','bu-rounded-half', "bu-h-42", "bu-w-42"];
 
   if (!isSameMonth(day, monthStart)) {
     classes.push('disabled');
@@ -45,13 +45,13 @@ function DayClasses({
   if (buDate) {
     if (buDate.arrival && isAfter(day, subDays(new Date(), 1)) && buDate.max_nights !== 0) {
       if (prevBooked.max_nights === 0) {
-        classes.push('departure-arrival');
+        classes.push('departure-arrival', 'bu-hover-bright');
       } else {
-        classes.push('arrival');
+        classes.push('arrival', 'bu-hover-bright');
       }
     } else if (buDate.max_nights === 0) {
       if (prevBooked.max_nights !== 0) {
-        classes.push('booked-departure');
+        classes.push('booked-departure', 'bu-hover-bright');
       } else {
         classes.push('booked');
       }
