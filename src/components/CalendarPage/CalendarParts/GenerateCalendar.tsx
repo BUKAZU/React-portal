@@ -9,11 +9,7 @@ import Loading from '../../icons/loading.svg';
 import Calendar from '../Calendar';
 import { TrackEvent } from '../../../_lib/Tracking';
 
-interface Props {
-  PortalSite: PortalSiteType;
-}
-
-function GenerateCalendar({ PortalSite }: Props): JSX.Element {
+function GenerateCalendar(): JSX.Element {
   const { portalCode, objectCode, locale } = useContext(AppContext);
   const { loading, error, data } = useQuery(SINGLE_HOUSE_QUERY, {
     variables: { portalCode, objectCode }
@@ -40,13 +36,11 @@ function GenerateCalendar({ PortalSite }: Props): JSX.Element {
     );
   }
 
-  const Results = data.PortalSite.houses;
-  const numberOfMonths = PortalSite.options.bookingForm
-    ? PortalSite.options.bookingForm.numberOfMonths
-    : 4;
-  const numberOfMonthsInARow = PortalSite.options.bookingForm
-    ? PortalSite.options.bookingForm.numberOfMonthsInARow
-    : 4;
+  const PortalSite = data.PortalSite;
+  const Results = PortalSite.houses;
+  const numberOfMonths = PortalSite.bookingFormConfiguration.showMonthsAmount;
+  const numberOfMonthsInARow =
+    PortalSite.bookingFormConfiguration.showMonthsInARow;
 
   return (
     <div id="calendar-container">

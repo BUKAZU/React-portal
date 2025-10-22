@@ -7,7 +7,7 @@ interface Props {
   buttonText?: string | React.ReactNode;
 }
 
-function Modal({ children, buttonText, show }: Props) {
+function Modal({ children, buttonText, show = false }: Props) {
   const [visible, setVisible] = useState(show);
 
   if (!visible) {
@@ -38,9 +38,5 @@ function Modal({ children, buttonText, show }: Props) {
     </div>
   );
 }
-
-Modal.defaultProps = {
-  show: false
-};
 
 export default Modal;

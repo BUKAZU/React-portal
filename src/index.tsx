@@ -33,7 +33,7 @@ function Portal({
   pageType,
   locale,
   filters,
-  api_url
+  api_url = 'https://api.bukazu.com/graphql'
 }: Props): JSX.Element {
   const errors = IntegrationError({ portalCode, pageType, locale, filters });
   if (errors) {
@@ -82,11 +82,6 @@ function Portal({
     </ApolloProvider>
   );
 }
-
-Portal.defaultProps = {
-  pageType: null,
-  api_url: 'https://api.bukazu.com/graphql'
-};
 
 export default Portal;
 

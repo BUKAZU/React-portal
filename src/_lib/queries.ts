@@ -228,6 +228,19 @@ export const SINGLE_HOUSE_QUERY = gql`
   query PortalSiteSingleHouseQuery($portalCode: ID!, $objectCode: String!) {
     PortalSite(id: $portalCode) {
       id
+      options
+      bookingFormConfiguration {
+        adultsFromAge
+        babiesAllowed
+        babiesTillAge        
+        childrenAllowed
+        childrenFromAge
+        childrenTillAge
+        languageSelectorVisible
+        redirectUrl
+        showMonthsAmount
+        showMonthsInARowAmount
+      }
       houses(house_code: $objectCode) {
         id
         code
