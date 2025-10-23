@@ -20,18 +20,7 @@ function Paginator({
 }: Props): JSX.Element {
   const { loading, error, data } = useQuery(HOUSE_COUNT_QUERY, { variables });
 
-  if (loading)
-    return (
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center'
-        }}
-      >
-        <Loading />
-      </div>
-    );
+  if (loading) return <Loading />;
   if (error) {
     return <div>Error</div>;
   }
@@ -40,7 +29,7 @@ function Paginator({
 
   const pageCount = Math.ceil(results.length / limit);
   return (
-    <div className="bu-paginator">
+    <div className="bu-grid bu-grid-cols-2 bup-8 bup-x-16 bu-w100 bu-y-center bu-space-between">
       <div>
         {results.length} <FormattedMessage id="results" />
       </div>

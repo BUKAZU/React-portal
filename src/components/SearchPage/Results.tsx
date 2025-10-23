@@ -99,14 +99,14 @@ function Results({
   );
   const Results: HouseType[] = data.PortalSite.houses;
 
+  const listMode = PortalSite.options.filtersForm
+    ? PortalSite.options.filtersForm.mode
+    : '';
+
   return (
     <div
       id="results"
-      className={
-        PortalSite.options.filtersForm
-          ? PortalSite.options.filtersForm.mode
-          : ''
-      }
+      className={`bu-grid bu-gap-16 ${listMode === 'grid' ? 'bu-grid-cols-3 bup-16 grid' : 'bu-grid-cols-1 bup-8 list'}`}
     >
       {Pagination}
       {Results.length === 0 ? (

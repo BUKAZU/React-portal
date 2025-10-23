@@ -2,49 +2,7 @@
   padding: 8px;
 }
 #bukazu-app #results {
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 16px;
-  align-items: stretch;
-  align-content: flex-start;
   @media screen and (max-width: 992px) {
     justify-content: space-around;
   }
-  
-  .bu-paginator {
-        display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 8px 16px 0;
-  .pagination {
-    display: flex;
-    list-style: none;
-    li {
-      padding: 8px;
-      a {
-        text-decoration: none;
-        color: #000;
-      }
-      &.disabled {
-        a {
-          color: rgba(0, 0, 0, 0.5);
-        }
-      }
-      &.active {
-        border: 1px solid var(--bukazu-button);
-        a {
-          color: #000 !important;
-        }
-      }
-    }
-  }
-  }
-}
-
-#bukazu-app #results .object-inner {
-  color: rgba(26, 25, 25, 1);
-  border: 1px solid rgba(69, 74, 83, 0.2);
-  border-radius: 5px;
 }

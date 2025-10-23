@@ -80,18 +80,18 @@ class SearchPage extends Component<MyProps, MyState> {
       locale: locale
     });
 
+    const filterPostions = options.filtersForm
+      ? options.filtersForm.location === 'right'
+        ? 'bu-reverse'
+        : options.filtersForm.location === 'top'
+          ? 'bu-column'
+          : ''
+      : '';
+
     return (
       <div
         id="search-page"
-        className={
-          options.filtersForm
-            ? options.filtersForm.location === 'right'
-              ? 'bu-reverse'
-              : options.filtersForm.location === 'top'
-              ? 'bu-column'
-              : ''
-            : ''
-        }
+        className={`bu-w100 bu-grid bu-grid-cols-2 ${filterPostions}`}
       >
         <Filters
           PortalSite={PortalSite}

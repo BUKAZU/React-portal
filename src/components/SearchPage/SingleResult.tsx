@@ -1,7 +1,6 @@
 import React from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { FiltersFormType, HouseType } from '../../types';
-import ArrowRight from '../icons/ArrowRight.svg';
 
 interface Props {
   result: HouseType;
@@ -13,7 +12,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
 
   return (
     <a className="bukazu-result bu_card" href={result.house_url}>
-      <div className="bukazu-result-inner">
+      <div className="bukazu-result-inner bu-rounded">
         <div className="image-holder">
           <img src={result.image_url} alt={result.name} />
         </div>

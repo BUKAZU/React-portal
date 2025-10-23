@@ -10,6 +10,7 @@
 @import 'filters.css';
 @import 'pagination.css';
 @import 'reviews.css';
+@import 'sm.css';
 
 #bukazu-app {
   #search-page {
@@ -110,14 +111,17 @@
     gap: 16px;
   }
 
-  .bu-grid-cols-3 {
-    grid-template-columns: repeat(3, 1fr);
+  .bu-grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr);
   }
   .bu-grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
     @media (max-width: 992px) {
       grid-template-columns: repeat(1, 1fr);
     }
+  }
+  .bu-grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
   }
   .bu-grid-cols-4 {
     grid-template-columns: repeat(4, 1fr);
@@ -127,6 +131,12 @@
   }
   .bu-center {
     justify-content: center;
+    align-items: center;
+  }
+  .bu-space-between {
+    justify-content: space-between;
+  }
+  .bu-y-center {
     align-items: center;
   }
 
@@ -157,6 +167,9 @@
   }
   .bu-w-42 {
     width: 42px;
+  }
+  .bu-w100 {
+    width: 100%;
   }
 
   .bu-text-center {

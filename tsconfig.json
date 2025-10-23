@@ -1,5 +1,4 @@
 /// <reference types="vite/client" />
-
 {
   "compilerOptions": {
     "target": "es6",
@@ -13,5 +12,7 @@
     "isolatedModules": true,
     "esModuleInterop": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

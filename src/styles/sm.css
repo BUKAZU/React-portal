@@ -1,0 +1,7 @@
+@media screen and (max-width: 992px) {
+  #bukazu-app {
+    .bu-grid-cols-2 {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
