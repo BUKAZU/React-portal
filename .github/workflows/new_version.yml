@@ -47,7 +47,7 @@ jobs:
       - name: Get new version
         run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           title: "chore: Bump version to v${{ env.VERSION }}"
           body: | 
