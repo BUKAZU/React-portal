@@ -1,5 +1,4 @@
-import { subYears, addYears } from 'date-fns';
-import { format } from 'date-fns';
+import { subYears, addYears, format } from 'date-fns';
 import {
     createPeronsArray,
     initializeBookingFields,
