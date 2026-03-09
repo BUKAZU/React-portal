@@ -9,6 +9,9 @@ import { addMonths, subMonths } from 'date-fns';
 import CalendarHeader from '../CalendarHeader';
 import { CalendarContextDispatch } from '../CalendarContext';
 
+// Mock SVG icon imports used by CalendarHeader so Jest can load them without a transformer
+jest.mock('../../icons/ArrowRight.svg', () => () => <span className="icon" />);
+jest.mock('../../icons/Reload.svg', () => () => <span className="icon" />);
 // Required for act() to work correctly in the jsdom test environment
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
