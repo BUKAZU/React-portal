@@ -1,4 +1,4 @@
-import { addDays, startOfToday } from 'date-fns';
+import { addDays, format, startOfToday } from 'date-fns';
 import { calendarReducer } from '../CalendarContext';
 import { BookingType } from '../../calender_types';
 
@@ -28,7 +28,7 @@ const mockHouse = {
 };
 
 const today = startOfToday();
-const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+const todayStr = format(today, 'yyyy-MM-dd');
 
 const mockArrivalDay = {
     date: todayStr,
@@ -78,7 +78,7 @@ describe('calendarReducer', () => {
 
     it('should set departureDate when clicking a valid departure day', () => {
         const futureDate = addDays(today, 7);
-        const futureDateStr = `${futureDate.getFullYear()}-${String(futureDate.getMonth() + 1).padStart(2, '0')}-${String(futureDate.getDate()).padStart(2, '0')}`;
+        const futureDateStr = format(futureDate, 'yyyy-MM-dd');
 
         const stateWithArrival: BookingType = {
             ...initialBooking,
@@ -106,7 +106,7 @@ describe('calendarReducer', () => {
 
     it('should not set departureDate when departure day does not meet min_nights constraint', () => {
         const tooSoonDate = addDays(today, 1); // Only 1 day, min is 3
-        const tooSoonStr = `${tooSoonDate.getFullYear()}-${String(tooSoonDate.getMonth() + 1).padStart(2, '0')}-${String(tooSoonDate.getDate()).padStart(2, '0')}`;
+        const tooSoonStr = format(tooSoonDate, 'yyyy-MM-dd');
 
         const stateWithArrival: BookingType = {
             ...initialBooking,
