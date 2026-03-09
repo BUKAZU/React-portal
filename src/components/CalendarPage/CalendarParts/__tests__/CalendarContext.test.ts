@@ -40,7 +40,7 @@ const mockArrivalDay = {
 };
 
 describe('calendarReducer', () => {
-    it('should return the initial state unchanged for an arrival click without dispatch', () => {
+    it('should set selectedDate and arrivalDate when clicking an arrival day', () => {
         const result = calendarReducer(initialBooking, {
             type: 'clicked',
             house: mockHouse as any,
