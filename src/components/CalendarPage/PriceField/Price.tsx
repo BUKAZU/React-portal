@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import React, { useContext } from 'react';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
@@ -39,15 +39,14 @@ function Price({ persons, variables }: Props) {
       <div className="price-overview--book">
         <div className="price">
           €{' '}
-          <FormattedNumber
-            value={Math.round(result.total_price)}
-            minimumFractionDigits={2}
-            maximumFractionDigits={2}
-          />
+          {formatNumber(Math.round(result.total_price), {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          })}
         </div>
         <div>
           <i>
-            <FormattedMessage id="based_on_one_person" values={{ persons }} />
+            {t('based_on_one_person', { persons })}
           </i>
         </div>
       </div>
