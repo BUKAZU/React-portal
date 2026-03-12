@@ -14,21 +14,17 @@ export type FiltersFormType = {
   mode: 'grid' | 'list';
 };
 
-type BookingFormType = {
-  adults_from: number;
-  children: boolean;
-  children_from: number;
-  children_til: number;
-  babies: boolean;
-  babies_til: number;
-  showDiscountCode: boolean;
+export type BookingFormConfiguration = {
+  adultsFromAge: number;
+  babiesAllowed: boolean;
+  babiesTillAge: number;
+  childrenAllowed: boolean;
+  childrenFromAge: number;
+  childrenTillAge: number;
+  languageSelectorVisible: boolean;
   redirectUrl: string | null;
-  redirectUrl_en: string | null;
-  redirectUrl_nl: string | null;
-  redirectUrl_de: string | null;
-  redirectUrl_fr: string | null;
-  redirectUrl_es: string | null;
-  redirectUrl_it: string | null;
+  showMonthsAmount: number;
+  showMonthsInARowAmount: number;
 };
 
 type name_id_type = {
@@ -39,12 +35,12 @@ type name_id_type = {
 type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
-  bookingForm: BookingFormType;
 };
 
 export type PortalSiteType = {
   categories: { id: number; name: string; properties: name_id_type[] }[];
   options: PortalOptions;
+  bookingFormConfiguration: BookingFormConfiguration;
   max_persons: number;
   name: string;
   max_bedrooms: number;

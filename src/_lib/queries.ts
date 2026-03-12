@@ -97,6 +97,9 @@ export const BOOKING_PRICE_QUERY = gql`
     PortalSite(id: $portalCode) {
       id
       options
+      bookingFormConfiguration {
+        redirectUrl
+      }
       first_name_label
       preposition_label
       last_name_label

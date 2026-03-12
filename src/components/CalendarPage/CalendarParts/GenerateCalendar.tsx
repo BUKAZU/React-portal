@@ -40,7 +40,7 @@ function GenerateCalendar(): JSX.Element {
   const Results = PortalSite.houses;
   const numberOfMonths = PortalSite.bookingFormConfiguration.showMonthsAmount;
   const numberOfMonthsInARow =
-    PortalSite.bookingFormConfiguration.showMonthsInARow;
+    PortalSite.bookingFormConfiguration.showMonthsInARowAmount;
 
   return (
     <div id="calendar-container">
