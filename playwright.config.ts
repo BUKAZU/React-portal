@@ -34,7 +34,11 @@ export default defineConfig({
   ],
   /* Run local dev server before starting the tests */
   webServer: {
+<<<<<<< HEAD
     command: 'npm run dev -- --port 5173 --strictPort',
+=======
+    command: 'npm run dev',
+>>>>>>> efe0c61e (feat: introduce Playwright for end-to-end testing)
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI
   }
