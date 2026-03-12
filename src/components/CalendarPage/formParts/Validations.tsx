@@ -1,8 +1,7 @@
-import React from 'react';
-import { FormattedMessage } from 'react-intl';
 import { HouseType } from '../../../types';
 import { byString, validateAge } from './BookingHelpers';
 import { isInt } from './OptionalBookingFields';
+import { t } from '../../../intl';
 
 export function validateForm(
   values: object,
@@ -28,36 +27,34 @@ export function validateForm(
         );
 
         if (!validateValue || validateValue === '') {
-          errors[field.id] = <FormattedMessage id="required" />;
+          errors[field.id] = t('required');
         }
       } else {
         const validateValue = byString(values, field.id);
 
         if (!validateValue || validateValue === '') {
-          errors[field.id] = <FormattedMessage id="required" />;
+          errors[field.id] = t('required');
         }
       }
     }
   }
 
   if (values.adults < 1 && persons > 0) {
-    errors.adults = <FormattedMessage id="at_least_1_adult" />;
+    errors.adults = t('at_least_1_adult');
   }
   if (Number(values.discount) > 0 && !values.discount_reason) {
-    errors.discount_reason = <FormattedMessage id="you_need_to_give_reason" />;
+    errors.discount_reason = t('you_need_to_give_reason');
   }
   if (values.persons > persons) {
-    errors.max_persons = <FormattedMessage id="max_persons_reached" />;
+    errors.max_persons = t('max_persons_reached');
   }
 
   if (
     values.cancel_insurance !== 0 &&
     validateAge(values.extra_fields?.date_of_birth)
   ) {
-    errors['extra_fields.date_of_birth'] = (
-      <FormattedMessage id="at_least_18y_old" />
-    );
-    errors['insurances'] = <FormattedMessage id="at_least_18y_old" />;
+    errors['extra_fields.date_of_birth'] = t('at_least_18y_old');
+    errors['insurances'] = t('at_least_18y_old');
   }
 
   return errors;

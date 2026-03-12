@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 
 interface Props {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ function Modal({ children, buttonText, show = false }: Props) {
 
           <div className="bukazu-modal-footer">
             <a onClick={() => setVisible(false)}>
-              <FormattedMessage id="close" />
+              {t('close')}
             </a>
           </div>
         </div>

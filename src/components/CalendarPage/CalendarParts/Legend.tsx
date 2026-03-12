@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 
 interface Props {
   house: {
@@ -12,19 +12,19 @@ function Legend({ house }: Props): JSX.Element {
     <div className="legend">
       <div>
         <span className="legend-field arrival" />
-        <FormattedMessage id={`${house.house_type}.arrival_date`} />
+        {t(`${house.house_type}.arrival_date`)}
       </div>
       <div>
         <span className="legend-field booked" />
-        <FormattedMessage id="booked" />
+        {t('booked')}
       </div>
       <div>
         <span className="legend-field departure" />
-        <FormattedMessage id={`${house.house_type}.departure_date`} />
+        {t(`${house.house_type}.departure_date`)}
       </div>
       <div>
         <span className="legend-field last_minute_discount" />
-        <FormattedMessage id="discount" />
+        {t('discount')}
       </div>
     </div>
   );

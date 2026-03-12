@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { t, formatNumber } from '../../../intl';
 import Modal from '../../Modal';
 import Icon from '../../icons/info.svg';
 import { createPeronsArray } from './BookingHelpers';
@@ -12,7 +12,7 @@ function OptionalCosts({ costs }) {
   return (
     <div className="form-section bup-16 optional_house_costs">
       <h2>
-        <FormattedMessage id="extra_costs_bookable" />
+        {t('extra_costs_bookable')}
       </h2>
       <div>
         {costs.map((cost) => {
@@ -25,25 +25,16 @@ function OptionalCosts({ costs }) {
                 <div className="form-row inline" key={cost.id}>
                   <label htmlFor={cost.id}>{cost.name}</label>
                   <Field component="select" name={`costs[${cost.id}]`}>
-                    <FormattedMessage id="no">
-                      {(formattedMessage) => (
-                        <option value={0}>{formattedMessage}</option>
-                      )}
-                    </FormattedMessage>
-                    <FormattedMessage id="yes">
-                      {(formattedMessage) => (
-                        <option value={1}>{formattedMessage}</option>
-                      )}
-                    </FormattedMessage>
+                    <option value={0}>{t('no')}</option>
+                    <option value={1}>{t('yes')}</option>
                   </Field>
 
                   <div className="price_per">
                     €{' '}
-                    <FormattedNumber
-                      value={cost.amount}
-                      minimumFractionDigits={2}
-                      maximumFractionDigits={2}
-                    />{' '}
+                    {formatNumber(cost.amount, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}{' '}
                     {cost.method_name}
                   </div>
                   <div>
@@ -73,11 +64,10 @@ function OptionalCosts({ costs }) {
 
                 <div className="price_per">
                   €{' '}
-                  <FormattedNumber
-                    value={cost.amount}
-                    minimumFractionDigits={2}
-                    maximumFractionDigits={2}
-                  />{' '}
+                  {formatNumber(cost.amount, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}{' '}
                   {cost.method_name}
                 </div>
                 <div>

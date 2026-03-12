@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { Field } from 'formik';
 import Modal from '../../Modal';
 import Icon from '../../icons/info.svg';
@@ -19,7 +19,7 @@ function cancelInsurance(house: HouseType) {
     return (
       <div className="form-row inline">
         <label htmlFor="cancel_insurance">
-          <FormattedMessage id="cancel_insurance" />
+          {t('cancel_insurance')}
         </label>
         <Field component="select" name="cancel_insurance" required={true}>
           {translatedOption('choose', '')}
@@ -40,7 +40,7 @@ export const Insurances = ({ house, values }: Props) => {
     return (
       <div className="form-section bup-16" id="insurances">
         <h2>
-          <FormattedMessage id="insurances" />
+          {t('insurances')}
         </h2>
         {cancelInsurance(house)}
         {values.cancel_insurance && values.cancel_insurance !== '0' && (
@@ -50,7 +50,7 @@ export const Insurances = ({ house, values }: Props) => {
             required
             inline={false}
             description={
-              <FormattedMessage id="insurance_company_needs_date_of_birth" />
+              t('insurance_company_needs_date_of_birth')
             }
           />
         )}

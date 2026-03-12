@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 
 export default function Select({
   label,
@@ -15,7 +15,7 @@ export default function Select({
         return (
           <div className="form-row inline" id={`bukazu_form_${props.name}`}>
             <label htmlFor={props.name}>
-              <FormattedMessage id={label} />
+              {t(label)}
             </label>
             <select {...field} {...props}>
               {options.map((opt) => {

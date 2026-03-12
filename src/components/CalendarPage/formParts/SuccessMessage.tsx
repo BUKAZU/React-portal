@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 
 const SuccessMessage = () => (
   <div className="success-message">
@@ -20,10 +20,10 @@ const SuccessMessage = () => (
       <path d="M50,5C25.2,5,5,25.1,5,50c0,24.8,20.2,45,45,45s45-20.2,45-45C95,25.1,74.8,5,50,5z M72.7,38.2L44.2,66.7  c-0.4,0.4-0.9,0.6-1.4,0.6s-1-0.2-1.4-0.6l-14-14c-0.8-0.8-0.8-2,0-2.8c0.8-0.8,2-0.8,2.8,0l12.6,12.6l27.1-27.1  c0.8-0.8,2-0.8,2.8,0C73.5,36.1,73.5,37.4,72.7,38.2z" />
     </svg>
     <h3>
-      <FormattedMessage id="thank_you_for_your_request" />
+      {t('thank_you_for_your_request')}
     </h3>
     <p>
-      <FormattedMessage id="we_sent_confirmation_check_email" />
+      {t('we_sent_confirmation_check_email')}
     </p>
   </div>
 );

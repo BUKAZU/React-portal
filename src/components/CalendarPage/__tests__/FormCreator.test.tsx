@@ -1,11 +1,9 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { IntlProvider } from 'react-intl';
 import FormCreator from '../FormCreator';
 import { CalendarContext, CalendarContextDispatch } from '../CalendarParts/CalendarContext';
 import { AppContext } from '../../AppContext';
-import en from '../../../locales/en.json';
 import { HouseType, PortalSiteType } from '../../../types';
 import { BuDate } from '../../../types';
 
@@ -169,26 +167,25 @@ function renderFormCreator(
 ) {
   act(() => {
     root.render(
-      <IntlProvider locale="en" messages={en as any}>
-        <AppContext.Provider
-          value={{ locale: 'en', portalCode: 'TEST', objectCode: 'HOUSE1' }}
-        >
-          <CalendarContext.Provider value={calendarState as any}>
-            <CalendarContextDispatch.Provider value={mockDispatch}>
-              <FormCreator
-                house={house}
-                PortalSite={portalSite}
-                booking={null as any}
-              />
-            </CalendarContextDispatch.Provider>
-          </CalendarContext.Provider>
-        </AppContext.Provider>
-      </IntlProvider>
+      <AppContext.Provider
+        value={{ locale: 'en', portalCode: 'TEST', objectCode: 'HOUSE1' }}
+      >
+        <CalendarContext.Provider value={calendarState as any}>
+          <CalendarContextDispatch.Provider value={mockDispatch}>
+            <FormCreator
+              house={house}
+              PortalSite={portalSite}
+              booking={null as any}
+            />
+          </CalendarContextDispatch.Provider>
+        </CalendarContext.Provider>
+      </AppContext.Provider>
     );
   });
 }
 
 beforeEach(() => {
+  (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
   act(() => {

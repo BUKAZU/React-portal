@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from '../Modal';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 import { ApolloError } from '@apollo/client';
 
 function ApiError(
@@ -10,7 +10,7 @@ function ApiError(
   const errorMessage = (
     <div className="bukazu-error-message">
       <h2>
-        <FormattedMessage id="something_went_wrong_please_try_again" />
+        {t('something_went_wrong_please_try_again')}
       </h2>
       <ul>
         {errors.errors.graphQLErrors.map((err) => (

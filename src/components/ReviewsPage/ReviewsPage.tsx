@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import React, { useContext } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 import { AppContext } from '../AppContext';
 import { ApiError } from '../Error';
 import Loading from '../icons/loading.svg';
@@ -31,7 +31,7 @@ function ReviewsPage(): JSX.Element {
       <div className="bu_reviews__overview bup-16 bu_card">
         <Score rating={house.rating} />
         <div className="bu_reviews__overview__number">
-          {house.scoreAmount} <FormattedMessage id="reviews" />
+          {house.scoreAmount} {t('reviews')}
         </div>
       </div>
       {reviews.map((review) => {

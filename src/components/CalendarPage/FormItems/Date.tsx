@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import DatePicker from 'react-date-picker';
 import { format } from 'date-fns';
 
@@ -31,7 +31,7 @@ function DateField({ label, description, name, inline }: Props) {
             id={`bukazu_form_${name}`}
           >
             <label htmlFor={name}>
-              <FormattedMessage id={label} />
+              {t(label)}
             </label>
             <DatePicker
               className="bukazu-date-picker"
