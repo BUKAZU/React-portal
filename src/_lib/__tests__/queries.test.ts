@@ -76,8 +76,9 @@ describe('GraphQL queries comply with API schema', () => {
 
   it('all queries are semantically valid against the API schema', () => {
     if (!schema) {
-      // Schema could not be fetched from the endpoint; semantic validation is skipped.
-      return;
+      throw new Error(
+        `Could not fetch schema from ${GRAPHQL_ENDPOINT}. Ensure the endpoint is reachable.`
+      );
     }
     for (const { name, document } of allQueries) {
       const errors = validate(schema, document);
