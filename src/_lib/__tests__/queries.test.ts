@@ -87,7 +87,13 @@ describe('GraphQL queries comply with API schema', () => {
     }
     for (const { name, document } of allQueries) {
       const errors = validate(schema, document);
-      expect(errors, `${name} has schema validation errors: ${errors.map((e) => e.message).join(', ')}`).toHaveLength(0);
+      if (errors.length > 0) {
+        const message = `${name} has schema validation errors: ${errors
+          .map((e) => e.message)
+          .join(', ')}`;
+        throw new Error(message);
+      }
+      expect(errors).toHaveLength(0);
     }
   });
 });
