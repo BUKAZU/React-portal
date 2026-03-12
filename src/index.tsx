@@ -72,7 +72,3 @@ function Portal({
 }
 
 export default Portal;
-
-type JSONType = {
-  [key: string]: string;
-};

@@ -56,7 +56,6 @@ function Totals({ prices }: Props): JSX.Element {
               testTransform: 'capitalize'
             }}
           >
-          >
             {t('total')}
           </th>
           <td className="price">
