@@ -12,7 +12,8 @@ export default defineConfig({
       name: 'BukazuPortal',
       // the proper extensions will be added
       formats: ['es', 'umd'],
-      fileName: (format) => `portal.${format}.js`
+      fileName: (format) => `portal.${format}.js`,
+      cssFileName: 'index'
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
@@ -20,10 +21,6 @@ export default defineConfig({
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM'
-        },
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name == 'style.css') return 'index.css';
-          return assetInfo.name;
         }
       }
     }
