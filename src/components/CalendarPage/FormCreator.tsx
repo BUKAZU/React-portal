@@ -152,8 +152,6 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             <Discount
               errors={errors}
               house={house}
-              values={values}
-              render={bookingPrice.optional_house_costs}
             />
 
             <Insurances house={house} values={values} />
