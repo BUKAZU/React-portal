@@ -1,5 +1,5 @@
 import React from "react";
-import { FormattedMessage } from "react-intl";
+import { t } from "../../intl";
 
 function Note() {
     return (
@@ -7,7 +7,7 @@ function Note() {
             {/* <FormattedMessage id="reviews_note" />
             <br /> */}
             <a href="https://www.bukazu.com" target="_blank" rel="noopener noreferrer">
-                <FormattedMessage id="reviews_note_link" />
+                {t('reviews_note_link')}
             </a>
         </div>
     )

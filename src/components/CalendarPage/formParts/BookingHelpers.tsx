@@ -1,6 +1,6 @@
 import { subYears, isAfter } from 'date-fns'
 import React from 'react'
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 
 export function createPeronsArray(persons: number): number[] {
   return Array.apply(null, { length: persons + 1 }).map(Number.call, Number);
@@ -31,9 +31,7 @@ export function byString(o, s) {
 
 export function translatedOption(id:string, value: string):JSX.Element {
   return (
-    <FormattedMessage id={id}>
-      {(formattedMessage) => <option value={value}>{formattedMessage}</option>}
-    </FormattedMessage>
+    <option value={value}>{t(id)}</option>
   );
 }
 

@@ -1,9 +1,7 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { IntlProvider } from 'react-intl';
 import Filters from '../Filters';
-import en from '../../../locales/en.json';
 import { PortalOptions, PortalSiteType } from '../../../types';
 
 // Mock SVG and child components
@@ -70,20 +68,19 @@ let root: ReturnType<typeof createRoot>;
 function renderFilters(props: Partial<React.ComponentProps<typeof Filters>> = {}) {
   act(() => {
     root.render(
-      <IntlProvider locale="en" messages={en as any}>
-        <Filters
-          filters={{}}
-          onFilterChange={jest.fn()}
-          PortalSite={mockPortalSite}
-          options={{ ...mockOptions, searchFields: defaultSearchFields } as any}
-          {...props}
-        />
-      </IntlProvider>
+      <Filters
+        filters={{}}
+        onFilterChange={jest.fn()}
+        PortalSite={mockPortalSite}
+        options={{ ...mockOptions, searchFields: defaultSearchFields } as any}
+        {...props}
+      />
     );
   });
 }
 
 beforeEach(() => {
+  (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
   act(() => {
