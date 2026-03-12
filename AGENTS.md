@@ -6,7 +6,7 @@
 
 ## Language
 
-All source code must be written in **TypeScript**. JavaScript files are not acceptable for new code. The TypeScript compiler is configured in `tsconfig.json` with `strict: true`; all code must satisfy strict type-checking with no `any` types unless absolutely unavoidable and explicitly justified with a comment.
+All source code must be written in **TypeScript**. JavaScript files are not acceptable for new code. The TypeScript compiler is configured in `tsconfig.json` with `strict: true`; all code must satisfy strict type-checking with no `any` types unless absolutely unavoidable and explicitly justified with a comment. Note that `tsconfig.json` also has `allowJs: true` enabled **only** to support existing legacy JavaScript and necessary interop; do **not** add new `.js` source files, and prefer migrating any touched legacy JavaScript to TypeScript.
 
 ## Testing
 
