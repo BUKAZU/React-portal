@@ -30,7 +30,7 @@ export function CalendarProvider({
   );
 }
 
-function calendarReducer(
+export function calendarReducer(
   bookingState: BookingType,
   action: { type: string; house: HouseType; day: BuDate; persons: number }
 ): BookingType {
