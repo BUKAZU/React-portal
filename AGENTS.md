@@ -22,10 +22,13 @@ npm test
 
 ## Code Style
 
-- Formatting is enforced by **Prettier** (`.prettierrc`).
-- Linting is enforced by **ESLint** (`.eslintrc`).
-- Run both before committing.
+- Code formatting is handled by **Prettier** (`.prettierrc`).
+- Linting is handled by **ESLint** (`.eslintrc`).
+- Before committing, run:
 
+  ```bash
+  npx eslint "src/**/*.{ts,tsx}"
+  npx prettier "src/**/*.{ts,tsx}" --check
 ## Future Direction
 
 The long-term goal is to **remove the React dependency** and migrate the codebase to **plain TypeScript** (using web standards / custom elements). When making changes:
