@@ -20,21 +20,10 @@ import {
 import { BOOKING_PRICE_TOTAL_QUERY } from '../../components/CalendarPage/Summary/Queries';
 import { BOOKING_PRICE_QUERY as PRICE_FIELD_BOOKING_PRICE_QUERY } from '../../components/CalendarPage/PriceField/Queries';
 import { REVIEWS_QUERY } from '../../components/ReviewsPage/Queries';
-import { gql } from '@apollo/client';
-
-// Inline mutation from DiscountCode.tsx (not separately exported from the component)
-const CHECK_DISCOUNT_CODE = gql`
-  mutation CheckDiscountCode($code: String!, $house_code: String!) {
-    checkDiscountCode(code: $code, house_code: $house_code) {
-      name
-      use_price
-      percentage
-      price
-    }
-  }
-`;
+import { CHECK_DISCOUNT_CODE } from '../../components/CalendarPage/formParts/DiscountCode';
 
 const GRAPHQL_ENDPOINT = 'https://api.bukazu.com/graphql';
+const SCHEMA_FETCH_TIMEOUT_MS = 10000;
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
   { name: 'PORTAL_QUERY', document: PORTAL_QUERY },
@@ -55,11 +44,14 @@ describe('GraphQL queries comply with API schema', () => {
   let schema: GraphQLSchema | null = null;
 
   beforeAll(async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), SCHEMA_FETCH_TIMEOUT_MS);
     try {
       const response = await fetch(GRAPHQL_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: getIntrospectionQuery() }),
+        signal: controller.signal,
       });
       if (response.ok) {
         const result = await response.json();
@@ -68,7 +60,9 @@ describe('GraphQL queries comply with API schema', () => {
         }
       }
     } catch {
-      // Endpoint not reachable; semantic validation will be skipped
+      // Endpoint not reachable or timed out; semantic validation will be skipped
+    } finally {
+      clearTimeout(timeout);
     }
   }, 30000);
 
