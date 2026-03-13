@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Field from './Field';
 import Reload from '../icons/Reload.svg';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 import { defaultFilter } from './filters/helper';
 import { FiltersType } from './filters/filter_types';
 import { PortalOptions, PortalSiteType } from '../../types';
@@ -48,7 +48,7 @@ function Filters({
         className={`filters-button ${fixed}`}
         onClick={() => setShow(!show)}
       >
-        <FormattedMessage id="filters" />
+        {t('filters')}
       </button>
       <div className={`${filterClass} ${fixed} ${showOn}`}>
         <button

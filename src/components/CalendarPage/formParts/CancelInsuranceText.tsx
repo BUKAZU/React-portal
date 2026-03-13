@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { FormattedMessage as FM } from 'react-intl';
+import { t } from '../../../intl';
 import { AppContext } from '../../AppContext';
 
 const CancelInsuranceText = () => {
@@ -17,50 +17,50 @@ const CancelInsuranceText = () => {
   return (
     <>
       <h2>
-        <FM id="cancel_insurance_normal_long" />
+        {t('cancel_insurance_normal_long')}
       </h2>
       <p>
-        <FM id="cancel_insurance_normal_desc" />
+        {t('cancel_insurance_normal_desc')}
       </p>
       <h3>
-        <FM id="cancel_insurance_more_insured" />
+        {t('cancel_insurance_more_insured')}
       </h3>
       <p>
-        <FM id="cancel_insurance_more_insured_desc" />
-      </p>
-
-      <h3>
-        <FM id="cancel_insurance_important" />
-      </h3>
-      <p>
-        <FM id="cancel_insurance_important_message" />
+        {t('cancel_insurance_more_insured_desc')}
       </p>
 
       <h3>
-        <FM id="cancel_insurance_for_whom" />
+        {t('cancel_insurance_important')}
       </h3>
       <p>
-        <FM id="cancel_insurance_for_whom_explain" />
+        {t('cancel_insurance_important_message')}
+      </p>
+
+      <h3>
+        {t('cancel_insurance_for_whom')}
+      </h3>
+      <p>
+        {t('cancel_insurance_for_whom_explain')}
       </p>
       <h3>
-        <FM id="cancel_insurance_questions" />
+        {t('cancel_insurance_questions')}
       </h3>
       <p>
-        <FM id="cancel_insurance_questions_explain_1" />
+        {t('cancel_insurance_questions_explain_1')}
         <a href={links[locale]} target="_blank">
-          <FM id="cancel_insurance_questions_explain_link" />
+          {t('cancel_insurance_questions_explain_link')}
         </a>
-        <FM id="cancel_insurance_questions_explain_2" />
+        {t('cancel_insurance_questions_explain_2')}
       </p>
       <h3>
-        <FM id="terms" />
+        {t('terms')}
       </h3>
       <a
         href={`https://api.bukazu.com/files/${locale}/insurance.pdf`}
         target="_blank"
         rel="noopener noreferrer"
       >
-        <FM id="show_terms" />
+        {t('show_terms')}
       </a>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 import { differenceInCalendarDays } from 'date-fns';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
@@ -111,7 +111,7 @@ function Results({
       {Pagination}
       {Results.length === 0 ? (
         <div className="bu-noresults">
-          <FormattedMessage id="no_results" />
+          {t('no_results')}
         </div>
       ) : null}
       {Results.map((result) => (

@@ -12,6 +12,7 @@ const config: Config = {
   ],
   coverageDirectory: './coverage',
   coverageProvider: 'v8',
+  coverageReporters: ['text', 'lcov', 'json-summary'],
 };
 
 export default config;

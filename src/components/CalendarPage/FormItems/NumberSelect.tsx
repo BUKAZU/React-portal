@@ -1,7 +1,7 @@
 import React from 'react';
 import { Field } from 'formik';
 import { createPeronsArray } from '../formParts/BookingHelpers';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 
 export default function NumberSelect({
   label,
@@ -17,7 +17,7 @@ export default function NumberSelect({
         return (
           <div className="form-row inline" id={`bukazu_form_${props.name}`}>
             <label htmlFor={props.name}>
-              <FormattedMessage id={label} />
+              {t(label)}
             </label>
             <select {...field} {...props}>
               {numbers.map((opt) => {
