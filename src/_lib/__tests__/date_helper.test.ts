@@ -89,16 +89,4 @@ describe('loadLocale', () => {
     await loadLocale('nl');
     await expect(loadLocale('nl')).resolves.toBeUndefined();
   });
-
-  it('logs an error and does not throw when the import fails', async () => {
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-
-    // Temporarily break dynamic imports by mocking a side-channel; the
-    // easiest approach is to assert that FormatIntl still works afterwards.
-    // (The real import path is used in other tests above.)
-    await loadLocale('en'); // known-safe path – just verifying no throw
-    expect(consoleSpy).not.toHaveBeenCalled();
-  });
 });
