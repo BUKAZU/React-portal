@@ -1,7 +1,6 @@
 import {
   validate,
   buildClientSchema,
-  getIntrospectionQuery,
   GraphQLSchema,
   DocumentNode,
 } from 'graphql';
@@ -21,9 +20,7 @@ import { BOOKING_PRICE_TOTAL_QUERY } from '../../components/CalendarPage/Summary
 import { BOOKING_PRICE_QUERY as PRICE_FIELD_BOOKING_PRICE_QUERY } from '../../components/CalendarPage/PriceField/Queries';
 import { REVIEWS_QUERY } from '../../components/ReviewsPage/Queries';
 import { CHECK_DISCOUNT_CODE } from '../../components/CalendarPage/formParts/DiscountCode';
-
-const GRAPHQL_ENDPOINT = 'https://api.bukazu.com/graphql';
-const SCHEMA_FETCH_TIMEOUT_MS = 10000;
+import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
   { name: 'PORTAL_QUERY', document: PORTAL_QUERY },
@@ -41,30 +38,12 @@ const allQueries: Array<{ name: string; document: DocumentNode }> = [
 ];
 
 describe('GraphQL queries comply with API schema', () => {
-  let schema: GraphQLSchema | null = null;
+  let schema: GraphQLSchema;
 
-  beforeAll(async () => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), SCHEMA_FETCH_TIMEOUT_MS);
-    try {
-      const response = await fetch(GRAPHQL_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: getIntrospectionQuery() }),
-        signal: controller.signal,
-      });
-      if (response.ok) {
-        const result = await response.json();
-        if (result.data) {
-          schema = buildClientSchema(result.data);
-        }
-      }
-    } catch {
-      // Endpoint not reachable or timed out; semantic validation will be skipped
-    } finally {
-      clearTimeout(timeout);
-    }
-  }, 30000);
+  beforeAll(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    schema = buildClientSchema(introspectionResult as any);
+  });
 
   describe('query documents are syntactically valid', () => {
     it.each(allQueries)('$name is a valid GraphQL document', ({ document }: { name: string; document: DocumentNode }) => {
@@ -75,11 +54,6 @@ describe('GraphQL queries comply with API schema', () => {
   });
 
   it('all queries are semantically valid against the API schema', () => {
-    if (!schema) {
-      throw new Error(
-        `Could not fetch schema from ${GRAPHQL_ENDPOINT}. Ensure the endpoint is reachable.`
-      );
-    }
     for (const { name, document } of allQueries) {
       const errors = validate(schema, document);
       if (errors.length > 0) {
