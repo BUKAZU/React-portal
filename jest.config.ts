@@ -12,6 +12,7 @@ const config: Config = {
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
+    '!src/**/__mocks__/**',
     '!src/**/*.{svg,d}.{ts,tsx}',
   ],
   coverageDirectory: './coverage',
