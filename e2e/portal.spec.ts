@@ -8,6 +8,7 @@ import { test, expect } from '@playwright/test';
  * Note: The portal fetches live data from the Bukazu API; these tests only
  * validate basic page rendering, not loading states, error boundaries, or the
  * full data-driven UI.
+ */
 
 test.describe('Search page', () => {
   test.beforeEach(async ({ page }) => {
