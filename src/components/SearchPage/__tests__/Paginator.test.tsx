@@ -122,6 +122,34 @@ describe('Paginator', () => {
     expect(container.textContent).toContain('25');
   });
 
+  it('does not render pagination when there is only a single page', () => {
+    mockUseQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { PortalSite: { houses: makeHouses(5) } } // 5 results / 10 per page = 1 page
+    });
+
+    act(() => {
+      root.render(<Paginator {...defaultProps} limit={10} />);
+    });
+
+    expect(container.querySelector('.bu-pagination')).toBeNull();
+  });
+
+  it('does not render pagination when there are no results', () => {
+    mockUseQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { PortalSite: { houses: makeHouses(0) } }
+    });
+
+    act(() => {
+      root.render(<Paginator {...defaultProps} />);
+    });
+
+    expect(container.querySelector('.bu-pagination')).toBeNull();
+  });
+
   it('renders pagination buttons', () => {
     mockUseQuery.mockReturnValue({
       loading: false,

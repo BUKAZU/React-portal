@@ -82,43 +82,45 @@ function Paginator({
       <div>
         {results.length} {t('results')}
       </div>
-      <ul className="bu-pagination">
-        <li className={activePage === 0 ? 'disabled' : ''}>
-          <button
-            disabled={activePage === 0}
-            onClick={() => onPageChange(activePage - 1)}
-            aria-label={t('previous')}
-          >
-            {'<'}
-          </button>
-        </li>
-        {pages.map((page, index) =>
-          page === '...' ? (
-            <li key={`break-${index}`}>
-              <span aria-label="More pages">...</span>
-            </li>
-          ) : (
-            <li key={page} className={page === activePage ? 'selected' : ''}>
-              <button
-                data-page-button
-                onClick={() => onPageChange(page)}
-                aria-current={page === activePage ? 'page' : undefined}
-              >
-                {page + 1}
-              </button>
-            </li>
-          )
-        )}
-        <li className={activePage === pageCount - 1 ? 'disabled' : ''}>
-          <button
-            disabled={activePage === pageCount - 1}
-            onClick={() => onPageChange(activePage + 1)}
-            aria-label={t('next')}
-          >
-            {'>'}
-          </button>
-        </li>
-      </ul>
+      {pageCount > 1 && (
+        <ul className="bu-pagination">
+          <li className={activePage === 0 ? 'disabled' : ''}>
+            <button
+              disabled={activePage === 0}
+              onClick={() => onPageChange(activePage - 1)}
+              aria-label={t('previous')}
+            >
+              {'<'}
+            </button>
+          </li>
+          {pages.map((page, index) =>
+            page === '...' ? (
+              <li key={`break-${index}`}>
+                <span aria-label="More pages">...</span>
+              </li>
+            ) : (
+              <li key={page} className={page === activePage ? 'selected' : ''}>
+                <button
+                  data-page-button
+                  onClick={() => onPageChange(page)}
+                  aria-current={page === activePage ? 'page' : undefined}
+                >
+                  {page + 1}
+                </button>
+              </li>
+            )
+          )}
+          <li className={activePage === pageCount - 1 ? 'disabled' : ''}>
+            <button
+              disabled={activePage === pageCount - 1}
+              onClick={() => onPageChange(activePage + 1)}
+              aria-label={t('next')}
+            >
+              {'>'}
+            </button>
+          </li>
+        </ul>
+      )}
     </div>
   );
 }
