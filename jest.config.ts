@@ -5,6 +5,7 @@ import type { Config } from 'jest';
 const config: Config = {
   verbose: true,
   testEnvironment: 'jsdom',
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.{ts,tsx}', '<rootDir>/src/**/*.{spec,test}.{ts,tsx}'],
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
