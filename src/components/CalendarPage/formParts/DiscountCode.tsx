@@ -4,6 +4,17 @@ import { t } from '../../../intl';
 import { gql, useMutation } from '@apollo/client';
 import { HouseType } from '../../../types';
 
+export const CHECK_DISCOUNT_CODE = gql`
+  mutation CheckDiscountCode($code: String!, $house_code: String!) {
+    checkDiscountCode(code: $code, house_code: $house_code) {
+      name
+      use_price
+      percentage
+      price
+    }
+  }
+`;
+
 function DiscountCode({ house }: { house: HouseType }): ReactNode {
   const [checkCode, { loading, error, data }] =
     useMutation(CHECK_DISCOUNT_CODE);
@@ -47,16 +58,5 @@ function DiscountCode({ house }: { house: HouseType }): ReactNode {
     </div>
   );
 }
-
-const CHECK_DISCOUNT_CODE = gql`
-  mutation CheckDiscountCode($code: String!, $house_code: String!) {
-    checkDiscountCode(code: $code, house_code: $house_code) {
-      name
-      use_price
-      percentage
-      price
-    }
-  }
-`;
 
 export default DiscountCode;
