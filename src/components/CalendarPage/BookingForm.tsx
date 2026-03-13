@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
 import { BOOKING_PRICE_QUERY } from '../../_lib/gql';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../../_lib/hooks';
 import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';

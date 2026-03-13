@@ -2,13 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { initClient } from './_lib/graphqlClient';
 
 import './styles/main.css';
 import { IntegrationError } from './components/Error';
 import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
+
+const queryClient = new QueryClient();
 
 interface Props {
   portalCode: string;
@@ -45,29 +48,18 @@ function Portal({
     }
   }, [ref.current]);
 
-  const client = new ApolloClient({
-    uri: api_url,
-    cache: new InMemoryCache(),
-    headers: {
-      locale
-    },
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'cache-and-network'
-      }
-    }
-  });
+  initClient(api_url, locale);
 
   window.__localeId__ = locale;
 
   return (
-    <ApolloProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <AppContext.Provider value={{ portalCode, objectCode, locale }}>
         <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
           <App pageType={pageType} locale={locale} filters={filters} />
         </div>
       </AppContext.Provider>
-    </ApolloProvider>
+    </QueryClientProvider>
   );
 }
 

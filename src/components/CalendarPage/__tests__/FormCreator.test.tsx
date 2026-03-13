@@ -10,16 +10,15 @@ import { AppContext } from '../../AppContext';
 import { HouseType, PortalSiteType } from '../../../types';
 import { BuDate } from '../../../types';
 
-// Mock @apollo/client to avoid real GraphQL calls
-jest.mock('@apollo/client', () => ({
+// Mock hooks to avoid real GraphQL calls
+jest.mock('../../../_lib/hooks', () => ({
   useMutation: jest.fn(() => [
     jest.fn().mockResolvedValue({}),
     { loading: false, error: null, data: null, reset: jest.fn() }
-  ]),
-  gql: (query: any) => query
+  ])
 }));
 
-// Mock queries module so gql template literal is passable
+// Mock queries module
 jest.mock('../../../_lib/gql', () => ({
   CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
 }));
@@ -272,7 +271,7 @@ describe('FormCreator', () => {
   });
 
   it('should show "Creating booking..." when loading is true', () => {
-    const { useMutation } = require('@apollo/client');
+    const { useMutation } = require('../../../_lib/hooks');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn(),
       { loading: true, error: null, data: null, reset: jest.fn() }
@@ -286,7 +285,7 @@ describe('FormCreator', () => {
   });
 
   it('should render the error modal when a mutation error occurs', () => {
-    const { useMutation } = require('@apollo/client');
+    const { useMutation } = require('../../../_lib/hooks');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn(),
       {
@@ -304,7 +303,7 @@ describe('FormCreator', () => {
   });
 
   it('should render the success modal when booking data is returned', () => {
-    const { useMutation } = require('@apollo/client');
+    const { useMutation } = require('../../../_lib/hooks');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn(),
       {

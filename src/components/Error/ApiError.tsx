@@ -1,19 +1,31 @@
 import React from 'react';
 import Modal from '../Modal';
 import { t } from '../../intl';
-import { ApolloError } from '@apollo/client';
+
+export interface GqlError {
+  message?: string;
+  response?: {
+    errors?: Array<{ message: string }>;
+  };
+  graphQLErrors?: Array<{ message: string }>;
+}
 
 function ApiError(
-  errors: { errors: ApolloError },
+  errors: { errors: GqlError },
   modal: boolean = false
 ): JSX.Element {
+  const gqlErrors: Array<{ message: string }> =
+    errors.errors.response?.errors ??
+    errors.errors.graphQLErrors ??
+    (errors.errors.message ? [{ message: errors.errors.message }] : []);
+
   const errorMessage = (
     <div className="bukazu-error-message">
       <h2>
         {t('something_went_wrong_please_try_again')}
       </h2>
       <ul>
-        {errors.errors.graphQLErrors.map((err) => (
+        {gqlErrors.map((err) => (
           <li key={err.message}>{err.message}</li>
         ))}
       </ul>

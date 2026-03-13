@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import {
   HOUSE_SEARCH_RESULT_FIELDS,
   BOOKING_FORM_LABEL_FIELDS,

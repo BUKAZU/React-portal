@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../../../_lib/hooks';
 import InsurancesAndRequired from './InsurancesAndRequired.tsx';
 import { BOOKING_PRICE_TOTAL_QUERY } from '../../../_lib/gql';
 import RentAndDiscount from './RentAndDiscount';
