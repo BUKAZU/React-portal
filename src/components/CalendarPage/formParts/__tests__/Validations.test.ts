@@ -33,7 +33,7 @@ const baseValues = {
   babies: 0,
   persons: 0,
   discount: 0,
-  cancel_insurance: 0
+  cancel_insurance: '0'
 };
 
 describe('validateForm - required fields', () => {
@@ -81,6 +81,19 @@ describe('validateForm - required fields', () => {
     expect(errors['first_name']).toBeUndefined();
     expect(errors['last_name']).toBe('This field is required.');
     expect(errors['email']).toBe('This field is required.');
+  });
+
+  it("does not require date_of_birth when cancel_insurance is '0' and DOB is still populated", () => {
+    const bookingFields = [{ id: 'extra_fields.date_of_birth', required: true }];
+    const values = {
+      ...baseValues,
+      cancel_insurance: '0',
+      extra_fields: {
+        date_of_birth: format(subYears(new Date(), 30), 'yyyy-MM-dd')
+      }
+    };
+    const errors = validateForm(values, baseHouse, bookingFields as any);
+    expect(errors['extra_fields.date_of_birth']).toBeUndefined();
   });
 });
 
