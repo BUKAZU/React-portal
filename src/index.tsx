@@ -9,6 +9,7 @@ import { IntegrationError } from './components/Error';
 import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
+import { loadLocale } from './_lib/date_helper';
 
 interface Props {
   portalCode: string;
@@ -27,29 +28,38 @@ function Portal({
   filters,
   api_url = 'https://api.bukazu.com/graphql'
 }: Props): JSX.Element {
-  const errors = IntegrationError({ portalCode, pageType, locale, filters });
+  const resolvedLocale: LocaleType = locale ?? 'en';
+
+  const errors = IntegrationError({
+    portalCode,
+    pageType,
+    locale: resolvedLocale,
+    filters
+  });
   if (errors) {
     return errors;
   }
 
-  if (!locale) {
-    locale = 'en';
-  }
-
   const [width, setWidth] = useState(0);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.getBoundingClientRect().width);
+    const current = ref.current;
+    if (current) {
+      setWidth(current.getBoundingClientRect().width);
     }
-  }, [ref.current]);
+  }, [ref]);
+
+  useEffect(() => {
+    window.__localeId__ = resolvedLocale;
+    void loadLocale(resolvedLocale);
+  }, [resolvedLocale]);
 
   const client = new ApolloClient({
     uri: api_url,
     cache: new InMemoryCache(),
     headers: {
-      locale
+      locale: resolvedLocale
     },
     defaultOptions: {
       watchQuery: {
@@ -58,13 +68,11 @@ function Portal({
     }
   });
 
-  window.__localeId__ = locale;
-
   return (
     <ApolloProvider client={client}>
-      <AppContext.Provider value={{ portalCode, objectCode, locale }}>
+      <AppContext.Provider value={{ portalCode, objectCode, locale: resolvedLocale }}>
         <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
-          <App pageType={pageType} locale={locale} filters={filters} />
+          <App pageType={pageType} locale={resolvedLocale} filters={filters} />
         </div>
       </AppContext.Provider>
     </ApolloProvider>
