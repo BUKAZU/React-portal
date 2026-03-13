@@ -1,9 +1,6 @@
 import React, { useContext } from 'react';
 import Loading from './icons/loading.svg';
 
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
-
 import { PORTAL_QUERY } from '../_lib/gql';
 
 import SearchPage from './SearchPage/SearchPage';

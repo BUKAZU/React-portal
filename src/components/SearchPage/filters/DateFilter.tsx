@@ -1,6 +1,8 @@
 import { format } from 'date-fns';
 import React from 'react';
 import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
 import { Field } from './filter_types';
 
 interface Props {
