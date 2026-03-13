@@ -38,13 +38,14 @@ function Portal({
   }
 
   const [width, setWidth] = useState(0);
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.getBoundingClientRect().width);
+    const current = ref.current;
+    if (current) {
+      setWidth(current.getBoundingClientRect().width);
     }
-  }, [ref.current]);
+  }, [ref]);
 
   const client = new ApolloClient({
     uri: api_url,
