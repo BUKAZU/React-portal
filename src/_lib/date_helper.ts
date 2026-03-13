@@ -56,7 +56,7 @@ async function loadLocale(localeId: LocaleType): Promise<void> {
   }
 }
 
-function FormatIntl(date: number, formatStr: string): string {
+function FormatIntl(date: Date | number, formatStr: string): string {
   const localeId = (
     typeof window !== 'undefined' ? window.__localeId__ : undefined
   ) as LocaleType | undefined;
