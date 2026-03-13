@@ -1,19 +1,9 @@
 import React, { ReactNode } from 'react';
 import { Field } from 'formik';
 import { t } from '../../../intl';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { HouseType } from '../../../types';
-
-export const CHECK_DISCOUNT_CODE = gql`
-  mutation CheckDiscountCode($code: String!, $house_code: String!) {
-    checkDiscountCode(code: $code, house_code: $house_code) {
-      name
-      use_price
-      percentage
-      price
-    }
-  }
-`;
+import { CHECK_DISCOUNT_CODE } from '../../../_lib/gql';
 
 function DiscountCode({ house }: { house: HouseType }): ReactNode {
   const [checkCode, { loading, error, data }] =
@@ -21,9 +11,7 @@ function DiscountCode({ house }: { house: HouseType }): ReactNode {
 
   return (
     <div className="form-row inline">
-      <label htmlFor="discount_code">
-        {t('discount_code')}
-      </label>
+      <label htmlFor="discount_code">{t('discount_code')}</label>
       <Field name="discount_code">
         {({ field, form }) => {
           return (
@@ -41,9 +29,7 @@ function DiscountCode({ house }: { house: HouseType }): ReactNode {
       </Field>
       {loading && <div className="bu_discount_code">Loading...</div>}
       {error && (
-        <div className="bu_discount_code">
-          {t('no_discount_code_found')}
-        </div>
+        <div className="bu_discount_code">{t('no_discount_code_found')}</div>
       )}
       {data && (
         <div className="bu_discount_code">

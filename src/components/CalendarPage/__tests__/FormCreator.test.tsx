@@ -2,7 +2,10 @@ import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import FormCreator from '../FormCreator';
-import { CalendarContext, CalendarContextDispatch } from '../CalendarParts/CalendarContext';
+import {
+  CalendarContext,
+  CalendarContextDispatch
+} from '../CalendarParts/CalendarContext';
 import { AppContext } from '../../AppContext';
 import { HouseType, PortalSiteType } from '../../../types';
 import { BuDate } from '../../../types';
@@ -17,7 +20,7 @@ jest.mock('@apollo/client', () => ({
 }));
 
 // Mock queries module so gql template literal is passable
-jest.mock('../../../_lib/queries', () => ({
+jest.mock('../../../_lib/gql', () => ({
   CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
 }));
 
@@ -247,7 +250,9 @@ describe('FormCreator', () => {
   it('should render the Insurances sub-component', () => {
     renderFormCreator();
 
-    expect(container.querySelector('[data-testid="insurances"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="insurances"]')
+    ).not.toBeNull();
   });
 
   it('should render the OptionalCosts sub-component', () => {
@@ -357,7 +362,10 @@ describe('FormCreator', () => {
   });
 
   it('should show option text when house.allow_option is true', () => {
-    const houseWithOption: HouseType = { ...mockHouse, allow_option: true } as any;
+    const houseWithOption: HouseType = {
+      ...mockHouse,
+      allow_option: true
+    } as any;
 
     renderFormCreator(houseWithOption);
 

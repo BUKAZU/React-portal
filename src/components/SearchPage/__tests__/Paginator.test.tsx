@@ -12,8 +12,8 @@ jest.mock('@apollo/client', () => ({
   gql: (query: TemplateStringsArray) => query
 }));
 
-// Mock SearchQueries
-jest.mock('../../../_lib/SearchQueries', () => ({
+// Mock gql queries
+jest.mock('../../../_lib/gql', () => ({
   HOUSE_COUNT_QUERY: 'HOUSE_COUNT_QUERY'
 }));
 

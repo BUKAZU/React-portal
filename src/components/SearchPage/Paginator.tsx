@@ -1,6 +1,6 @@
 import React from 'react';
 import { t } from '../../intl';
-import { HOUSE_COUNT_QUERY } from '../../_lib/SearchQueries';
+import { HOUSE_COUNT_QUERY } from '../../_lib/gql';
 import Loading from '../icons/loading.svg';
 import { useQuery } from '@apollo/client';
 

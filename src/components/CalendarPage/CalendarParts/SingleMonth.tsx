@@ -8,7 +8,7 @@ import {
 } from 'date-fns';
 import React, { useContext } from 'react';
 import { HouseType } from '../../../types';
-import { CALENDAR_QUERY } from '../../../_lib/queries';
+import { CALENDAR_QUERY } from '../../../_lib/gql';
 import { AppContext } from '../../AppContext';
 import Loading from '../../icons/loading.svg';
 import MonthHeader from './MonthHeader';

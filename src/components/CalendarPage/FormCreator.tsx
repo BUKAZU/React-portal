@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Formik, Form } from 'formik';
 import { t } from '../../intl';
-import { CREATE_BOOKING_MUTATION } from '../../_lib/queries';
+import { CREATE_BOOKING_MUTATION } from '../../_lib/gql';
 import { Insurances } from './formParts/insurances';
 import Discount from './formParts/discount';
 import Summary from './Summary';
@@ -145,9 +145,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               >
                 {t('return_to_calendar')}
               </a>
-              <h2>
-                {t('stay_details')}
-              </h2>
+              <h2>{t('stay_details')}</h2>
               <Guests options={options} house={house} />
 
               {errors.max_persons && (
@@ -205,9 +203,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               )}
             </div>
             {[1, 2].includes(Number(values.cancel_insurance)) ? (
-              <div className="terms">
-                {t('comply_insurance_card')}
-              </div>
+              <div className="terms">{t('comply_insurance_card')}</div>
             ) : null}
             <button
               className="bu-calendar-button"

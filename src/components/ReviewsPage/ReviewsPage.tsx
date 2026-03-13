@@ -4,7 +4,7 @@ import { t } from '../../intl';
 import { AppContext } from '../AppContext';
 import { ApiError } from '../Error';
 import Loading from '../icons/loading.svg';
-import { REVIEWS_QUERY } from './Queries';
+import { REVIEWS_QUERY } from '../../_lib/gql';
 import Score from './Score';
 import SingleReview from './SingleReview';
 import Note from './note';
