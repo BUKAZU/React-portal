@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 import { HOUSE_COUNT_QUERY } from '../../_lib/SearchQueries';
 import Loading from '../icons/loading.svg';
 import ReactPaginate from 'react-paginate';
@@ -42,7 +42,7 @@ function Paginator({
   return (
     <div className="bu-paginator">
       <div>
-        {results.length} <FormattedMessage id="results" />
+        {results.length} {t('results')}
       </div>
       <ReactPaginate
         pageCount={pageCount}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { t, formatNumber } from '../../intl';
 import { FiltersFormType, HouseType } from '../../types';
 import ArrowRight from '../icons/ArrowRight.svg';
 
@@ -31,17 +31,17 @@ function SingleResult({ result, options }: Props): JSX.Element {
           <div className="result-details">
             {thisOptions.showPersons && (
               <div>
-                {result.persons} <FormattedMessage id="persons" />
+                {result.persons} {t('persons')}
               </div>
             )}
             {thisOptions.showBedrooms && (
               <div>
-                {result.bedrooms} <FormattedMessage id="bedrooms" />
+                {result.bedrooms} {t('bedrooms')}
               </div>
             )}
             {thisOptions.showBathrooms && (
               <div>
-                {result.bathrooms} <FormattedMessage id="bathrooms" />
+                {result.bathrooms} {t('bathrooms')}
               </div>
             )}
           </div>
@@ -56,33 +56,31 @@ function SingleResult({ result, options }: Props): JSX.Element {
             <div className="result-price">
               {result.booking_price ? (
                 <>
-                  <FormattedMessage id="price_from" />
+                  {t('price_from')}
                   <span className="price">
                     €{' '}
-                    <FormattedNumber
-                      value={result.booking_price.total_price}
-                      minimumFractionDigits={0}
-                      maximumFractionDigits={0}
-                    />
+                    {formatNumber(result.booking_price.total_price, {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0
+                    })}
                   </span>
                 </>
               ) : (
                 <>
-                  <FormattedMessage id="minimum_week_price" />
+                  {t('minimum_week_price')}
                   <span className="price">
                     €{' '}
-                    <FormattedNumber
-                      value={result.minimum_week_price}
-                      minimumFractionDigits={0}
-                      maximumFractionDigits={0}
-                    />
+                    {formatNumber(result.minimum_week_price, {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0
+                    })}
                   </span>
                 </>
               )}
             </div>
           )}
           <div className="result-button">
-            <FormattedMessage id="view_details" />
+            {t('view_details')}
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { FormattedMessage } from 'react-intl';
+import React from 'react';
+import { t } from '../../../intl';
 import { HouseType } from '../../../types';
 import {
   FormatIntl,
@@ -7,23 +7,18 @@ import {
   Parse_EN_US
 } from '../../../_lib/date_helper';
 import { CalendarContext } from '../CalendarParts/CalendarContext';
+import { useContext } from 'react';
 
-interface Props {
-  house: HouseType;
-}
-
-function AssistanceMessage({ house }: Props): JSX.Element {
+function AssistanceMessage({ house }: { house: HouseType }): JSX.Element {
   const { departureDate, arrivalDate } = useContext(CalendarContext);
 
   if (departureDate?.date) {
     return (
       <div className="bup-16 bu-bold">
-        <FormattedMessage id={`${house.house_type}.you_picked_arrival_date`} />:{' '}
+        {t(`${house.house_type}.you_picked_arrival_date`)}:{' '}
         {FormatIntl(Parse_EN_US(arrivalDate.date), LONG_DATE_FORMAT)}
         <br />
-        <FormattedMessage
-          id={`${house.house_type}.you_picked_departure_date`}
-        />
+        {t(`${house.house_type}.you_picked_departure_date`)}
         : {FormatIntl(Parse_EN_US(departureDate.date), LONG_DATE_FORMAT)}
       </div>
     );
@@ -32,27 +27,19 @@ function AssistanceMessage({ house }: Props): JSX.Element {
   if (arrivalDate?.date) {
     return (
       <div className="bup-16 bu-bold">
-        <FormattedMessage id={`${house.house_type}.you_picked_arrival_date`} />:{' '}
+        {t(`${house.house_type}.you_picked_arrival_date`)}:{' '}
         {FormatIntl(Parse_EN_US(arrivalDate.date), LONG_DATE_FORMAT)}
         <br />
-        <FormattedMessage
-          id={`${house.house_type}.pick_your_departure_in_the_calendar`}
-        />
+        {t(`${house.house_type}.pick_your_departure_in_the_calendar`)}
         <br />
-        <FormattedMessage
-          id="minimum_nights"
-          values={{ minimum: arrivalDate.min_nights }}
-          defaultMessage="Minimum {minimum} nights"
-        />
+        {t('minimum_nights', { minimum: arrivalDate.min_nights })}
       </div>
     );
   }
 
   return (
     <div className="bup-16 bu-bold">
-      <FormattedMessage
-        id={`${house.house_type}.pick_your_arrivaldate_in_the_calendar`}
-      />
+      {t(`${house.house_type}.pick_your_arrivaldate_in_the_calendar`)}
     </div>
   );
 }

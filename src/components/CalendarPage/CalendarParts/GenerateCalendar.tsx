@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import React, { useContext } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { HouseType, PortalSiteType } from '../../../types';
 import { SINGLE_HOUSE_QUERY } from '../../../_lib/queries';
 import { AppContext } from '../../AppContext';
@@ -46,7 +46,7 @@ function GenerateCalendar(): JSX.Element {
     <div id="calendar-container">
       {Results.length === 0 && (
         <div>
-          <FormattedMessage id="no_house_found" />
+          {t('no_house_found')}
         </div>
       )}
       {Results.map((result: HouseType) => (

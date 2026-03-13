@@ -1,7 +1,7 @@
 import React from 'react';
 import CostRow from './CostRow';
 import CostSection from './CostSection';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { t, formatNumber } from '../../../intl';
 import { PricesType } from './cost_types';
 
 interface Props {
@@ -19,15 +19,14 @@ function Totals({ prices }: Props): JSX.Element {
               testTransform: 'capitalize'
             }}
           >
-            <FormattedMessage id="total" />
+            {t('total')}
           </th>
           <th className="price" style={{ fontSize: 18 }}>
             €{' '}
-            <FormattedNumber
-              value={prices.total_costs.sub_total}
-              minimumFractionDigits={2}
-              maximumFractionDigits={2}
-            />
+            {formatNumber(prices.total_costs.sub_total, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
           </th>
         </tr>
       </CostSection>
@@ -57,15 +56,14 @@ function Totals({ prices }: Props): JSX.Element {
               testTransform: 'capitalize'
             }}
           >
-            <FormattedMessage id="total" />
+            {t('total')}
           </th>
           <td className="price">
             €{' '}
-            <FormattedNumber
-              value={prices.total_costs.total_price}
-              minimumFractionDigits={2}
-              maximumFractionDigits={2}
-            />
+            {formatNumber(prices.total_costs.total_price, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
           </td>
         </tr>
       </CostSection>
