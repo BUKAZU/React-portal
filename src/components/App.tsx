@@ -15,6 +15,7 @@ import ErrorBoundary from './ErrorBoundary';
 import { useQuery } from '@apollo/client';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
+import SearchPageWrapper from './SearchPage/SearchPageWrapper';
 
 interface Props {
   pageType?: string;
@@ -89,16 +90,15 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     page = <ReviewsPage />;
   } else {
     page = (
-      <SearchPage
-        PortalSite={PortalSite}
+      <SearchPageWrapper
         locale={locale}
-        options={options}
         filters={filters}
+        portalCode={portalCode}
       />
     );
   }
 
-  return <>{page}</>;
+  return page;
 }
 
 export default App;

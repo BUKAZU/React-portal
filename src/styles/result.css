@@ -5,11 +5,8 @@
   appearance: none;
   text-decoration: none;
   display: block;
-  /* box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.25); */
-  /* border-radius: 16px; */
   transition: all 0.5s ease;
   &:hover {
-    /* box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.25); */
     text-decoration: none;
   }
   &-inner {
@@ -71,7 +68,7 @@
           font-weight: bold;
           padding: 6px 10px;
           font-size: 14px;
-          line-height: 14px;          
+          line-height: 14px;
         }
       }
       &-price {
@@ -82,7 +79,7 @@
         padding: 12px 8px;
 
         span.price {
-            padding: 8px 0 0;
+          padding: 8px 0 0;
           font-size: 18px;
           font-weight: bold;
         }
@@ -92,14 +89,14 @@
         text-align: center;
         padding: 8px;
         position: relative;
-        display:flex;
+        display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
         &:before {
           position: absolute;
           height: 100%;
-          content: "";
+          content: '';
           background-color: var(--bukazu-button_cta);
           mix-blend-mode: multiply;
           width: 0px;

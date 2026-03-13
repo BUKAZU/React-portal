@@ -6,6 +6,18 @@ export const PORTAL_QUERY = gql`
       id
       portal_code
       options
+    }
+  }
+`;
+
+export const SEARCH_PAGE_QUERY = gql`
+  query PortalSiteSearchQuery(
+    $id: ID!   
+  ) {
+    PortalSite(id: $id) {
+      id
+      portal_code
+      options
       countries {
         id
         name
@@ -30,7 +42,6 @@ export const PORTAL_QUERY = gql`
       country_placeholder
       categories
       countries_label
-      country_placeholder
       regions_label
       cities_label
       arrival_date_label
@@ -44,9 +55,8 @@ export const PORTAL_QUERY = gql`
       no_nights_label
       extra_search_label
       properties_label
-    }
-  }
-`;
+}
+      }`
 
 export const CALENDAR_QUERY = gql`
   query PortalSiteHousesQuery(
