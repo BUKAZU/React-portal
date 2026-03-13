@@ -41,7 +41,6 @@ export const PORTAL_QUERY = gql`
       country_placeholder
       categories
       countries_label
-      country_placeholder
       regions_label
       cities_label
       arrival_date_label
