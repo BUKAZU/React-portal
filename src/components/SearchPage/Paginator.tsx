@@ -95,7 +95,7 @@ function Paginator({
         {pages.map((page, index) =>
           page === '...' ? (
             <li key={`break-${index}`}>
-              <span aria-label={t('more_pages')}>...</span>
+              <span aria-label="More pages">...</span>
             </li>
           ) : (
             <li key={page} className={page === activePage ? 'selected' : ''}>
