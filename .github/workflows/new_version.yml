@@ -15,12 +15,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-         contents: write
+      contents: write
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'npm'
           registry-url: https://registry.npmjs.org/
       - run: npm ci
@@ -38,23 +38,23 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'npm'
           registry-url: https://registry.npmjs.org/
       - name: Bump version
         run: |
-          npm version ${{ inputs.update_type }} --no-git-tag-version    
+          npm version ${{ inputs.update_type }} --no-git-tag-version
       - name: Get new version
         run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
         with:
-          title: "chore: Bump version to v${{ env.VERSION }}"
-          body: | 
+          title: 'chore: Bump version to v${{ env.VERSION }}'
+          body: |
             "This PR bumps the package version to v${{ env.VERSION }}."
-          commit-message: "chore: Bump version to v${{ env.VERSION }}"
+          commit-message: 'chore: Bump version to v${{ env.VERSION }}'
           labels: version-bump, automated-pr
-          branch: "releases/v${{ env.VERSION }}"
+          branch: 'releases/v${{ env.VERSION }}'
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
