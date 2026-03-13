@@ -1,17 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Field } from 'formik';
 import { t } from '../../../intl';
 import { Countries } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
 import DefaultBookingFields from './DefaultBookingFields';
+import { SingleBookingFieldType, PossibleValues } from './form_types';
 
-export function isInt(value) {
+interface BookingFieldDefinition {
+  id: string;
+  label: string;
+  field_type: string;
+}
+
+interface PortalSiteForBookingFields {
+  booking_fields?: BookingFieldDefinition[];
+  [key: string]: unknown;
+}
+
+interface Props {
+  bookingFields: SingleBookingFieldType[];
+  errors: Record<string, string | undefined>;
+  touched: Record<string, boolean | Record<string, boolean> | undefined>;
+  PortalSite: PortalSiteForBookingFields;
+  values: PossibleValues;
+}
+
+export function isInt(value: unknown): boolean {
+  if (typeof value !== 'string' && typeof value !== 'number') return false;
   return (
-    !isNaN(value) &&
+    !isNaN(value as number) &&
     (function (x) {
       return (x | 0) === x;
-    })(parseFloat(value))
+    })(parseFloat(value as string))
   );
 }
 
@@ -21,17 +41,19 @@ export default function OptionalBookingFields({
   touched,
   PortalSite,
   values
-}) {
-  let fields = [].concat(bookingFields);
+}: Props) {
+  let fields: SingleBookingFieldType[] = [...bookingFields];
 
   const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
   if (values.cancel_insurance === '1' || values.cancel_insurance === '2') {
     requiredFields.forEach((key) => {
+      const defaultField = DefaultBookingFields.find((x) => x.id === key);
+      if (!defaultField) return;
       let index = bookingFields.findIndex((x) => x.id === key);
       if (index !== -1) {
-        fields[index] = DefaultBookingFields.find((x) => x.id === key);
+        fields[index] = defaultField;
       } else {
-        fields.push(DefaultBookingFields.find((x) => x.id === key));
+        fields.push(defaultField);
       }
     });
   }
@@ -50,13 +72,15 @@ export default function OptionalBookingFields({
             (x) => x.id === input.id
           );
 
+          if (!bookingField) return null;
+
           return (
             <div className="form-row" key={bookingField.id}>
               <label htmlFor={`extra_fields.booking_field_${bookingField.id}`}>
                 {bookingField.label} {input.required && <span>*</span>}
               </label>
               <Field
-                onKeyPress={(e) => {
+                onKeyPress={(e: React.KeyboardEvent) => {
                   e.which === 13 && e.preventDefault();
                 }}
                 id={`extra_fields.booking_field_${bookingField.id}`}
@@ -74,7 +98,9 @@ export default function OptionalBookingFields({
               />
               {errors[input.id] &&
                 ((touched.extra_fields &&
-                  touched.extra_fields[`booking_field_${bookingField.id}`]) ||
+                  (touched.extra_fields as Record<string, boolean>)[
+                    `booking_field_${bookingField.id}`
+                  ]) ||
                   touched[input.id]) && (
                   <div className="error-message bu-error-message">
                     {errors[input.id]}
@@ -86,7 +112,7 @@ export default function OptionalBookingFields({
           return (
             <div className="form-row" key={input.id}>
               <label htmlFor={input.id}>
-                {PortalSite[`${input.id}_label`]}{' '}
+                {PortalSite[`${input.id}_label`] as React.ReactNode}{' '}
                 {input.required && <span>*</span>}
               </label>
               <Field component="select" name={input.id}>
@@ -116,15 +142,14 @@ export default function OptionalBookingFields({
             <div className="form-row" key={input.id}>
               <label
                 htmlFor={input.id}
-                name={`${input.id.replace(/\./g, '_')}_label`}
               >
-                {PortalSite[`${input.id.replace(/\./g, '_')}_label`]}{' '}
+                {PortalSite[`${input.id.replace(/\./g, '_')}_label`] as React.ReactNode}{' '}
                 {input.required && <span>*</span>}
               </label>
               <Field
                 type={input.type}
                 name={input.id}
-                onKeyPress={(e) => {
+                onKeyPress={(e: React.KeyboardEvent) => {
                   e.which === 13 && e.preventDefault();
                 }}
               />
@@ -140,9 +165,3 @@ export default function OptionalBookingFields({
     </div>
   );
 }
-
-OptionalBookingFields.propTypes = {
-  bookingFields: PropTypes.array.isRequired,
-  errors: PropTypes.object.isRequired,
-  PortalSite: PropTypes.object.isRequired
-};

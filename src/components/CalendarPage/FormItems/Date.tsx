@@ -6,10 +6,10 @@ import { format } from 'date-fns';
 
 interface Props {
   label: string;
-  description: string | React.ReactNode;
+  description?: string | React.ReactNode;
   name: string;
   inline: boolean;
-  required: boolean;
+  required?: boolean;
 }
 
 function DateField({ label, description, name, inline }: Props) {
