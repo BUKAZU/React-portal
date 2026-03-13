@@ -48,7 +48,6 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   root.style.setProperty('--bukazu-departure', colors.departure);
   root.style.setProperty('--bukazu-button', colors.button);
   root.style.setProperty('--bukazu-button_cta', colors.buttonCta);
-  root.style.setProperty('--bukazu-background_month', colors.buttonCta);
 
   let page;
 
