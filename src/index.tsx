@@ -4,7 +4,8 @@ import App from './components/App';
 
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-import './styles/main.css';
+// @ts-ignore — Vite inline import; the CSS is injected via React 19 <style> hoisting
+import bukazuCSS from './styles/main.css?inline';
 import { IntegrationError } from './components/Error';
 import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
@@ -70,6 +71,8 @@ function Portal({
 
   return (
     <ApolloProvider client={client}>
+      {/* React 19: hoisted to <head>, deduplicated across multiple Portal instances */}
+      <style href="bukazu-portal" precedence="low">{bukazuCSS}</style>
       <AppContext.Provider value={{ portalCode, objectCode, locale: resolvedLocale }}>
         <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
           <App pageType={pageType} locale={resolvedLocale} filters={filters} />

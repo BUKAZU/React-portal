@@ -1,15 +1,21 @@
-@import 'calendar.css';
-@import 'form.css';
-@import 'field.css';
-@import 'datepicker.css';
-@import 'modal.css';
-@import 'price-overview.css';
-@import 'success.css';
-@import 'result.css';
-@import 'results.css';
-@import 'filters.css';
-@import 'pagination.css';
-@import 'reviews.css';
+/* Declare the layer first so consumers can control cascade order:
+   @layer their-layer, bukazu;  ← consumer puts this before importing this CSS */
+@layer bukazu;
+
+@import 'calendar.css' layer(bukazu);
+@import 'form.css' layer(bukazu);
+@import 'field.css' layer(bukazu);
+@import 'datepicker.css' layer(bukazu);
+@import 'modal.css' layer(bukazu);
+@import 'price-overview.css' layer(bukazu);
+@import 'success.css' layer(bukazu);
+@import 'result.css' layer(bukazu);
+@import 'results.css' layer(bukazu);
+@import 'filters.css' layer(bukazu);
+@import 'pagination.css' layer(bukazu);
+@import 'reviews.css' layer(bukazu);
+
+@layer bukazu {
 
 #bukazu-app {
   #search-page {
@@ -167,3 +173,5 @@
     filter: brightness(1.2);
   }
 }
+
+} /* end @layer bukazu */
