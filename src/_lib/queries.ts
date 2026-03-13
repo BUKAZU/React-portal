@@ -16,6 +16,7 @@ export const SEARCH_PAGE_QUERY = gql`
   ) {
     PortalSite(id: $id) {
       id
+      portal_code
       options
       countries {
         id
@@ -41,7 +42,6 @@ export const SEARCH_PAGE_QUERY = gql`
       country_placeholder
       categories
       countries_label
-      country_placeholder
       regions_label
       cities_label
       arrival_date_label
