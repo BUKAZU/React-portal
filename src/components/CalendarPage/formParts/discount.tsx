@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Field } from 'formik';
 import { t } from '../../../intl';
 import DiscountCode from './DiscountCode';
@@ -7,7 +6,7 @@ import { HouseType, PortalOptions } from '../../../types';
 import { PossibleValues } from './form_types';
 
 interface Props {
-  errors: object;
+  errors: Record<string, string | undefined>;
   house: HouseType;
   options: PortalOptions;
   values: PossibleValues;
@@ -59,11 +58,6 @@ const Discount = ({ errors, house, options, values }: Props) => {
   } else {
     return null;
   }
-};
-
-Discount.propTypes = {
-  house: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
 };
 
 export default Discount;
