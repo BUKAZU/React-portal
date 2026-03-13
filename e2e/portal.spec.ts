@@ -19,7 +19,8 @@ test.describe('Search page', () => {
   });
 
   test('mounts the portal container', async ({ page }) => {
-    await expect(page.locator('#bukazu-app')).toBeAttached();
+    const portalWrapper = page.locator('.bu-smaller, .bu-large');
+    await expect(portalWrapper.first()).toBeVisible();
   });
 });
 
@@ -33,7 +34,8 @@ test.describe('Calendar page', () => {
   });
 
   test('mounts the portal container', async ({ page }) => {
-    await expect(page.locator('#bukazu-app')).toBeAttached();
+    const portalWrapper = page.locator('.bu-smaller, .bu-large');
+    await expect(portalWrapper.first()).toBeVisible();
   });
 });
 
@@ -47,7 +49,8 @@ test.describe('Reviews page', () => {
   });
 
   test('mounts the portal container', async ({ page }) => {
-    await expect(page.locator('#bukazu-app')).toBeAttached();
+    const portalWrapper = page.locator('.bu-smaller, .bu-large');
+    await expect(portalWrapper.first()).toBeVisible();
   });
 });
 
