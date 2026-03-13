@@ -30,23 +30,19 @@ const mockPortalSite: PortalSiteType = {
       show: true,
       fixedMobile: false
     },
-    bookingFields: [],
-    bookingForm: {
-      adults_from: 18,
-      children: false,
-      children_from: 0,
-      children_til: 12,
-      babies: false,
-      babies_til: 2,
-      showDiscountCode: false,
-      redirectUrl: null,
-      redirectUrl_en: null,
-      redirectUrl_nl: null,
-      redirectUrl_de: null,
-      redirectUrl_fr: null,
-      redirectUrl_es: null,
-      redirectUrl_it: null
-    }
+    bookingFields: []
+  },
+  bookingFormConfiguration: {
+    adultsFromAge: 18,
+    childrenAllowed: false,
+    childrenFromAge: 3,
+    childrenTillAge: 17,
+    babiesAllowed: false,
+    babiesTillAge: 2,
+    languageSelectorVisible: false,
+    redirectUrl: null,
+    showMonthsAmount: 2,
+    showMonthsInARowAmount: 2
   },
   max_persons: 10,
   name: 'Test Portal',

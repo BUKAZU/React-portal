@@ -48,8 +48,7 @@ const mockPortalSite: PortalSiteType = {
       show: true,
       fixedMobile: false
     },
-    bookingFields: [],
-    bookingForm: {} as any
+    bookingFields: []
   },
   name: 'Test Portal'
 } as any;
