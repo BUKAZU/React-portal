@@ -13,7 +13,7 @@ interface BookingFieldDefinition {
 }
 
 interface PortalSiteForBookingFields {
-  booking_fields: BookingFieldDefinition[];
+  booking_fields?: BookingFieldDefinition[];
   [key: string]: unknown;
 }
 
