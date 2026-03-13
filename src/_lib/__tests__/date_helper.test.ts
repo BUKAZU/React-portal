@@ -53,10 +53,14 @@ describe('FormatIntl', () => {
   it('uses a cached locale once loadLocale has resolved', async () => {
     await loadLocale('nl');
     (window as any).__localeId__ = 'nl';
+
+    const enGbDayName = format(TEST_TIMESTAMP, 'EEEE', { locale: enGB });
     const result = FormatIntl(TEST_TIMESTAMP, 'EEEE');
-    // Dutch day name for a Monday should not be the English "Monday"
-    expect(typeof result).toBe('string');
-    expect(result.length).toBeGreaterThan(0);
+
+    // For 2024-01-15 (a Monday), the Dutch day name should be "maandag"
+    expect(result).toBe('maandag');
+    // Ensure we are not still using the enGB fallback
+    expect(result).not.toBe(enGbDayName);
   });
 });
 
