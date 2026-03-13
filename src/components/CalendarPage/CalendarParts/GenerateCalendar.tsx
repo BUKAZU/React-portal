@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import React, { useContext } from 'react';
 import { t } from '../../../intl';
 import { HouseType, PortalSiteType } from '../../../types';
-import { SINGLE_HOUSE_QUERY } from '../../../_lib/queries';
+import { SINGLE_HOUSE_QUERY } from '../../../_lib/gql';
 import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
@@ -44,11 +44,7 @@ function GenerateCalendar(): JSX.Element {
 
   return (
     <div id="calendar-container">
-      {Results.length === 0 && (
-        <div>
-          {t('no_house_found')}
-        </div>
-      )}
+      {Results.length === 0 && <div>{t('no_house_found')}</div>}
       {Results.map((result: HouseType) => (
         <div key={result.id}>
           <div className="bup-16">{result.name}</div>

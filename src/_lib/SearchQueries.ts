@@ -1,1 +1,0 @@
-export { HOUSES_QUERY, HOUSES_PRICE_QUERY, HOUSE_COUNT_QUERY } from './gql';

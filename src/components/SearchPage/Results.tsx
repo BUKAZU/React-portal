@@ -5,7 +5,7 @@ import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';
 
-import { HOUSES_PRICE_QUERY, HOUSES_QUERY } from '../../_lib/SearchQueries';
+import { HOUSES_PRICE_QUERY, HOUSES_QUERY } from '../../_lib/gql';
 import { ApiError } from '../Error';
 import { useQuery } from '@apollo/client';
 import { FiltersType } from './filters/filter_types';
@@ -110,9 +110,7 @@ function Results({
     >
       {Pagination}
       {Results.length === 0 ? (
-        <div className="bu-noresults">
-          {t('no_results')}
-        </div>
+        <div className="bu-noresults">{t('no_results')}</div>
       ) : null}
       {Results.map((result) => (
         <SingleResult

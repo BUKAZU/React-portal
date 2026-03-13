@@ -5,11 +5,7 @@ import {
   BOOKING_FORM_CONFIGURATION_FIELDS
 } from './fragments';
 
-export {
-  HOUSE_SEARCH_RESULT_FIELDS,
-  BOOKING_FORM_LABEL_FIELDS,
-  BOOKING_FORM_CONFIGURATION_FIELDS
-};
+export * from './fragments';
 
 export const PORTAL_QUERY = gql`
   query PortalSiteQuery($id: ID!) {

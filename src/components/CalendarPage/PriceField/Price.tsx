@@ -4,7 +4,7 @@ import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
-import { BOOKING_PRICE_QUERY } from './Queries';
+import { PRICE_FIELD_BOOKING_PRICE_QUERY as BOOKING_PRICE_QUERY } from '../../../_lib/gql';
 
 interface Props {
   persons: number;
@@ -45,9 +45,7 @@ function Price({ persons, variables }: Props) {
           })}
         </div>
         <div>
-          <i>
-            {t('based_on_one_person', { persons })}
-          </i>
+          <i>{t('based_on_one_person', { persons })}</i>
         </div>
       </div>
     </>
