@@ -26,12 +26,30 @@ export default function OptionalBookingFields({
   const [countriesLoading, setCountriesLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
     const locale: string =
       (typeof window !== 'undefined' && window.__localeId__) || 'en';
-    loadCountries(locale).then((data) => {
-      setCountries(data);
-      setCountriesLoading(false);
-    });
+
+    const fetchCountries = async () => {
+      try {
+        const data = await loadCountries(locale);
+        if (mounted) {
+          setCountries(data);
+        }
+      } catch {
+        // If the locale chunk fails to load, leave the list empty.
+      } finally {
+        if (mounted) {
+          setCountriesLoading(false);
+        }
+      }
+    };
+
+    fetchCountries();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   let fields = [].concat(bookingFields);
