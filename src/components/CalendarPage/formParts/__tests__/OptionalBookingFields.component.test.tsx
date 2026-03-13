@@ -12,6 +12,13 @@ jest.mock('../../FormItems', () => ({
   )
 }));
 
+jest.mock('../../../../_lib/countries', () => ({
+  loadCountries: jest.fn().mockResolvedValue([
+    { name: 'Netherlands', alpha2: 'nl' },
+    { name: 'Germany', alpha2: 'de' }
+  ])
+}));
+
 const mockPortalSite = {
   first_name_label: 'First name',
   last_name_label: 'Last name',
@@ -143,8 +150,9 @@ describe('OptionalBookingFields - country field', () => {
     expect(select).not.toBeNull();
   });
 
-  it('renders country options from the locale list', () => {
+  it('renders country options from the locale list', async () => {
     renderFields([{ id: 'country', type: 'select', required: true }]);
+    await act(async () => {});
     const options = container.querySelectorAll('option');
     expect(options.length).toBeGreaterThan(0);
   });
@@ -269,19 +277,13 @@ describe('OptionalBookingFields - telephone id normalisation', () => {
 
 describe('OptionalBookingFields - cancel_insurance required address fields', () => {
   it('adds required address fields when cancel_insurance is "1"', () => {
-    renderFields(
-      [],
-      { ...defaultValues, cancel_insurance: '1' }
-    );
+    renderFields([], { ...defaultValues, cancel_insurance: '1' });
     const formRows = container.querySelectorAll('.form-row');
     expect(formRows.length).toBeGreaterThan(0);
   });
 
   it('adds required address fields when cancel_insurance is "2"', () => {
-    renderFields(
-      [],
-      { ...defaultValues, cancel_insurance: '2' }
-    );
+    renderFields([], { ...defaultValues, cancel_insurance: '2' });
     const formRows = container.querySelectorAll('.form-row');
     expect(formRows.length).toBeGreaterThan(0);
   });

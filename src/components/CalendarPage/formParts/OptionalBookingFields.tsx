@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'formik';
 import { t } from '../../../intl';
-import { Countries } from '../../../_lib/countries';
+import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
 import DefaultBookingFields from './DefaultBookingFields';
 
@@ -22,6 +22,18 @@ export default function OptionalBookingFields({
   PortalSite,
   values
 }) {
+  const [countries, setCountries] = useState<CountryEntry[]>([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+
+  useEffect(() => {
+    const locale: string =
+      (typeof window !== 'undefined' && window.__localeId__) || 'en';
+    loadCountries(locale).then((data) => {
+      setCountries(data);
+      setCountriesLoading(false);
+    });
+  }, []);
+
   let fields = [].concat(bookingFields);
 
   const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
@@ -37,9 +49,7 @@ export default function OptionalBookingFields({
   }
   return (
     <div className="form-section bup-16">
-      <h2>
-        {t('personal_details')}
-      </h2>
+      <h2>{t('personal_details')}</h2>
       {fields.map((input) => {
         if (input.id === 'telephone') {
           input.id = 'phonenumber';
@@ -89,8 +99,12 @@ export default function OptionalBookingFields({
                 {PortalSite[`${input.id}_label`]}{' '}
                 {input.required && <span>*</span>}
               </label>
-              <Field component="select" name={input.id}>
-                {Countries[window.__localeId__].map((country) => {
+              <Field
+                component="select"
+                name={input.id}
+                disabled={countriesLoading}
+              >
+                {countries.map((country) => {
                   return (
                     <option value={country.alpha2} key={country.alpha2}>
                       {country.name}
