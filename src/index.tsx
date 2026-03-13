@@ -28,13 +28,16 @@ function Portal({
   filters,
   api_url = 'https://api.bukazu.com/graphql'
 }: Props): JSX.Element {
-  const errors = IntegrationError({ portalCode, pageType, locale, filters });
+  const resolvedLocale: LocaleType = locale ?? 'en';
+
+  const errors = IntegrationError({
+    portalCode,
+    pageType,
+    locale: resolvedLocale,
+    filters
+  });
   if (errors) {
     return errors;
-  }
-
-  if (!locale) {
-    locale = 'en';
   }
 
   const [width, setWidth] = useState(0);
@@ -47,11 +50,16 @@ function Portal({
     }
   }, [ref]);
 
+  useEffect(() => {
+    window.__localeId__ = resolvedLocale;
+    void loadLocale(resolvedLocale);
+  }, [resolvedLocale]);
+
   const client = new ApolloClient({
     uri: api_url,
     cache: new InMemoryCache(),
     headers: {
-      locale
+      locale: resolvedLocale
     },
     defaultOptions: {
       watchQuery: {
@@ -60,16 +68,11 @@ function Portal({
     }
   });
 
-  window.__localeId__ = locale;
-  // Fire-and-forget: ensures the locale module is cached before subsequent
-  // re-renders so that FormatIntl always uses the correct locale.
-  loadLocale(locale);
-
   return (
     <ApolloProvider client={client}>
-      <AppContext.Provider value={{ portalCode, objectCode, locale }}>
+      <AppContext.Provider value={{ portalCode, objectCode, locale: resolvedLocale }}>
         <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
-          <App pageType={pageType} locale={locale} filters={filters} />
+          <App pageType={pageType} locale={resolvedLocale} filters={filters} />
         </div>
       </AppContext.Provider>
     </ApolloProvider>
