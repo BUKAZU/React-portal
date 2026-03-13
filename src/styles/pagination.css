@@ -8,13 +8,16 @@
   margin: 0;
   li {
     margin: 0;
-    a {
+    a,
+    button {
       display: block;
       padding: 0.5rem 0.75rem;
       line-height: 1.25;
       color: var(--bukazu-button);
       background-color: #fff;
       border: 1px solid #dee2e6;
+      font-size: inherit;
+      font-family: inherit;
       &:hover {
         z-index: 2;
         color: #0056b3;
@@ -36,25 +39,30 @@
   }
 }
 
-.bu-pagination li:first-child a {
+.bu-pagination li:first-child a,
+.bu-pagination li:first-child button {
   margin-left: 0;
   border-top-left-radius: 0.25rem;
   border-bottom-left-radius: 0.25rem;
 }
-.bu-pagination li:last-child a {
+.bu-pagination li:last-child a,
+.bu-pagination li:last-child button {
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
 }
-.bu-pagination li.selected a {
+.bu-pagination li.selected a,
+.bu-pagination li.selected button {
   z-index: 1;
   color: #fff;
   background-color: var(--bukazu-button);
   border-color: var(--bukazu-button);
-  a {
+  a,
+  button {
     color: #000;
   }
 }
-.bu-pagination li.disabled a {
+.bu-pagination li.disabled a,
+.bu-pagination li.disabled button {
   color: #6c757d;
   pointer-events: none;
   cursor: auto;
@@ -62,30 +70,36 @@
   border-color: #dee2e6;
 }
 
-.bu-pagination-lg a {
+.bu-pagination-lg a,
+.bu-pagination-lg button {
   padding: 0.75rem 1.5rem;
   font-size: 1.25rem;
   line-height: 1.5;
 }
-.bu-pagination-lg li:first-child a {
+.bu-pagination-lg li:first-child a,
+.bu-pagination-lg li:first-child button {
   border-top-left-radius: 0.3rem;
   border-bottom-left-radius: 0.3rem;
 }
-.bu-pagination-lg li:last-child a {
+.bu-pagination-lg li:last-child a,
+.bu-pagination-lg li:last-child button {
   border-top-right-radius: 0.3rem;
   border-bottom-right-radius: 0.3rem;
 }
 
-.bu-pagination-sm a {
+.bu-pagination-sm a,
+.bu-pagination-sm button {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
 }
-.bu-pagination-sm li:first-child a {
+.bu-pagination-sm li:first-child a,
+.bu-pagination-sm li:first-child button {
   border-top-left-radius: 0.2rem;
   border-bottom-left-radius: 0.2rem;
 }
-.bu-pagination-sm li:last-child a {
+.bu-pagination-sm li:last-child a,
+.bu-pagination-sm li:last-child button {
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;
 }
