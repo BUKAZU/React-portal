@@ -55,7 +55,7 @@
     "whatwg-fetch": "3.6.20"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.8",
+    "@apollo/client": "^4.1.6",
     "date-fns": "^4.1.0",
     "formik": "^2.2.9",
     "graphql": "^16.11.0",
