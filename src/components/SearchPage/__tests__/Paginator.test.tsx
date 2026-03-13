@@ -6,10 +6,9 @@ import Paginator, { buildPageRange } from '../Paginator';
 // Mock SVG loading icon
 jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 
-// Mock Apollo useQuery
-jest.mock('@apollo/client', () => ({
-  useQuery: jest.fn(),
-  gql: (query: TemplateStringsArray) => query
+// Mock useQuery hook
+jest.mock('../../../_lib/hooks', () => ({
+  useQuery: jest.fn()
 }));
 
 // Mock gql queries
@@ -17,7 +16,7 @@ jest.mock('../../../_lib/gql', () => ({
   HOUSE_COUNT_QUERY: 'HOUSE_COUNT_QUERY'
 }));
 
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../../../_lib/hooks';
 
 const mockUseQuery = useQuery as jest.Mock;
 

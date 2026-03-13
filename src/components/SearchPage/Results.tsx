@@ -7,7 +7,7 @@ import Paginator from './Paginator';
 
 import { HOUSES_PRICE_QUERY, HOUSES_QUERY } from '../../_lib/gql';
 import { ApiError } from '../Error';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../../_lib/hooks';
 import { FiltersType } from './filters/filter_types';
 import { Parse_EN_US } from '../../_lib/date_helper';
 import { AppContext } from '../AppContext';

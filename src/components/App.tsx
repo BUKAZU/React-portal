@@ -12,7 +12,7 @@ import ReviewsPage from './ReviewsPage/ReviewsPage';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../_lib/hooks';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 

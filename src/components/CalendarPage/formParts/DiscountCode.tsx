@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Field } from 'formik';
 import { t } from '../../../intl';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '../../../_lib/hooks';
 import { HouseType } from '../../../types';
 import { CHECK_DISCOUNT_CODE } from '../../../_lib/gql';
 

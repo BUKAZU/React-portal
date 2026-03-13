@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../../../_lib/hooks';
 import React, { useContext } from 'react';
 import { t } from '../../../intl';
 import { HouseType, PortalSiteType } from '../../../types';

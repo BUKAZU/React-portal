@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery } from '../../../_lib/hooks';
 import {
   addMonths,
   endOfMonth,
