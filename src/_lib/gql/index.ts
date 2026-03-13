@@ -13,6 +13,15 @@ export const PORTAL_QUERY = gql`
       id
       portal_code
       options
+      colorsConfiguration {
+        arrival
+        booked
+        button
+        buttonCta
+        cell
+        departure
+        discount
+      }
       countries {
         id
         name

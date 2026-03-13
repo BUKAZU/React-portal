@@ -12,6 +12,7 @@ import ErrorBoundary from './ErrorBoundary';
 import { useQuery } from '@apollo/client';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
+import { ColorsType } from '../types';
 
 interface Props {
   pageType?: string;
@@ -36,42 +37,18 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
 
   const PortalSite = data.PortalSite;
   let options = data.PortalSite.options;
+  const colors: ColorsType = data.PortalSite.colorsConfiguration;
 
-  let root = document.documentElement;
+  const root = document.documentElement;
 
-  root.style.setProperty(
-    '--bukazu-discount',
-    `${options.colors ? options.colors.discount : 'orange'}`
-  );
-  root.style.setProperty(
-    '--bukazu-cell',
-    `${options.colors ? options.colors.cell : '#fff'}`
-  );
-  root.style.setProperty(
-    '--bukazu-arrival',
-    `${options.colors ? options.colors.arrival : '#6eeb83'}`
-  );
-  root.style.setProperty(
-    '--bukazu-booked',
-    `${options.colors ? options.colors.booked : '#ea2b1f'}`
-  );
-  root.style.setProperty(
-    '--bukazu-departure',
-    `${options.colors ? options.colors.departure : 'yellow'}`
-  );
-
-  root.style.setProperty(
-    '--bukazu-button',
-    `${options.colors ? options.colors.button : 'rgba(23, 190, 187, 0.75)'}`
-  );
-  root.style.setProperty(
-    '--bukazu-button_cta',
-    `${options.colors ? options.colors.buttonCta : '#e28413'}`
-  );
-  root.style.setProperty(
-    '--bukazu-background_month',
-    `${options.colors ? options.colors.month_background : '#e28413'}`
-  );
+  root.style.setProperty('--bukazu-discount', colors.discount);
+  root.style.setProperty('--bukazu-cell', colors.cell);
+  root.style.setProperty('--bukazu-arrival', colors.arrival);
+  root.style.setProperty('--bukazu-booked', colors.booked);
+  root.style.setProperty('--bukazu-departure', colors.departure);
+  root.style.setProperty('--bukazu-button', colors.button);
+  root.style.setProperty('--bukazu-button_cta', colors.buttonCta);
+  root.style.setProperty('--bukazu-background_month', colors.buttonCta);
 
   let page;
 
