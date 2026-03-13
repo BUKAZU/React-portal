@@ -26,7 +26,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
 
   const { loading: baseLoading, error: baseError, data: baseData } = useQuery(
     PORTAL_BASE_QUERY,
-    { variables: { id: portalCode } }
+    { variables: { id: portalCode }, skip: isSearchPage }
   );
 
   const {
@@ -38,8 +38,8 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     skip: !isSearchPage
   });
 
-  const loading = baseLoading || (isSearchPage && searchLoading);
-  const error = baseError || (isSearchPage ? searchError : undefined);
+  const loading = isSearchPage ? searchLoading : baseLoading;
+  const error = isSearchPage ? searchError : baseError;
 
   if (loading) {
     return <Loading />;
