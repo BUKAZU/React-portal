@@ -2,6 +2,8 @@ import React from 'react';
 import { Field } from 'formik';
 import { t } from '../../../intl';
 import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
 import { format } from 'date-fns';
 
 interface Props {
