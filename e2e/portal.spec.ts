@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Smoke tests for the Bukazu Portal pages served by the Vite dev server.
- * These tests verify that each demo page loads and the portal mounts correctly.
+ * These tests verify that each demo page responds and that the portal
+ * container is present in the DOM.
  *
- * Note: The portal fetches live data from the Bukazu API; these tests verify
- * the initial render (loading state) and error boundaries, not the full
- * data-driven UI.
- */
+ * Note: The portal fetches live data from the Bukazu API; these tests only
+ * validate basic page rendering, not loading states, error boundaries, or the
+ * full data-driven UI.
 
 test.describe('Search page', () => {
   test.beforeEach(async ({ page }) => {
