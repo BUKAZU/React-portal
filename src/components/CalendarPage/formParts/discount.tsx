@@ -7,7 +7,6 @@ import { HouseType } from '../../../types';
 interface Props {
   errors: object;
   house: HouseType;
-  values: object;
 }
 
 const Discount = ({ errors, house }: Props) => {
