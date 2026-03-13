@@ -9,6 +9,7 @@ import { IntegrationError } from './components/Error';
 import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
+import { loadLocale } from './_lib/date_helper';
 
 interface Props {
   portalCode: string;
@@ -59,6 +60,9 @@ function Portal({
   });
 
   window.__localeId__ = locale;
+  // Fire-and-forget: ensures the locale module is cached before subsequent
+  // re-renders so that FormatIntl always uses the correct locale.
+  loadLocale(locale);
 
   return (
     <ApolloProvider client={client}>
