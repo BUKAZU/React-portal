@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { t, formatNumber } from '../../../intl';
 import Description from './Description';
 
 interface Props {
@@ -22,7 +22,7 @@ function CostRow({
   return (
     <tr>
       <td>
-        {formatName ? <FormattedMessage id={name} /> : name}
+        {formatName ? t(name) : name}
         {description && (
           <>
             {' '}
@@ -35,11 +35,10 @@ function CostRow({
         {amount && amount > 0 ? (
           <>
             €{' '}
-            <FormattedNumber
-              value={amount}
-              minimumFractionDigits={2}
-              maximumFractionDigits={2}
-            />
+            {formatNumber(amount, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })}
             {forceMethod && <> {method_name}</>}
           </>
         ) : (

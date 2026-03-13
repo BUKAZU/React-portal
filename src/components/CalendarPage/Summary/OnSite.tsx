@@ -1,7 +1,7 @@
 import React from 'react';
 import CostRow from './CostRow';
 import OptionalOnSite from './OptionalOnSite';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { PricesType } from './cost_types';
 
 interface Props {
@@ -14,7 +14,7 @@ export default function OnSite({ prices }: Props): React.ReactNode {
   return (
     <div className="costs-section">
       <strong>
-        <FormattedMessage id="costs_on_site" />
+        {t('costs_on_site')}
       </strong>
       <table>
         <tbody>

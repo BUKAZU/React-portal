@@ -4,7 +4,7 @@ import {
   LONG_DATE_FORMAT,
   Parse_EN_US
 } from '../../../_lib/date_helper';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { createPeronsArray } from '../formParts/BookingHelpers';
 import Price from './Price';
 import { HouseType } from '../../../types';
@@ -33,7 +33,7 @@ function PriceField({ house }: Props) {
     <div className="calendar--picker">
       <div className="calendar--picker--date">
         <span className="name">
-          <FormattedMessage id={`${house.house_type}.arrival`} />
+          {t(`${house.house_type}.arrival`)}
         </span>
         <span className="detail">
           {arrivalDate?.date ? (
@@ -41,15 +41,13 @@ function PriceField({ house }: Props) {
               {FormatIntl(Parse_EN_US(arrivalDate?.date), dateFormat)}
             </span>
           ) : (
-            <FormattedMessage
-              id={`${house.house_type}.pick_your_arrivaldate_in_the_calendar`}
-            />
+            t(`${house.house_type}.pick_your_arrivaldate_in_the_calendar`)
           )}
         </span>
       </div>
       <div className="calendar--picker--date">
         <span className="name">
-          <FormattedMessage id={`${house.house_type}.departure`} />
+          {t(`${house.house_type}.departure`)}
         </span>
         <span className="detail">
           {departureDate?.date ? (
@@ -59,16 +57,10 @@ function PriceField({ house }: Props) {
           ) : (
             <div>
               <div>
-                <FormattedMessage
-                  id={`${house.house_type}.pick_your_departure_in_the_calendar`}
-                />
+                {t(`${house.house_type}.pick_your_departure_in_the_calendar`)}
               </div>
               {arrivalDate && (
-                <FormattedMessage
-                  id="minimum_nights"
-                  defaultMessage="Minimum {minimum} nights"
-                  values={{ minimum: arrivalDate?.min_nights }}
-                />
+                t('minimum_nights', { minimum: arrivalDate?.min_nights })
               )}
             </div>
           )}
@@ -84,15 +76,9 @@ function PriceField({ house }: Props) {
             }}
           >
             {adults.map((person) => (
-              <FormattedMessage
-                id="persons"
-                key={person}
-                children={(text) => (
-                  <option value={person} key={person}>
-                    {person} {text}
-                  </option>
-                )}
-              />
+              <option value={person} key={person}>
+                {person} {t('persons')}
+              </option>
             ))}
           </select>
         </span>
@@ -120,7 +106,7 @@ function PriceField({ house }: Props) {
           }
         }}
       >
-        <FormattedMessage id="calculate" />
+        {t('calculate')}
       </button>
     </div>
   );

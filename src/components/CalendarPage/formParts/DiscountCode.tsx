@@ -1,8 +1,19 @@
 import React, { ReactNode } from 'react';
 import { Field } from 'formik';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { gql, useMutation } from '@apollo/client';
 import { HouseType } from '../../../types';
+
+export const CHECK_DISCOUNT_CODE = gql`
+  mutation CheckDiscountCode($code: String!, $house_code: String!) {
+    checkDiscountCode(code: $code, house_code: $house_code) {
+      name
+      use_price
+      percentage
+      price
+    }
+  }
+`;
 
 function DiscountCode({ house }: { house: HouseType }): ReactNode {
   const [checkCode, { loading, error, data }] =
@@ -11,7 +22,7 @@ function DiscountCode({ house }: { house: HouseType }): ReactNode {
   return (
     <div className="form-row inline">
       <label htmlFor="discount_code">
-        <FormattedMessage id="discount_code" />
+        {t('discount_code')}
       </label>
       <Field name="discount_code">
         {({ field, form }) => {
@@ -31,7 +42,7 @@ function DiscountCode({ house }: { house: HouseType }): ReactNode {
       {loading && <div className="bu_discount_code">Loading...</div>}
       {error && (
         <div className="bu_discount_code">
-          <FormattedMessage id="no_discount_code_found" />
+          {t('no_discount_code_found')}
         </div>
       )}
       {data && (
@@ -47,16 +58,5 @@ function DiscountCode({ house }: { house: HouseType }): ReactNode {
     </div>
   );
 }
-
-const CHECK_DISCOUNT_CODE = gql`
-  mutation CheckDiscountCode($code: String!, $house_code: String!) {
-    checkDiscountCode(code: $code, house_code: $house_code) {
-      name
-      use_price
-      percentage
-      price
-    }
-  }
-`;
 
 export default DiscountCode;

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Field } from 'formik';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { Countries } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
 import DefaultBookingFields from './DefaultBookingFields';
@@ -38,7 +38,7 @@ export default function OptionalBookingFields({
   return (
     <div className="form-section bup-16">
       <h2>
-        <FormattedMessage id="personal_details" />
+        {t('personal_details')}
       </h2>
       {fields.map((input) => {
         if (input.id === 'telephone') {

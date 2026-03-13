@@ -1,14 +1,17 @@
 import React from 'react';
 import { NumberSelect } from '../FormItems';
-import { FormattedMessage } from 'react-intl';
-import { BookingFormConfiguration, HouseType } from '../../../types';
+import { t } from '../../../intl';
+import { HouseType, BookingFormConfiguration } from '../../../types';
 
 interface Props {
   bookingFormConfiguration: BookingFormConfiguration;
   house: HouseType;
 }
 
-export default function Guests({ bookingFormConfiguration, house }: Props): React.ReactNode {
+export default function Guests({
+  bookingFormConfiguration,
+  house
+}: Props): React.ReactNode {
   return (
     <>
       <NumberSelect
@@ -17,11 +20,9 @@ export default function Guests({ bookingFormConfiguration, house }: Props): Reac
         count={house.persons}
         description={
           <div className="age-description">
-            <FormattedMessage
-              id="adults_from"
-              defaultMessage="> {age}"
-              values={{ age: bookingFormConfiguration.adultsFromAge }}
-            />
+            {t('adults_from', {
+              age: bookingFormConfiguration.adultsFromAge
+            })}
           </div>
         }
       />
@@ -32,14 +33,10 @@ export default function Guests({ bookingFormConfiguration, house }: Props): Reac
           count={house.persons - 1}
           description={
             <div className="age-description">
-              <FormattedMessage
-                id="children_from"
-                defaultMessage="{from} - {til}"
-                values={{
-                  from: bookingFormConfiguration.childrenFromAge,
-                  til: bookingFormConfiguration.childrenTillAge
-                }}
-              />
+              {t('children_from', {
+                from: bookingFormConfiguration.childrenFromAge,
+                til: bookingFormConfiguration.childrenTillAge
+              })}
             </div>
           }
         />
@@ -51,11 +48,9 @@ export default function Guests({ bookingFormConfiguration, house }: Props): Reac
           count={house.persons - 1}
           description={
             <div className="age-description">
-              <FormattedMessage
-                id="babies_from"
-                defaultMessage="til {babies_til}"
-                values={{ babies: bookingFormConfiguration.babiesTillAge }}
-              />
+              {t('babies_from', {
+                babies: bookingFormConfiguration.babiesTillAge
+              })}
             </div>
           }
         />

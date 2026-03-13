@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Formik, Form } from 'formik';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../intl';
 import { CREATE_BOOKING_MUTATION } from '../../_lib/queries';
 import { Insurances } from './formParts/insurances';
 import Discount from './formParts/discount';
@@ -136,10 +136,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                   });
                 }}
               >
-                <FormattedMessage id="return_to_calendar" />
+                {t('return_to_calendar')}
               </a>
               <h2>
-                <FormattedMessage id="stay_details" />
+                {t('stay_details')}
               </h2>
               <Guests bookingFormConfiguration={PortalSite.bookingFormConfiguration} house={house} />
 
@@ -172,35 +172,31 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             {status && status.msg && <div>{status.msg}</div>}
             <div className="terms">
               {PortalSite.form_submit_text}{' '}
-              <FormattedMessage id="terms">
-                {(fm) => (
-                  <Modal buttonText={fm}>
-                    <div
-                      style={{
-                        width: '90vh',
-                        height: '90vh'
-                      }}
-                    >
-                      <iframe
-                        src={house.rental_terms}
-                        width="100%"
-                        height="100%"
-                        title="Terms"
-                      />
-                    </div>
-                  </Modal>
-                )}
-              </FormattedMessage>
+              <Modal buttonText={t('terms')}>
+                <div
+                  style={{
+                    width: '90vh',
+                    height: '90vh'
+                  }}
+                >
+                  <iframe
+                    src={house.rental_terms}
+                    width="100%"
+                    height="100%"
+                    title="Terms"
+                  />
+                </div>
+              </Modal>
               {house.allow_option && (
                 <span>
                   {', '}
-                  <FormattedMessage id="option_is_free" />
+                  {t('option_is_free')}
                 </span>
               )}
             </div>
             {[1, 2].includes(Number(values.cancel_insurance)) ? (
               <div className="terms">
-                <FormattedMessage id="comply_insurance_card" />
+                {t('comply_insurance_card')}
               </div>
             ) : null}
             <button

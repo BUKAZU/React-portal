@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
 import { Field } from 'formik';
 import { HouseType } from '../../../types';
+import { t } from '../../../intl';
+import DiscountCode from './DiscountCode';
+import { HouseType, PortalOptions } from '../../../types';
+import { PossibleValues } from './form_types';
 
 interface Props {
   errors: object;
@@ -15,9 +18,7 @@ const Discount = ({ errors, house }: Props) => {
     return (
       <div className="form-section bup-16">
         <div className="form-row inline">
-          <label htmlFor="discount">
-            <FormattedMessage id="discount" />
-          </label>
+          <label htmlFor="discount">{t('discount')}</label>
           <Field component="select" name="discount">
             {discounts.map((discount) => (
               <option value={discount} key={discount}>
@@ -27,9 +28,7 @@ const Discount = ({ errors, house }: Props) => {
           </Field>
         </div>
         <div className="form-row inline">
-          <label htmlFor="discount_reason">
-            <FormattedMessage id="discount_reason" />
-          </label>
+          <label htmlFor="discount_reason">{t('discount_reason')}</label>
           <Field name="discount_reason" />
           {errors.discount_reason && (
             <div className="error-message bu-error-message">

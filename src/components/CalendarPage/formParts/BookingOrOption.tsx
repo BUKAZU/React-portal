@@ -1,7 +1,7 @@
 import React from 'react';
 import { RadioButtonGroup, RadioButton } from './radioButtons';
 import { Field } from 'formik';
-import { FormattedMessage } from 'react-intl';
+import { t } from '../../../intl';
 import { HouseType } from '../../../types';
 
 interface Props {
@@ -19,13 +19,13 @@ export default function BookingOrOption({ house }: Props): JSX.Element {
               name="is_option"
               id="true"
               disabled={!house.allow_option}
-              label={<FormattedMessage id="option" />}
+              label={t('option')}
             />
             <Field
               component={RadioButton}
               name="is_option"
               id="false"
-              label={<FormattedMessage id="booking" />}
+              label={t('booking')}
             />
           </RadioButtonGroup>
         </div>
