@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Loading from './icons/loading.svg';
 
-import { PORTAL_QUERY } from '../_lib/gql';
+import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
 
 import SearchPage from './SearchPage/SearchPage';
 import CalendarPage from './CalendarPage/CalendarPage';
@@ -22,9 +22,24 @@ interface Props {
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   const { portalCode, objectCode } = useContext(AppContext);
 
-  const { loading, error, data } = useQuery(PORTAL_QUERY, {
-    variables: { id: portalCode }
+  const isSearchPage = !objectCode;
+
+  const { loading: baseLoading, error: baseError, data: baseData } = useQuery(
+    PORTAL_BASE_QUERY,
+    { variables: { id: portalCode } }
+  );
+
+  const {
+    loading: searchLoading,
+    error: searchError,
+    data: searchData
+  } = useQuery(PORTAL_SEARCH_QUERY, {
+    variables: { id: portalCode },
+    skip: !isSearchPage
   });
+
+  const loading = baseLoading || (isSearchPage && searchLoading);
+  const error = baseError || (isSearchPage ? searchError : undefined);
 
   if (loading) {
     return <Loading />;
@@ -34,8 +49,15 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     return <ApiError errors={{ ...error }} />;
   }
 
-  const PortalSite = data.PortalSite;
-  let options = data.PortalSite.options;
+  const PortalSite = isSearchPage
+    ? (searchData?.PortalSite ?? null)
+    : (baseData?.PortalSite ?? null);
+
+  if (!PortalSite) {
+    return <Loading />;
+  }
+
+  let options = PortalSite.options;
 
   let root = document.documentElement;
 

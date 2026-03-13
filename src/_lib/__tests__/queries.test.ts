@@ -5,6 +5,8 @@ import {
   DocumentNode
 } from 'graphql';
 import {
+  PORTAL_BASE_QUERY,
+  PORTAL_SEARCH_QUERY,
   PORTAL_QUERY,
   CALENDAR_QUERY,
   BOOKING_PRICE_QUERY,
@@ -24,6 +26,8 @@ import {
 import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
+  { name: 'PORTAL_BASE_QUERY', document: PORTAL_BASE_QUERY },
+  { name: 'PORTAL_SEARCH_QUERY', document: PORTAL_SEARCH_QUERY },
   { name: 'PORTAL_QUERY', document: PORTAL_QUERY },
   { name: 'CALENDAR_QUERY', document: CALENDAR_QUERY },
   { name: 'BOOKING_PRICE_QUERY', document: BOOKING_PRICE_QUERY },

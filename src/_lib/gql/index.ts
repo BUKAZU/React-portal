@@ -7,8 +7,18 @@ import {
 
 export * from './fragments';
 
-export const PORTAL_QUERY = gql`
-  query PortalSiteQuery($id: ID!) {
+export const PORTAL_BASE_QUERY = gql`
+  query PortalSiteBaseQuery($id: ID!) {
+    PortalSite(id: $id) {
+      id
+      portal_code
+      options
+    }
+  }
+`;
+
+export const PORTAL_SEARCH_QUERY = gql`
+  query PortalSiteSearchQuery($id: ID!) {
     PortalSite(id: $id) {
       id
       portal_code
@@ -53,6 +63,9 @@ export const PORTAL_QUERY = gql`
     }
   }
 `;
+
+/** @deprecated Use PORTAL_BASE_QUERY for Calendar/Reviews pages and PORTAL_SEARCH_QUERY for Search pages. */
+export const PORTAL_QUERY = PORTAL_SEARCH_QUERY;
 
 export const CALENDAR_QUERY = gql`
   query PortalSiteHousesQuery(
