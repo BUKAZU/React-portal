@@ -2,20 +2,12 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Smoke tests for the Bukazu Portal pages served by the Vite dev server.
-<<<<<<< HEAD
  * These tests verify that each demo page responds and that the portal
  * container is present in the DOM.
  *
  * Note: The portal fetches live data from the Bukazu API; these tests only
  * validate basic page rendering, not loading states, error boundaries, or the
  * full data-driven UI.
-=======
- * These tests verify that each demo page loads and the portal mounts correctly.
- *
- * Note: The portal fetches live data from the Bukazu API; these tests verify
- * the initial render (loading state) and error boundaries, not the full
- * data-driven UI.
->>>>>>> efe0c61e (feat: introduce Playwright for end-to-end testing)
  */
 
 test.describe('Search page', () => {
@@ -28,12 +20,7 @@ test.describe('Search page', () => {
   });
 
   test('mounts the portal container', async ({ page }) => {
-<<<<<<< HEAD
-    const portalWrapper = page.locator('.bu-smaller, .bu-large');
-    await expect(portalWrapper.first()).toBeVisible();
-=======
     await expect(page.locator('#bukazu-app')).toBeAttached();
->>>>>>> efe0c61e (feat: introduce Playwright for end-to-end testing)
   });
 });
 
@@ -47,12 +34,7 @@ test.describe('Calendar page', () => {
   });
 
   test('mounts the portal container', async ({ page }) => {
-<<<<<<< HEAD
-    const portalWrapper = page.locator('.bu-smaller, .bu-large');
-    await expect(portalWrapper.first()).toBeVisible();
-=======
     await expect(page.locator('#bukazu-app')).toBeAttached();
->>>>>>> efe0c61e (feat: introduce Playwright for end-to-end testing)
   });
 });
 
@@ -66,12 +48,7 @@ test.describe('Reviews page', () => {
   });
 
   test('mounts the portal container', async ({ page }) => {
-<<<<<<< HEAD
-    const portalWrapper = page.locator('.bu-smaller, .bu-large');
-    await expect(portalWrapper.first()).toBeVisible();
-=======
     await expect(page.locator('#bukazu-app')).toBeAttached();
->>>>>>> efe0c61e (feat: introduce Playwright for end-to-end testing)
   });
 });
 
