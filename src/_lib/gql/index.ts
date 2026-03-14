@@ -13,6 +13,15 @@ export const PORTAL_BASE_QUERY = gql`
       id
       portal_code
       options
+      colorsConfiguration {
+        arrival
+        booked
+        button
+        buttonCta
+        cell
+        departure
+        discount
+      }
     }
   }
 `;
@@ -23,6 +32,15 @@ export const PORTAL_SEARCH_QUERY = gql`
       id
       portal_code
       options
+      colorsConfiguration {
+        arrival
+        booked
+        button
+        buttonCta
+        cell
+        departure
+        discount
+      }
       countries {
         id
         name
