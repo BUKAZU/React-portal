@@ -7,6 +7,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import CostRow from '../CostRow';
 
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+
 jest.mock('../../../../intl', () => ({
   t: (id: string) => `t_${id}`,
   formatNumber: (value: number, options?: Intl.NumberFormatOptions) =>
