@@ -66,7 +66,6 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   const colors: ColorsType = PortalSite.colorsConfiguration;
 
   const root = document.documentElement;
-
   root.style.setProperty('--bukazu-discount', colors.discount);
   root.style.setProperty('--bukazu-cell', colors.cell);
   root.style.setProperty('--bukazu-arrival', colors.arrival);
