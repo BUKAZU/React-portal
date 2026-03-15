@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Loading from './icons/loading.svg';
 
-import { PORTAL_QUERY } from '../_lib/gql';
+import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
 
 import SearchPage from './SearchPage/SearchPage';
 import CalendarPage from './CalendarPage/CalendarPage';
@@ -23,9 +23,28 @@ interface Props {
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   const { portalCode, objectCode } = useContext(AppContext);
 
-  const { loading, error, data } = useQuery(PORTAL_QUERY, {
-    variables: { id: portalCode }
+  const isSearchPage = !objectCode;
+
+  const {
+    loading: baseLoading,
+    error: baseError,
+    data: baseData
+  } = useQuery(PORTAL_BASE_QUERY, {
+    variables: { id: portalCode },
+    skip: isSearchPage
   });
+
+  const {
+    loading: searchLoading,
+    error: searchError,
+    data: searchData
+  } = useQuery(PORTAL_SEARCH_QUERY, {
+    variables: { id: portalCode },
+    skip: !isSearchPage
+  });
+
+  const loading = isSearchPage ? searchLoading : baseLoading;
+  const error = isSearchPage ? searchError : baseError;
 
   if (loading) {
     return <Loading />;
@@ -35,12 +54,18 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     return <ApiError errors={{ ...error }} />;
   }
 
-  const PortalSite = data.PortalSite;
-  let options = data.PortalSite.options;
-  const colors: ColorsType = data.PortalSite.colorsConfiguration;
+  const PortalSite = isSearchPage
+    ? (searchData?.PortalSite ?? null)
+    : (baseData?.PortalSite ?? null);
+
+  if (!PortalSite) {
+    return <Loading />;
+  }
+
+  let options = PortalSite.options;
+  const colors: ColorsType = PortalSite.colorsConfiguration;
 
   const root = document.documentElement;
-
   root.style.setProperty('--bukazu-discount', colors.discount);
   root.style.setProperty('--bukazu-cell', colors.cell);
   root.style.setProperty('--bukazu-arrival', colors.arrival);

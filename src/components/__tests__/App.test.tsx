@@ -14,7 +14,8 @@ jest.mock('@apollo/client', () => ({
 
 // Mock the GQL module
 jest.mock('../../_lib/gql', () => ({
-  PORTAL_QUERY: 'PORTAL_QUERY'
+  PORTAL_BASE_QUERY: 'PORTAL_BASE_QUERY',
+  PORTAL_SEARCH_QUERY: 'PORTAL_SEARCH_QUERY'
 }));
 
 // Mock heavy child components
@@ -55,10 +56,11 @@ const fullColors = {
   buttonCta: '#777777'
 };
 
-function makeData(
-  colorsConfiguration = fullColors,
-  objectCode = ''
-): { loading: boolean; error: undefined; data: any } {
+function makeData(colorsConfiguration = fullColors): {
+  loading: boolean;
+  error: undefined;
+  data: any;
+} {
   return {
     loading: false,
     error: undefined,
