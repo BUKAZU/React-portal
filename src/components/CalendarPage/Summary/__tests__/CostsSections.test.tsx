@@ -131,7 +131,13 @@ describe('Booking summary cost sections', () => {
       ]
     } as any;
 
-    const { root, container } = render(<OptionalOnSite prices={prices} />);
+    const { root, container } = render(
+      <table>
+        <tbody>
+          <OptionalOnSite prices={prices} />
+        </tbody>
+      </table>
+    );
 
     const renderedIds = mockCostRow.mock.calls
       .map(([props]) => props as { id?: number } | undefined)
