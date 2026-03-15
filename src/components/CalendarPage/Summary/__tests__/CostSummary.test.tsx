@@ -197,7 +197,7 @@ describe('CostSummary', () => {
       BOOKING_PRICE_TOTAL_QUERY,
       expect.objectContaining({
         variables: expect.objectContaining({
-          persons: baseValues.adults + baseValues.children // babies are clamped to 0
+          persons: baseValues.adults + baseValues.children // babies are capped at 0
         })
       })
     );
