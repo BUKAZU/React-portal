@@ -36,10 +36,21 @@ type name_id_type = {
   name: string;
 };
 
+export type ColorsType = {
+  arrival: string;
+  booked: string;
+  button: string;
+  buttonCta: string;
+  cell: string;
+  departure: string;
+  discount: string;
+};
+
 type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
   bookingForm: BookingFormType;
+  colors?: ColorsType;
 };
 
 export type PortalSiteType = {

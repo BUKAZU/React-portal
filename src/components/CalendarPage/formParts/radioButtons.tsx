@@ -1,13 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { FieldInputProps } from 'formik';
+
+interface InputFeedbackProps {
+  error?: React.ReactNode;
+}
 
 // Input feedback
-const InputFeedback = ({ error }) =>
+const InputFeedback = ({ error }: InputFeedbackProps) =>
   error ? <div className="input-feedback">{error}</div> : null;
 
-InputFeedback.propTypes = {
-  error: PropTypes.object,
-};
+interface RadioButtonProps {
+  field: FieldInputProps<string>;
+  id: string;
+  label: React.ReactNode;
+}
 
 // Radio input
 export const RadioButton = ({
@@ -15,7 +21,7 @@ export const RadioButton = ({
   id,
   label,
   ...props
-}) => {
+}: RadioButtonProps) => {
   return (
     <div>
       <input
@@ -34,11 +40,14 @@ export const RadioButton = ({
   );
 };
 
-RadioButton.propTypes = {
-  field: PropTypes.object,
-  id: PropTypes.string,
-  label: PropTypes.object,
-};
+interface RadioButtonGroupProps {
+  id?: string;
+  error?: React.ReactNode;
+  touched?: boolean | Record<string, boolean>;
+  label?: string;
+  className?: string;
+  children: React.ReactNode;
+}
 
 // Radio group
 export const RadioButtonGroup = ({
@@ -47,7 +56,7 @@ export const RadioButtonGroup = ({
   label,
   className,
   children,
-}) => {
+}: RadioButtonGroupProps) => {
   return (
     <div className={className}>
       <div className="legend">{label}</div>
@@ -55,12 +64,4 @@ export const RadioButtonGroup = ({
       {touched && <InputFeedback error={error} />}
     </div>
   );
-};
-
-RadioButtonGroup.propTypes = {
-  error: PropTypes.object,
-  touched: PropTypes.object,
-  className: PropTypes.string,
-  label: PropTypes.string,
-  children: PropTypes.node.isRequired,
 };
