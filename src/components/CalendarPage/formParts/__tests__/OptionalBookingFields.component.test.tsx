@@ -3,6 +3,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Formik } from 'formik';
 import OptionalBookingFields from '../OptionalBookingFields';
+import { loadCountries } from '../../../../_lib/countries';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -11,6 +12,15 @@ jest.mock('../../FormItems', () => ({
     <div data-testid="date-field" data-name={name} />
   )
 }));
+
+jest.mock('../../../../_lib/countries', () => ({
+  loadCountries: jest.fn().mockResolvedValue([
+    { name: 'Netherlands', alpha2: 'nl' },
+    { name: 'Germany', alpha2: 'de' }
+  ])
+}));
+
+const mockLoadCountries = loadCountries as jest.Mock;
 
 const mockPortalSite = {
   first_name_label: 'First name',
@@ -143,8 +153,9 @@ describe('OptionalBookingFields - country field', () => {
     expect(select).not.toBeNull();
   });
 
-  it('renders country options from the locale list', () => {
+  it('renders country options from the locale list', async () => {
     renderFields([{ id: 'country', type: 'select', required: true }]);
+    await act(async () => {});
     const options = container.querySelectorAll('option');
     expect(options.length).toBeGreaterThan(0);
   });
@@ -165,6 +176,49 @@ describe('OptionalBookingFields - country field', () => {
     const errorDiv = container.querySelector('.error-message');
     expect(errorDiv).not.toBeNull();
     expect(errorDiv?.textContent).toBe('This field is required.');
+  });
+
+  it('disables the select while countries are loading', () => {
+    // loadCountries returns a never-resolving promise to simulate in-flight
+    mockLoadCountries.mockReturnValueOnce(new Promise(() => {}));
+    renderFields([{ id: 'country', type: 'select', required: true }]);
+    const select = container.querySelector('select');
+    expect(select).not.toBeNull();
+    expect(select?.disabled).toBe(true);
+  });
+
+  it('enables the select once countries have loaded', async () => {
+    renderFields([{ id: 'country', type: 'select', required: true }]);
+    await act(async () => {});
+    const select = container.querySelector('select');
+    expect(select?.disabled).toBe(false);
+  });
+
+  it('enables the select and leaves list empty when loadCountries rejects', async () => {
+    mockLoadCountries.mockRejectedValueOnce(new Error('chunk load error'));
+    renderFields([{ id: 'country', type: 'select', required: true }]);
+    await act(async () => {});
+    const select = container.querySelector('select');
+    expect(select?.disabled).toBe(false);
+    expect(container.querySelectorAll('option').length).toBe(0);
+  });
+
+  it('does not update state after unmount', async () => {
+    let resolveCountries!: (v: { name: string; alpha2: string }[]) => void;
+    mockLoadCountries.mockReturnValueOnce(
+      new Promise((res) => {
+        resolveCountries = res;
+      })
+    );
+    renderFields([{ id: 'country', type: 'select', required: true }]);
+    // Unmount before the promise resolves
+    act(() => {
+      root.unmount();
+    });
+    // Resolving after unmount should not throw or warn
+    await act(async () => {
+      resolveCountries([{ name: 'Test Country', alpha2: 'xx' }]);
+    });
   });
 });
 
@@ -269,19 +323,13 @@ describe('OptionalBookingFields - telephone id normalisation', () => {
 
 describe('OptionalBookingFields - cancel_insurance required address fields', () => {
   it('adds required address fields when cancel_insurance is "1"', () => {
-    renderFields(
-      [],
-      { ...defaultValues, cancel_insurance: '1' }
-    );
+    renderFields([], { ...defaultValues, cancel_insurance: '1' });
     const formRows = container.querySelectorAll('.form-row');
     expect(formRows.length).toBeGreaterThan(0);
   });
 
   it('adds required address fields when cancel_insurance is "2"', () => {
-    renderFields(
-      [],
-      { ...defaultValues, cancel_insurance: '2' }
-    );
+    renderFields([], { ...defaultValues, cancel_insurance: '2' });
     const formRows = container.querySelectorAll('.form-row');
     expect(formRows.length).toBeGreaterThan(0);
   });
