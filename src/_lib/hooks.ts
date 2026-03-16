@@ -1,7 +1,5 @@
-import {
-  useQuery as useQueryTanstack,
-  useMutation as useMutationTanstack
-} from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { print, DocumentNode } from 'graphql';
 import { TypedDocumentNode } from 'graphql-request';
 import { getClient } from './graphqlClient';
 
@@ -21,11 +19,52 @@ export function useQuery<T = Record<string, unknown>>(
   options?: UseQueryOptions
 ): UseQueryResult<T> {
   const variables = options?.variables ?? {};
-  const { data, error, isLoading } = useQueryTanstack<T>({
-    queryKey: [query, variables],
-    queryFn: () => getClient().request<T>(query, variables)
-  });
-  return { data, error: error as Error | null, loading: isLoading };
+  const [data, setData] = useState<T | undefined>(undefined);
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Stable key from actual variable values (new object references won't re-trigger)
+  const variablesKey = useMemo(
+    () => JSON.stringify(variables),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(variables)]
+  );
+
+  // Stable printed query string — query documents are module-level constants so
+  // this ref rarely changes; printing is deferred to avoid per-render cost.
+  const queryStringRef = useRef<string | null>(null);
+  if (queryStringRef.current === null) {
+    queryStringRef.current = print(query as DocumentNode);
+  }
+  const queryString = queryStringRef.current;
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    getClient()
+      .request<T>(query, variables)
+      .then((result) => {
+        if (!cancelled) {
+          setData(result);
+          setLoading(false);
+        }
+      })
+      .catch((err: Error) => {
+        if (!cancelled) {
+          setError(err);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryString, variablesKey]);
+
+  return { data, error, loading };
 }
 
 interface MutationState<T> {
@@ -40,21 +79,35 @@ type MutateFn<T> = (options?: { variables?: Record<string, unknown> }) => Promis
 export function useMutation<T = Record<string, unknown>>(
   mutation: TypedDocumentNode<T, Record<string, unknown>>
 ): [MutateFn<T>, MutationState<T>] {
-  const { mutateAsync, isPending, error, data, reset } = useMutationTanstack<
-    T,
-    Error,
-    Record<string, unknown>
-  >({
-    mutationFn: (variables: Record<string, unknown>) =>
-      getClient().request<T>(mutation, variables)
-  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<T | undefined>(undefined);
 
-  const mutate: MutateFn<T> = (
-    options?: { variables?: Record<string, unknown> }
-  ) => mutateAsync(options?.variables ?? {});
+  const reset = useCallback(() => {
+    setLoading(false);
+    setError(null);
+    setData(undefined);
+  }, []);
 
-  return [
-    mutate,
-    { loading: isPending, error: error as Error | null, data, reset }
-  ];
+  const mutate: MutateFn<T> = useCallback(
+    (options?: { variables?: Record<string, unknown> }) => {
+      setLoading(true);
+      setError(null);
+      return getClient()
+        .request<T>(mutation, options?.variables ?? {})
+        .then((result) => {
+          setData(result);
+          setLoading(false);
+          return result;
+        })
+        .catch((err: Error) => {
+          setError(err);
+          setLoading(false);
+          throw err;
+        });
+    },
+    [mutation]
+  );
+
+  return [mutate, { loading, error, data, reset }];
 }

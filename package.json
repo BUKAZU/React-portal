@@ -55,7 +55,6 @@
     "whatwg-fetch": "3.6.20"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.21",
     "date-fns": "^4.1.0",
     "formik": "^2.2.9",
     "graphql": "^16.11.0",
