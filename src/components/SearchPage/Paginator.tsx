@@ -74,7 +74,7 @@ function Paginator({
   }
 
   const results = data.PortalSite.houses;
-  const pageCount = Math.ceil(results.length / limit);
+  const pageCount = limit > 0 ? Math.ceil(results.length / limit) : 0;
   const pages = buildPageRange(activePage, pageCount);
 
   return (
