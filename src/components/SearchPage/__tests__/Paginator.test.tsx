@@ -136,6 +136,21 @@ describe('Paginator', () => {
     expect(container.querySelector('.bu-pagination')).toBeNull();
   });
 
+  it('does not render pagination when limit is zero', () => {
+    mockUseQuery.mockReturnValue({
+      loading: false,
+      error: null,
+      data: { PortalSite: { houses: makeHouses(30) } }
+    });
+
+    act(() => {
+      root.render(<Paginator {...defaultProps} limit={0} />);
+    });
+
+    expect(container.querySelector('.bu-pagination')).toBeNull();
+    expect(container.textContent).not.toContain('Infinity');
+  });
+
   it('does not render pagination when there are no results', () => {
     mockUseQuery.mockReturnValue({
       loading: false,
