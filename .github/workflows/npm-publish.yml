@@ -4,11 +4,23 @@
 name: Release npm package
 
 on:
-  - workflow_call
-  - workflow_dispatch
+  workflow_call:
+  workflow_dispatch:
+  pull_request:
+    branches: ['master']
+    types: [closed]
 
 jobs:
   build:
+    if: >
+      github.event_name != 'pull_request' ||
+      (
+        github.event.pull_request.merged == true &&
+        (
+          contains(github.event.pull_request.labels.*.name, 'version bump') ||
+          contains(github.event.pull_request.labels.*.name, 'version-bump')
+        )
+      )
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -26,7 +38,15 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    if:
+    if: >
+      github.event_name != 'pull_request' ||
+      (
+        github.event.pull_request.merged == true &&
+        (
+          contains(github.event.pull_request.labels.*.name, 'version bump') ||
+          contains(github.event.pull_request.labels.*.name, 'version-bump')
+        )
+      )
     permissions:
       packages: write
       contents: write
@@ -40,6 +60,8 @@ jobs:
           cache: 'npm'
           registry-url: https://registry.npmjs.org/
       - run: npm ci
+      - name: Get version
+        run: echo "VERSION=$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
       - run: npm run build
       - run: npm publish
         env:
