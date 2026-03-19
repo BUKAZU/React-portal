@@ -65,12 +65,12 @@ export const BOOKING_FORM_CONFIGURATION_FIELDS = gql`
     childrenTillAge
     languageSelectorVisible
     redirectUrl
-    redirectUrl_nl
-    redirectUrl_en
-    redirectUrl_de
-    redirectUrl_fr
-    redirectUrl_es
-    redirectUrl_it
+    redirectUrlNl
+    redirectUrlEn
+    redirectUrlDe
+    redirectUrlFr
+    redirectUrlEs
+    redirectUrlIt
     showDiscountCode
     showMonthsAmount
     showMonthsInARowAmount

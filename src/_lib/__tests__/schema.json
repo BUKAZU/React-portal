@@ -45675,7 +45675,7 @@
             "deprecationReason": null
           },
           {
-            "name": "redirectUrl_nl",
+            "name": "redirectUrlNl",
             "description": "URL to redirect after booking (nl)",
             "args": [],
             "type": {
@@ -45687,7 +45687,7 @@
             "deprecationReason": null
           },
           {
-            "name": "redirectUrl_en",
+            "name": "redirectUrlEn",
             "description": "URL to redirect after booking (en)",
             "args": [],
             "type": {
@@ -45699,7 +45699,7 @@
             "deprecationReason": null
           },
           {
-            "name": "redirectUrl_de",
+            "name": "redirectUrlDe",
             "description": "URL to redirect after booking (de)",
             "args": [],
             "type": {
@@ -45711,7 +45711,7 @@
             "deprecationReason": null
           },
           {
-            "name": "redirectUrl_fr",
+            "name": "redirectUrlFr",
             "description": "URL to redirect after booking (fr)",
             "args": [],
             "type": {
@@ -45723,7 +45723,7 @@
             "deprecationReason": null
           },
           {
-            "name": "redirectUrl_es",
+            "name": "redirectUrlEs",
             "description": "URL to redirect after booking (es)",
             "args": [],
             "type": {
@@ -45735,7 +45735,7 @@
             "deprecationReason": null
           },
           {
-            "name": "redirectUrl_it",
+            "name": "redirectUrlIt",
             "description": "URL to redirect after booking (it)",
             "args": [],
             "type": {

@@ -40,12 +40,12 @@ const mockPortalSite: PortalSiteType = {
       babies_til: 2,
       showDiscountCode: false,
       redirectUrl: null,
-      redirectUrl_en: null,
-      redirectUrl_nl: null,
-      redirectUrl_de: null,
-      redirectUrl_fr: null,
-      redirectUrl_es: null,
-      redirectUrl_it: null
+      redirectUrlEn: null,
+      redirectUrlNl: null,
+      redirectUrlDe: null,
+      redirectUrlFr: null,
+      redirectUrlEs: null,
+      redirectUrlIt: null
     }
   },
   max_persons: 10,
