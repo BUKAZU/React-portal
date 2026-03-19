@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Field } from 'formik';
 import { t } from '../../../intl';
-import { Countries } from '../../../_lib/countries';
+import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
 import DefaultBookingFields from './DefaultBookingFields';
 import { SingleBookingFieldType, PossibleValues } from './form_types';
@@ -20,7 +20,9 @@ interface PortalSiteForBookingFields {
 interface Props {
   bookingFields: SingleBookingFieldType[];
   errors: Record<string, string | undefined>;
-  touched: Record<string, boolean | Record<string, boolean> | undefined>;
+  touched: Record<string, boolean | Record<string, boolean> | undefined> & {
+    extra_fields?: Record<string, boolean>;
+  };
   PortalSite: PortalSiteForBookingFields;
   values: PossibleValues;
 }
@@ -42,6 +44,36 @@ export default function OptionalBookingFields({
   PortalSite,
   values
 }: Props) {
+  const [countries, setCountries] = useState<CountryEntry[]>([]);
+  const [countriesLoading, setCountriesLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const locale: string =
+      (typeof window !== 'undefined' && window.__localeId__) || 'en';
+
+    const fetchCountries = async () => {
+      try {
+        const data = await loadCountries(locale);
+        if (mounted) {
+          setCountries(data);
+        }
+      } catch {
+        // If the locale chunk fails to load, leave the list empty.
+      } finally {
+        if (mounted) {
+          setCountriesLoading(false);
+        }
+      }
+    };
+
+    fetchCountries();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   let fields: SingleBookingFieldType[] = [...bookingFields];
 
   const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
@@ -59,16 +91,14 @@ export default function OptionalBookingFields({
   }
   return (
     <div className="form-section bup-16">
-      <h2>
-        {t('personal_details')}
-      </h2>
+      <h2>{t('personal_details')}</h2>
       {fields.map((input) => {
         if (input.id === 'telephone') {
           input.id = 'phonenumber';
         }
 
         if (input.type === 'booking_field' || isInt(input.id)) {
-          const bookingField = PortalSite.booking_fields.find(
+          const bookingField = PortalSite.booking_fields?.find(
             (x) => x.id === input.id
           );
 
@@ -115,8 +145,12 @@ export default function OptionalBookingFields({
                 {PortalSite[`${input.id}_label`] as React.ReactNode}{' '}
                 {input.required && <span>*</span>}
               </label>
-              <Field component="select" name={input.id}>
-                {Countries[window.__localeId__].map((country) => {
+              <Field
+                component="select"
+                name={input.id}
+                disabled={countriesLoading}
+              >
+                {countries.map((country) => {
                   return (
                     <option value={country.alpha2} key={country.alpha2}>
                       {country.name}
