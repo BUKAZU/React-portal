@@ -13,7 +13,7 @@ interface Props {
 function DateField({ label, description, name, inline }: Props) {
   return (
     <Field name={name}>
-      {({ field, meta, form }) => {
+      {({ field, meta }) => {
         const { value, name } = field;
         const dateValue = value && value !== '' ? value : '';
 
