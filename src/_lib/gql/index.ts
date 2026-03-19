@@ -7,12 +7,40 @@ import {
 
 export * from './fragments';
 
-export const PORTAL_QUERY = gql`
-  query PortalSiteQuery($id: ID!) {
+export const PORTAL_BASE_QUERY = gql`
+  query PortalSiteBaseQuery($id: ID!) {
     PortalSite(id: $id) {
       id
       portal_code
       options
+      colorsConfiguration {
+        arrival
+        booked
+        button
+        buttonCta
+        cell
+        departure
+        discount
+      }
+    }
+  }
+`;
+
+export const PORTAL_SEARCH_QUERY = gql`
+  query PortalSiteSearchQuery($id: ID!) {
+    PortalSite(id: $id) {
+      id
+      portal_code
+      options
+      colorsConfiguration {
+        arrival
+        booked
+        button
+        buttonCta
+        cell
+        departure
+        discount
+      }
       countries {
         id
         name
@@ -53,6 +81,9 @@ export const PORTAL_QUERY = gql`
     }
   }
 `;
+
+/** @deprecated Use PORTAL_BASE_QUERY for Calendar/Reviews pages and PORTAL_SEARCH_QUERY for Search pages. */
+export const PORTAL_QUERY = PORTAL_SEARCH_QUERY;
 
 export const CALENDAR_QUERY = gql`
   query PortalSiteHousesQuery(
@@ -95,6 +126,7 @@ export const CALENDAR_QUERY = gql`
 
 export const BOOKING_PRICE_QUERY = gql`
   ${BOOKING_FORM_LABEL_FIELDS}
+  ${BOOKING_FORM_CONFIGURATION_FIELDS}
   query BookingFormQuery(
     $portalCode: ID!
     $objectCode: String!
@@ -105,6 +137,9 @@ export const BOOKING_PRICE_QUERY = gql`
       id
       options
       ...BookingFormLabelFields
+      bookingFormConfiguration {
+        ...BookingFormConfigurationFields
+      }
       booking_fields {
         id
         label

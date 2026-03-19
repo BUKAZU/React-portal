@@ -52,7 +52,6 @@
     .bu-calendar-col {
       .icon {
         padding: 8px 40px;
-        background-color: rgb(23, 190, 187);
         background: var(--bukazu-button);
         cursor: pointer;
         display: flex;
@@ -75,9 +74,7 @@
   .bu-smaller .calendar {
     width: 100%;
   }
-  .bu-smaller .calendar .col {
-    padding: 16px 4px;
-  }
+  .bu-smaller .calendar .col,
   .bu-smaller .calendar .bu-calendar-col {
     padding: 16px 4px;
   }
@@ -180,7 +177,6 @@
       cursor: pointer;
     }
     .selected {
-      background: rgb(23, 190, 187) !important;
       background: var(--bukazu-button) !important;
     }
     .booked {

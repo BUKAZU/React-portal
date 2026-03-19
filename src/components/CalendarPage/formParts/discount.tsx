@@ -2,22 +2,27 @@ import React from 'react';
 import { Field } from 'formik';
 import { t } from '../../../intl';
 import DiscountCode from './DiscountCode';
-import { HouseType, PortalOptions } from '../../../types';
+import { BookingFormConfigurationType, HouseType } from '../../../types';
 import { PossibleValues } from './form_types';
 
 interface Props {
   errors: Record<string, string | undefined>;
   house: HouseType;
-  options: PortalOptions;
+  bookingFormConfiguration: BookingFormConfigurationType;
   values: PossibleValues;
 }
 
-const Discount = ({ errors, house, options, values }: Props) => {
+const Discount = ({
+  errors,
+  house,
+  bookingFormConfiguration,
+  values
+}: Props) => {
   if (
     (house.discounts && house.discounts !== '0') ||
-    options.bookingForm?.showDiscountCode
+    bookingFormConfiguration.showDiscountCode
   ) {
-    let discounts = house.discounts ? house.discounts.split(',') : [];
+    const discounts = house.discounts ? house.discounts.split(',') : [];
     return (
       <div className="form-section bup-16">
         {house.discounts && house.discounts !== '0' && (
@@ -50,7 +55,7 @@ const Discount = ({ errors, house, options, values }: Props) => {
             </div>
           </>
         )}
-        {options.bookingForm?.showDiscountCode && (
+        {bookingFormConfiguration.showDiscountCode && (
           <DiscountCode errors={errors} house={house} values={values} />
         )}
       </div>

@@ -5,7 +5,6 @@
 @import 'calendar.css' layer(bukazu);
 @import 'form.css' layer(bukazu);
 @import 'field.css' layer(bukazu);
-@import 'datepicker.css' layer(bukazu);
 @import 'modal.css' layer(bukazu);
 @import 'price-overview.css' layer(bukazu);
 @import 'success.css' layer(bukazu);

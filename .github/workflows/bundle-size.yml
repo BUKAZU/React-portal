@@ -19,7 +19,7 @@ jobs:
           node-version: 24.x
           cache: 'npm'
       - name: Report bundle size
-        uses: preactjs/compressed-size-action@v2
+        uses: preactjs/compressed-size-action@v3
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           build-script: 'build'
