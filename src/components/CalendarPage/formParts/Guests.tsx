@@ -1,14 +1,17 @@
 import React from 'react';
 import { NumberSelect } from '../FormItems';
 import { t } from '../../../intl';
-import { HouseType, PortalOptions } from '../../../types';
+import { HouseType, BookingFormConfigurationType } from '../../../types';
 
 interface Props {
-  options: PortalOptions;
+  bookingFormConfiguration: BookingFormConfigurationType;
   house: HouseType;
 }
 
-export default function Guests({ options, house }: Props): React.ReactNode {
+export default function Guests({
+  bookingFormConfiguration,
+  house
+}: Props): React.ReactNode {
   return (
     <>
       <NumberSelect
@@ -17,15 +20,11 @@ export default function Guests({ options, house }: Props): React.ReactNode {
         count={house.persons}
         description={
           <div className="age-description">
-            {t('adults_from', {
-              age: options.bookingForm
-                ? options.bookingForm.adults_from || '18'
-                : '18'
-            })}
+            {t('adults_from', { age: bookingFormConfiguration.adultsFromAge })}
           </div>
         }
       />
-      {options.bookingForm && !options.bookingForm.children ? null : (
+      {!bookingFormConfiguration.childrenAllowed ? null : (
         <NumberSelect
           name="children"
           label="children"
@@ -33,18 +32,14 @@ export default function Guests({ options, house }: Props): React.ReactNode {
           description={
             <div className="age-description">
               {t('children_from', {
-                from: options.bookingForm
-                  ? options.bookingForm.children_from || '3'
-                  : '3',
-                til: options.bookingForm
-                  ? options.bookingForm.children_til || '17'
-                  : '17'
+                from: bookingFormConfiguration.childrenFromAge,
+                til: bookingFormConfiguration.childrenTillAge
               })}
             </div>
           }
         />
       )}
-      {options.bookingForm && !options.bookingForm.babies ? null : (
+      {!bookingFormConfiguration.babiesAllowed ? null : (
         <NumberSelect
           name="babies"
           label="babies"
@@ -52,9 +47,7 @@ export default function Guests({ options, house }: Props): React.ReactNode {
           description={
             <div className="age-description">
               {t('babies_from', {
-                babies: options.bookingForm
-                  ? options.bookingForm.babies_til || '2'
-                  : '2'
+                babies: bookingFormConfiguration.babiesTillAge
               })}
             </div>
           }

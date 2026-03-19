@@ -53,7 +53,7 @@ export const BOOKING_FORM_LABEL_FIELDS = gql`
 
 /**
  * Reusable fragment for booking form configuration fields.
- * Used in SINGLE_HOUSE_QUERY.
+ * Used in SINGLE_HOUSE_QUERY and BOOKING_PRICE_QUERY.
  */
 export const BOOKING_FORM_CONFIGURATION_FIELDS = gql`
   fragment BookingFormConfigurationFields on PortalSitesBookingFormConfiguration {
@@ -65,6 +65,13 @@ export const BOOKING_FORM_CONFIGURATION_FIELDS = gql`
     childrenTillAge
     languageSelectorVisible
     redirectUrl
+    redirectUrlNl
+    redirectUrlEn
+    redirectUrlDe
+    redirectUrlFr
+    redirectUrlEs
+    redirectUrlIt
+    showDiscountCode
     showMonthsAmount
     showMonthsInARowAmount
   }
