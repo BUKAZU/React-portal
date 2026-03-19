@@ -43,6 +43,13 @@ const baseConfig: BookingFormConfigurationType = {
   childrenTillAge: 17,
   languageSelectorVisible: false,
   redirectUrl: '',
+  redirectUrl_nl: '',
+  redirectUrl_en: '',
+  redirectUrl_de: '',
+  redirectUrl_fr: '',
+  redirectUrl_es: '',
+  redirectUrl_it: '',
+  showDiscountCode: false,
   showMonthsAmount: 2,
   showMonthsInARowAmount: 2
 };

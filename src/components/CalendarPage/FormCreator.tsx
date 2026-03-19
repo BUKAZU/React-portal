@@ -15,7 +15,7 @@ import OptionalCosts from './formParts/OptionalCosts';
 import Guests from './formParts/Guests';
 import { validateForm } from './formParts/Validations';
 import { AppContext } from '../AppContext';
-import { HouseType, PortalSiteType } from '../../types';
+import { HouseType, LocaleType, PortalSiteType } from '../../types';
 import { BookingType } from './calender_types';
 import { useMutation } from '@apollo/client';
 import {
@@ -97,7 +97,11 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         };
 
         createBooking({ variables }).then(() => {
-          if (
+          const localeRedirectKey: `redirectUrl_${LocaleType}` = `redirectUrl_${locale as LocaleType}`;
+          const localeRedirectUrl = bookingFormConfiguration[localeRedirectKey];
+          if (localeRedirectUrl && localeRedirectUrl !== '') {
+            window.location = localeRedirectUrl;
+          } else if (
             bookingFormConfiguration.redirectUrl &&
             bookingFormConfiguration.redirectUrl !== ''
           ) {
@@ -152,6 +156,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             <Discount
               errors={errors}
               house={house}
+              bookingFormConfiguration={bookingFormConfiguration}
               values={values}
             />
 

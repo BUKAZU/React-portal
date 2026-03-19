@@ -46,6 +46,13 @@ export type BookingFormConfigurationType = {
   childrenTillAge: number;
   languageSelectorVisible: boolean;
   redirectUrl: string;
+  redirectUrl_nl: string;
+  redirectUrl_en: string;
+  redirectUrl_de: string;
+  redirectUrl_fr: string;
+  redirectUrl_es: string;
+  redirectUrl_it: string;
+  showDiscountCode: boolean;
   showMonthsAmount: number;
   showMonthsInARowAmount: number;
 };
