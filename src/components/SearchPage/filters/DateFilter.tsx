@@ -12,6 +12,8 @@ function DateFilter({ value, onChange, field }: Props): JSX.Element {
   return (
     <input
       type="date"
+      id={field.id}
+      name={field.id}
       value={dateValue}
       onChange={(e) => {
         onChange(field.id, e.target.value);
