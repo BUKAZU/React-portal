@@ -1,6 +1,0 @@
-#bukazu-app {
-  .react-calendar button, .react-date-picker__button {
-    background-color: transparent;
-    box-shadow: none;
-  }
-}

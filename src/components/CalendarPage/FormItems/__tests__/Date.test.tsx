@@ -6,26 +6,11 @@ import DateField from '../Date';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-// Capture the onChange passed to DatePicker so tests can trigger it
-let capturedOnChange: ((value: any) => void) | null = null;
-
-jest.mock('react-date-picker', () => (props: any) => {
-  capturedOnChange = props.onChange;
-  return (
-    <div
-      data-testid="date-picker"
-      data-name={props.name}
-      data-value={props.value ? String(props.value) : ''}
-    />
-  );
-});
-
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
 beforeEach(() => {
   (window as any).__localeId__ = 'en';
-  capturedOnChange = null;
   container = document.createElement('div');
   document.body.appendChild(container);
   act(() => {
@@ -95,22 +80,21 @@ describe('DateField – basic rendering', () => {
     expect(container.querySelector('#bukazu_form_dob')).not.toBeNull();
   });
 
-  it('renders the mocked DatePicker', () => {
+  it('renders a native date input', () => {
     renderDateField();
-    expect(container.querySelector('[data-testid="date-picker"]')).not.toBeNull();
+    expect(container.querySelector('input[type="date"]')).not.toBeNull();
   });
 
-  it('passes null to DatePicker when the field value is empty', () => {
+  it('has empty value when the field value is empty', () => {
     renderDateField({}, { date_of_birth: '' });
-    const picker = container.querySelector('[data-testid="date-picker"]');
-    expect(picker?.getAttribute('data-value')).toBe('');
+    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    expect(input?.value).toBe('');
   });
 
-  it('passes a Date to DatePicker when the field value is a valid date string', () => {
+  it('has the correct value when the field value is a valid date string', () => {
     renderDateField({}, { date_of_birth: '2000-06-15' });
-    const picker = container.querySelector('[data-testid="date-picker"]');
-    // The data-value attribute will be the string representation of the Date object
-    expect(picker?.getAttribute('data-value')).not.toBe('');
+    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    expect(input?.value).toBe('2000-06-15');
   });
 });
 
@@ -164,17 +148,35 @@ describe('DateField – validation error display', () => {
   });
 });
 
-describe('DateField – onChange formatting', () => {
-  it('calls DatePicker onChange with a formatted yyyy-MM-dd string via form.setFieldValue', () => {
-    renderDateField({ name: 'dob' }, { dob: '' });
-    expect(capturedOnChange).not.toBeNull();
-
-    act(() => {
-      capturedOnChange!(new Date(2020, 0, 15)); // Jan 15 2020
+describe('DateField – onChange', () => {
+  it('updates the field value when the date input changes', async () => {
+    let formValues: Record<string, any> = {};
+    await act(async () => {
+      root.render(
+        <Formik
+          initialValues={{ dob: '' }}
+          onSubmit={(values) => {
+            formValues = values;
+          }}
+        >
+          {({ values }) => {
+            formValues = values;
+            return <DateField label="date_of_birth" name="dob" inline={true} />;
+          }}
+        </Formik>
+      );
     });
 
-    // The field value should now be the formatted date
-    const picker = container.querySelector('[data-testid="date-picker"]');
-    expect(picker?.getAttribute('data-value')).not.toBe('');
+    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value'
+    )!.set!;
+    await act(async () => {
+      nativeInputValueSetter.call(input, '2020-01-15');
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    expect(formValues.dob).toBe('2020-01-15');
   });
 });
