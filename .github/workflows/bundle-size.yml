@@ -23,5 +23,5 @@ jobs:
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           build-script: 'build'
-          pattern: './build/portal.{es,umd}.js'
+          pattern: './build/portal.{es,umd,website}.js'
           strip-hash: '\.[a-f0-9]{8}\.'
