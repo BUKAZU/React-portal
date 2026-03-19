@@ -15,7 +15,7 @@ import OptionalCosts from './formParts/OptionalCosts';
 import Guests from './formParts/Guests';
 import { validateForm } from './formParts/Validations';
 import { AppContext } from '../AppContext';
-import { HouseType, PortalSiteType } from '../../types';
+import { HouseType, LocaleType, PortalSiteType } from '../../types';
 import { BookingType } from './calender_types';
 import { useMutation } from '@apollo/client';
 import {
@@ -36,6 +36,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const dispatch = useContext(CalendarContextDispatch);
 
   const { options } = PortalSite;
+
+  const bookingFormConfiguration = PortalSite.bookingFormConfiguration;
 
   const bookingFields = options.bookingFields || DefaultBookingFields;
 
@@ -95,18 +97,25 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         };
 
         createBooking({ variables }).then(() => {
-          if (
-            options.bookingForm &&
-            options.bookingForm[`redirectUrl_${locale}`] &&
-            options.bookingForm[`redirectUrl_${locale}`] !== ''
-          ) {
-            window.location = options.bookingForm[`redirectUrl_${locale}`];
+          const localeRedirectKeyMap: Record<LocaleType, 'redirectUrlNl' | 'redirectUrlEn' | 'redirectUrlDe' | 'redirectUrlFr' | 'redirectUrlEs' | 'redirectUrlIt'> = {
+            nl: 'redirectUrlNl',
+            en: 'redirectUrlEn',
+            de: 'redirectUrlDe',
+            fr: 'redirectUrlFr',
+            es: 'redirectUrlEs',
+            it: 'redirectUrlIt'
+          };
+          const localeRedirectKey = localeRedirectKeyMap[locale as LocaleType];
+          const localeRedirectUrl = localeRedirectKey
+            ? bookingFormConfiguration[localeRedirectKey]
+            : undefined;
+          if (localeRedirectUrl && localeRedirectUrl !== '') {
+            window.location = localeRedirectUrl;
           } else if (
-            options.bookingForm &&
-            options.bookingForm.redirectUrl &&
-            options.bookingForm.redirectUrl !== ''
+            bookingFormConfiguration.redirectUrl &&
+            bookingFormConfiguration.redirectUrl !== ''
           ) {
-            window.location = options.bookingForm.redirectUrl;
+            window.location = bookingFormConfiguration.redirectUrl;
           } else {
             setTimeout(() => {
               dispatch({
@@ -146,7 +155,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 {t('return_to_calendar')}
               </a>
               <h2>{t('stay_details')}</h2>
-              <Guests options={options} house={house} />
+              <Guests bookingFormConfiguration={bookingFormConfiguration} house={house} />
 
               {errors.max_persons && (
                 <div className="error-message bu-error-message persons">
@@ -157,9 +166,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             <Discount
               errors={errors}
               house={house}
-              options={options}
+              bookingFormConfiguration={bookingFormConfiguration}
               values={values}
-              render={bookingPrice.optional_house_costs}
             />
 
             <Insurances house={house} values={values} />

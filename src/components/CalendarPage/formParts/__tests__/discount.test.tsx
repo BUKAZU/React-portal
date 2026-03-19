@@ -3,6 +3,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Formik } from 'formik';
 import Discount from '../discount';
+import { BookingFormConfigurationType } from '../../../../types';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -29,25 +30,24 @@ const baseHouse = {
   description: ''
 };
 
-const baseOptions = {
-  filtersForm: {} as any,
-  bookingFields: [],
-  bookingForm: {
-    adults_from: 1,
-    children: false,
-    children_from: 0,
-    children_til: 0,
-    babies: false,
-    babies_til: 0,
-    showDiscountCode: false,
-    redirectUrl: null,
-    redirectUrl_en: null,
-    redirectUrl_nl: null,
-    redirectUrl_de: null,
-    redirectUrl_fr: null,
-    redirectUrl_es: null,
-    redirectUrl_it: null
-  }
+const baseConfig: BookingFormConfigurationType = {
+  adultsFromAge: 18,
+  babiesAllowed: false,
+  babiesTillAge: 2,
+  childrenAllowed: false,
+  childrenFromAge: 3,
+  childrenTillAge: 17,
+  languageSelectorVisible: false,
+  redirectUrl: '',
+  redirectUrlNl: '',
+  redirectUrlEn: '',
+  redirectUrlDe: '',
+  redirectUrlFr: '',
+  redirectUrlEs: '',
+  redirectUrlIt: '',
+  showDiscountCode: false,
+  showMonthsAmount: 2,
+  showMonthsInARowAmount: 2
 };
 
 const baseValues = {
@@ -87,18 +87,11 @@ afterEach(() => {
 
 function renderDiscount(
   housePatch: Partial<typeof baseHouse> = {},
-  optionsPatch: Partial<typeof baseOptions> = {},
+  configPatch: Partial<BookingFormConfigurationType> = {},
   errors: Record<string, string | undefined> = {}
 ) {
   const house = { ...baseHouse, ...housePatch } as any;
-  const options = {
-    ...baseOptions,
-    ...optionsPatch,
-    bookingForm: {
-      ...baseOptions.bookingForm,
-      ...(optionsPatch.bookingForm ?? {})
-    }
-  } as any;
+  const bookingFormConfiguration = { ...baseConfig, ...configPatch };
 
   act(() => {
     root.render(
@@ -106,7 +99,7 @@ function renderDiscount(
         <Discount
           errors={errors}
           house={house}
-          options={options}
+          bookingFormConfiguration={bookingFormConfiguration}
           values={baseValues}
         />
       </Formik>
@@ -174,7 +167,7 @@ describe('Discount – DiscountCode branch', () => {
   it('renders the DiscountCode component when showDiscountCode is true', () => {
     renderDiscount(
       { discounts: undefined },
-      { bookingForm: { ...baseOptions.bookingForm, showDiscountCode: true } }
+      { showDiscountCode: true }
     );
     expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
   });
@@ -182,7 +175,7 @@ describe('Discount – DiscountCode branch', () => {
   it('renders both discount select and DiscountCode when both conditions are met', () => {
     renderDiscount(
       { discounts: '10' },
-      { bookingForm: { ...baseOptions.bookingForm, showDiscountCode: true } }
+      { showDiscountCode: true }
     );
     expect(container.querySelector('select')).not.toBeNull();
     expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
