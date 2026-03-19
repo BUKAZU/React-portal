@@ -126,6 +126,7 @@ export const CALENDAR_QUERY = gql`
 
 export const BOOKING_PRICE_QUERY = gql`
   ${BOOKING_FORM_LABEL_FIELDS}
+  ${BOOKING_FORM_CONFIGURATION_FIELDS}
   query BookingFormQuery(
     $portalCode: ID!
     $objectCode: String!
@@ -136,6 +137,9 @@ export const BOOKING_PRICE_QUERY = gql`
       id
       options
       ...BookingFormLabelFields
+      bookingFormConfiguration {
+        ...BookingFormConfigurationFields
+      }
       booking_fields {
         id
         label

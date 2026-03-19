@@ -14,6 +14,11 @@ export type FiltersFormType = {
   mode: 'grid' | 'list';
 };
 
+/**
+ * @deprecated Use BookingFormConfigurationType instead.
+ * The bookingForm field in portal options is deprecated in favour of
+ * the bookingFormConfiguration returned directly by the API.
+ */
 type BookingFormType = {
   adults_from: number;
   children: boolean;
@@ -31,6 +36,20 @@ type BookingFormType = {
   redirectUrl_it: string | null;
 };
 
+/** Booking form configuration returned directly by the portal site API. */
+export type BookingFormConfigurationType = {
+  adultsFromAge: number;
+  babiesAllowed: boolean;
+  babiesTillAge: number;
+  childrenAllowed: boolean;
+  childrenFromAge: number;
+  childrenTillAge: number;
+  languageSelectorVisible: boolean;
+  redirectUrl: string;
+  showMonthsAmount: number;
+  showMonthsInARowAmount: number;
+};
+
 type name_id_type = {
   id: number;
   name: string;
@@ -46,9 +65,10 @@ export type ColorsType = {
   discount: string;
 };
 
-type PortalOptions = {
+export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
+  /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;
 };
@@ -56,6 +76,7 @@ type PortalOptions = {
 export type PortalSiteType = {
   categories: { id: number; name: string; properties: name_id_type[] }[];
   options: PortalOptions;
+  bookingFormConfiguration: BookingFormConfigurationType;
   max_persons: number;
   name: string;
   max_bedrooms: number;

@@ -37,6 +37,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
   const { options } = PortalSite;
 
+  const bookingFormConfiguration = PortalSite.bookingFormConfiguration;
+
   const bookingFields = options.bookingFields || DefaultBookingFields;
 
   const bookingPrice = house.booking_price;
@@ -96,17 +98,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
         createBooking({ variables }).then(() => {
           if (
-            options.bookingForm &&
-            options.bookingForm[`redirectUrl_${locale}`] &&
-            options.bookingForm[`redirectUrl_${locale}`] !== ''
+            bookingFormConfiguration.redirectUrl &&
+            bookingFormConfiguration.redirectUrl !== ''
           ) {
-            window.location = options.bookingForm[`redirectUrl_${locale}`];
-          } else if (
-            options.bookingForm &&
-            options.bookingForm.redirectUrl &&
-            options.bookingForm.redirectUrl !== ''
-          ) {
-            window.location = options.bookingForm.redirectUrl;
+            window.location = bookingFormConfiguration.redirectUrl;
           } else {
             setTimeout(() => {
               dispatch({
@@ -146,7 +141,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 {t('return_to_calendar')}
               </a>
               <h2>{t('stay_details')}</h2>
-              <Guests options={options} house={house} />
+              <Guests bookingFormConfiguration={bookingFormConfiguration} house={house} />
 
               {errors.max_persons && (
                 <div className="error-message bu-error-message persons">
@@ -157,9 +152,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             <Discount
               errors={errors}
               house={house}
-              options={options}
               values={values}
-              render={bookingPrice.optional_house_costs}
             />
 
             <Insurances house={house} values={values} />

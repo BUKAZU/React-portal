@@ -149,6 +149,18 @@ const mockPortalSite: PortalSiteType = {
       redirectUrl_it: null
     }
   },
+  bookingFormConfiguration: {
+    adultsFromAge: 18,
+    babiesAllowed: false,
+    babiesTillAge: 2,
+    childrenAllowed: false,
+    childrenFromAge: 3,
+    childrenTillAge: 17,
+    languageSelectorVisible: false,
+    redirectUrl: '',
+    showMonthsAmount: 2,
+    showMonthsInARowAmount: 2
+  },
   max_persons: 10,
   name: 'Test Portal',
   max_bedrooms: 5,

@@ -6,12 +6,6 @@ import Discount from '../discount';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-// DiscountCode uses Apollo useMutation – mock the whole module so we can
-// verify it is rendered without needing a full Apollo provider.
-jest.mock('../DiscountCode', () => () => (
-  <div data-testid="discount-code" />
-));
-
 const baseHouse = {
   id: 1,
   code: 'TEST',
@@ -27,27 +21,6 @@ const baseHouse = {
   province: 'NH',
   country_name: 'Netherlands',
   description: ''
-};
-
-const baseOptions = {
-  filtersForm: {} as any,
-  bookingFields: [],
-  bookingForm: {
-    adults_from: 1,
-    children: false,
-    children_from: 0,
-    children_til: 0,
-    babies: false,
-    babies_til: 0,
-    showDiscountCode: false,
-    redirectUrl: null,
-    redirectUrl_en: null,
-    redirectUrl_nl: null,
-    redirectUrl_de: null,
-    redirectUrl_fr: null,
-    redirectUrl_es: null,
-    redirectUrl_it: null
-  }
 };
 
 const baseValues = {
@@ -87,18 +60,9 @@ afterEach(() => {
 
 function renderDiscount(
   housePatch: Partial<typeof baseHouse> = {},
-  optionsPatch: Partial<typeof baseOptions> = {},
   errors: Record<string, string | undefined> = {}
 ) {
   const house = { ...baseHouse, ...housePatch } as any;
-  const options = {
-    ...baseOptions,
-    ...optionsPatch,
-    bookingForm: {
-      ...baseOptions.bookingForm,
-      ...(optionsPatch.bookingForm ?? {})
-    }
-  } as any;
 
   act(() => {
     root.render(
@@ -106,7 +70,6 @@ function renderDiscount(
         <Discount
           errors={errors}
           house={house}
-          options={options}
           values={baseValues}
         />
       </Formik>
@@ -115,12 +78,12 @@ function renderDiscount(
 }
 
 describe('Discount – renders nothing', () => {
-  it('returns null when house has no discounts and showDiscountCode is false', () => {
+  it('returns null when house has no discounts', () => {
     renderDiscount({ discounts: undefined });
     expect(container.querySelector('.form-section')).toBeNull();
   });
 
-  it('returns null when discounts is "0" and showDiscountCode is false', () => {
+  it('returns null when discounts is "0"', () => {
     renderDiscount({ discounts: '0' });
     expect(container.querySelector('.form-section')).toBeNull();
   });
@@ -151,7 +114,7 @@ describe('Discount – discount select branch', () => {
   });
 
   it('shows the discount_reason error message when an error is present', () => {
-    renderDiscount({ discounts: '10' }, {}, {
+    renderDiscount({ discounts: '10' }, {
       discount_reason: 'Reason is required.'
     });
     const errorDiv = container.querySelector('.error-message');
@@ -167,24 +130,5 @@ describe('Discount – discount select branch', () => {
   it('renders discounts_info text when provided', () => {
     renderDiscount({ discounts: '10', discounts_info: 'Special rates apply.' });
     expect(container.textContent).toContain('Special rates apply.');
-  });
-});
-
-describe('Discount – DiscountCode branch', () => {
-  it('renders the DiscountCode component when showDiscountCode is true', () => {
-    renderDiscount(
-      { discounts: undefined },
-      { bookingForm: { ...baseOptions.bookingForm, showDiscountCode: true } }
-    );
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
-  });
-
-  it('renders both discount select and DiscountCode when both conditions are met', () => {
-    renderDiscount(
-      { discounts: '10' },
-      { bookingForm: { ...baseOptions.bookingForm, showDiscountCode: true } }
-    );
-    expect(container.querySelector('select')).not.toBeNull();
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
   });
 });
