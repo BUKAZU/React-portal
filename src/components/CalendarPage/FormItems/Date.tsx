@@ -1,10 +1,6 @@
 import React from 'react';
 import { Field } from 'formik';
 import { t } from '../../../intl';
-import DatePicker from 'react-date-picker';
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
-import { format } from 'date-fns';
 
 interface Props {
   label: string;
@@ -17,15 +13,9 @@ interface Props {
 function DateField({ label, description, name, inline }: Props) {
   return (
     <Field name={name}>
-      {({ field, meta, form }) => {
+      {({ field, meta }) => {
         const { value, name } = field;
-
-        let tempval;
-        if (value === '' || !value) {
-          tempval = null;
-        } else {
-          tempval = new Date(value);
-        }
+        const dateValue = value && value !== '' ? value : '';
 
         return (
           <div
@@ -35,15 +25,13 @@ function DateField({ label, description, name, inline }: Props) {
             <label htmlFor={name}>
               {t(label)}
             </label>
-            <DatePicker
+            <input
+              type="date"
               className="bukazu-date-picker"
+              id={name}
               name={name}
-              format="dd-MM-y"
-              value={tempval}
-              onChange={(e) => {
-                field.onChange(format(e, 'yyyy-MM-dd'));
-                form.setFieldValue(name, format(e, 'yyyy-MM-dd'));
-              }}
+              value={dateValue}
+              onChange={field.onChange}
             />
             <span className="bu-input-description">{description}</span>
             {meta.touched && meta.error && (

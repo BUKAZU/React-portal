@@ -3,21 +3,6 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import DateFilter from '../DateFilter';
 
-// Mock react-date-picker to avoid complex setup in unit tests.
-// The mock captures onChange and exposes it via a data attribute
-// so tests can invoke it directly without relying on native event dispatch.
-let capturedOnChange: ((date: Date | null) => void) | null = null;
-jest.mock('react-date-picker', () => ({ onChange, value }: any) => {
-  capturedOnChange = onChange;
-  return (
-    <input
-      data-testid="date-picker"
-      type="text"
-      defaultValue={value ? String(value) : ''}
-    />
-  );
-});
-
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 let container: HTMLDivElement;
@@ -39,7 +24,7 @@ afterEach(() => {
 });
 
 describe('DateFilter', () => {
-  it('should render the date picker', () => {
+  it('should render a native date input', () => {
     act(() => {
       root.render(
         <DateFilter
@@ -50,10 +35,11 @@ describe('DateFilter', () => {
       );
     });
 
-    expect(container.querySelector('[data-testid="date-picker"]')).not.toBeNull();
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
   });
 
-  it('should pass null to picker when value is empty string', () => {
+  it('should have an empty value when value is empty string', () => {
     act(() => {
       root.render(
         <DateFilter
@@ -64,11 +50,12 @@ describe('DateFilter', () => {
       );
     });
 
-    const picker = container.querySelector('[data-testid="date-picker"]') as HTMLInputElement;
-    expect(picker?.value).toBe('');
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    expect((input as HTMLInputElement).value).toBe('');
   });
 
-  it('should pass null to picker when value is falsy', () => {
+  it('should have an empty value when value is falsy', () => {
     act(() => {
       root.render(
         <DateFilter
@@ -79,11 +66,12 @@ describe('DateFilter', () => {
       );
     });
 
-    const picker = container.querySelector('[data-testid="date-picker"]') as HTMLInputElement;
-    expect(picker?.value).toBe('');
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    expect((input as HTMLInputElement).value).toBe('');
   });
 
-  it('should call onChange with formatted date string when date is selected', () => {
+  it('should call onChange with date string when date is selected', () => {
     const onChange = jest.fn();
     act(() => {
       root.render(
@@ -95,8 +83,15 @@ describe('DateFilter', () => {
       );
     });
 
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value'
+    )!.set!;
     act(() => {
-      capturedOnChange!(new Date('2025-06-15'));
+      nativeInputValueSetter.call(input as HTMLInputElement, '2025-06-15');
+      (input as HTMLInputElement).dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     expect(onChange).toHaveBeenCalledWith('arrival_date', '2025-06-15');
@@ -114,8 +109,15 @@ describe('DateFilter', () => {
       );
     });
 
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value'
+    )!.set!;
     act(() => {
-      capturedOnChange!(null);
+      nativeInputValueSetter.call(input as HTMLInputElement, '');
+      (input as HTMLInputElement).dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     expect(onChange).toHaveBeenCalledWith('departure_date', '');
