@@ -167,14 +167,16 @@ describe('DateField – onChange', () => {
       );
     });
 
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    const dateInput = input as HTMLInputElement;
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
       'value'
     )!.set!;
     await act(async () => {
-      nativeInputValueSetter.call(input, '2020-01-15');
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      nativeInputValueSetter.call(dateInput, '2020-01-15');
+      dateInput.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     expect(formValues.dob).toBe('2020-01-15');
