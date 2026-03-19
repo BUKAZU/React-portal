@@ -50,8 +50,9 @@ describe('DateFilter', () => {
       );
     });
 
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
-    expect(input?.value).toBe('');
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    expect((input as HTMLInputElement).value).toBe('');
   });
 
   it('should have an empty value when value is falsy', () => {
@@ -65,8 +66,9 @@ describe('DateFilter', () => {
       );
     });
 
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
-    expect(input?.value).toBe('');
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
+    expect((input as HTMLInputElement).value).toBe('');
   });
 
   it('should call onChange with date string when date is selected', () => {
@@ -81,14 +83,15 @@ describe('DateFilter', () => {
       );
     });
 
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
       'value'
     )!.set!;
     act(() => {
-      nativeInputValueSetter.call(input, '2025-06-15');
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      nativeInputValueSetter.call(input as HTMLInputElement, '2025-06-15');
+      (input as HTMLInputElement).dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     expect(onChange).toHaveBeenCalledWith('arrival_date', '2025-06-15');
@@ -106,14 +109,15 @@ describe('DateFilter', () => {
       );
     });
 
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    const input = container.querySelector('input[type="date"]');
+    expect(input).not.toBeNull();
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
       'value'
     )!.set!;
     act(() => {
-      nativeInputValueSetter.call(input, '');
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      nativeInputValueSetter.call(input as HTMLInputElement, '');
+      (input as HTMLInputElement).dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     expect(onChange).toHaveBeenCalledWith('departure_date', '');
