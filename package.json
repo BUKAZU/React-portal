@@ -57,6 +57,7 @@
     "rollup-plugin-visualizer": "^7.0.1",
     "terser": "^5.46.0",
     "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.2",
     "typescript": "^4.9.4",
     "vite": "^7.3.0",
     "whatwg-fetch": "3.6.20"
@@ -66,8 +67,7 @@
     "date-fns": "^4.1.0",
     "formik": "^2.2.9",
     "graphql": "^16.11.0",
-    "react-date-picker": "^10.6.0",
-    "ts-node": "^10.9.2"
+    "react-date-picker": "^10.6.0"
   },
   "main": "./build/portal.umd.js",
   "module": "./build/portal.es.js",
