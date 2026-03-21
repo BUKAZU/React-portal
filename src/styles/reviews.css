@@ -19,9 +19,6 @@
   }
   & .bu_criteria {
     columns: 2;
-    & .bu-smaller {
-      columns: 1;
-    }
   }
 }
 .bu_score {
@@ -76,8 +73,8 @@
   }
 }
 
-.bu-smaller {
-  & .bu_single_review {
+@container (max-width: 875px) {
+  .bu_single_review {
     & .bu_criteria {
       columns: 1;
     }

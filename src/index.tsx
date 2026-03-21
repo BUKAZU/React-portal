@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
 
@@ -40,16 +40,6 @@ function Portal({
     return errors;
   }
 
-  const [width, setWidth] = useState(0);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const current = ref.current;
-    if (current) {
-      setWidth(current.getBoundingClientRect().width);
-    }
-  }, [ref]);
-
   useEffect(() => {
     window.__localeId__ = resolvedLocale;
     void loadLocale(resolvedLocale);
@@ -71,7 +61,7 @@ function Portal({
   return (
     <ApolloProvider client={client}>
       <AppContext.Provider value={{ portalCode, objectCode, locale: resolvedLocale }}>
-        <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
+        <div className="bu-portal">
           <App pageType={pageType} locale={resolvedLocale} filters={filters} />
         </div>
       </AppContext.Provider>
