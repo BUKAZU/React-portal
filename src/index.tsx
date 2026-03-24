@@ -10,12 +10,13 @@ import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
 import { loadLocale } from './_lib/date_helper';
+import { normalizeLocale } from './_lib/locale';
 
 interface Props {
   portalCode: string;
   objectCode: string;
   pageType?: string;
-  locale?: LocaleType;
+  locale?: string;
   filters?: FiltersType;
   api_url?: string;
 }
@@ -28,7 +29,7 @@ function Portal({
   filters,
   api_url = 'https://api.bukazu.com/graphql'
 }: Props): JSX.Element {
-  const resolvedLocale: LocaleType = locale ?? 'en';
+  const resolvedLocale: LocaleType = normalizeLocale(locale);
 
   const errors = IntegrationError({
     portalCode,

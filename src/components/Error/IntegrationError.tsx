@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiltersType } from '../SearchPage/filters/filter_types';
+import { normalizeLocale } from '../../_lib/locale';
 
 interface Props {
   portalCode: string;
@@ -31,8 +32,9 @@ export default function IntegrationError({
   if (!locale) {
     console.warn('No locale is set default to English');
   } else {
-    if (!['nl', 'de', 'en', 'fr', 'it', 'es'].includes(locale)) {
-      errors.push('Invalid locale');
+    const normalized = normalizeLocale(locale);
+    if (normalized === 'en' && !locale.toLowerCase().startsWith('en')) {
+      console.warn(`Locale '${locale}' is not supported, defaulting to English`);
     }
   }
 
