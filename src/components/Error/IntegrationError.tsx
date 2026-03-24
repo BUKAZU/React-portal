@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiltersType } from '../SearchPage/filters/filter_types';
+import { reportMessage } from '../../_lib/sentry';
 
 interface Props {
   portalCode: string;
@@ -44,6 +45,8 @@ export default function IntegrationError({
   if (errors.length == 0) {
     return false;
   }
+
+  errors.forEach((message) => reportMessage(message));
 
   return (
     <div>
