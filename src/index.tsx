@@ -39,22 +39,12 @@ function Portal({
   // Placing the Sentry effect here (before that call) ensures Sentry context
   // is always set before IntegrationError's reportMessage effect fires, since
   // React runs effects in registration order within a single component.
-  const [width, setWidth] = useState(0);
-  const ref = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     if (sentryDsn) {
       initSentry(sentryDsn);
     }
     setSentryContext({ portalCode, objectCode, locale: resolvedLocale });
   }, [sentryDsn, portalCode, objectCode, resolvedLocale]);
-
-  useEffect(() => {
-    const current = ref.current;
-    if (current) {
-      setWidth(current.getBoundingClientRect().width);
-    }
-  }, [ref]);
 
   useEffect(() => {
     window.__localeId__ = resolvedLocale;
@@ -89,7 +79,9 @@ function Portal({
 
   return (
     <ApolloProvider client={client}>
-      <AppContext.Provider value={{ portalCode, objectCode, locale: resolvedLocale }}>
+      <AppContext.Provider
+        value={{ portalCode, objectCode, locale: resolvedLocale }}
+      >
         <div className="bu-portal">
           <App pageType={pageType} locale={resolvedLocale} filters={filters} />
         </div>
