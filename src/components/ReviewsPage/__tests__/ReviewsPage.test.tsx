@@ -1,19 +1,10 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { useQuery } from '@apollo/client';
-import ReviewsPage from '../ReviewsPage';
-import { AppContext } from '../../AppContext';
+import ReviewsPageView from '../ReviewsPageView';
+import { loadReviewsHouse } from '../ReviewsPage';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
-
-jest.mock('@apollo/client', () => ({
-  useQuery: jest.fn()
-}));
-
-jest.mock('../../../_lib/gql', () => ({
-  REVIEWS_QUERY: 'REVIEWS_QUERY'
-}));
 
 jest.mock('../../../intl', () => ({
   t: (id: string) => id
@@ -51,7 +42,11 @@ jest.mock('../SingleReview', () => ({
 
 jest.mock('../note', () => () => <div data-testid="note" />);
 
-const mockedUseQuery = useQuery as jest.Mock;
+jest.mock('../ReviewsPage', () => ({
+  loadReviewsHouse: jest.fn()
+}));
+
+const mockedLoadReviewsHouse = loadReviewsHouse as jest.Mock;
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -72,14 +67,10 @@ afterEach(() => {
   container.remove();
 });
 
-function renderWithContext() {
-  act(() => {
+async function renderPage() {
+  await act(async () => {
     root.render(
-      <AppContext.Provider
-        value={{ locale: 'en', portalCode: 'PORTAL1', objectCode: 'HOUSE1' }}
-      >
-        <ReviewsPage />
-      </AppContext.Provider>
+      <ReviewsPageView objectCode="HOUSE1" portalCode="PORTAL1" locale="en" />
     );
   });
 }
@@ -118,31 +109,37 @@ const mockData = {
 };
 
 describe('ReviewsPage', () => {
-  it('renders loading state', () => {
-    mockedUseQuery.mockReturnValue({ loading: true, error: undefined, data: undefined });
+  it('renders loading state while waiting for data', async () => {
+    mockedLoadReviewsHouse.mockImplementation(
+      () => new Promise(() => undefined)
+    );
 
-    renderWithContext();
+    await renderPage();
 
     expect(container.querySelector('[data-testid="loading"]')).not.toBeNull();
   });
 
-  it('renders error state', () => {
-    mockedUseQuery.mockReturnValue({
-      loading: false,
-      error: { message: 'Something went wrong' },
-      data: undefined
-    });
+  it('renders error state', async () => {
+    mockedLoadReviewsHouse.mockRejectedValue(new Error('Something went wrong'));
 
-    renderWithContext();
+    await renderPage();
+
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
     expect(container.textContent).toContain('Something went wrong');
   });
 
-  it('renders reviews overview with score and count', () => {
-    mockedUseQuery.mockReturnValue({ loading: false, error: undefined, data: mockData });
+  it('renders reviews overview with score and count', async () => {
+    mockedLoadReviewsHouse.mockResolvedValue(mockData.PortalSite.houses[0]);
 
-    renderWithContext();
+    await renderPage();
+
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     expect(container.querySelector('.bu_score')).not.toBeNull();
     expect(container.textContent).toContain('8.5');
@@ -150,10 +147,14 @@ describe('ReviewsPage', () => {
     expect(container.textContent).toContain('reviews');
   });
 
-  it('renders all reviews', () => {
-    mockedUseQuery.mockReturnValue({ loading: false, error: undefined, data: mockData });
+  it('renders all reviews', async () => {
+    mockedLoadReviewsHouse.mockResolvedValue(mockData.PortalSite.houses[0]);
 
-    renderWithContext();
+    await renderPage();
+
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     const reviews = container.querySelectorAll('.bu_single_review');
     expect(reviews).toHaveLength(2);
@@ -161,21 +162,29 @@ describe('ReviewsPage', () => {
     expect(reviews[1].textContent).toContain('Bob');
   });
 
-  it('renders the note component', () => {
-    mockedUseQuery.mockReturnValue({ loading: false, error: undefined, data: mockData });
+  it('renders the note component', async () => {
+    mockedLoadReviewsHouse.mockResolvedValue(mockData.PortalSite.houses[0]);
 
-    renderWithContext();
+    await renderPage();
+
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     expect(container.querySelector('[data-testid="note"]')).not.toBeNull();
   });
 
-  it('passes correct variables to useQuery', () => {
-    mockedUseQuery.mockReturnValue({ loading: true, error: undefined, data: undefined });
+  it('passes correct variables to the reviews loader', async () => {
+    mockedLoadReviewsHouse.mockImplementation(
+      () => new Promise(() => undefined)
+    );
 
-    renderWithContext();
+    await renderPage();
 
-    expect(mockedUseQuery).toHaveBeenCalledWith('REVIEWS_QUERY', {
-      variables: { id: 'PORTAL1', house_id: 'HOUSE1' }
+    expect(mockedLoadReviewsHouse).toHaveBeenCalledWith({
+      portalCode: 'PORTAL1',
+      objectCode: 'HOUSE1',
+      locale: 'en'
     });
   });
 });

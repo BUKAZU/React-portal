@@ -1,29 +1,78 @@
-import { useQuery } from '@apollo/client';
-import React, { useContext } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ApolloError } from '@apollo/client';
+import { GraphQLError } from 'graphql';
 import { t } from '../../intl';
-import { AppContext } from '../AppContext';
 import { ApiError } from '../Error';
 import Loading from '../icons/loading.svg';
-import { REVIEWS_QUERY } from '../../_lib/gql';
 import { getScore } from './Score';
+import { loadReviewsHouse, type ReviewsHouse } from './ReviewsPage';
 import { processReview } from './SingleReview';
 import Note from './note';
 
-function ReviewsPage(): JSX.Element {
-  const { objectCode, portalCode } = useContext(AppContext);
-  const { data, error, loading } = useQuery(REVIEWS_QUERY, {
-    variables: { id: portalCode, house_id: objectCode }
-  });
+interface Props {
+  objectCode: string;
+  portalCode: string;
+  locale: string;
+}
 
-  if (loading)
+type ReviewsPageState =
+  | { status: 'loading' }
+  | { status: 'error'; error: ApolloError }
+  | { status: 'ready'; house: ReviewsHouse };
+
+function toApolloError(error: unknown): ApolloError {
+  if (error instanceof ApolloError) {
+    return error;
+  }
+
+  const message =
+    error instanceof Error ? error.message : 'Failed to load reviews data';
+
+  return new ApolloError({
+    graphQLErrors: [new GraphQLError(message)]
+  });
+}
+
+function ReviewsPageView({ objectCode, portalCode, locale }: Props): JSX.Element {
+  const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
+
+  useEffect(() => {
+    let isMounted = true;
+    setState({ status: 'loading' });
+
+    void loadReviewsHouse({ portalCode, objectCode, locale })
+      .then((house) => {
+        if (!isMounted) {
+          return;
+        }
+        setState({ status: 'ready', house });
+      })
+      .catch((error: unknown) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setState({ status: 'error', error: toApolloError(error) });
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [portalCode, objectCode, locale]);
+
+  if (state.status === 'loading') {
     return (
       <div>
         <Loading />
       </div>
     );
-  if (error) return <ApiError errors={error} />;
+  }
 
-  const house = data.PortalSite.houses[0];
+  if (state.status === 'error') {
+    return <ApiError errors={state.error} />;
+  }
+
+  const { house } = state;
   const reviews = house.reviews;
 
   return (
@@ -83,4 +132,4 @@ function ReviewsPage(): JSX.Element {
   );
 }
 
-export default ReviewsPage;
+export default ReviewsPageView;

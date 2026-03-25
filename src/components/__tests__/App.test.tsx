@@ -25,7 +25,7 @@ jest.mock('../SearchPage/SearchPage', () => () => (
 jest.mock('../CalendarPage/CalendarPage', () => () => (
   <div data-testid="calendar-page" />
 ));
-jest.mock('../ReviewsPage/ReviewsPage', () => () => (
+jest.mock('../ReviewsPage/ReviewsPageView', () => () => (
   <div data-testid="reviews-page" />
 ));
 jest.mock('../SafeBooking', () => () => <div data-testid="safe-booking" />);
