@@ -85,4 +85,17 @@ describe('IntegrationError', () => {
 
     expect(sentryLib.reportMessage).toHaveBeenCalledTimes(2);
   });
+
+  it('does not re-report to Sentry when the same errors are re-rendered', () => {
+    act(() => {
+      root.render(<IntegrationError portalCode="" locale="en" />);
+    });
+    expect(sentryLib.reportMessage).toHaveBeenCalledTimes(1);
+
+    // Re-render with identical invalid props — effect must not fire again
+    act(() => {
+      root.render(<IntegrationError portalCode="" locale="en" />);
+    });
+    expect(sentryLib.reportMessage).toHaveBeenCalledTimes(1);
+  });
 });

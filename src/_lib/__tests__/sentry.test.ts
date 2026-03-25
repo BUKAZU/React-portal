@@ -43,12 +43,9 @@ describe('sentry helpers', () => {
       expect(SentryBrowser.setTag).toHaveBeenCalledWith('object_code', 'OBJ42');
     });
 
-    it('does not set object_code tag when objectCode is absent', () => {
+    it('sets object_code tag to empty string when objectCode is absent', () => {
       setSentryContext({ portalCode: 'PORTAL1' });
-      expect(SentryBrowser.setTag).not.toHaveBeenCalledWith(
-        'object_code',
-        expect.anything()
-      );
+      expect(SentryBrowser.setTag).toHaveBeenCalledWith('object_code', '');
     });
 
     it('sets locale tag when locale is provided', () => {

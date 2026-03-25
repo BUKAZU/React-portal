@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FiltersType } from '../SearchPage/filters/filter_types';
 import { reportMessage } from '../../_lib/sentry';
 
@@ -42,18 +42,28 @@ export default function IntegrationError({
     console.error(message, filters);
   }
 
-  if (errors.length == 0) {
+  // Report to Sentry only when the error set changes (not on every re-render).
+  // errorsKey is used instead of the `errors` array itself so the effect only
+  // re-fires when the serialised content changes, not on every render (arrays
+  // are new references each render and would make the dependency unstable).
+  const errorsKey = JSON.stringify(errors);
+  useEffect(() => {
+    errors.forEach((message) => reportMessage(message));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `errors` is
+    // intentionally excluded: we depend on the derived `errorsKey` string so
+    // the effect only fires when the set of validation messages actually changes.
+  }, [errorsKey]);
+
+  if (errors.length === 0) {
     return false;
   }
-
-  errors.forEach((message) => reportMessage(message));
 
   return (
     <div>
       <h2>Something went wrong please try again </h2>
       <ul>
         {errors.map((err) => (
-          <li>{err}</li>
+          <li key={err}>{err}</li>
         ))}
       </ul>
     </div>
