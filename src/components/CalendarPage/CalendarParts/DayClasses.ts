@@ -10,6 +10,11 @@ import {
 import { BuDate, Discount } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
 
+interface Discount {
+  discount_starts_at: string;
+  discount_ends_at: string;
+}
+
 interface Props {
   day: Date;
   monthStart: Date;
@@ -84,8 +89,7 @@ function DayClasses({
     const dayDiff = differenceInCalendarDays(day, selectedDate);
     const minimum = dayDiff >= (arrivalDate?.min_nights ?? 0);
     const maximum =
-      dayDiff <= house.max_nights &&
-      dayDiff <= (arrivalDate?.max_nights ?? 0);
+      dayDiff <= house.max_nights && dayDiff <= (arrivalDate?.max_nights ?? 0);
 
     if (
       buDate.departure &&
@@ -100,10 +104,7 @@ function DayClasses({
 
   if (departureDate && selectedDate) {
     const departureDateParsed = Parse_EN_US(departureDate.date);
-    if (
-      isAfter(day, selectedDate) &&
-      isBefore(day, departureDateParsed)
-    ) {
+    if (isAfter(day, selectedDate) && isBefore(day, departureDateParsed)) {
       classes.push('selected');
     }
     if (isSameDay(day, departureDateParsed)) {
