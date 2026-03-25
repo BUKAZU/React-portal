@@ -9,9 +9,9 @@ describe('SafeBooking', () => {
 
   it('returns HTML with safe-booking classes', () => {
     const result = SafeBooking('en');
-    expect(result).toContain('class="safe-booking"');
-    expect(result).toContain('class="safe-booking-link"');
-    expect(result).toContain('class="safe-booking-icon"');
+    expect(result).toContain('class="bu-safe-booking"');
+    expect(result).toContain('class="bu-safe-booking-link"');
+    expect(result).toContain('class="bu-safe-booking-icon"');
   });
 
   it('returns the correct label for each supported locale', () => {

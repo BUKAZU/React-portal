@@ -1,14 +1,9 @@
+import type { LocaleType } from '../types';
+
 const svgIcon =
-  '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve" width="16px" height="16px" class="safe-booking-icon"><path d="M75.98,41.62h-2.47L73.5,29.31C73.49,15.9,62.58,4.99,49.17,5C35.76,5.01,24.85,15.92,24.86,29.33l0.02,12.31H24  c-4.61,0.01-8.35,3.75-8.34,8.36v36.65c0,4.61,3.75,8.35,8.36,8.35L76,94.97c4.61,0,8.35-3.74,8.34-8.35V49.96  C84.34,45.35,80.59,41.62,75.98,41.62z M33.84,41.64l-0.02-12.31c0-8.47,6.88-15.36,15.35-15.37c8.47,0,15.36,6.89,15.36,15.35  l0.02,12.31L33.84,41.64z" /></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve" width="16px" height="16px" class="bu-safe-booking-icon"><path d="M75.98,41.62h-2.47L73.5,29.31C73.49,15.9,62.58,4.99,49.17,5C35.76,5.01,24.85,15.92,24.86,29.33l0.02,12.31H24  c-4.61,0.01-8.35,3.75-8.34,8.36v36.65c0,4.61,3.75,8.35,8.36,8.35L76,94.97c4.61,0,8.35-3.74,8.34-8.35V49.96  C84.34,45.35,80.59,41.62,75.98,41.62z M33.84,41.64l-0.02-12.31c0-8.47,6.88-15.36,15.35-15.37c8.47,0,15.36,6.89,15.36,15.35  l0.02,12.31L33.84,41.64z" /></svg>';
 
-type Trans = {
-  [key: string]: {
-    url: string;
-    label: string;
-  };
-};
-
-const trans: Trans = {
+const trans: Record<LocaleType, { url: string; label: string }> = {
   nl: {
     url: 'http://bukazu.com/veiligheid',
     label: 'Beveiligd en mogelijk gemaakt door BUKAZU'
@@ -35,9 +30,12 @@ const trans: Trans = {
   }
 };
 
-function SafeBooking(locale: string): string {
-  const { url, label } = trans[locale] ?? trans.en;
-  return `<div class="safe-booking"><a href="${url}" class="safe-booking-link">${svgIcon}${label}</a></div>`;
+// locale accepts LocaleType | string to accommodate callers (e.g. App.tsx) that type locale as string
+function SafeBooking(locale: LocaleType | string): string {
+  const { url, label } = Object.prototype.hasOwnProperty.call(trans, locale)
+    ? trans[locale as LocaleType]
+    : trans.en;
+  return `<div class="bu-safe-booking"><a href="${url}" class="bu-safe-booking-link">${svgIcon}${label}</a></div>`;
 }
 
 export default SafeBooking;

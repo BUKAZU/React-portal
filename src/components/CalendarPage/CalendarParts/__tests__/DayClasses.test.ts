@@ -4,7 +4,6 @@ import DayClasses from '../DayClasses';
 describe('DayClasses', () => {
   // Mock date for consistent testing
   const today = startOfToday();
-  const tomorrow = addDays(today, 1);
   const todayString = format(today, 'yyyy-MM-dd');
   const monthStart = startOfMonth(today);
 
@@ -192,7 +191,8 @@ describe('DayClasses', () => {
       day: today
     };
     const result = DayClasses(props);
-    expect(result).toContain('departure-arrival');
+    expect(result).toContain('arrival');
+    expect(result).not.toContain('departure-arrival');
   });
 
   it('should add booked class when buDate.max_nights > 0 and prevBooked is undefined', () => {
