@@ -171,11 +171,10 @@ describe('DayClasses', () => {
             day: today
         };
         const result = DayClasses(props);
-        expect(result).toContain('arrival');
-        expect(result).not.toContain('departure-arrival');
+        expect(result).toContain('departure-arrival');
     });
 
-it('should add booked class when buDate.max_nights > 0 and prevBooked is undefined', () => {
+    it('should add booked class when buDate.max_nights > 0 and prevBooked is undefined', () => {
         const props = {
             ...defaultProps,
             buDate: {

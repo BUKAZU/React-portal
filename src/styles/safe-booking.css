@@ -1,0 +1,18 @@
+.safe-booking {
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.safe-booking-link {
+  color: #808080;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.safe-booking-icon {
+  margin-right: 4px;
+  fill: #808080;
+}

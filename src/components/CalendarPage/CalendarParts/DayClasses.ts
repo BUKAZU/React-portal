@@ -7,13 +7,8 @@ import {
   isSameMonth,
   subDays
 } from 'date-fns';
-import { BuDate } from '../../../types';
+import { BuDate, Discount } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
-
-interface Discount {
-  discount_starts_at: string;
-  discount_ends_at: string;
-}
 
 interface Props {
   day: Date;
@@ -42,7 +37,9 @@ function DayClasses({
   discounts
 }: Props): string {
   const { selectedDate, departureDate, arrivalDate } = dates;
-  let classes = [
+  const today = new Date();
+  const prevMaxNights = prevBooked?.max_nights ?? 0;
+  const classes = [
     'bu-grid',
     'bu-center',
     'bu-rounded-half',
@@ -57,23 +54,23 @@ function DayClasses({
   if (buDate) {
     if (
       buDate.arrival &&
-      isAfter(day, subDays(new Date(), 1)) &&
+      isAfter(day, subDays(today, 1)) &&
       buDate.max_nights !== 0
     ) {
-      if (prevBooked?.max_nights === 0) {
+      if (prevMaxNights === 0) {
         classes.push('departure-arrival', 'bu-hover-bright');
       } else {
         classes.push('arrival', 'bu-hover-bright');
       }
     } else if (buDate.max_nights === 0) {
-      if (prevBooked?.max_nights !== 0) {
+      if (prevMaxNights !== 0) {
         classes.push('booked-departure', 'bu-hover-bright');
       } else {
         classes.push('booked');
       }
     } else if (
       buDate.max_nights > 0 &&
-      (prevBooked?.max_nights ?? 0) === 0 &&
+      prevMaxNights === 0 &&
       !buDate.arrival
     ) {
       classes.push('booked');
@@ -84,36 +81,37 @@ function DayClasses({
     if (isSameDay(day, selectedDate)) {
       classes.push('selected');
     }
-    const minimum =
-      differenceInCalendarDays(day, selectedDate) >= (arrivalDate?.min_nights ?? 0);
+    const dayDiff = differenceInCalendarDays(day, selectedDate);
+    const minimum = dayDiff >= (arrivalDate?.min_nights ?? 0);
     const maximum =
-      differenceInCalendarDays(day, selectedDate) <= house.max_nights &&
-      differenceInCalendarDays(day, selectedDate) <= (arrivalDate?.max_nights ?? 0);
+      dayDiff <= house.max_nights &&
+      dayDiff <= (arrivalDate?.max_nights ?? 0);
 
     if (
       buDate.departure &&
       isAfter(day, selectedDate) &&
       minimum &&
       maximum &&
-      prevBooked?.max_nights !== 0
+      prevMaxNights !== 0
     ) {
       classes.push('departure');
     }
   }
 
   if (departureDate && selectedDate) {
+    const departureDateParsed = Parse_EN_US(departureDate.date);
     if (
       isAfter(day, selectedDate) &&
-      isBefore(day, Parse_EN_US(departureDate.date))
+      isBefore(day, departureDateParsed)
     ) {
       classes.push('selected');
     }
-    if (isSameDay(day, Parse_EN_US(departureDate.date))) {
+    if (isSameDay(day, departureDateParsed)) {
       classes.push('selected');
     }
   }
 
-  const daysFromToday = differenceInCalendarDays(day, new Date());
+  const daysFromToday = differenceInCalendarDays(day, today);
   const last_minute =
     daysFromToday <= house.last_minute_days && daysFromToday > 0;
 
