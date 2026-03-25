@@ -9,6 +9,7 @@
 @import 'filters.css';
 @import 'pagination.css';
 @import 'reviews.css';
+@import 'safe-booking.css';
 
 .bu-portal {
   container-type: inline-size;

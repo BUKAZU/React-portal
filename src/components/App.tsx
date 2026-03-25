@@ -80,7 +80,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     page = (
       <ErrorBoundary>
         <CalendarPage />
-        <SafeBooking />
+        <div dangerouslySetInnerHTML={{ __html: SafeBooking(locale) }} />
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {

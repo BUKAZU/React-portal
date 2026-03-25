@@ -28,7 +28,7 @@ jest.mock('../CalendarPage/CalendarPage', () => () => (
 jest.mock('../ReviewsPage/ReviewsPage', () => () => (
   <div data-testid="reviews-page" />
 ));
-jest.mock('../SafeBooking', () => () => <div data-testid="safe-booking" />);
+jest.mock('../SafeBooking', () => () => '<div class="safe-booking"></div>');
 jest.mock('../Error', () => ({
   ApiError: ({ errors }: { errors?: { message: string } }) => (
     <div data-testid="api-error">{errors?.message}</div>
@@ -239,9 +239,7 @@ describe('App page routing', () => {
     expect(
       container.querySelector('[data-testid="calendar-page"]')
     ).not.toBeNull();
-    expect(
-      container.querySelector('[data-testid="safe-booking"]')
-    ).not.toBeNull();
+    expect(container.querySelector('.safe-booking')).not.toBeNull();
   });
 
   it('renders ReviewsPage when objectCode is set and pageType is reviews', () => {
