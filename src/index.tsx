@@ -33,15 +33,6 @@ function Portal({
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = locale ?? 'en';
 
-  const errors = IntegrationError({
-    portalCode,
-    pageType,
-    locale: resolvedLocale,
-    filters
-  });
-  if (errors) {
-    return errors;
-  }
   // All hooks must be called unconditionally before any conditional return
   // (React Rules of Hooks). IntegrationError is called as a plain function
   // below, which registers its internal useEffect into Portal's hook list.
