@@ -4,11 +4,16 @@ import { t } from '../../intl';
 import { ApolloError } from '@apollo/client';
 import { reportError } from '../../_lib/sentry';
 
+const reportedErrors = new WeakSet<ApolloError>();
+
 function ApiError(
   errors: { errors: ApolloError },
   modal: boolean = false
 ): JSX.Element {
-  reportError(errors.errors);
+  if (!reportedErrors.has(errors.errors)) {
+    reportedErrors.add(errors.errors);
+    reportError(errors.errors);
+  }
 
   const errorMessage = (
     <div className="bukazu-error-message">
