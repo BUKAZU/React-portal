@@ -45,8 +45,8 @@ export function setSentryContext(context: PortalContext): void {
     typeof window !== 'undefined' ? window.location.href : undefined;
 
   setTag('portal_code', context.portalCode);
-  if (context.objectCode) setTag('object_code', context.objectCode);
-  if (context.locale) setTag('locale', context.locale);
+  setTag('object_code', context.objectCode ?? '');
+  setTag('locale', context.locale ?? '');
 
   setContext('bukazu', {
     portal_code: context.portalCode,
