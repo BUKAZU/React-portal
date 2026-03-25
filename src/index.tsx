@@ -39,7 +39,10 @@ function Portal({
   // initSentry is guarded by getClient() so it is a no-op after the first call.
   // setSentryContext is idempotent (setTag/setContext calls on the Sentry scope).
   if (sentryDsn) {
-    initSentry(sentryDsn);
+    initSentry({
+      dsn: sentryDsn,
+      sendDefaultPii: false
+    });
   }
   setSentryContext({ portalCode, objectCode, locale: resolvedLocale });
 
