@@ -10,6 +10,7 @@ import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
 import { loadLocale } from './_lib/date_helper';
+import { initSentry, setSentryContext } from './_lib/sentry';
 
 interface Props {
   portalCode: string;
@@ -18,6 +19,7 @@ interface Props {
   locale?: LocaleType;
   filters?: FiltersType;
   api_url?: string;
+  sentryDsn?: string;
 }
 
 function Portal({
@@ -26,9 +28,20 @@ function Portal({
   pageType,
   locale,
   filters,
-  api_url = 'https://api.bukazu.com/graphql'
+  api_url = 'https://api.bukazu.com/graphql',
+  sentryDsn
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = locale ?? 'en';
+
+  // initSentry and setSentryContext are called here (before any hook) because
+  // IntegrationError is evaluated as a plain function call below and may return
+  // early — meaning useEffect would never fire on that path.
+  // initSentry is guarded by getClient() so it is a no-op after the first call.
+  // setSentryContext is idempotent (setTag/setContext calls on the Sentry scope).
+  if (sentryDsn) {
+    initSentry(sentryDsn);
+  }
+  setSentryContext({ portalCode, objectCode, locale: resolvedLocale });
 
   const errors = IntegrationError({
     portalCode,
