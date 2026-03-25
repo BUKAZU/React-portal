@@ -189,9 +189,7 @@ describe('App theming — CSS custom properties', () => {
 
 describe('App loading and error states', () => {
   it('renders the loading icon while the query is in flight', async () => {
-    mockedLoadPortalSite.mockImplementation(
-      () => new Promise(() => undefined)
-    );
+    mockedLoadPortalSite.mockImplementation(() => new Promise(() => undefined));
 
     await act(async () => {
       root.render(

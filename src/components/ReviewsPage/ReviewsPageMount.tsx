@@ -33,10 +33,7 @@ function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
   return <div ref={containerRef} />;
 }
 
-function ReviewsPageMount({
-  objectCode,
-  portalCode
-}: Props): JSX.Element {
+function ReviewsPageMount({ objectCode, portalCode }: Props): JSX.Element {
   const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
 
   useEffect(() => {

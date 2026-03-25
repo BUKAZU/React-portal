@@ -44,10 +44,7 @@ export function createGraphQLRequestClient(): GraphQLClient {
 export async function requestGraphQL<
   TData,
   TVariables extends Variables = Variables
->(
-  query: RequestDocument,
-  variables?: TVariables
-): Promise<TData> {
+>(query: RequestDocument, variables?: TVariables): Promise<TData> {
   const client = createGraphQLRequestClient();
   return client.request<TData, TVariables>(query, variables);
 }

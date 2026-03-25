@@ -86,12 +86,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
-    page = (
-      <ReviewsPageMount
-        objectCode={objectCode}
-        portalCode={portalCode}
-      />
-    );
+    page = <ReviewsPageMount objectCode={objectCode} portalCode={portalCode} />;
   } else {
     page = (
       <SearchPage
