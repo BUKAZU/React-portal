@@ -247,6 +247,7 @@ const bookingPriceData = {
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
+let consoleSpy: jest.SpyInstance;
 
 function renderApp() {
   act(() => {
@@ -281,7 +282,16 @@ function clickCalculate() {
   });
 }
 
+/** Navigate from the calendar view to the booking form */
+function navigateToBookingForm() {
+  selectDates();
+  clickCalculate();
+}
+
 beforeEach(() => {
+  // Suppress FormCreator's console.log({ sessionIdentifier }) noise
+  consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
   (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -290,8 +300,16 @@ beforeEach(() => {
   });
   jest.clearAllMocks();
 
+  const { useQuery, useMutation } = require('@apollo/client');
+
+  // Re-apply default useMutation implementation after clearAllMocks so that
+  // per-test overrides from mockReturnValue don't leak into later tests.
+  (useMutation as jest.Mock).mockReturnValue([
+    jest.fn().mockResolvedValue({}),
+    { loading: false, error: null, data: null, reset: jest.fn() }
+  ]);
+
   // Default useQuery behaviour: return appropriate fixture data per query
-  const { useQuery } = require('@apollo/client');
   (useQuery as jest.Mock).mockImplementation((query: string) => {
     if (query === 'SINGLE_HOUSE_QUERY') {
       return { data: singleHouseData, loading: false, error: null };
@@ -317,6 +335,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  consoleSpy.mockRestore();
   act(() => {
     root.unmount();
   });
@@ -368,8 +387,7 @@ describe('Booking flow – integration', () => {
   it('transitions from the calendar view to the booking form after clicking Calculate', () => {
     renderApp();
 
-    selectDates();
-    clickCalculate();
+    navigateToBookingForm();
 
     // Calendar is no longer shown
     expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
@@ -380,16 +398,43 @@ describe('Booking flow – integration', () => {
   it('renders the submit button inside the booking form', () => {
     renderApp();
 
-    selectDates();
-    clickCalculate();
+    navigateToBookingForm();
 
     const submitButton = container.querySelector('button[type="submit"]');
     expect(submitButton).not.toBeNull();
     expect(submitButton!.textContent).toBe('Book now');
   });
 
-  it('shows the success modal after a booking is successfully created', () => {
-    // Make the mutation return success data immediately so the modal is visible
+  it('calls createBooking with the correct variables when the form is submitted', async () => {
+    const mockCreateBooking = jest.fn().mockResolvedValue({});
+    const { useMutation } = require('@apollo/client');
+    (useMutation as jest.Mock).mockReturnValue([
+      mockCreateBooking,
+      { loading: false, error: null, data: null, reset: jest.fn() }
+    ]);
+
+    renderApp();
+    navigateToBookingForm();
+
+    // Submit the form and wait for Formik's async validation + onSubmit to settle
+    await act(async () => {
+      (container.querySelector('button[type="submit"]') as HTMLElement).click();
+    });
+
+    // The mutate function must have been called with the expected booking variables
+    expect(mockCreateBooking).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          arrival_date: '2025-07-01',
+          departure_date: '2025-07-08',
+          house_code: 'HOUSE1',
+          portal_code: 'TEST'
+        })
+      })
+    );
+  });
+
+  it('shows the success modal when the mutation returns booking data', () => {
     const { useMutation } = require('@apollo/client');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn().mockResolvedValue({}),
@@ -402,9 +447,7 @@ describe('Booking flow – integration', () => {
     ]);
 
     renderApp();
-
-    selectDates();
-    clickCalculate();
+    navigateToBookingForm();
 
     // The success modal container and SuccessMessage component must be rendered
     const modalContainer = container.querySelector('.bukazu-modal');
@@ -415,14 +458,12 @@ describe('Booking flow – integration', () => {
   it('shows "Creating booking..." loading text while the mutation is in flight', () => {
     const { useMutation } = require('@apollo/client');
     (useMutation as jest.Mock).mockReturnValue([
-      jest.fn(),
+      jest.fn().mockResolvedValue({}),
       { loading: true, error: null, data: null, reset: jest.fn() }
     ]);
 
     renderApp();
-
-    selectDates();
-    clickCalculate();
+    navigateToBookingForm();
 
     const loadingMsg = container.querySelector('.return-message');
     expect(loadingMsg).not.toBeNull();
@@ -432,7 +473,7 @@ describe('Booking flow – integration', () => {
   it('shows an error modal when the booking mutation returns an error', () => {
     const { useMutation } = require('@apollo/client');
     (useMutation as jest.Mock).mockReturnValue([
-      jest.fn(),
+      jest.fn().mockResolvedValue({}),
       {
         loading: false,
         error: { message: 'Network error', graphQLErrors: [] },
@@ -442,9 +483,7 @@ describe('Booking flow – integration', () => {
     ]);
 
     renderApp();
-
-    selectDates();
-    clickCalculate();
+    navigateToBookingForm();
 
     expect(
       container.querySelector('[data-testid="api-error"]')
@@ -454,8 +493,7 @@ describe('Booking flow – integration', () => {
   it('returns to the calendar view when the return link is clicked', () => {
     renderApp();
 
-    selectDates();
-    clickCalculate();
+    navigateToBookingForm();
 
     // Confirm the form is showing
     expect(container.querySelector('form.form')).not.toBeNull();
