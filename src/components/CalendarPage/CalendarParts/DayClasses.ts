@@ -7,13 +7,8 @@ import {
   isSameMonth,
   subDays
 } from 'date-fns';
-import { BuDate } from '../../../types';
+import { BuDate, Discount } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
-
-interface Discount {
-  discount_starts_at: string;
-  discount_ends_at: string;
-}
 
 interface Props {
   day: Date;
@@ -43,7 +38,6 @@ function DayClasses({
 }: Props): string {
   const { selectedDate, departureDate, arrivalDate } = dates;
   const today = new Date();
-  const prevMaxNights = prevBooked?.max_nights ?? 0;
   const classes = [
     'bu-grid',
     'bu-center',
@@ -62,20 +56,20 @@ function DayClasses({
       isAfter(day, subDays(today, 1)) &&
       buDate.max_nights !== 0
     ) {
-      if (prevMaxNights === 0) {
+      if (prevBooked?.max_nights === 0) {
         classes.push('departure-arrival', 'bu-hover-bright');
       } else {
         classes.push('arrival', 'bu-hover-bright');
       }
     } else if (buDate.max_nights === 0) {
-      if (prevMaxNights !== 0) {
+      if (prevBooked !== undefined && prevBooked.max_nights !== 0) {
         classes.push('booked-departure', 'bu-hover-bright');
       } else {
         classes.push('booked');
       }
     } else if (
       buDate.max_nights > 0 &&
-      prevMaxNights === 0 &&
+      (prevBooked === undefined || prevBooked.max_nights === 0) &&
       !buDate.arrival
     ) {
       classes.push('booked');
@@ -96,7 +90,7 @@ function DayClasses({
       isAfter(day, selectedDate) &&
       minimum &&
       maximum &&
-      prevMaxNights !== 0
+      prevBooked !== undefined && prevBooked.max_nights !== 0
     ) {
       classes.push('departure');
     }
