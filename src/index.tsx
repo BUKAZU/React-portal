@@ -33,28 +33,21 @@ function Portal({
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = locale ?? 'en';
 
-  // initSentry and setSentryContext are called here (before any hook) because
-  // IntegrationError is evaluated as a plain function call below and may return
-  // early — meaning useEffect would never fire on that path.
-  // initSentry is guarded by getClient() so it is a no-op after the first call.
-  // setSentryContext is idempotent (setTag/setContext calls on the Sentry scope).
-  if (sentryDsn) {
-    initSentry(sentryDsn);
-  }
-  setSentryContext({ portalCode, objectCode, locale: resolvedLocale });
-
-  const errors = IntegrationError({
-    portalCode,
-    pageType,
-    locale: resolvedLocale,
-    filters
-  });
-  if (errors) {
-    return errors;
-  }
-
+  // All hooks must be called unconditionally before any conditional return
+  // (React Rules of Hooks). IntegrationError is called as a plain function
+  // below, which registers its internal useEffect into Portal's hook list.
+  // Placing the Sentry effect here (before that call) ensures Sentry context
+  // is always set before IntegrationError's reportMessage effect fires, since
+  // React runs effects in registration order within a single component.
   const [width, setWidth] = useState(0);
   const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (sentryDsn) {
+      initSentry(sentryDsn);
+    }
+    setSentryContext({ portalCode, objectCode, locale: resolvedLocale });
+  }, [sentryDsn, portalCode, objectCode, resolvedLocale]);
 
   useEffect(() => {
     const current = ref.current;
@@ -67,6 +60,19 @@ function Portal({
     window.__localeId__ = resolvedLocale;
     void loadLocale(resolvedLocale);
   }, [resolvedLocale]);
+
+  // IntegrationError is called as a plain function so its internal hooks are
+  // appended to Portal's hook list (always, unconditionally). The early return
+  // below is safe because all hooks have already been registered above.
+  const errors = IntegrationError({
+    portalCode,
+    pageType,
+    locale: resolvedLocale,
+    filters
+  });
+  if (errors) {
+    return errors;
+  }
 
   const client = new ApolloClient({
     uri: api_url,
