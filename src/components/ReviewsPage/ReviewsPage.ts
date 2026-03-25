@@ -1,5 +1,5 @@
-import { GraphQLClient } from 'graphql-request';
 import { REVIEWS_QUERY } from '../../_lib/gql';
+import { requestGraphQL } from '../../_lib/graphql_request';
 import type { Review } from './SingleReview';
 
 interface ReviewsPortalSite {
@@ -26,25 +26,13 @@ interface ReviewsQueryVariables {
 interface LoadReviewsHouseParams {
   portalCode: string;
   objectCode: string;
-  locale: string;
-  apiUrl?: string;
 }
-
-const DEFAULT_API_URL = 'https://api.bukazu.com/graphql';
 
 export async function loadReviewsHouse({
   portalCode,
-  objectCode,
-  locale,
-  apiUrl = DEFAULT_API_URL
+  objectCode
 }: LoadReviewsHouseParams): Promise<ReviewsHouse> {
-  const client = new GraphQLClient(apiUrl, {
-    headers: {
-      locale
-    }
-  });
-
-  const data = await client.request<
+  const data = await requestGraphQL<
     ReviewsQueryResponse,
     ReviewsQueryVariables
   >(REVIEWS_QUERY, {

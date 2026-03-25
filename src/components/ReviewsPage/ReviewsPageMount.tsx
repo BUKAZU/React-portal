@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ApolloError } from '@apollo/client';
-import { GraphQLError } from 'graphql';
+import { toApolloError } from '../../_lib/graphql_request';
+import { mountPlainNode } from '../../_lib/plain_mount';
 import { ApiError } from '../Error';
 import Loading from '../icons/loading.svg';
 import { loadReviewsHouse, type ReviewsHouse } from './ReviewsPage';
@@ -9,26 +10,12 @@ import { createReviewsPageView } from './ReviewsPageView';
 interface Props {
   objectCode: string;
   portalCode: string;
-  locale: string;
 }
 
 type ReviewsPageState =
   | { status: 'loading' }
   | { status: 'error'; error: ApolloError }
   | { status: 'ready'; house: ReviewsHouse };
-
-function toApolloError(error: unknown): ApolloError {
-  if (error instanceof ApolloError) {
-    return error;
-  }
-
-  const message =
-    error instanceof Error ? error.message : 'Failed to load reviews data';
-
-  return new ApolloError({
-    graphQLErrors: [new GraphQLError(message)]
-  });
-}
 
 function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -38,24 +25,25 @@ function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
       return;
     }
 
-    containerRef.current.replaceChildren(createReviewsPageView(house));
-
-    return () => {
-      containerRef.current?.replaceChildren();
-    };
+    return mountPlainNode(containerRef.current, () =>
+      createReviewsPageView(house)
+    );
   }, [house]);
 
   return <div ref={containerRef} />;
 }
 
-function ReviewsPageMount({ objectCode, portalCode, locale }: Props): JSX.Element {
+function ReviewsPageMount({
+  objectCode,
+  portalCode
+}: Props): JSX.Element {
   const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
 
   useEffect(() => {
     let isMounted = true;
     setState({ status: 'loading' });
 
-    void loadReviewsHouse({ portalCode, objectCode, locale })
+    void loadReviewsHouse({ portalCode, objectCode })
       .then((house) => {
         if (!isMounted) {
           return;
@@ -72,7 +60,7 @@ function ReviewsPageMount({ objectCode, portalCode, locale }: Props): JSX.Elemen
     return () => {
       isMounted = false;
     };
-  }, [portalCode, objectCode, locale]);
+  }, [portalCode, objectCode]);
 
   if (state.status === 'loading') {
     return (

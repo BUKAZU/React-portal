@@ -10,6 +10,7 @@ import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
 import { loadLocale } from './_lib/date_helper';
+import { setGraphQLRequestConfig } from './_lib/graphql_request';
 import { initSentry, setSentryContext } from './_lib/sentry';
 
 interface Props {
@@ -48,8 +49,9 @@ function Portal({
 
   useEffect(() => {
     window.__localeId__ = resolvedLocale;
+    setGraphQLRequestConfig({ apiUrl: api_url, locale: resolvedLocale });
     void loadLocale(resolvedLocale);
-  }, [resolvedLocale]);
+  }, [api_url, resolvedLocale]);
 
   // IntegrationError is called as a plain function so its internal hooks are
   // appended to Portal's hook list (always, unconditionally). The early return

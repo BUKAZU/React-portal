@@ -1,26 +1,24 @@
-import { GraphQLClient } from 'graphql-request';
 import { REVIEWS_QUERY } from '../../../_lib/gql';
+import { requestGraphQL } from '../../../_lib/graphql_request';
 import { loadReviewsHouse } from '../ReviewsPage';
-
-jest.mock('graphql-request', () => ({
-  GraphQLClient: jest.fn()
-}));
 
 jest.mock('../../../_lib/gql', () => ({
   REVIEWS_QUERY: 'REVIEWS_QUERY'
 }));
 
-type GraphQLClientMock = jest.MockedClass<typeof GraphQLClient>;
+jest.mock('../../../_lib/graphql_request', () => ({
+  requestGraphQL: jest.fn()
+}));
 
-const GraphQLClientCtor = GraphQLClient as GraphQLClientMock;
+const mockedRequestGraphQL = requestGraphQL as jest.Mock;
 
 describe('loadReviewsHouse', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('creates GraphQLClient with locale header and requests reviews house', async () => {
-    const request = jest.fn().mockResolvedValue({
+  it('requests reviews house through the central request helper', async () => {
+    mockedRequestGraphQL.mockResolvedValue({
       PortalSite: {
         houses: [
           {
@@ -34,28 +32,12 @@ describe('loadReviewsHouse', () => {
       }
     });
 
-    GraphQLClientCtor.mockImplementation(
-      () =>
-        ({
-          request
-        }) as unknown as GraphQLClient
-    );
-
     const result = await loadReviewsHouse({
       portalCode: 'PORTAL1',
-      objectCode: 'HOUSE1',
-      locale: 'en'
+      objectCode: 'HOUSE1'
     });
 
-    expect(GraphQLClientCtor).toHaveBeenCalledWith(
-      'https://api.bukazu.com/graphql',
-      {
-        headers: {
-          locale: 'en'
-        }
-      }
-    );
-    expect(request).toHaveBeenCalledWith(REVIEWS_QUERY, {
+    expect(mockedRequestGraphQL).toHaveBeenCalledWith(REVIEWS_QUERY, {
       id: 'PORTAL1',
       house_id: 'HOUSE1'
     });
@@ -63,24 +45,16 @@ describe('loadReviewsHouse', () => {
   });
 
   it('throws when the API returns no matching house', async () => {
-    const request = jest.fn().mockResolvedValue({
+    mockedRequestGraphQL.mockResolvedValue({
       PortalSite: {
         houses: []
       }
     });
 
-    GraphQLClientCtor.mockImplementation(
-      () =>
-        ({
-          request
-        }) as unknown as GraphQLClient
-    );
-
     await expect(
       loadReviewsHouse({
         portalCode: 'PORTAL1',
-        objectCode: 'HOUSE1',
-        locale: 'en'
+        objectCode: 'HOUSE1'
       })
     ).rejects.toThrow('No reviews house found for the given portal and object');
   });

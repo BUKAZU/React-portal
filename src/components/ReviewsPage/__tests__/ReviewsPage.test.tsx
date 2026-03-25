@@ -76,9 +76,7 @@ afterEach(() => {
 
 async function renderPage() {
   await act(async () => {
-    root.render(
-      <ReviewsPageMount objectCode="HOUSE1" portalCode="PORTAL1" locale="en" />
-    );
+    root.render(<ReviewsPageMount objectCode="HOUSE1" portalCode="PORTAL1" />);
   });
 }
 
@@ -215,8 +213,7 @@ describe('ReviewsPage', () => {
 
     expect(mockedLoadReviewsHouse).toHaveBeenCalledWith({
       portalCode: 'PORTAL1',
-      objectCode: 'HOUSE1',
-      locale: 'en'
+      objectCode: 'HOUSE1'
     });
   });
 });

@@ -1,0 +1,42 @@
+import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
+import { requestGraphQL } from '../_lib/graphql_request';
+import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
+
+interface PortalSiteQueryVariables {
+  id: string;
+}
+
+export interface AppPortalSite extends PortalSiteType {
+  portal_code: string;
+  options: PortalOptions;
+  colorsConfiguration: ColorsType;
+}
+
+interface PortalSiteQueryResponse {
+  PortalSite: AppPortalSite | null;
+}
+
+interface LoadPortalSiteParams {
+  portalCode: string;
+  isSearchPage: boolean;
+}
+
+export async function loadPortalSite({
+  portalCode,
+  isSearchPage
+}: LoadPortalSiteParams): Promise<AppPortalSite> {
+  const query = isSearchPage ? PORTAL_SEARCH_QUERY : PORTAL_BASE_QUERY;
+
+  const data = await requestGraphQL<
+    PortalSiteQueryResponse,
+    PortalSiteQueryVariables
+  >(query, {
+    id: portalCode
+  });
+
+  if (!data.PortalSite) {
+    throw new Error('Portal site data is missing');
+  }
+
+  return data.PortalSite;
+}
