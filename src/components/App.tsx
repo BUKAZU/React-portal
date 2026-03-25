@@ -5,7 +5,7 @@ import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
 
 import SearchPage from './SearchPage/SearchPage';
 import CalendarPage from './CalendarPage/CalendarPage';
-import ReviewsPageView from './ReviewsPage/ReviewsPageView';
+import ReviewsPageMount from './ReviewsPage/ReviewsPageMount';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
@@ -85,7 +85,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
     page = (
-      <ReviewsPageView
+      <ReviewsPageMount
         objectCode={objectCode}
         portalCode={portalCode}
         locale={locale}

@@ -1,39 +1,14 @@
-import { act, createElement } from 'react';
-import { createRoot } from 'react-dom/client';
-import Note from '../note';
-
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
-  true;
+import createNote from '../note';
 
 jest.mock('../../../intl', () => ({
   t: (id: string) => id
 }));
 
-let container: HTMLDivElement;
-let root: ReturnType<typeof createRoot>;
-
-beforeEach(() => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-  act(() => {
-    root = createRoot(container);
-  });
-});
-
-afterEach(() => {
-  act(() => {
-    root.unmount();
-  });
-  container.remove();
-});
-
 describe('Note', () => {
-  it('renders the bukazu link with expected attributes and text', () => {
-    act(() => {
-      root.render(createElement(Note));
-    });
+  it('creates the bukazu link with expected attributes and text', () => {
+    const note = createNote();
 
-    const link = container.querySelector('a');
+    const link = note.querySelector('a');
     expect(link).not.toBeNull();
     expect(link?.getAttribute('href')).toBe('https://www.bukazu.com');
     expect(link?.getAttribute('target')).toBe('_blank');

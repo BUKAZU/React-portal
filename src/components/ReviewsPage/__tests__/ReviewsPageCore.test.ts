@@ -38,7 +38,7 @@ describe('loadReviewsHouse', () => {
       () =>
         ({
           request
-        } as unknown as GraphQLClient)
+        }) as unknown as GraphQLClient
     );
 
     const result = await loadReviewsHouse({
@@ -73,7 +73,7 @@ describe('loadReviewsHouse', () => {
       () =>
         ({
           request
-        } as unknown as GraphQLClient)
+        }) as unknown as GraphQLClient
     );
 
     await expect(

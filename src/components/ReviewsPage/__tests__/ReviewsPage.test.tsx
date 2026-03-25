@@ -1,8 +1,9 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import ReviewsPageView from '../ReviewsPageView';
+import ReviewsPageMount from '../ReviewsPageMount';
 import { loadReviewsHouse } from '../ReviewsPage';
+import { createReviewsPageView } from '../ReviewsPageView';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -19,7 +20,10 @@ jest.mock('../../Error', () => ({
 }));
 
 jest.mock('../Score', () => ({
-  getScore: (rating: number) => ({ color: 'best', formatted: rating.toFixed(1) })
+  getScore: (rating: number) => ({
+    color: 'best',
+    formatted: rating.toFixed(1)
+  })
 }));
 
 jest.mock('../SingleReview', () => ({
@@ -40,13 +44,16 @@ jest.mock('../SingleReview', () => ({
   })
 }));
 
-jest.mock('../note', () => () => <div data-testid="note" />);
-
 jest.mock('../ReviewsPage', () => ({
   loadReviewsHouse: jest.fn()
 }));
 
+jest.mock('../ReviewsPageView', () => ({
+  createReviewsPageView: jest.fn()
+}));
+
 const mockedLoadReviewsHouse = loadReviewsHouse as jest.Mock;
+const mockedCreateReviewsPageView = createReviewsPageView as jest.Mock;
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -70,7 +77,7 @@ afterEach(() => {
 async function renderPage() {
   await act(async () => {
     root.render(
-      <ReviewsPageView objectCode="HOUSE1" portalCode="PORTAL1" locale="en" />
+      <ReviewsPageMount objectCode="HOUSE1" portalCode="PORTAL1" locale="en" />
     );
   });
 }
@@ -109,6 +116,30 @@ const mockData = {
 };
 
 describe('ReviewsPage', () => {
+  beforeEach(() => {
+    mockedCreateReviewsPageView.mockImplementation((house) => {
+      const element = document.createElement('div');
+      element.className = 'bu_reviews';
+
+      const heading = document.createElement('div');
+      heading.textContent = `${house.scoreAmount} reviews`;
+      element.appendChild(heading);
+
+      house.reviews.forEach((review) => {
+        const item = document.createElement('div');
+        item.className = 'bu_single_review';
+        item.textContent = review.name;
+        element.appendChild(item);
+      });
+
+      const note = document.createElement('div');
+      note.setAttribute('data-testid', 'note');
+      element.appendChild(note);
+
+      return element;
+    });
+  });
+
   it('renders loading state while waiting for data', async () => {
     mockedLoadReviewsHouse.mockImplementation(
       () => new Promise(() => undefined)
@@ -141,8 +172,9 @@ describe('ReviewsPage', () => {
       await Promise.resolve();
     });
 
-    expect(container.querySelector('.bu_score')).not.toBeNull();
-    expect(container.textContent).toContain('8.5');
+    expect(mockedCreateReviewsPageView).toHaveBeenCalledWith(
+      mockData.PortalSite.houses[0]
+    );
     expect(container.textContent).toContain('42');
     expect(container.textContent).toContain('reviews');
   });

@@ -44,13 +44,13 @@ export async function loadReviewsHouse({
     }
   });
 
-  const data = await client.request<ReviewsQueryResponse, ReviewsQueryVariables>(
-    REVIEWS_QUERY,
-    {
-      id: portalCode,
-      house_id: objectCode
-    }
-  );
+  const data = await client.request<
+    ReviewsQueryResponse,
+    ReviewsQueryVariables
+  >(REVIEWS_QUERY, {
+    id: portalCode,
+    house_id: objectCode
+  });
 
   const house = data.PortalSite?.houses?.[0];
   if (!house) {
