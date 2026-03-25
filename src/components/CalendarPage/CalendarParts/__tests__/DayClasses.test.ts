@@ -22,8 +22,11 @@ describe('DayClasses', () => {
         },
         prevBooked: {
             date: '2023-06-14',
+            arrival: false,
+            departure: false,
             max_nights: 12,
-            min_nights: 0
+            min_nights: 0,
+            special_offer: 0
         },
         dates: {
             selectedDate: null,
@@ -129,6 +132,20 @@ describe('DayClasses', () => {
         expect(result).toContain('discount');
     });
 
+    it('should add discount class when day falls within a discount period', () => {
+        const props = {
+            ...defaultProps,
+            discounts: [
+                {
+                    discount_starts_at: format(subDays(today, 2), 'yyyy-MM-dd'),
+                    discount_ends_at: format(addDays(today, 2), 'yyyy-MM-dd')
+                }
+            ]
+        };
+        const result = DayClasses(props);
+        expect(result).toContain('discount');
+    });
+
     it('should handle selected date range', () => {
         const props = {
             ...defaultProps,
@@ -140,6 +157,36 @@ describe('DayClasses', () => {
         };
         const result = DayClasses(props);
         expect(result).toContain('selected');
+    });
+
+    it('should handle undefined prevBooked gracefully', () => {
+        const props = {
+            ...defaultProps,
+            buDate: {
+                ...defaultProps.buDate,
+                arrival: true,
+                max_nights: 7
+            },
+            prevBooked: undefined,
+            day: today
+        };
+        const result = DayClasses(props);
+        expect(result).toContain('arrival');
+        expect(result).not.toContain('departure-arrival');
+    });
+
+it('should add booked class when buDate.max_nights > 0 and prevBooked is undefined', () => {
+        const props = {
+            ...defaultProps,
+            buDate: {
+                ...defaultProps.buDate,
+                arrival: false,
+                max_nights: 5
+            },
+            prevBooked: undefined
+        };
+        const result = DayClasses(props);
+        expect(result).toContain('booked');
     });
 
     it('should handle departure day', () => {

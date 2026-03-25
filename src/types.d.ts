@@ -94,12 +94,12 @@ export type PortalSiteType = {
 export type LocaleType = 'nl' | 'en' | 'de' | 'es' | 'fr' | 'it';
 
 export type BuDate = {
-  arrival: Boolean;
-  departure: Boolean;
-  min_nights: Number;
-  max_nights: Number;
+  arrival: boolean;
+  departure: boolean;
+  min_nights: number;
+  max_nights: number;
   date: string;
-  special_offer: Number;
+  special_offer: number;
 };
 
 export type HouseType = {
