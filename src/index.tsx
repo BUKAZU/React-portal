@@ -29,7 +29,7 @@ function Portal({
   locale,
   filters,
   api_url = 'https://api.bukazu.com/graphql',
-  sentryDsn = 'https://eb07ca4f9ded9ec8be29eb1b35a983ce@o208128.ingest.us.sentry.io/4511103963496448'
+  sentryDsn
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = locale ?? 'en';
 
