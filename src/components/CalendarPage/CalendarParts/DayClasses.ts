@@ -7,7 +7,7 @@ import {
   isSameMonth,
   subDays
 } from 'date-fns';
-import { BuDate, Discount } from '../../../types';
+import { BuDate } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
 
 interface Discount {
