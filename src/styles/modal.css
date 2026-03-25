@@ -8,7 +8,7 @@
   padding: 50px;
   z-index: 1;
   display: flex;
-  @media screen and (max-width: 992px) {
+  @container (max-width: 992px) {
     padding: 50px 16px;
   }
 }

@@ -17,16 +17,18 @@
     }
 }
 
-#bukazu-app .bu-smaller #search-page .filters {
+@container (max-width: 875px) {
+  #bukazu-app #search-page .filters {
     width: 175px;
     min-width: 175px;
+  }
 }
 
 #bukazu-app #search-page .filters {
     padding: 8px;
     width: 250px;
 }
-@media (max-width: 825px) {
+@container (max-width: 825px) {
     #bukazu-app #search-page {
         flex-direction: column;
         .filters-button {

@@ -1,5 +1,7 @@
-#bukazu-app .bu-smaller #results {
-  padding: 8px;
+@container (max-width: 875px) {
+  #bukazu-app #results {
+    padding: 8px;
+  }
 }
 #bukazu-app #results {
   display: inline-flex;
@@ -8,7 +10,7 @@
   padding: 16px;
   align-items: stretch;
   align-content: flex-start;
-  @media screen and (max-width: 992px) {
+  @container (max-width: 992px) {
     justify-content: space-around;
   }
   

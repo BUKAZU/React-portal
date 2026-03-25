@@ -10,6 +10,10 @@
 @import 'pagination.css';
 @import 'reviews.css';
 
+.bu-portal {
+  container-type: inline-size;
+}
+
 #bukazu-app {
   #search-page {
     &.bu-reverse {
@@ -114,7 +118,7 @@
   }
   .bu-grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
-    @media (max-width: 992px) {
+    @container (max-width: 992px) {
       grid-template-columns: repeat(1, 1fr);
     }
   }

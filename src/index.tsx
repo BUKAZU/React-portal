@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
 
@@ -90,7 +90,7 @@ function Portal({
   return (
     <ApolloProvider client={client}>
       <AppContext.Provider value={{ portalCode, objectCode, locale: resolvedLocale }}>
-        <div ref={ref} className={width < 875 ? 'bu-smaller' : 'bu-large'}>
+        <div className="bu-portal">
           <App pageType={pageType} locale={resolvedLocale} filters={filters} />
         </div>
       </AppContext.Provider>
