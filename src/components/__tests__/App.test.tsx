@@ -239,9 +239,7 @@ describe('App page routing', () => {
     expect(
       container.querySelector('[data-testid="calendar-page"]')
     ).not.toBeNull();
-    expect(
-      container.querySelector('.safe-booking')
-    ).not.toBeNull();
+    expect(container.querySelector('.safe-booking')).not.toBeNull();
   });
 
   it('renders ReviewsPage when objectCode is set and pageType is reviews', () => {
