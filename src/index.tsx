@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
+import { createApolloClient } from './_lib/apollo_client';
 
 import './styles/main.css';
 import { IntegrationError } from './components/Error';
@@ -64,18 +65,7 @@ function Portal({
     return errors;
   }
 
-  const client = new ApolloClient({
-    uri: api_url,
-    cache: new InMemoryCache(),
-    headers: {
-      locale: resolvedLocale
-    },
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'cache-and-network'
-      }
-    }
-  });
+  const client = createApolloClient(api_url, resolvedLocale);
 
   return (
     <ApolloProvider client={client}>
