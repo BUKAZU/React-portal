@@ -17,7 +17,34 @@ export function createApolloClient(
 
   const retryLink = new RetryLink({
     delay: { initial: 300, jitter: true },
-    attempts: { max: MAX_RETRY_ATTEMPTS }
+    attempts: {
+      max: MAX_RETRY_ATTEMPTS,
+      retryIf: (error): boolean => {
+        // Only retry when a network-level error is present.
+        const networkError = (error as { networkError?: unknown }).networkError as {
+          statusCode?: number;
+        } | null | undefined;
+
+        if (!networkError) {
+          return false;
+        }
+
+        const statusCode = (networkError as { statusCode?: number }).statusCode;
+        if (typeof statusCode === 'number') {
+          // Retry on common transient HTTP status codes.
+          if (statusCode === 408 || statusCode === 429) {
+            return true;
+          }
+          if (statusCode >= 500 && statusCode < 600) {
+            return true;
+          }
+          return false;
+        }
+
+        // If there is a networkError but no explicit status code, treat it as transient.
+        return true;
+      }
+    }
   });
 
   return new ApolloClient({
