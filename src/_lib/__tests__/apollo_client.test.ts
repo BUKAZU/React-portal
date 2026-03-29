@@ -4,10 +4,22 @@ import { createApolloClient, MAX_RETRY_ATTEMPTS } from '../apollo_client';
 
 // HttpLink requires a global fetch to be available in the test environment
 const mockFetch = jest.fn();
-// @ts-ignore – polyfilling fetch for the test environment
-global.fetch = mockFetch;
+let originalFetch: typeof globalThis.fetch | undefined;
 
 describe('createApolloClient', () => {
+  beforeAll(() => {
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = mockFetch as unknown as typeof globalThis.fetch;
+  });
+
+  afterAll(() => {
+    if (originalFetch) {
+      globalThis.fetch = originalFetch;
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (globalThis as any).fetch;
+    }
+  });
   it('returns an ApolloClient instance', () => {
     const client = createApolloClient('https://api.bukazu.com/graphql', 'en');
     expect(client).toBeInstanceOf(ApolloClient);
