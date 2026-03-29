@@ -126,9 +126,13 @@ describe('DayClasses', () => {
   });
 
   it('should handle last minute discount', () => {
+    const testDay = addDays(today, 3); // Within last_minute_days
     const props = {
       ...defaultProps,
-      day: addDays(today, 3), // Within last_minute_days
+      day: testDay,
+      // Ensure monthStart matches testDay's month so the day is not treated as
+      // outside the current month (which would return early with 'disabled').
+      monthStart: startOfMonth(testDay),
       house: {
         ...defaultProps.house,
         last_minute_days: 7
