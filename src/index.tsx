@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
+import { createApolloClient } from './_lib/apollo_client';
 
 import './styles/main.css';
 import { IntegrationError } from './components/Error';
@@ -60,22 +61,17 @@ function Portal({
     locale: resolvedLocale,
     filters
   });
+
+  // Memoize the Apollo client so it is only recreated when api_url or locale
+  // changes, preventing cache loss and unnecessary refetches on re-renders.
+  const client = useMemo(
+    () => createApolloClient(api_url, resolvedLocale),
+    [api_url, resolvedLocale]
+  );
+
   if (errors) {
     return errors;
   }
-
-  const client = new ApolloClient({
-    uri: api_url,
-    cache: new InMemoryCache(),
-    headers: {
-      locale: resolvedLocale
-    },
-    defaultOptions: {
-      watchQuery: {
-        fetchPolicy: 'cache-and-network'
-      }
-    }
-  });
 
   return (
     <ApolloProvider client={client}>
