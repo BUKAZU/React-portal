@@ -43,13 +43,14 @@ export default defineConfig({
       fileName: (format) => `portal.${format}.js`,
       cssFileName: 'index'
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM'
-        }
+        },
+        minify: true
       }
     }
   }
