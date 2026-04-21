@@ -34,7 +34,7 @@ jobs:
       - run: npm test
       - name: Coverage comment
         if: github.event_name == 'pull_request' && matrix.node-version == '24.x'
-        uses: MishaKav/jest-coverage-comment@v1.0.32
+        uses: MishaKav/jest-coverage-comment@v1.0.33
         with:
           coverage-summary-path: ./coverage/coverage-summary.json
 
