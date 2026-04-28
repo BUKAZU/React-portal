@@ -1,18 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Loading from './icons/loading.svg';
-
-import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
 
 import SearchPage from './SearchPage/SearchPage';
 import CalendarPage from './CalendarPage/CalendarPage';
-import ReviewsPage from './ReviewsPage/ReviewsPage';
+import ReviewsPageMount from './ReviewsPage/ReviewsPageMount';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
-import { useQuery } from '@apollo/client';
+import { ApolloError } from '@apollo/client';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
+import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
+import { toApolloError } from '../_lib/graphql_request';
+import { GraphQLClientContext } from '../_lib/GraphQLClientContext';
 
 interface Props {
   pageType?: string;
@@ -20,50 +21,53 @@ interface Props {
   locale: string;
 }
 
+type AppState =
+  | { status: 'loading' }
+  | { status: 'error'; error: ApolloError }
+  | { status: 'ready'; portalSite: AppPortalSite };
+
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   const { portalCode, objectCode } = useContext(AppContext);
+  const client = useContext(GraphQLClientContext);
+  const [state, setState] = useState<AppState>({ status: 'loading' });
 
   const isSearchPage = !objectCode;
 
-  const {
-    loading: baseLoading,
-    error: baseError,
-    data: baseData
-  } = useQuery(PORTAL_BASE_QUERY, {
-    variables: { id: portalCode },
-    skip: isSearchPage
-  });
+  useEffect(() => {
+    let isMounted = true;
+    setState({ status: 'loading' });
 
-  const {
-    loading: searchLoading,
-    error: searchError,
-    data: searchData
-  } = useQuery(PORTAL_SEARCH_QUERY, {
-    variables: { id: portalCode },
-    skip: !isSearchPage
-  });
+    void loadPortalSite({ portalCode, isSearchPage, client })
+      .then((portalSite) => {
+        if (!isMounted) {
+          return;
+        }
+        setState({ status: 'ready', portalSite });
+      })
+      .catch((error: unknown) => {
+        if (!isMounted) {
+          return;
+        }
+        setState({ status: 'error', error: toApolloError(error) });
+      });
 
-  const loading = isSearchPage ? searchLoading : baseLoading;
-  const error = isSearchPage ? searchError : baseError;
+    return () => {
+      isMounted = false;
+    };
+  }, [portalCode, isSearchPage, client]);
 
-  if (loading) {
+  if (state.status === 'loading') {
     return <Loading />;
   }
 
-  if (error) {
-    return <ApiError errors={{ ...error }} />;
+  if (state.status === 'error') {
+    return <ApiError errors={state.error} />;
   }
 
-  const PortalSite = isSearchPage
-    ? (searchData?.PortalSite ?? null)
-    : (baseData?.PortalSite ?? null);
+  const portalSite = state.portalSite;
 
-  if (!PortalSite) {
-    return <Loading />;
-  }
-
-  let options = PortalSite.options;
-  const colors: ColorsType = PortalSite.colorsConfiguration;
+  let options = portalSite.options;
+  const colors: ColorsType = portalSite.colorsConfiguration;
 
   const root = document.documentElement;
   root.style.setProperty('--bukazu-discount', colors.discount);
@@ -84,11 +88,11 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
-    page = <ReviewsPage />;
+    page = <ReviewsPageMount objectCode={objectCode} portalCode={portalCode} />;
   } else {
     page = (
       <SearchPage
-        PortalSite={PortalSite}
+        PortalSite={portalSite}
         locale={locale}
         options={options}
         filters={filters}
