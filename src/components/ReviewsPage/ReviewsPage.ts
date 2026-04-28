@@ -1,5 +1,5 @@
+import { GraphQLClient } from 'graphql-request';
 import { REVIEWS_QUERY } from '../../_lib/gql';
-import { requestGraphQL } from '../../_lib/graphql_request';
 import type { Review } from './SingleReview';
 
 interface ReviewsPortalSite {
@@ -26,19 +26,21 @@ interface ReviewsQueryVariables {
 interface LoadReviewsHouseParams {
   portalCode: string;
   objectCode: string;
+  client: GraphQLClient;
 }
 
 export async function loadReviewsHouse({
   portalCode,
-  objectCode
+  objectCode,
+  client
 }: LoadReviewsHouseParams): Promise<ReviewsHouse> {
-  const data = await requestGraphQL<
-    ReviewsQueryResponse,
-    ReviewsQueryVariables
-  >(REVIEWS_QUERY, {
-    id: portalCode,
-    house_id: objectCode
-  });
+  const data = await client.request<ReviewsQueryResponse, ReviewsQueryVariables>(
+    REVIEWS_QUERY,
+    {
+      id: portalCode,
+      house_id: objectCode
+    }
+  );
 
   const house = data.PortalSite?.houses?.[0];
   if (!house) {

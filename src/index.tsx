@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
 
@@ -10,7 +10,8 @@ import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
 import { loadLocale } from './_lib/date_helper';
-import { setGraphQLRequestConfig } from './_lib/graphql_request';
+import { createGraphQLRequestClient } from './_lib/graphql_request';
+import { GraphQLClientContext } from './_lib/GraphQLClientContext';
 import { initSentry, setSentryContext } from './_lib/sentry';
 
 interface Props {
@@ -34,6 +35,13 @@ function Portal({
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = locale ?? 'en';
 
+  // Create a per-portal GraphQL client synchronously during render so it is
+  // available before any child useEffect runs – no global mutable config needed.
+  const graphqlClient = useMemo(
+    () => createGraphQLRequestClient(api_url, resolvedLocale),
+    [api_url, resolvedLocale]
+  );
+
   // All hooks must be called unconditionally before any conditional return
   // (React Rules of Hooks). IntegrationError is called as a plain function
   // below, which registers its internal useEffect into Portal's hook list.
@@ -49,9 +57,8 @@ function Portal({
 
   useEffect(() => {
     window.__localeId__ = resolvedLocale;
-    setGraphQLRequestConfig({ apiUrl: api_url, locale: resolvedLocale });
     void loadLocale(resolvedLocale);
-  }, [api_url, resolvedLocale]);
+  }, [resolvedLocale]);
 
   // IntegrationError is called as a plain function so its internal hooks are
   // appended to Portal's hook list (always, unconditionally). The early return
@@ -80,15 +87,17 @@ function Portal({
   });
 
   return (
-    <ApolloProvider client={client}>
-      <AppContext.Provider
-        value={{ portalCode, objectCode, locale: resolvedLocale }}
-      >
-        <div className="bu-portal">
-          <App pageType={pageType} locale={resolvedLocale} filters={filters} />
-        </div>
-      </AppContext.Provider>
-    </ApolloProvider>
+    <GraphQLClientContext.Provider value={graphqlClient}>
+      <ApolloProvider client={client}>
+        <AppContext.Provider
+          value={{ portalCode, objectCode, locale: resolvedLocale }}
+        >
+          <div className="bu-portal">
+            <App pageType={pageType} locale={resolvedLocale} filters={filters} />
+          </div>
+        </AppContext.Provider>
+      </ApolloProvider>
+    </GraphQLClientContext.Provider>
   );
 }
 

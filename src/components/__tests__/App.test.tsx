@@ -262,9 +262,11 @@ describe('App page routing', () => {
   it('calls loadPortalSite with search mode', async () => {
     await renderApp('');
 
-    expect(mockedLoadPortalSite).toHaveBeenCalledWith({
-      portalCode: 'TEST',
-      isSearchPage: true
-    });
+    expect(mockedLoadPortalSite).toHaveBeenCalledWith(
+      expect.objectContaining({
+        portalCode: 'TEST',
+        isSearchPage: true
+      })
+    );
   });
 });

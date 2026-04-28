@@ -1,5 +1,5 @@
+import { GraphQLClient } from 'graphql-request';
 import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
-import { requestGraphQL } from '../_lib/graphql_request';
 import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
 
 interface PortalSiteQueryVariables {
@@ -19,15 +19,17 @@ interface PortalSiteQueryResponse {
 interface LoadPortalSiteParams {
   portalCode: string;
   isSearchPage: boolean;
+  client: GraphQLClient;
 }
 
 export async function loadPortalSite({
   portalCode,
-  isSearchPage
+  isSearchPage,
+  client
 }: LoadPortalSiteParams): Promise<AppPortalSite> {
   const query = isSearchPage ? PORTAL_SEARCH_QUERY : PORTAL_BASE_QUERY;
 
-  const data = await requestGraphQL<
+  const data = await client.request<
     PortalSiteQueryResponse,
     PortalSiteQueryVariables
   >(query, {

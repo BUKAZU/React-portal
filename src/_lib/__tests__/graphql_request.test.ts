@@ -1,10 +1,5 @@
 import { GraphQLClient } from 'graphql-request';
-import {
-  createGraphQLRequestClient,
-  requestGraphQL,
-  setGraphQLRequestConfig,
-  toApolloError
-} from '../graphql_request';
+import { createGraphQLRequestClient, toApolloError } from '../graphql_request';
 
 jest.mock('graphql-request', () => ({
   GraphQLClient: jest.fn()
@@ -16,15 +11,10 @@ const mockedGraphQLClient = GraphQLClient as MockedClientCtor;
 describe('graphql_request helpers', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setGraphQLRequestConfig({
-      apiUrl: 'https://api.bukazu.com/graphql',
-      locale: 'en',
-      headers: {}
-    });
   });
 
-  it('creates a client from centralized config', () => {
-    createGraphQLRequestClient();
+  it('creates a client from explicit apiUrl and locale', () => {
+    createGraphQLRequestClient('https://api.bukazu.com/graphql', 'en');
 
     expect(mockedGraphQLClient).toHaveBeenCalledWith(
       'https://api.bukazu.com/graphql',
@@ -36,40 +26,17 @@ describe('graphql_request helpers', () => {
     );
   });
 
-  it('requests data using current config and variables', async () => {
-    const request = jest.fn().mockResolvedValue({ PortalSite: { id: 'x' } });
-    mockedGraphQLClient.mockImplementation(
-      () =>
-        ({
-          request
-        }) as unknown as GraphQLClient
-    );
-
-    setGraphQLRequestConfig({
-      apiUrl: 'https://custom.example/graphql',
-      locale: 'nl',
-      headers: { authorization: 'Bearer token' }
-    });
-
-    const result = await requestGraphQL<{ PortalSite: { id: string } }>(
-      'query Test($id: ID!) { PortalSite(id: $id) { id } }',
-      { id: 'x' }
-    );
+  it('creates a client with a custom apiUrl and locale', () => {
+    createGraphQLRequestClient('https://custom.example/graphql', 'nl');
 
     expect(mockedGraphQLClient).toHaveBeenCalledWith(
       'https://custom.example/graphql',
       {
         headers: {
-          locale: 'nl',
-          authorization: 'Bearer token'
+          locale: 'nl'
         }
       }
     );
-    expect(request).toHaveBeenCalledWith(
-      'query Test($id: ID!) { PortalSite(id: $id) { id } }',
-      { id: 'x' }
-    );
-    expect(result.PortalSite.id).toBe('x');
   });
 
   it('maps unknown errors to ApolloError', () => {

@@ -211,9 +211,11 @@ describe('ReviewsPage', () => {
 
     await renderPage();
 
-    expect(mockedLoadReviewsHouse).toHaveBeenCalledWith({
-      portalCode: 'PORTAL1',
-      objectCode: 'HOUSE1'
-    });
+    expect(mockedLoadReviewsHouse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        portalCode: 'PORTAL1',
+        objectCode: 'HOUSE1'
+      })
+    );
   });
 });

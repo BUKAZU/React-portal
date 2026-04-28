@@ -13,6 +13,7 @@ import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
 import { toApolloError } from '../_lib/graphql_request';
+import { GraphQLClientContext } from '../_lib/GraphQLClientContext';
 
 interface Props {
   pageType?: string;
@@ -27,6 +28,7 @@ type AppState =
 
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   const { portalCode, objectCode } = useContext(AppContext);
+  const client = useContext(GraphQLClientContext);
   const [state, setState] = useState<AppState>({ status: 'loading' });
 
   const isSearchPage = !objectCode;
@@ -35,7 +37,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     let isMounted = true;
     setState({ status: 'loading' });
 
-    void loadPortalSite({ portalCode, isSearchPage })
+    void loadPortalSite({ portalCode, isSearchPage, client })
       .then((portalSite) => {
         if (!isMounted) {
           return;
@@ -52,7 +54,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     return () => {
       isMounted = false;
     };
-  }, [portalCode, isSearchPage]);
+  }, [portalCode, isSearchPage, client]);
 
   if (state.status === 'loading') {
     return <Loading />;

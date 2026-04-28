@@ -1,24 +1,18 @@
+import { GraphQLClient } from 'graphql-request';
 import { REVIEWS_QUERY } from '../../../_lib/gql';
-import { requestGraphQL } from '../../../_lib/graphql_request';
 import { loadReviewsHouse } from '../ReviewsPage';
 
 jest.mock('../../../_lib/gql', () => ({
   REVIEWS_QUERY: 'REVIEWS_QUERY'
 }));
 
-jest.mock('../../../_lib/graphql_request', () => ({
-  requestGraphQL: jest.fn()
-}));
-
-const mockedRequestGraphQL = requestGraphQL as jest.Mock;
+function makeMockClient(resolvedValue: unknown): GraphQLClient {
+  return { request: jest.fn().mockResolvedValue(resolvedValue) } as unknown as GraphQLClient;
+}
 
 describe('loadReviewsHouse', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('requests reviews house through the central request helper', async () => {
-    mockedRequestGraphQL.mockResolvedValue({
+  it('requests reviews house through the provided client', async () => {
+    const client = makeMockClient({
       PortalSite: {
         houses: [
           {
@@ -34,10 +28,11 @@ describe('loadReviewsHouse', () => {
 
     const result = await loadReviewsHouse({
       portalCode: 'PORTAL1',
-      objectCode: 'HOUSE1'
+      objectCode: 'HOUSE1',
+      client
     });
 
-    expect(mockedRequestGraphQL).toHaveBeenCalledWith(REVIEWS_QUERY, {
+    expect((client.request as jest.Mock)).toHaveBeenCalledWith(REVIEWS_QUERY, {
       id: 'PORTAL1',
       house_id: 'HOUSE1'
     });
@@ -45,7 +40,7 @@ describe('loadReviewsHouse', () => {
   });
 
   it('throws when the API returns no matching house', async () => {
-    mockedRequestGraphQL.mockResolvedValue({
+    const client = makeMockClient({
       PortalSite: {
         houses: []
       }
@@ -54,7 +49,8 @@ describe('loadReviewsHouse', () => {
     await expect(
       loadReviewsHouse({
         portalCode: 'PORTAL1',
-        objectCode: 'HOUSE1'
+        objectCode: 'HOUSE1',
+        client
       })
     ).rejects.toThrow('No reviews house found for the given portal and object');
   });

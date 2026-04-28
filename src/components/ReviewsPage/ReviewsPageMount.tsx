@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ApolloError } from '@apollo/client';
 import { toApolloError } from '../../_lib/graphql_request';
+import { GraphQLClientContext } from '../../_lib/GraphQLClientContext';
 import { mountPlainNode } from '../../_lib/plain_mount';
 import { ApiError } from '../Error';
 import Loading from '../icons/loading.svg';
@@ -34,13 +35,14 @@ function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
 }
 
 function ReviewsPageMount({ objectCode, portalCode }: Props): JSX.Element {
+  const client = useContext(GraphQLClientContext);
   const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
 
   useEffect(() => {
     let isMounted = true;
     setState({ status: 'loading' });
 
-    void loadReviewsHouse({ portalCode, objectCode })
+    void loadReviewsHouse({ portalCode, objectCode, client })
       .then((house) => {
         if (!isMounted) {
           return;
@@ -57,7 +59,7 @@ function ReviewsPageMount({ objectCode, portalCode }: Props): JSX.Element {
     return () => {
       isMounted = false;
     };
-  }, [portalCode, objectCode]);
+  }, [portalCode, objectCode, client]);
 
   if (state.status === 'loading') {
     return (
