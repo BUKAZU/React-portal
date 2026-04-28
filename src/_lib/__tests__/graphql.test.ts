@@ -1,15 +1,31 @@
-import { graphqlMutation, MAX_RETRY_ATTEMPTS } from '../graphql';
+import {
+  graphqlMutation,
+  GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS
+} from '../graphql';
 
 // Mock the global fetch
 const mockFetch = jest.fn();
-// @ts-ignore - We're mocking the global fetch
-global.fetch = mockFetch;
+let originalFetch: typeof globalThis.fetch | undefined;
 
 describe('graphqlMutation', () => {
   const mockUrl = 'https://test-api.com/graphql';
   const mockQuery = 'mutation { test }';
   const mockVariables = { id: 1 };
   const mockHeaders = { Authorization: 'Bearer token' };
+
+  beforeAll(() => {
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = mockFetch as unknown as typeof globalThis.fetch;
+  });
+
+  afterAll(() => {
+    if (originalFetch) {
+      globalThis.fetch = originalFetch;
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (globalThis as any).fetch;
+    }
+  });
 
   beforeEach(() => {
     // Clear all mocks before each test
@@ -135,10 +151,10 @@ describe('graphqlMutation', () => {
       jest.useRealTimers();
     });
 
-    it('exposes MAX_RETRY_ATTEMPTS as a positive integer', () => {
-      expect(typeof MAX_RETRY_ATTEMPTS).toBe('number');
-      expect(MAX_RETRY_ATTEMPTS).toBeGreaterThan(0);
-      expect(Number.isInteger(MAX_RETRY_ATTEMPTS)).toBe(true);
+    it('exposes GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS as a positive integer', () => {
+      expect(typeof GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS).toBe('number');
+      expect(GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS).toBeGreaterThan(0);
+      expect(Number.isInteger(GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS)).toBe(true);
     });
 
     it('retries and succeeds when fetch fails with TypeError then recovers', async () => {
@@ -175,8 +191,10 @@ describe('graphqlMutation', () => {
       await jest.runAllTimersAsync();
       await assertion;
 
-      // Initial attempt + MAX_RETRY_ATTEMPTS retries
-      expect(mockFetch).toHaveBeenCalledTimes(MAX_RETRY_ATTEMPTS + 1);
+      // Initial attempt + GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS retries
+      expect(mockFetch).toHaveBeenCalledTimes(
+        GRAPHQL_MUTATION_MAX_RETRY_ATTEMPTS + 1
+      );
     });
 
     it('does not retry on non-connection errors (plain Error)', async () => {
