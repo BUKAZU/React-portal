@@ -7,12 +7,12 @@ import ReviewsPageMount from './ReviewsPage/ReviewsPageMount';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
-import { ApolloError } from '@apollo/client';
+import { GraphQLError } from 'graphql';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
-import { toApolloError } from '../_lib/graphql_request';
+import { toGraphQLErrors } from '../_lib/graphql_request';
 import { GraphQLClientContext } from '../_lib/GraphQLClientContext';
 
 interface Props {
@@ -23,7 +23,7 @@ interface Props {
 
 type AppState =
   | { status: 'loading' }
-  | { status: 'error'; error: ApolloError }
+  | { status: 'error'; error: GraphQLError[] }
   | { status: 'ready'; portalSite: AppPortalSite };
 
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
@@ -48,7 +48,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
         if (!isMounted) {
           return;
         }
-        setState({ status: 'error', error: toApolloError(error) });
+        setState({ status: 'error', error: toGraphQLErrors(error) });
       });
 
     return () => {

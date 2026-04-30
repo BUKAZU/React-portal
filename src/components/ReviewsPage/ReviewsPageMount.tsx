@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ApolloError } from '@apollo/client';
-import { toApolloError } from '../../_lib/graphql_request';
+import { GraphQLError } from 'graphql';
+import { toGraphQLErrors } from '../../_lib/graphql_request';
 import { GraphQLClientContext } from '../../_lib/GraphQLClientContext';
 import { mountPlainNode } from '../../_lib/plain_mount';
 import { ApiError } from '../Error';
@@ -15,7 +15,7 @@ interface Props {
 
 type ReviewsPageState =
   | { status: 'loading' }
-  | { status: 'error'; error: ApolloError }
+  | { status: 'error'; error: GraphQLError[] }
   | { status: 'ready'; house: ReviewsHouse };
 
 function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
@@ -53,7 +53,7 @@ function ReviewsPageMount({ objectCode, portalCode }: Props): JSX.Element {
         if (!isMounted) {
           return;
         }
-        setState({ status: 'error', error: toApolloError(error) });
+        setState({ status: 'error', error: toGraphQLErrors(error) });
       });
 
     return () => {

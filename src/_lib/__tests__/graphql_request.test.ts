@@ -1,5 +1,6 @@
 import { GraphQLClient } from 'graphql-request';
-import { createGraphQLRequestClient, toApolloError } from '../graphql_request';
+import { GraphQLError } from 'graphql';
+import { createGraphQLRequestClient, toGraphQLErrors } from '../graphql_request';
 
 jest.mock('graphql-request', () => ({
   GraphQLClient: jest.fn()
@@ -39,9 +40,19 @@ describe('graphql_request helpers', () => {
     );
   });
 
-  it('maps unknown errors to ApolloError', () => {
-    const error = toApolloError(new Error('boom'));
+  it('maps unknown errors to GraphQLErrors', () => {
+    const error = toGraphQLErrors(new Error('boom'));
 
-    expect(error.graphQLErrors[0].message).toBe('boom');
+    expect(error[0].message).toBe('boom');
+  });
+
+  it('returns GraphQLErrors from a GraphQL response error', () => {
+    const graphQLError = new GraphQLError('resolver failed');
+
+    const errors = toGraphQLErrors({
+      response: { errors: [graphQLError] }
+    });
+
+    expect(errors).toEqual([graphQLError]);
   });
 });
