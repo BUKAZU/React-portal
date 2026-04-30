@@ -24,10 +24,7 @@ function getGraphQLErrors(
   return errorSource;
 }
 
-function ApiError(
-  errors: ApiErrorProps,
-  modal: boolean = false
-): JSX.Element {
+function ApiError(errors: ApiErrorProps, modal: boolean = false): JSX.Element {
   const graphQLErrors = getGraphQLErrors(errors.errors);
 
   if (
@@ -41,9 +38,7 @@ function ApiError(
 
   const errorMessage = (
     <div className="bukazu-error-message">
-      <h2>
-        {t('something_went_wrong_please_try_again')}
-      </h2>
+      <h2>{t('something_went_wrong_please_try_again')}</h2>
       <ul>
         {graphQLErrors.map((err) => (
           <li key={err.message}>{err.message}</li>

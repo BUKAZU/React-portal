@@ -1,6 +1,9 @@
 import { GraphQLClient } from 'graphql-request';
 import { GraphQLError } from 'graphql';
-import { createGraphQLRequestClient, toGraphQLErrors } from '../graphql_request';
+import {
+  createGraphQLRequestClient,
+  toGraphQLErrors
+} from '../graphql_request';
 
 jest.mock('graphql-request', () => ({
   GraphQLClient: jest.fn()

@@ -15,9 +15,13 @@ jest.mock('../../../_lib/sentry', () => ({
   reportError: jest.fn()
 }));
 
-jest.mock('../../Modal', () => ({ children }: { children: React.ReactNode }) => (
-  <div data-testid="modal">{children}</div>
-));
+jest.mock(
+  '../../Modal',
+  () =>
+    ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="modal">{children}</div>
+    )
+);
 
 jest.mock('../../../intl', () => ({
   t: (id: string) => id
