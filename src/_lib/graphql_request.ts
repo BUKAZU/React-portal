@@ -1,6 +1,11 @@
-import { ApolloError } from '@apollo/client';
 import { GraphQLError } from 'graphql';
 import { GraphQLClient } from 'graphql-request';
+
+interface GraphQLResponseError {
+  response?: {
+    errors?: readonly GraphQLError[];
+  };
+}
 
 export function createGraphQLRequestClient(
   apiUrl: string,
@@ -13,15 +18,28 @@ export function createGraphQLRequestClient(
   });
 }
 
-export function toApolloError(error: unknown): ApolloError {
-  if (error instanceof ApolloError) {
-    return error;
+function hasGraphQLResponseErrors(
+  error: unknown
+): error is GraphQLResponseError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    Array.isArray((error as GraphQLResponseError).response?.errors)
+  );
+}
+
+export function toGraphQLErrors(error: unknown): GraphQLError[] {
+  if (hasGraphQLResponseErrors(error)) {
+    const { errors } = error.response ?? {};
+
+    if (errors !== undefined && errors.length > 0) {
+      return [...errors];
+    }
   }
 
   const message =
     error instanceof Error ? error.message : 'A GraphQL request failed';
 
-  return new ApolloError({
-    graphQLErrors: [new GraphQLError(message)]
-  });
+  return [new GraphQLError(message)];
 }

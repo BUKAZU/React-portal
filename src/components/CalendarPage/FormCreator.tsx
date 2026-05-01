@@ -131,7 +131,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           {loading && <div className="return-message">Creating booking...</div>}
           {error && (
             <Modal show={true} onClose={reset}>
-              <ApiError errors={error} modal={true} />
+              <ApiError errors={error} />
             </Modal>
           )}
           {data && (

@@ -24,8 +24,8 @@ jest.mock('../ReviewsPage/ReviewsPageMount', () => () => (
 ));
 jest.mock('../SafeBooking', () => () => '<div class="safe-booking"></div>');
 jest.mock('../Error', () => ({
-  ApiError: ({ errors }: { errors?: { message: string } }) => (
-    <div data-testid="api-error">{errors?.message}</div>
+  ApiError: ({ errors }: { errors?: Array<{ message: string }> }) => (
+    <div data-testid="api-error">{errors?.[0]?.message}</div>
   )
 }));
 jest.mock(

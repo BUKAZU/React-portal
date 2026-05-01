@@ -15,7 +15,7 @@ jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 
 jest.mock('../../Error', () => ({
   ApiError: ({ errors }: { errors: any }) => (
-    <div data-testid="api-error">{errors.message}</div>
+    <div data-testid="api-error">{errors[0]?.message}</div>
   )
 }));
 
