@@ -63,7 +63,7 @@
     "whatwg-fetch": "3.6.20"
   },
   "dependencies": {
-    "@apollo/client": "^3.11.8",
+    "@apollo/client": "^4.1.9",
     "@sentry/browser": "^10.45.0",
     "date-fns": "^4.1.0",
     "formik": "^2.2.9",
