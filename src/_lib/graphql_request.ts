@@ -30,8 +30,12 @@ function hasGraphQLResponseErrors(
 }
 
 export function toGraphQLErrors(error: unknown): GraphQLError[] {
-  if (hasGraphQLResponseErrors(error) && error.response?.errors !== undefined) {
-    return [...error.response.errors];
+  if (hasGraphQLResponseErrors(error)) {
+    const { errors } = error.response ?? {};
+
+    if (errors !== undefined && errors.length > 0) {
+      return [...errors];
+    }
   }
 
   const message =
