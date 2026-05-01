@@ -1,5 +1,4 @@
 import React from 'react';
-import Modal from '../Modal';
 import { t } from '../../intl';
 import { GraphQLError } from 'graphql';
 import { reportError } from '../../_lib/sentry';
@@ -24,7 +23,7 @@ function getGraphQLErrors(
   return errorSource;
 }
 
-function ApiError(errors: ApiErrorProps, modal: boolean = false): JSX.Element {
+function ApiError(errors: ApiErrorProps): JSX.Element {
   const graphQLErrors = getGraphQLErrors(errors.errors);
 
   if (
@@ -36,7 +35,7 @@ function ApiError(errors: ApiErrorProps, modal: boolean = false): JSX.Element {
     reportError(new Error(graphQLErrors.map((err) => err.message).join('\n')));
   }
 
-  const errorMessage = (
+  return (
     <div className="bukazu-error-message">
       <h2>{t('something_went_wrong_please_try_again')}</h2>
       <ul>
@@ -46,11 +45,6 @@ function ApiError(errors: ApiErrorProps, modal: boolean = false): JSX.Element {
       </ul>
     </div>
   );
-  if (modal == true) {
-    return <Modal show={true}>{errorMessage}</Modal>;
-  }
-
-  return errorMessage;
 }
 
 export default ApiError;

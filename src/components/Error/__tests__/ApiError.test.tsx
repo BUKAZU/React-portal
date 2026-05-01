@@ -15,14 +15,6 @@ jest.mock('../../../_lib/sentry', () => ({
   reportError: jest.fn()
 }));
 
-jest.mock(
-  '../../Modal',
-  () =>
-    ({ children }: { children: React.ReactNode }) => (
-      <div data-testid="modal">{children}</div>
-    )
-);
-
 jest.mock('../../../intl', () => ({
   t: (id: string) => id
 }));
@@ -71,19 +63,6 @@ describe('ApiError', () => {
 
     expect(sentryLib.reportError).toHaveBeenCalledWith(
       expect.objectContaining({ message: 'GraphQL error' })
-    );
-  });
-
-  it('wraps the error in a Modal when modal=true', () => {
-    const error = makeGraphQLErrors(['Modal error']);
-
-    act(() => {
-      root.render(<>{ApiError({ errors: error }, true)}</>);
-    });
-
-    expect(container.querySelector('[data-testid="modal"]')).not.toBeNull();
-    expect(sentryLib.reportError).toHaveBeenCalledWith(
-      expect.objectContaining({ message: 'Modal error' })
     );
   });
 
