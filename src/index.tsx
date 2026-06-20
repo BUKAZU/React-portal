@@ -86,7 +86,12 @@ function Portal({
     <GraphQLClientContext.Provider value={graphqlClient}>
       <ApolloProvider client={client}>
         <AppContext.Provider
-          value={{ portalCode, objectCode, locale: resolvedLocale }}
+          value={{
+            portalCode,
+            objectCode,
+            locale: resolvedLocale,
+            apiUrl: api_url
+          }}
         >
           <div className="bu-portal">
             <App pageType={pageType} locale={resolvedLocale} filters={filters} />
