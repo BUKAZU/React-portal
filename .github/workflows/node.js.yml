@@ -40,6 +40,8 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
 
     permissions:
       contents: read
@@ -52,8 +54,6 @@ jobs:
           node-version: 24.x
           cache: 'npm'
       - run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
       - name: Run Playwright e2e tests
         run: npm run test:e2e
       - name: Upload Playwright report
