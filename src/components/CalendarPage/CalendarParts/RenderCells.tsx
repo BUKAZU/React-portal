@@ -30,7 +30,7 @@ function RenderCells({
   month,
   discounts,
   house
-}: CellProps): Array<JSX.Element> {
+}: CellProps): JSX.Element {
   const dispatch = useContext(CalendarContextDispatch);
   const dates = useContext(CalendarContext);
 
@@ -38,7 +38,7 @@ function RenderCells({
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
   const endDate = endOfWeek(monthEnd);
-  const rows: JSX.Element[] = [];
+  const rows: React.ReactNode[] = [];
 
   let days: JSX.Element[] = [];
   let day: Date = startDate;
