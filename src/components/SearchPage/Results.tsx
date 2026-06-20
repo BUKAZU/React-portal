@@ -103,9 +103,7 @@ function Results({
     <div
       id="results"
       className={
-        PortalSite.options.filtersForm
-          ? PortalSite.options.filtersForm.mode
-          : ''
+        PortalSite.options.filtersForm.mode
       }
     >
       {Pagination}

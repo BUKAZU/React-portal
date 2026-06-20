@@ -28,17 +28,11 @@ function Filters({
   const [show, setShow] = useState(false);
 
   const searchFields = options.searchFields || defaultFilter;
-  let fixed = options.filtersForm
-    ? options.filtersForm.fixed_mobile
-      ? 'fixed-mobile'
-      : null
-    : null;
+  let fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : null;
 
-  let filterClass = options.filtersForm
-    ? options.filtersForm.show
-      ? `filters filters-${options.filtersForm.location}`
-      : 'filters-hidden'
-    : 'filters';
+  let filterClass = options.filtersForm.show
+    ? `filters filters-${options.filtersForm.location}`
+    : 'filters-hidden';
 
   let showOn = show && 'showOnMobile';
 

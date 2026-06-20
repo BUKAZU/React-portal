@@ -35,11 +35,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const { locale, portalCode, objectCode } = useContext(AppContext);
   const dispatch = useContext(CalendarContextDispatch);
 
-  const { options } = PortalSite;
+  const { options, bookingFormConfiguration } = PortalSite;
 
-  const bookingFormConfiguration = PortalSite.bookingFormConfiguration;
-
-  const bookingFields = options.bookingFields || DefaultBookingFields;
+  const bookingFields = options.bookingFields;
 
   const bookingPrice = house.booking_price;
 
@@ -140,7 +138,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 {t('return_to_calendar')}
               </a>
               <h2>{t('stay_details')}</h2>
-              <Guests bookingFormConfiguration={bookingFormConfiguration} house={house} />
+              <Guests
+                bookingFormConfiguration={bookingFormConfiguration}
+                house={house}
+              />
 
               {errors.max_persons && (
                 <div className="error-message bu-error-message persons">
