@@ -63,3 +63,28 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  bundle-size:
+    if: github.event_name == 'pull_request'
+    needs: [build, e2e]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+      - name: Report bundle size
+        uses: preactjs/compressed-size-action@v3
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          install-script: 'npm ci'
+          build-script: 'npm run build'
+          pattern: './build/portal.{es,umd}.js'
+          strip-hash: '\.[a-f0-9]{8}\.'
