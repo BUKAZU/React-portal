@@ -14,12 +14,34 @@ jobs:
       id-token: write
 
     steps:
+      - name: Check preview cleanup configuration
+        id: cleanup-config
+        env:
+          AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          missing=()
+
+          [[ -n "$AWS_ROLE_TO_ASSUME" ]] || missing+=("AWS_ROLE_TO_ASSUME")
+          [[ -n "$AWS_REGION" ]] || missing+=("AWS_REGION")
+          [[ -n "$AWS_S3_BUCKET" ]] || missing+=("AWS_S3_BUCKET")
+
+          if [ ${#missing[@]} -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Skipping S3 preview cleanup because the following secrets are not configured: $(IFS=,; echo "${missing[*]}")"
+          fi
+
       - name: Configure AWS credentials
+        if: steps.cleanup-config.outputs.ready == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Remove S3 deployment
+        if: steps.cleanup-config.outputs.ready == 'true'
         run: |
           aws s3 rm s3://${{ secrets.AWS_S3_BUCKET }}/pr-${{ github.event.pull_request.number }}/ --recursive
