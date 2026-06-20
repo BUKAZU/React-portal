@@ -85,7 +85,7 @@ export default class ObjectDetails {
         );
 
         const departureTimeCell = document.createElement('td');
-        departureTimeCell.textContent = departureDate.departure_time;
+        departureTimeCell.textContent = departureDate.departure_time ?? null;
 
         departureRow.append(departureLabel, departureDateCell, departureTimeCell);
 

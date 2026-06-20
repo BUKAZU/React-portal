@@ -41,7 +41,6 @@ jest.mock('@apollo/client', () => ({
 jest.mock('../../../_lib/gql', () => ({
   SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
   BOOKING_PRICE_QUERY: 'BOOKING_PRICE_QUERY',
-  CALENDAR_QUERY: 'CALENDAR_QUERY',
   CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION',
   PRICE_FIELD_BOOKING_PRICE_QUERY: 'PRICE_FIELD_BOOKING_PRICE_QUERY'
 }));
@@ -253,7 +252,12 @@ function renderApp() {
   act(() => {
     root.render(
       <AppContext.Provider
-        value={{ locale: 'en', portalCode: 'TEST', objectCode: 'HOUSE1' }}
+        value={{
+          locale: 'en',
+          portalCode: 'TEST',
+          objectCode: 'HOUSE1',
+          apiUrl: 'https://api.bukazu.com/graphql'
+        }}
       >
         <CalendarWrapper />
       </AppContext.Provider>

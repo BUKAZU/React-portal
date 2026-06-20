@@ -94,6 +94,7 @@ export type PortalSiteType = {
 export type LocaleType = 'nl' | 'en' | 'de' | 'es' | 'fr' | 'it';
 
 export type Discount = {
+  name?: string;
   discount_starts_at: string;
   discount_ends_at: string;
 };
@@ -105,6 +106,9 @@ export type BuDate = {
   max_nights: number;
   date: string;
   special_offer: number;
+  arrival_time_from?: string | null;
+  arrival_time_to?: string | null;
+  departure_time?: string | null;
 };
 
 export type HouseType = {
