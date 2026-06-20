@@ -98,7 +98,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
         createBooking({ variables }).then(() => {
           const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
-          const localeRedirectUrl = redirect_urls[locale as string];
+          const localeRedirectUrl = redirect_urls[locale];
           if (localeRedirectUrl && localeRedirectUrl !== '') {
             window.location = localeRedirectUrl;
           } else {

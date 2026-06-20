@@ -48,6 +48,7 @@ export type BookingFormConfigurationType = {
   children_from: number;
   children_til: number;
   language_selector_visible: boolean;
+  /** Per-locale redirect URLs after booking. Keys are locale codes ('nl', 'en', 'de', 'fr', 'es', 'it'); values may be null when not configured. */
   redirect_urls: Record<string, string | null>;
   show_discount_code: boolean;
   number_of_months: number;
