@@ -5,9 +5,6 @@ import {
   DocumentNode
 } from 'graphql';
 import {
-  PORTAL_BASE_QUERY,
-  PORTAL_SEARCH_QUERY,
-  PORTAL_QUERY,
   BOOKING_PRICE_QUERY,
   CREATE_BOOKING_MUTATION,
   SINGLE_HOUSE_QUERY,
@@ -18,16 +15,11 @@ import {
   PRICE_FIELD_BOOKING_PRICE_QUERY,
   REVIEWS_QUERY,
   CHECK_DISCOUNT_CODE,
-  HOUSE_SEARCH_RESULT_FIELDS,
-  BOOKING_FORM_LABEL_FIELDS,
-  BOOKING_FORM_CONFIGURATION_FIELDS
+  HOUSE_SEARCH_RESULT_FIELDS
 } from '../gql';
 import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
-  { name: 'PORTAL_BASE_QUERY', document: PORTAL_BASE_QUERY },
-  { name: 'PORTAL_SEARCH_QUERY', document: PORTAL_SEARCH_QUERY },
-  { name: 'PORTAL_QUERY', document: PORTAL_QUERY },
   { name: 'BOOKING_PRICE_QUERY', document: BOOKING_PRICE_QUERY },
   { name: 'CREATE_BOOKING_MUTATION', document: CREATE_BOOKING_MUTATION },
   { name: 'SINGLE_HOUSE_QUERY', document: SINGLE_HOUSE_QUERY },
@@ -44,12 +36,7 @@ const allQueries: Array<{ name: string; document: DocumentNode }> = [
 ];
 
 const allFragments: Array<{ name: string; document: DocumentNode }> = [
-  { name: 'HOUSE_SEARCH_RESULT_FIELDS', document: HOUSE_SEARCH_RESULT_FIELDS },
-  { name: 'BOOKING_FORM_LABEL_FIELDS', document: BOOKING_FORM_LABEL_FIELDS },
-  {
-    name: 'BOOKING_FORM_CONFIGURATION_FIELDS',
-    document: BOOKING_FORM_CONFIGURATION_FIELDS
-  }
+  { name: 'HOUSE_SEARCH_RESULT_FIELDS', document: HOUSE_SEARCH_RESULT_FIELDS }
 ];
 
 describe('GraphQL queries comply with API schema', () => {

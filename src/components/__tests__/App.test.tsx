@@ -105,7 +105,12 @@ async function renderApp(
   await act(async () => {
     root.render(
       <AppContext.Provider
-        value={{ locale: 'en', portalCode: 'TEST', objectCode }}
+        value={{
+          locale: 'en',
+          portalCode: 'TEST',
+          objectCode,
+          apiUrl: 'https://api.example.com/graphql'
+        }}
       >
         <App locale="en" pageType={pageType} />
       </AppContext.Provider>
@@ -263,7 +268,10 @@ describe('App page routing', () => {
     expect(mockedLoadPortalSite).toHaveBeenCalledWith(
       expect.objectContaining({
         portalCode: 'TEST',
-        isSearchPage: true
+        isSearchPage: true,
+        isBookingPage: false,
+        apiUrl: 'https://api.example.com/graphql',
+        locale: 'en'
       })
     );
   });

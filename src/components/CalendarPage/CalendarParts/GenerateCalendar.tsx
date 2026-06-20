@@ -1,15 +1,20 @@
 import { useQuery } from '@apollo/client';
 import React, { useContext } from 'react';
 import { t } from '../../../intl';
-import { HouseType, PortalSiteType } from '../../../types';
+import { HouseType } from '../../../types';
 import { SINGLE_HOUSE_QUERY } from '../../../_lib/gql';
 import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
 import Calendar from '../Calendar';
 import { TrackEvent } from '../../../_lib/Tracking';
+import type { AppPortalSite } from '../../loadPortalSite';
 
-function GenerateCalendar(): JSX.Element {
+interface Props {
+  portalSite: AppPortalSite;
+}
+
+function GenerateCalendar({ portalSite }: Props): JSX.Element {
   const { portalCode, objectCode, locale } = useContext(AppContext);
   const { loading, error, data } = useQuery(SINGLE_HOUSE_QUERY, {
     variables: { portalCode, objectCode }
@@ -36,11 +41,10 @@ function GenerateCalendar(): JSX.Element {
     );
   }
 
-  const PortalSite = data.PortalSite;
-  const Results = PortalSite.houses;
-  const numberOfMonths = PortalSite.bookingFormConfiguration.showMonthsAmount;
+  const Results = data.PortalSite.houses;
+  const numberOfMonths = portalSite.bookingFormConfiguration.showMonthsAmount;
   const numberOfMonthsInARow =
-    PortalSite.bookingFormConfiguration.showMonthsInARow;
+    portalSite.bookingFormConfiguration.showMonthsInARow;
 
   return (
     <div id="calendar-container">

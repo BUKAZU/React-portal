@@ -1,44 +1,58 @@
-import { GraphQLClient } from 'graphql-request';
-import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
-import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
+import {
+  fetchBookingFields,
+  fetchFilterFields,
+  fetchSearchFacets,
+  fetchSettings
+} from '../_lib/portal_settings';
+import { buildAppPortalSite, type AppPortalSite } from './portalSiteAdapter';
 
-interface PortalSiteQueryVariables {
-  id: string;
-}
-
-export interface AppPortalSite extends PortalSiteType {
-  portal_code: string;
-  options: PortalOptions;
-  colorsConfiguration: ColorsType;
-}
-
-interface PortalSiteQueryResponse {
-  PortalSite: AppPortalSite | null;
-}
+export type { AppPortalSite } from './portalSiteAdapter';
 
 interface LoadPortalSiteParams {
   portalCode: string;
+  /** Search page needs the house-derived facets and the filter-field list. */
   isSearchPage: boolean;
-  client: GraphQLClient;
+  /** Booking/calendar page needs the configured booking fields. */
+  isBookingPage: boolean;
+  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  apiUrl: string;
+  locale: string;
 }
 
+/**
+ * Load the portal-site configuration from the REST config endpoints and assemble
+ * it into the shape the app consumes. Replaces the legacy PORTAL_BASE_QUERY /
+ * PORTAL_SEARCH_QUERY GraphQL queries.
+ */
 export async function loadPortalSite({
   portalCode,
   isSearchPage,
-  client
+  isBookingPage,
+  apiUrl,
+  locale
 }: LoadPortalSiteParams): Promise<AppPortalSite> {
-  const query = isSearchPage ? PORTAL_SEARCH_QUERY : PORTAL_BASE_QUERY;
+  const settings = await fetchSettings({ apiUrl, locale, portalCode });
 
-  const data = await client.request<
-    PortalSiteQueryResponse,
-    PortalSiteQueryVariables
-  >(query, {
-    id: portalCode
-  });
-
-  if (!data.PortalSite) {
+  if (!settings) {
     throw new Error('Portal site data is missing');
   }
 
-  return data.PortalSite;
+  const [facets, filterFields] = isSearchPage
+    ? await Promise.all([
+        fetchSearchFacets({ apiUrl, locale, portalCode }),
+        fetchFilterFields({ apiUrl, locale, portalCode })
+      ])
+    : [undefined, undefined];
+
+  const bookingFields = isBookingPage
+    ? await fetchBookingFields({ apiUrl, locale, portalCode })
+    : undefined;
+
+  return buildAppPortalSite({
+    settings,
+    facets,
+    filterFields,
+    bookingFields,
+    locale
+  });
 }

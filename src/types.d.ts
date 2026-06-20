@@ -12,6 +12,8 @@ export type FiltersFormType = {
   no_results: number;
   location: string;
   mode: 'grid' | 'list';
+  show?: boolean;
+  fixedMobile?: boolean;
 };
 
 /**
@@ -55,6 +57,8 @@ export type BookingFormConfigurationType = {
   showDiscountCode: boolean;
   showMonthsAmount: number;
   showMonthsInARowAmount: number;
+  /** Alias of showMonthsInARowAmount; read by GenerateCalendar. */
+  showMonthsInARow: number;
 };
 
 type name_id_type = {
@@ -75,6 +79,8 @@ export type ColorsType = {
 export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
+  /** Search-filter fields to render, mapped from the filter-fields REST endpoint. */
+  searchFields?: { id: string; type: string }[];
   /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;
