@@ -93,7 +93,7 @@ describe('loadPortalSite', () => {
 
     // Adapter mapped the settings + facets into the consumed shape.
     expect(result.portal_code).toBe('P1');
-    expect(result.colorsConfiguration.buttonCta).toBe('#2');
+    expect(result.colorsConfiguration.button_cta).toBe('#2');
     expect(result.max_persons).toBe(8);
     expect(result.countries_label).toBe('Land');
   });

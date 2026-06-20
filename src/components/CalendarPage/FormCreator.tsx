@@ -15,7 +15,7 @@ import OptionalCosts from './formParts/OptionalCosts';
 import Guests from './formParts/Guests';
 import { validateForm } from './formParts/Validations';
 import { AppContext } from '../AppContext';
-import { HouseType, LocaleType, PortalSiteType } from '../../types';
+import { HouseType, PortalSiteType } from '../../types';
 import { BookingType } from './calender_types';
 import { useMutation } from '@apollo/client';
 import {
@@ -97,25 +97,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         };
 
         createBooking({ variables }).then(() => {
-          const localeRedirectKeyMap: Record<LocaleType, 'redirectUrlNl' | 'redirectUrlEn' | 'redirectUrlDe' | 'redirectUrlFr' | 'redirectUrlEs' | 'redirectUrlIt'> = {
-            nl: 'redirectUrlNl',
-            en: 'redirectUrlEn',
-            de: 'redirectUrlDe',
-            fr: 'redirectUrlFr',
-            es: 'redirectUrlEs',
-            it: 'redirectUrlIt'
-          };
-          const localeRedirectKey = localeRedirectKeyMap[locale as LocaleType];
-          const localeRedirectUrl = localeRedirectKey
-            ? bookingFormConfiguration[localeRedirectKey]
-            : undefined;
+          const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
+          const localeRedirectUrl = redirect_urls[locale as string];
           if (localeRedirectUrl && localeRedirectUrl !== '') {
             window.location = localeRedirectUrl;
-          } else if (
-            bookingFormConfiguration.redirectUrl &&
-            bookingFormConfiguration.redirectUrl !== ''
-          ) {
-            window.location = bookingFormConfiguration.redirectUrl;
           } else {
             setTimeout(() => {
               dispatch({

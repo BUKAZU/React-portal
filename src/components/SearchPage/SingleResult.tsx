@@ -20,39 +20,39 @@ function SingleResult({ result, options }: Props): JSX.Element {
         <div className="result">
           <div className="result-title">{result.name}</div>
           <div className="result-place">
-            {thisOptions.showCity && <span>{result.city}, </span>}
-            {thisOptions.showRegion && <span>{result.province}, </span>}
-            {thisOptions.showCountry && <span>{result.country_name}</span>}
+            {thisOptions.show_city && <span>{result.city}, </span>}
+            {thisOptions.show_region && <span>{result.province}, </span>}
+            {thisOptions.show_country && <span>{result.country_name}</span>}
           </div>
           <div
             className="result-description"
             dangerouslySetInnerHTML={{ __html: result.description }}
           />
           <div className="result-details">
-            {thisOptions.showPersons && (
+            {thisOptions.show_persons && (
               <div>
                 {result.persons} {t('persons')}
               </div>
             )}
-            {thisOptions.showBedrooms && (
+            {thisOptions.show_bedrooms && (
               <div>
                 {result.bedrooms} {t('bedrooms')}
               </div>
             )}
-            {thisOptions.showBathrooms && (
+            {thisOptions.show_bathrooms && (
               <div>
                 {result.bathrooms} {t('bathrooms')}
               </div>
             )}
           </div>
-          {thisOptions.showRating && result.rating && (
+          {thisOptions.show_rating && result.rating && (
             <div className="result-rating bu_card">
               <div className="result-rating-inner">
                 {result.rating.toFixed(1)}
               </div>
             </div>
           )}
-          {thisOptions.showPrice && (
+          {thisOptions.show_price && (
             <div className="result-price">
               {result.booking_price ? (
                 <>

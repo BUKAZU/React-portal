@@ -1,19 +1,20 @@
 import { PricesType } from './components/CalendarPage/Summary/cost_types';
 
 export type FiltersFormType = {
-  showCity: boolean;
-  showRegion: boolean;
-  showCountry: boolean;
-  showPersons: boolean;
-  showBathrooms: boolean;
-  showBedrooms: boolean;
-  showPrice: boolean;
+  show_city: boolean;
+  show_region: boolean;
+  show_country: boolean;
+  show_persons: boolean;
+  show_bathrooms: boolean;
+  show_bedrooms: boolean;
+  show_price: boolean;
+  show_rating?: boolean;
   categories: number[];
   no_results: number;
   location: string;
   mode: 'grid' | 'list';
   show?: boolean;
-  fixedMobile?: boolean;
+  fixed_mobile?: boolean;
 };
 
 /**
@@ -40,25 +41,17 @@ type BookingFormType = {
 
 /** Booking form configuration returned directly by the portal site API. */
 export type BookingFormConfigurationType = {
-  adultsFromAge: number;
-  babiesAllowed: boolean;
-  babiesTillAge: number;
-  childrenAllowed: boolean;
-  childrenFromAge: number;
-  childrenTillAge: number;
-  languageSelectorVisible: boolean;
-  redirectUrl: string;
-  redirectUrlNl: string;
-  redirectUrlEn: string;
-  redirectUrlDe: string;
-  redirectUrlFr: string;
-  redirectUrlEs: string;
-  redirectUrlIt: string;
-  showDiscountCode: boolean;
-  showMonthsAmount: number;
-  showMonthsInARowAmount: number;
-  /** Alias of showMonthsInARowAmount; read by GenerateCalendar. */
-  showMonthsInARow: number;
+  adults_from: number;
+  babies: boolean;
+  babies_til: number;
+  children: boolean;
+  children_from: number;
+  children_til: number;
+  language_selector_visible: boolean;
+  redirect_urls: Record<string, string | null>;
+  show_discount_code: boolean;
+  number_of_months: number;
+  number_of_months_in_a_row: number;
 };
 
 type name_id_type = {
@@ -70,7 +63,7 @@ export type ColorsType = {
   arrival: string;
   booked: string;
   button: string;
-  buttonCta: string;
+  button_cta: string;
   cell: string;
   departure: string;
   discount: string;

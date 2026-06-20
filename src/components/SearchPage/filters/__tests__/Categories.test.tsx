@@ -34,19 +34,19 @@ const mockPortalSite: PortalSiteType = {
   options: {
     filtersForm: {
       categories: [1, 2],
-      showCity: false,
-      showRegion: false,
-      showCountry: false,
-      showPersons: false,
-      showBathrooms: false,
-      showBedrooms: false,
-      showPrice: false,
-      showRating: false,
+      show_city: false,
+      show_region: false,
+      show_country: false,
+      show_persons: false,
+      show_bathrooms: false,
+      show_bedrooms: false,
+      show_price: false,
+      show_rating: false,
       no_results: 20,
       location: 'left',
       mode: 'grid',
       show: true,
-      fixedMobile: false
+      fixed_mobile: false
     },
     bookingFields: [],
     bookingForm: {} as any

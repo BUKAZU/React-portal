@@ -1,23 +1,16 @@
 /**
- * Maps the portal-site configuration REST responses (see `_lib/portal_settings.ts`)
- * back into the shapes the components already consume (`AppPortalSite`,
- * `PortalOptions`, `BookingFormConfigurationType`, `ColorsType`, plus the dynamic
- * `<field>_label` keys). This keeps the migration to REST invisible to every
- * consumer: only the data source changed, not the data shape.
+ * Assembles the portal-site configuration REST responses (see `_lib/portal_settings.ts`)
+ * into the `AppPortalSite` shape the components consume. The REST API already uses
+ * snake_case, matching the types directly — no field renaming needed.
  */
 import type {
   BookingFieldResponse,
   FilterFieldResponse,
   SearchFacetsResponse,
-  SettingsBookingForm,
-  SettingsColors,
-  SettingsFiltersForm,
   SettingsResponse
 } from '../_lib/portal_settings';
 import type {
-  BookingFormConfigurationType,
   ColorsType,
-  FiltersFormType,
   PortalOptions,
   PortalSiteType
 } from '../types';
@@ -46,63 +39,6 @@ export type MappedBookingField = {
   required: boolean;
   placeholder: string | null;
 };
-
-export function mapColors(colors: SettingsColors): ColorsType {
-  return {
-    button: colors.button,
-    buttonCta: colors.button_cta,
-    discount: colors.discount,
-    cell: colors.cell,
-    booked: colors.booked,
-    arrival: colors.arrival,
-    departure: colors.departure
-  };
-}
-
-export function mapBookingFormConfiguration(
-  bf: SettingsBookingForm
-): BookingFormConfigurationType & { showMonthsInARow: number } {
-  const redirect = bf.redirect_urls ?? {};
-  return {
-    adultsFromAge: bf.adults_from,
-    babiesAllowed: bf.babies,
-    babiesTillAge: bf.babies_til,
-    childrenAllowed: bf.children,
-    childrenFromAge: bf.children_from,
-    childrenTillAge: bf.children_til,
-    languageSelectorVisible: bf.language_selector_visible,
-    redirectUrl: '',
-    redirectUrlNl: redirect.nl ?? '',
-    redirectUrlEn: redirect.en ?? '',
-    redirectUrlDe: redirect.de ?? '',
-    redirectUrlFr: redirect.fr ?? '',
-    redirectUrlEs: redirect.es ?? '',
-    redirectUrlIt: redirect.it ?? '',
-    showDiscountCode: bf.show_discount_code,
-    showMonthsAmount: bf.number_of_months,
-    showMonthsInARowAmount: bf.number_of_months_in_a_row,
-    // GenerateCalendar reads `showMonthsInARow`; keep it in sync with the *Amount field.
-    showMonthsInARow: bf.number_of_months_in_a_row
-  };
-}
-
-export function mapFiltersForm(ff: SettingsFiltersForm): FiltersFormType {
-  return {
-    show: ff.show,
-    location: ff.location,
-    mode: ff.mode as FiltersFormType['mode'],
-    no_results: ff.no_results,
-    fixedMobile: ff.fixed_mobile,
-    categories: ff.categories,
-    showPrice: ff.show_price,
-    showPersons: ff.show_persons,
-    showBedrooms: ff.show_bedrooms,
-    showBathrooms: ff.show_bathrooms,
-    showCountry: ff.show_country,
-    showRegion: ff.show_region,
-    showCity: ff.show_city
-  };
-}
 
 /**
  * Flatten the all-locales label map down to the single requested locale, exposing
@@ -200,10 +136,10 @@ export function buildAppPortalSite({
   locale
 }: BuildAppPortalSiteParams): AppPortalSite {
   const mappedBookingFields = mapBookingFields(bookingFields ?? []);
-  const colorsConfiguration = mapColors(settings.colors);
+  const colorsConfiguration: ColorsType = settings.colors;
 
   const options: PortalOptions = {
-    filtersForm: mapFiltersForm(settings.filters_form),
+    filtersForm: settings.filters_form,
     bookingFields: mappedBookingFields,
     searchFields: mapFilterFields(filterFields ?? []),
     bookingForm: {} as PortalOptions['bookingForm'],
@@ -228,7 +164,7 @@ export function buildAppPortalSite({
     portal_code: settings.portal_code,
     options,
     colorsConfiguration,
-    bookingFormConfiguration: mapBookingFormConfiguration(settings.booking_form),
+    bookingFormConfiguration: settings.booking_form,
     booking_fields: mappedBookingFields,
     ...(facets ? mapSearchFacets(facets) : emptyFacets),
     ...mapLabels(settings.labels, locale)

@@ -172,24 +172,17 @@ const mockHouse = {
 };
 
 const mockBookingFormConfiguration = {
-  adultsFromAge: 18,
-  babiesAllowed: false,
-  babiesTillAge: 2,
-  childrenAllowed: false,
-  childrenFromAge: 3,
-  childrenTillAge: 17,
-  languageSelectorVisible: false,
-  redirectUrl: '',
-  redirectUrlNl: '',
-  redirectUrlEn: '',
-  redirectUrlDe: '',
-  redirectUrlFr: '',
-  redirectUrlEs: '',
-  redirectUrlIt: '',
-  showDiscountCode: false,
-  showMonthsAmount: 2,
-  showMonthsInARow: 2,
-  showMonthsInARowAmount: 2
+  adults_from: 18,
+  babies: false,
+  babies_til: 2,
+  children: false,
+  children_from: 3,
+  children_til: 17,
+  language_selector_visible: false,
+  redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
+  show_discount_code: false,
+  number_of_months: 2,
+  number_of_months_in_a_row: 2
 };
 
 /**

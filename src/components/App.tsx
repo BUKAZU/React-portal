@@ -82,7 +82,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   root.style.setProperty('--bukazu-booked', colors.booked);
   root.style.setProperty('--bukazu-departure', colors.departure);
   root.style.setProperty('--bukazu-button', colors.button);
-  root.style.setProperty('--bukazu-button_cta', colors.buttonCta);
+  root.style.setProperty('--bukazu-button_cta', colors.button_cta);
 
   let page;
 

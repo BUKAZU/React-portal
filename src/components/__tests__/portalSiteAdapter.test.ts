@@ -1,10 +1,7 @@
 import {
   buildAppPortalSite,
   mapBookingFields,
-  mapBookingFormConfiguration,
-  mapColors,
   mapFilterFields,
-  mapFiltersForm,
   mapLabels,
   mapSearchFacets
 } from '../portalSiteAdapter';
@@ -14,76 +11,6 @@ import type {
 } from '../../_lib/portal_settings';
 
 describe('portalSiteAdapter', () => {
-  it('mapColors renames button_cta', () => {
-    const colors = mapColors({
-      button: '#1',
-      button_cta: '#2',
-      discount: '#3',
-      cell: '#4',
-      booked: '#5',
-      arrival: '#6',
-      departure: '#7'
-    });
-    expect(colors.buttonCta).toBe('#2');
-    expect(colors.button).toBe('#1');
-  });
-
-  it('mapBookingFormConfiguration renames every field and mirrors months-in-a-row', () => {
-    const config = mapBookingFormConfiguration({
-      number_of_months: 3,
-      number_of_months_in_a_row: 2,
-      children: true,
-      babies: false,
-      babies_til: 2,
-      children_from: 4,
-      children_til: 12,
-      adults_from: 18,
-      show_discount_code: true,
-      language_selector_visible: false,
-      redirect_urls: { nl: 'https://nl', de: 'https://de' }
-    });
-
-    expect(config.showMonthsAmount).toBe(3);
-    expect(config.showMonthsInARowAmount).toBe(2);
-    expect(config.showMonthsInARow).toBe(2);
-    expect(config.childrenAllowed).toBe(true);
-    expect(config.babiesAllowed).toBe(false);
-    expect(config.babiesTillAge).toBe(2);
-    expect(config.childrenFromAge).toBe(4);
-    expect(config.childrenTillAge).toBe(12);
-    expect(config.adultsFromAge).toBe(18);
-    expect(config.showDiscountCode).toBe(true);
-    expect(config.redirectUrlNl).toBe('https://nl');
-    expect(config.redirectUrlDe).toBe('https://de');
-    expect(config.redirectUrlEn).toBe('');
-    expect(config.redirectUrl).toBe('');
-  });
-
-  it('mapFiltersForm renames show_* and fixed_mobile', () => {
-    const ff = mapFiltersForm({
-      show: true,
-      location: 'top',
-      mode: 'grid',
-      no_results: 9,
-      fixed_mobile: true,
-      categories: [1],
-      show_price: true,
-      show_persons: false,
-      show_bedrooms: true,
-      show_bathrooms: false,
-      show_country: true,
-      show_region: false,
-      show_city: true
-    });
-
-    expect(ff.showCity).toBe(true);
-    expect(ff.showRegion).toBe(false);
-    expect(ff.fixedMobile).toBe(true);
-    expect(ff.show).toBe(true);
-    expect(ff.no_results).toBe(9);
-    expect(ff.categories).toEqual([1]);
-  });
-
   it('mapLabels strips the locale suffix for the requested locale only', () => {
     const labels = {
       countries_label_nl: 'Land',
@@ -223,14 +150,15 @@ describe('portalSiteAdapter', () => {
     });
 
     expect(result.portal_code).toBe('P1');
-    expect(result.options.filtersForm.showCity).toBe(true);
+    expect(result.options.filtersForm.show_city).toBe(true);
     expect(result.options.searchFields).toEqual([{ id: 'countries', type: 'select' }]);
     expect(result.options.bookingFields).toEqual([]);
-    expect(result.colorsConfiguration.buttonCta).toBe('#2');
-    expect(result.bookingFormConfiguration.showMonthsAmount).toBe(2);
+    expect(result.colorsConfiguration.button_cta).toBe('#2');
+    expect(result.bookingFormConfiguration.number_of_months).toBe(2);
     expect(result.max_persons).toBe(8);
     expect(result.countries).toEqual([{ id: 1, name: 'NL' }]);
     expect(result.countries_label).toBe('Land');
     expect(result.form_submit_text).toBe('Akkoord');
   });
 });
+

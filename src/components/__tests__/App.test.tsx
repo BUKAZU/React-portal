@@ -47,7 +47,7 @@ const fullColors = {
   booked: '#444444',
   departure: '#555555',
   button: '#666666',
-  buttonCta: '#777777'
+  button_cta: '#777777'
 };
 
 function makePortalSite(colorsConfiguration = fullColors): any {
@@ -142,7 +142,7 @@ describe('App theming — CSS custom properties', () => {
     );
     expect(style.getPropertyValue('--bukazu-button')).toBe(fullColors.button);
     expect(style.getPropertyValue('--bukazu-button_cta')).toBe(
-      fullColors.buttonCta
+      fullColors.button_cta
     );
   });
 
@@ -154,7 +154,7 @@ describe('App theming — CSS custom properties', () => {
       booked: '',
       departure: '',
       button: '',
-      buttonCta: ''
+      button_cta: ''
     };
 
     await renderApp('', undefined, partialColors);
@@ -178,7 +178,7 @@ describe('App theming — CSS custom properties', () => {
       booked: '',
       departure: '',
       button: '',
-      buttonCta: ''
+      button_cta: ''
     };
 
     await renderApp('', undefined, sparseColors);

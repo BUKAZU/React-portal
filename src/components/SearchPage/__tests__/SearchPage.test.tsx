@@ -18,20 +18,20 @@ const mockPortalSite: PortalSiteType = {
   categories: [],
   options: {
     filtersForm: {
-      showCity: false,
-      showRegion: false,
-      showCountry: false,
-      showPersons: false,
-      showBathrooms: false,
-      showBedrooms: false,
-      showPrice: false,
-      showRating: false,
+      show_city: false,
+      show_region: false,
+      show_country: false,
+      show_persons: false,
+      show_bathrooms: false,
+      show_bedrooms: false,
+      show_price: false,
+      show_rating: false,
       categories: [],
       no_results: 20,
       location: 'left',
       mode: 'grid',
       show: true,
-      fixedMobile: false
+      fixed_mobile: false
     },
     bookingFields: [],
     bookingForm: {
@@ -43,12 +43,12 @@ const mockPortalSite: PortalSiteType = {
       babies_til: 2,
       showDiscountCode: false,
       redirectUrl: null,
-      redirectUrlEn: null,
-      redirectUrlNl: null,
-      redirectUrlDe: null,
-      redirectUrlFr: null,
-      redirectUrlEs: null,
-      redirectUrlIt: null
+      redirectUrl_en: null,
+      redirectUrl_nl: null,
+      redirectUrl_de: null,
+      redirectUrl_fr: null,
+      redirectUrl_es: null,
+      redirectUrl_it: null
     }
   },
   max_persons: 10,

@@ -29,7 +29,7 @@ function Filters({
 
   const searchFields = options.searchFields || defaultFilter;
   let fixed = options.filtersForm
-    ? options.filtersForm.fixedMobile
+    ? options.filtersForm.fixed_mobile
       ? 'fixed-mobile'
       : null
     : null;
