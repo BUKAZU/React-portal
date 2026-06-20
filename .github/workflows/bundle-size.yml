@@ -22,6 +22,6 @@ jobs:
         uses: preactjs/compressed-size-action@v3
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
-          build-script: 'build'
+          build-script: 'npm run build'
           pattern: './build/portal.{es,umd}.js'
           strip-hash: '\.[a-f0-9]{8}\.'
