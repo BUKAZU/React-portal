@@ -68,7 +68,8 @@
     "date-fns": "^4.1.0",
     "formik": "^2.2.9",
     "graphql": "^16.11.0",
-    "graphql-request": "^7.4.0"
+    "graphql-request": "^7.4.0",
+    "ky": "^2.0.2"
   },
   "main": "./build/portal.umd.js",
   "module": "./build/portal.es.js",
