@@ -48,6 +48,7 @@ export const http: KyInstance = ky.create({
   hooks: {
     beforeRequest: [
       ({ request }) => {
+        if (request.method !== 'GET') return;
         const entry = responseCache.get(request.url);
         if (!entry) return;
         if (entry.etag) {
@@ -60,6 +61,9 @@ export const http: KyInstance = ky.create({
     ],
     afterResponse: [
       async ({ request, response }) => {
+        if (request.method !== 'GET') {
+          return response;
+        }
         // Transparent cache hit: serve the stored body as 200 OK.
         if (response.status === 304) {
           const entry = responseCache.get(request.url);

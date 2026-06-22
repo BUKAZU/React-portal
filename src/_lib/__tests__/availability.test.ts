@@ -5,7 +5,7 @@ import {
 } from '../availability';
 import { HTTPError } from 'ky';
 
-// Explicit factory mock – ky is never loaded, keeping the test suite lightweight.
+// Explicit factory mock for the shared HTTP client so tests do not perform real HTTP requests.
 jest.mock('../http_client', () => ({
   http: { get: jest.fn() }
 }));

@@ -13,9 +13,8 @@ interface GraphQLMutationOptions<TVariables = Record<string, unknown>> {
 
 /**
  * Executes a GraphQL mutation using the shared HTTP client.
- * Transient network-level errors are automatically retried by `ky` for GET
- * requests; POST requests (mutations) are intentionally excluded from retry
- * by ky's default method list to prevent duplicate side effects.
+ * Mutations are sent as POST requests and are intentionally not retried by the
+ * shared ky client to avoid duplicate side effects if the request is repeated.
  * @template TData - The expected response data type
  * @template TVariables - The variables type for the mutation
  * @param {GraphQLMutationOptions<TVariables>} options - The mutation options

@@ -2,4 +2,4 @@
 // in the jsdom test environment, which does not expose them as globals.
 import { TextDecoder, TextEncoder } from 'util';
 
-Object.assign(global, { TextDecoder, TextEncoder });
+Object.assign(globalThis, { TextDecoder, TextEncoder });
