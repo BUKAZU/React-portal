@@ -175,7 +175,7 @@ export const HOUSES_QUERY = gql`
 
 export const HOUSES_PRICE_QUERY = gql`
   ${HOUSE_SEARCH_RESULT_FIELDS}
-  query PortalSiteHousesQuery(
+  query PortalSiteHousePriceQuery(
     $id: ID!
     $country_id: ID
     $region_id: String
