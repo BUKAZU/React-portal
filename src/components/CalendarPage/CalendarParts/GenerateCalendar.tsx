@@ -42,9 +42,9 @@ function GenerateCalendar({ portalSite }: Props): JSX.Element {
   }
 
   const Results = data.PortalSite.houses;
-  const numberOfMonths = portalSite.bookingFormConfiguration.number_of_months;
+  const numberOfMonths = portalSite.bookingFormConfiguration.show_months_amount;
   const numberOfMonthsInARow =
-    portalSite.bookingFormConfiguration.number_of_months_in_a_row;
+    portalSite.bookingFormConfiguration.show_months_in_a_row_amount;
 
   return (
     <div id="calendar-container">

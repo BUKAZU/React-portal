@@ -29,14 +29,14 @@ const settings = {
     departure: '#7'
   },
   booking_form: {
-    number_of_months: 2,
-    number_of_months_in_a_row: 1,
-    children: true,
-    babies: true,
-    babies_til: 2,
-    children_from: 3,
-    children_til: 12,
-    adults_from: 18,
+    show_months_amount: 2,
+    show_months_in_a_row_amount: 1,
+    children_allowed: true,
+    babies_allowed: true,
+    babies_till_age: 2,
+    children_from_age: 3,
+    children_till_age: 12,
+    adults_from_age: 18,
     show_discount_code: true,
     language_selector_visible: false,
     redirect_urls: { nl: 'https://nl', en: 'https://en' }

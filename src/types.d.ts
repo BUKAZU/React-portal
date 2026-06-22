@@ -23,12 +23,12 @@ export type FiltersFormType = {
  * the bookingFormConfiguration returned directly by the API.
  */
 type BookingFormType = {
-  adults_from: number;
-  children: boolean;
-  children_from: number;
-  children_til: number;
-  babies: boolean;
-  babies_til: number;
+  adults_from_age: number;
+  children_allowed: boolean;
+  children_from_age: number;
+  children_till_age: number;
+  babies_allowed: boolean;
+  babies_till_age: number;
   showDiscountCode: boolean;
   redirectUrl: string | null;
   redirectUrl_en: string | null;
@@ -41,18 +41,18 @@ type BookingFormType = {
 
 /** Booking form configuration returned directly by the portal site API. */
 export type BookingFormConfigurationType = {
-  adults_from: number;
-  babies: boolean;
-  babies_til: number;
-  children: boolean;
-  children_from: number;
-  children_til: number;
+  adults_from_age: number;
+  babies_allowed: boolean;
+  babies_till_age: number;
+  children_allowed: boolean;
+  children_from_age: number;
+  children_till_age: number;
   language_selector_visible: boolean;
   /** Per-locale redirect URLs after booking. Keys are locale codes ('nl', 'en', 'de', 'fr', 'es', 'it'); values may be null when not configured. */
   redirect_urls: Record<string, string | null>;
   show_discount_code: boolean;
-  number_of_months: number;
-  number_of_months_in_a_row: number;
+  show_months_amount: number;
+  show_months_in_a_row_amount: number;
 };
 
 type name_id_type = {
@@ -74,7 +74,7 @@ export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
   /** Search-filter fields to render, mapped from the filter-fields REST endpoint. */
-  searchFields?: { id: string; type: string }[];
+  searchFields?: { id: string; type: string; label: string | null }[];
   /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;

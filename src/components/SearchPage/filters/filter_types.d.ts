@@ -1,6 +1,7 @@
 export type Field = {
   id: string;
-  type: string
+  type: string;
+  label: string | null;
 };
 
 export type FiltersType = {

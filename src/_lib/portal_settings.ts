@@ -23,14 +23,14 @@ export type SettingsColors = {
 
 /** Booking-form configuration as returned by the settings endpoint. */
 export type SettingsBookingForm = {
-  number_of_months: number;
-  number_of_months_in_a_row: number;
-  children: boolean;
-  babies: boolean;
-  babies_til: number;
-  children_from: number;
-  children_til: number;
-  adults_from: number;
+  show_months_amount: number;
+  show_months_in_a_row_amount: number;
+  children_allowed: boolean;
+  babies_allowed: boolean;
+  babies_till_age: number;
+  children_from_age: number;
+  children_till_age: number;
+  adults_from_age: number;
   show_discount_code: boolean;
   language_selector_visible: boolean;
   redirect_urls: Record<string, string | null>;
@@ -58,7 +58,7 @@ export type SettingsResponse = {
   name: string;
   domain: string;
   portal_code: string;
-  commission: number;
+  commission: string;
   use_custom_commission: boolean;
   colors: SettingsColors;
   booking_form: SettingsBookingForm;
@@ -72,8 +72,8 @@ type NameId = { id: number; name: string };
 /** Full response of GET /portal_api/v1/config/search-facets. */
 export type SearchFacetsResponse = {
   countries: NameId[];
-  regions: Array<{ id: number; name: string; country_id: number }>;
-  cities: Array<{ id: number; name: string; region: string; country_id: number }>;
+  regions: Array<{ id: string; name: string; country_id: number }>;
+  cities: Array<{ id: string; name: string; region: string; country_id: number }>;
   categories: Array<{ id: number; name: string; properties: NameId[] }>;
   extra_search: string[];
   max: {
@@ -81,7 +81,7 @@ export type SearchFacetsResponse = {
     bedrooms: number;
     bathrooms: number;
     nights: number;
-    weekprice: number;
+    weekprice: string;
   };
 };
 
@@ -99,8 +99,6 @@ export type BookingFieldResponse = {
 export type FilterFieldResponse = {
   id: string;
   field_type: string;
-  position: number;
-  visible: boolean;
   label: string | null;
 };
 

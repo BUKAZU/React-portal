@@ -9,11 +9,7 @@ import type {
   SearchFacetsResponse,
   SettingsResponse
 } from '../_lib/portal_settings';
-import type {
-  ColorsType,
-  PortalOptions,
-  PortalSiteType
-} from '../types';
+import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
 
 /** The portal-site object assembled for the app, mirroring the legacy GraphQL shape. */
 export interface AppPortalSite extends PortalSiteType {
@@ -89,7 +85,9 @@ type MappedSearchFacets = {
 };
 
 /** Flatten the search-facets response into the top-level fields the search UI reads. */
-export function mapSearchFacets(facets: SearchFacetsResponse): MappedSearchFacets {
+export function mapSearchFacets(
+  facets: SearchFacetsResponse
+): MappedSearchFacets {
   return {
     countries: facets.countries,
     regions: facets.regions,
@@ -100,23 +98,15 @@ export function mapSearchFacets(facets: SearchFacetsResponse): MappedSearchFacet
     max_bedrooms: facets.max.bedrooms,
     max_bathrooms: facets.max.bathrooms,
     max_nights: facets.max.nights,
-    max_weekprice: facets.max.weekprice
+    max_weekprice: parseFloat(facets.max.weekprice)
   };
 }
 
-/**
- * Map the filter-fields endpoint into the `options.searchFields` list the search
- * UI renders. Drops hidden fields and per-category (`category_<id>`) entries, which
- * the legacy `searchFields` blob never carried (categories are driven by the
- * `properties` field + `filtersForm.categories`).
- */
+/** Map the filter-fields endpoint into the `options.searchFields` list the search UI renders. */
 export function mapFilterFields(
   fields: FilterFieldResponse[]
-): { id: string; type: string }[] {
-  return (fields ?? [])
-    .filter((f) => f.visible && !f.id.startsWith('category_'))
-    .sort((a, b) => a.position - b.position)
-    .map((f) => ({ id: f.id, type: f.field_type }));
+): { id: string; type: string; label: string | null }[] {
+  return (fields ?? []).map((f) => ({ id: f.id, type: f.field_type, label: f.label }));
 }
 
 interface BuildAppPortalSiteParams {
@@ -142,7 +132,7 @@ export function buildAppPortalSite({
   const options: PortalOptions = {
     filtersForm: settings.filters_form,
     bookingFields: mappedBookingFields,
-    searchFields: mappedSearchFields.length > 0 ? mappedSearchFields : undefined,
+    searchFields: filterFields !== undefined ? mappedSearchFields : undefined,
     bookingForm: {} as PortalOptions['bookingForm'],
     colors: colorsConfiguration
   };

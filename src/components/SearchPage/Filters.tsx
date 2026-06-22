@@ -28,11 +28,13 @@ function Filters({
   const [show, setShow] = useState(false);
 
   const searchFields = options.searchFields || defaultFilter;
+
   let fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : null;
 
-  let filterClass = (options.filtersForm.show ?? true)
-    ? `filters filters-${options.filtersForm.location}`
-    : 'filters-hidden';
+  let filterClass =
+    (options.filtersForm.show ?? true)
+      ? `filters filters-${options.filtersForm.location}`
+      : 'filters-hidden';
 
   let showOn = show && 'showOnMobile';
 
@@ -66,7 +68,7 @@ function Filters({
               }}
               htmlFor={field.id}
             >
-              {PortalSite[`${field.id}_label`]}
+              {field.label}
             </label>
             <Field
               field={field}
