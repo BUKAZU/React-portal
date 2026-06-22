@@ -31,22 +31,27 @@ export async function loadPortalSite({
   apiUrl,
   locale
 }: LoadPortalSiteParams): Promise<AppPortalSite> {
-  const settings = await fetchSettings({ apiUrl, locale, portalCode });
+  const settingsPromise = fetchSettings({ apiUrl, locale, portalCode });
+  const facetsPromise = isSearchPage
+    ? fetchSearchFacets({ apiUrl, locale, portalCode })
+    : Promise.resolve(undefined);
+  const filterFieldsPromise = isSearchPage
+    ? fetchFilterFields({ apiUrl, locale, portalCode })
+    : Promise.resolve(undefined);
+  const bookingFieldsPromise = isBookingPage
+    ? fetchBookingFields({ apiUrl, locale, portalCode })
+    : Promise.resolve(undefined);
+
+  const [settings, facets, filterFields, bookingFields] = await Promise.all([
+    settingsPromise,
+    facetsPromise,
+    filterFieldsPromise,
+    bookingFieldsPromise
+  ]);
 
   if (!settings) {
     throw new Error('Portal site data is missing');
   }
-
-  const [facets, filterFields] = isSearchPage
-    ? await Promise.all([
-        fetchSearchFacets({ apiUrl, locale, portalCode }),
-        fetchFilterFields({ apiUrl, locale, portalCode })
-      ])
-    : [undefined, undefined];
-
-  const bookingFields = isBookingPage
-    ? await fetchBookingFields({ apiUrl, locale, portalCode })
-    : undefined;
 
   return buildAppPortalSite({
     settings,
