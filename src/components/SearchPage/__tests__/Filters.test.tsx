@@ -166,6 +166,26 @@ describe('Filters', () => {
     expect(filtersDiv).not.toBeNull();
   });
 
+  it('should show filters when filtersForm.show is undefined', () => {
+    const filtersFormWithoutShow = { ...mockOptions.filtersForm };
+    delete filtersFormWithoutShow.show;
+    const optionsWithoutShow: PortalOptions = {
+      ...mockOptions,
+      filtersForm: filtersFormWithoutShow
+    };
+
+    renderFilters({
+      options: { ...optionsWithoutShow, searchFields: defaultSearchFields }
+    });
+
+    const filtersDiv = container.querySelector('.filters');
+    const hiddenDiv = container.querySelector('.filters-hidden');
+    const fields = container.querySelectorAll('[data-testid="field"]');
+    expect(filtersDiv).not.toBeNull();
+    expect(hiddenDiv).toBeNull();
+    expect(fields.length).toBe(defaultSearchFields.length);
+  });
+
   it('should apply fixed-mobile class when fixedMobile is true', () => {
     const fixedOptions: PortalOptions = {
       ...mockOptions,

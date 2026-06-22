@@ -30,7 +30,7 @@ function Filters({
   const searchFields = options.searchFields || defaultFilter;
   let fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : null;
 
-  let filterClass = options.filtersForm.show
+  let filterClass = (options.filtersForm.show ?? true)
     ? `filters filters-${options.filtersForm.location}`
     : 'filters-hidden';
 
