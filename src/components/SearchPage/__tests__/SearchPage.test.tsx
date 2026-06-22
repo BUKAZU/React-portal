@@ -14,7 +14,6 @@ jest.mock('../../../_lib/Tracking', () => ({
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockPortalSite: PortalSiteType = {
-  portal_code: 'TEST',
   categories: [],
   options: {
     filtersForm: {
@@ -35,12 +34,12 @@ const mockPortalSite: PortalSiteType = {
     },
     bookingFields: [],
     bookingForm: {
-      adults_from: 18,
-      children: false,
-      children_from: 0,
-      children_til: 12,
-      babies: false,
-      babies_til: 2,
+      adults_from_age: 18,
+      children_allowed: false,
+      children_from_age: 0,
+      children_till_age: 12,
+      babies_allowed: false,
+      babies_till_age: 2,
       showDiscountCode: false,
       redirectUrl: null,
       redirectUrl_en: null,
@@ -50,6 +49,19 @@ const mockPortalSite: PortalSiteType = {
       redirectUrl_es: null,
       redirectUrl_it: null
     }
+  },
+  bookingFormConfiguration: {
+    adults_from_age: 18,
+    babies_allowed: false,
+    babies_till_age: 2,
+    children_allowed: false,
+    children_from_age: 0,
+    children_till_age: 12,
+    language_selector_visible: false,
+    redirect_urls: { nl: null, en: null, de: null, fr: null, es: null, it: null },
+    show_discount_code: false,
+    show_months_amount: 2,
+    show_months_in_a_row_amount: 2
   },
   max_persons: 10,
   name: 'Test Portal',

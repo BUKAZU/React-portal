@@ -35,17 +35,17 @@ const baseHouse: HouseType = {
 } as any;
 
 const baseConfig: BookingFormConfigurationType = {
-  adults_from: 18,
-  babies: true,
-  babies_til: 2,
-  children: true,
-  children_from: 3,
-  children_til: 17,
+  adults_from_age: 18,
+  babies_allowed: true,
+  babies_till_age: 2,
+  children_allowed: true,
+  children_from_age: 3,
+  children_till_age: 17,
   language_selector_visible: false,
   redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
   show_discount_code: false,
-  number_of_months: 2,
-  number_of_months_in_a_row: 2
+  show_months_amount: 2,
+  show_months_in_a_row_amount: 2
 };
 
 let container: HTMLDivElement;
@@ -86,22 +86,22 @@ describe('Guests', () => {
   });
 
   it('renders children NumberSelect when childrenAllowed is true', () => {
-    renderGuests({ children: true });
+    renderGuests({ children_allowed: true });
     expect(container.querySelector('[data-testid="number-select-children"]')).not.toBeNull();
   });
 
   it('does not render children NumberSelect when childrenAllowed is false', () => {
-    renderGuests({ children: false });
+    renderGuests({ children_allowed: false });
     expect(container.querySelector('[data-testid="number-select-children"]')).toBeNull();
   });
 
   it('renders babies NumberSelect when babiesAllowed is true', () => {
-    renderGuests({ babies: true });
+    renderGuests({ babies_allowed: true });
     expect(container.querySelector('[data-testid="number-select-babies"]')).not.toBeNull();
   });
 
   it('does not render babies NumberSelect when babiesAllowed is false', () => {
-    renderGuests({ babies: false });
+    renderGuests({ babies_allowed: false });
     expect(container.querySelector('[data-testid="number-select-babies"]')).toBeNull();
   });
 });

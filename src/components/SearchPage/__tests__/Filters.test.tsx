@@ -11,7 +11,6 @@ jest.mock('../Field', () => () => <div data-testid="field" />);
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockPortalSite: PortalSiteType = {
-  portal_code: 'TEST',
   categories: [],
   options: {
     filtersForm: {
@@ -32,12 +31,12 @@ const mockPortalSite: PortalSiteType = {
     },
     bookingFields: [],
     bookingForm: {
-      adults_from: 18,
-      children: false,
-      children_from: 0,
-      children_til: 12,
-      babies: false,
-      babies_til: 2,
+      adults_from_age: 18,
+      children_allowed: false,
+      children_from_age: 0,
+      children_till_age: 12,
+      babies_allowed: false,
+      babies_till_age: 2,
       showDiscountCode: false,
       redirectUrl: null,
       redirectUrl_en: null,

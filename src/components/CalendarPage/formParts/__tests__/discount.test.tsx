@@ -31,17 +31,17 @@ const baseHouse = {
 };
 
 const baseConfig: BookingFormConfigurationType = {
-  adults_from: 18,
-  babies: false,
-  babies_til: 2,
-  children: false,
-  children_from: 3,
-  children_til: 17,
+  adults_from_age: 18,
+  babies_allowed: false,
+  babies_till_age: 2,
+  children_allowed: false,
+  children_from_age: 3,
+  children_till_age: 17,
   language_selector_visible: false,
   redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
   show_discount_code: false,
-  number_of_months: 2,
-  number_of_months_in_a_row: 2
+  show_months_amount: 2,
+  show_months_in_a_row_amount: 2
 };
 
 const baseValues = {
