@@ -1,3 +1,5 @@
+import { http } from './http_client';
+
 export async function TrackEvent(data: any) {
     const cookie = getCookie('bu_portal_session');
 
@@ -5,17 +7,10 @@ export async function TrackEvent(data: any) {
         ...data,
         url: window.location.href,
         session_identifier: cookie
-    }
-    fetch("https://api.bukazu.com/tracking", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(all_data)
-      }).then((response) => response.text())
-        .then((data) => { 
-          setCookie('bu_portal_session', data, 14);
-      } );
+    };
+
+    const sessionId = await http.post('https://api.bukazu.com/tracking', { json: all_data }).text();
+    setCookie('bu_portal_session', sessionId, 14);
 }
 
 export function getSessionIdentifier() {
