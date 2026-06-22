@@ -2,9 +2,13 @@
  * REST client for the portal-site configuration endpoints
  * (GET /portal_api/v1/config/*). Replaces the legacy GraphQL PortalSite settings
  * reads (PORTAL_BASE_QUERY / PORTAL_SEARCH_QUERY and the settings portions of the
- * booking queries). Mirrors the availability client in `availability.ts`: native
- * fetch, REST origin derived from the configured GraphQL api_url, locale header.
+ * booking queries). Mirrors the availability client in `availability.ts`: shared ky
+ * http client, REST origin derived from the configured GraphQL api_url, locale header.
  */
+
+import { HTTPError } from 'ky';
+
+import { http } from './http_client';
 
 /** Colour configuration as returned by the settings endpoint. */
 export type SettingsColors = {
@@ -152,15 +156,14 @@ export function buildFilterFieldsUrl({
 }
 
 async function fetchConfig<T>(url: string, locale: string): Promise<T> {
-  const response = await fetch(url, {
-    headers: { locale, Accept: 'application/json' }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Portal settings request failed (${response.status})`);
+  try {
+    return await http.get(url, { headers: { locale } }).json<T>();
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      throw new Error(`Portal settings request failed (${error.response.status})`);
+    }
+    throw error;
   }
-
-  return (await response.json()) as T;
 }
 
 export function fetchSettings({
