@@ -136,12 +136,13 @@ export function buildAppPortalSite({
   locale
 }: BuildAppPortalSiteParams): AppPortalSite {
   const mappedBookingFields = mapBookingFields(bookingFields ?? []);
+  const mappedSearchFields = mapFilterFields(filterFields ?? []);
   const colorsConfiguration: ColorsType = settings.colors;
 
   const options: PortalOptions = {
     filtersForm: settings.filters_form,
     bookingFields: mappedBookingFields,
-    searchFields: mapFilterFields(filterFields ?? []),
+    searchFields: mappedSearchFields.length > 0 ? mappedSearchFields : undefined,
     bookingForm: {} as PortalOptions['bookingForm'],
     colors: colorsConfiguration
   };

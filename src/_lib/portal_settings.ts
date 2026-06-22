@@ -36,7 +36,7 @@ export type SettingsBookingForm = {
 export type SettingsFiltersForm = {
   show: boolean;
   location: string;
-  mode: string;
+  mode: 'grid' | 'list';
   no_results: number;
   fixed_mobile: boolean;
   categories: number[];
