@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { t } from '../../intl';
 import { CREATE_BOOKING_MUTATION } from '../../_lib/gql';
@@ -156,7 +156,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   }, []);
 
   const sessionIdentifier = getSessionIdentifier();
-  const errors: BookingFormErrors = validateForm(values, house, bookingFields);
+  const errors: BookingFormErrors = useMemo(
+    () => validateForm(values, house, bookingFields),
+    [bookingFields, house, values]
+  );
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {

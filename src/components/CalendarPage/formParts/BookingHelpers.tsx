@@ -5,7 +5,7 @@ import { HouseType } from '../../../types';
 import { PossibleValues } from './form_types';
 
 export function createPersonsArray(persons: number): number[] {
-  return Array.apply(null, { length: persons + 1 }).map(Number.call, Number);
+  return Array.from({ length: persons + 1 }, (_, index) => index);
 }
 
 export function initializeBookingFields(

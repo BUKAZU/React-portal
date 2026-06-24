@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { t } from '../../../intl';
 import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
@@ -288,21 +288,27 @@ export default function OptionalBookingFields({
     };
   }, []);
 
-  const fields: SingleBookingFieldType[] = [...bookingFields];
+  const fields = useMemo(() => {
+    const nextFields: SingleBookingFieldType[] = [...bookingFields];
+    const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
 
-  const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
-  if (values.cancel_insurance === '1' || values.cancel_insurance === '2') {
-    requiredFields.forEach((key) => {
-      const defaultField = DefaultBookingFields.find((x) => x.id === key);
-      if (!defaultField) return;
-      const index = bookingFields.findIndex((x) => x.id === key);
-      if (index !== -1) {
-        fields[index] = defaultField;
-      } else {
-        fields.push(defaultField);
-      }
-    });
-  }
+    if (values.cancel_insurance === '1' || values.cancel_insurance === '2') {
+      requiredFields.forEach((key) => {
+        const defaultField = DefaultBookingFields.find(
+          (field) => field.id === key
+        );
+        if (!defaultField) return;
+        const index = bookingFields.findIndex((field) => field.id === key);
+        if (index !== -1) {
+          nextFields[index] = defaultField;
+        } else {
+          nextFields.push(defaultField);
+        }
+      });
+    }
+
+    return nextFields;
+  }, [bookingFields, values.cancel_insurance]);
 
   return (
     <div className="form-section bup-16">

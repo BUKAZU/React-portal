@@ -50,9 +50,12 @@ export function validateForm(
     errors.max_persons = t('max_persons_reached');
   }
 
+  const dateOfBirth = values.extra_fields?.date_of_birth;
+
   if (
     values.cancel_insurance !== '0' &&
-    validateAge(String(values.extra_fields?.date_of_birth || ''))
+    dateOfBirth &&
+    validateAge(dateOfBirth)
   ) {
     errors['extra_fields.date_of_birth'] = t('at_least_18y_old');
     errors.insurances = t('at_least_18y_old');

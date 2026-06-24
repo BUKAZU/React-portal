@@ -14,18 +14,35 @@ export interface BookingFormContextValue {
   setFieldTouched: (name: string, touched?: boolean) => void;
 }
 
-export const BookingFormContext = createContext<BookingFormContextValue | null>(
-  null
+const defaultBookingFormContextValue: BookingFormContextValue = {
+  values: {
+    arrivalDate: {} as PossibleValues['arrivalDate'],
+    departureDate: {} as PossibleValues['departureDate'],
+    is_option: 'false',
+    costs: {},
+    adults: 0,
+    children: 0,
+    babies: 0,
+    persons: 0,
+    discount: 0,
+    country: '',
+    cancel_insurance: '0',
+    discount_code: '',
+    extra_fields: {}
+  },
+  errors: {},
+  touched: {},
+  isSubmitting: false,
+  setFieldValue: () => undefined,
+  setFieldTouched: () => undefined
+};
+
+export const BookingFormContext = createContext<BookingFormContextValue>(
+  defaultBookingFormContextValue
 );
 
 export function useBookingFormContext(): BookingFormContextValue {
-  const context = useContext(BookingFormContext);
-
-  if (!context) {
-    throw new Error('BookingFormContext is not available');
-  }
-
-  return context;
+  return useContext(BookingFormContext);
 }
 
 export function useBookingField(name: string) {
