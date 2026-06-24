@@ -16,9 +16,7 @@ export default function NumberSelect({
       {({ field, meta }) => {
         return (
           <div className="form-row inline" id={`bukazu_form_${props.name}`}>
-            <label htmlFor={props.name}>
-              {t(label)}
-            </label>
+            <label htmlFor={props.name}>{t(label)}</label>
             <select {...field} {...props}>
               {numbers.map((opt) => {
                 return (

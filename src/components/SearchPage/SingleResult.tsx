@@ -79,9 +79,7 @@ function SingleResult({ result, options }: Props): JSX.Element {
               )}
             </div>
           )}
-          <div className="result-button">
-            {t('view_details')}
-          </div>
+          <div className="result-button">{t('view_details')}</div>
         </div>
       </div>
     </a>

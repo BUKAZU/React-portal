@@ -2,7 +2,9 @@ import { graphqlMutation } from '../graphql';
 import { HTTPError } from 'ky';
 
 // Mock the shared http client so tests do not hit the network.
-jest.mock("../http_client", () => ({ http: { get: jest.fn(), post: jest.fn() } }));
+jest.mock('../http_client', () => ({
+  http: { get: jest.fn(), post: jest.fn() }
+}));
 import { http } from '../http_client';
 
 const mockHttp = http as jest.Mocked<typeof http>;
@@ -32,9 +34,13 @@ describe('graphqlMutation', () => {
 
     expect(result).toEqual(mockData);
 
-    const [calledUrl, calledOptions] = (mockHttp.post as jest.Mock).mock.calls[0];
+    const [calledUrl, calledOptions] = (mockHttp.post as jest.Mock).mock
+      .calls[0];
     expect(calledUrl).toBe(mockUrl);
-    expect(calledOptions.json).toEqual({ query: mockQuery, variables: mockVariables });
+    expect(calledOptions.json).toEqual({
+      query: mockQuery,
+      variables: mockVariables
+    });
     expect(calledOptions.headers).toEqual(mockHeaders);
   });
 

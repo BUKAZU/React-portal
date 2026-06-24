@@ -97,7 +97,15 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         };
 
         createBooking({ variables }).then(() => {
-          const localeRedirectKeyMap: Record<LocaleType, 'redirectUrlNl' | 'redirectUrlEn' | 'redirectUrlDe' | 'redirectUrlFr' | 'redirectUrlEs' | 'redirectUrlIt'> = {
+          const localeRedirectKeyMap: Record<
+            LocaleType,
+            | 'redirectUrlNl'
+            | 'redirectUrlEn'
+            | 'redirectUrlDe'
+            | 'redirectUrlFr'
+            | 'redirectUrlEs'
+            | 'redirectUrlIt'
+          > = {
             nl: 'redirectUrlNl',
             en: 'redirectUrlEn',
             de: 'redirectUrlDe',
@@ -155,7 +163,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 {t('return_to_calendar')}
               </a>
               <h2>{t('stay_details')}</h2>
-              <Guests bookingFormConfiguration={bookingFormConfiguration} house={house} />
+              <Guests
+                bookingFormConfiguration={bookingFormConfiguration}
+                house={house}
+              />
 
               {errors.max_persons && (
                 <div className="error-message bu-error-message persons">

@@ -3,7 +3,9 @@ import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../../_lib/gql';
 import { loadPortalSite } from '../loadPortalSite';
 
 function makeMockClient(resolvedValue: unknown): GraphQLClient {
-  return { request: jest.fn().mockResolvedValue(resolvedValue) } as unknown as GraphQLClient;
+  return {
+    request: jest.fn().mockResolvedValue(resolvedValue)
+  } as unknown as GraphQLClient;
 }
 
 describe('loadPortalSite', () => {
@@ -32,7 +34,7 @@ describe('loadPortalSite', () => {
 
     await loadPortalSite({ portalCode: 'P1', isSearchPage: true, client });
 
-    expect((client.request as jest.Mock)).toHaveBeenCalledWith(
+    expect(client.request as jest.Mock).toHaveBeenCalledWith(
       PORTAL_SEARCH_QUERY,
       { id: 'P1' }
     );
@@ -45,7 +47,7 @@ describe('loadPortalSite', () => {
       loadPortalSite({ portalCode: 'P1', isSearchPage: false, client })
     ).rejects.toThrow('Portal site data is missing');
 
-    expect((client.request as jest.Mock)).toHaveBeenCalledWith(
+    expect(client.request as jest.Mock).toHaveBeenCalledWith(
       PORTAL_BASE_QUERY,
       { id: 'P1' }
     );

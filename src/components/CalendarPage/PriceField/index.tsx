@@ -28,13 +28,10 @@ function PriceField({ house }: Props) {
 
   let adults = createPeronsArray(house.persons);
 
-
   return (
     <div className="calendar--picker">
       <div className="calendar--picker--date">
-        <span className="name">
-          {t(`${house.house_type}.arrival`)}
-        </span>
+        <span className="name">{t(`${house.house_type}.arrival`)}</span>
         <span className="detail">
           {arrivalDate?.date ? (
             <span>
@@ -46,9 +43,7 @@ function PriceField({ house }: Props) {
         </span>
       </div>
       <div className="calendar--picker--date">
-        <span className="name">
-          {t(`${house.house_type}.departure`)}
-        </span>
+        <span className="name">{t(`${house.house_type}.departure`)}</span>
         <span className="detail">
           {departureDate?.date ? (
             <span>
@@ -59,9 +54,8 @@ function PriceField({ house }: Props) {
               <div>
                 {t(`${house.house_type}.pick_your_departure_in_the_calendar`)}
               </div>
-              {arrivalDate && (
-                t('minimum_nights', { minimum: arrivalDate?.min_nights })
-              )}
+              {arrivalDate &&
+                t('minimum_nights', { minimum: arrivalDate?.min_nights })}
             </div>
           )}
         </span>

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { t } from '../../intl';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays } from '../../_lib/date_helper';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';

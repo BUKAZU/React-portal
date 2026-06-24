@@ -27,7 +27,13 @@ afterEach(() => {
 });
 
 function renderDateField(
-  fieldProps: { label?: string; name?: string; inline?: boolean; description?: string | React.ReactNode; required?: boolean } = {},
+  fieldProps: {
+    label?: string;
+    name?: string;
+    inline?: boolean;
+    description?: string | React.ReactNode;
+    required?: boolean;
+  } = {},
   initialValues: Record<string, any> = {}
 ) {
   const {
@@ -40,7 +46,10 @@ function renderDateField(
 
   act(() => {
     root.render(
-      <Formik initialValues={{ [name]: '', ...initialValues }} onSubmit={() => {}}>
+      <Formik
+        initialValues={{ [name]: '', ...initialValues }}
+        onSubmit={() => {}}
+      >
         <DateField
           label={label}
           name={name}
@@ -87,13 +96,17 @@ describe('DateField – basic rendering', () => {
 
   it('has empty value when the field value is empty', () => {
     renderDateField({}, { date_of_birth: '' });
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    const input = container.querySelector(
+      'input[type="date"]'
+    ) as HTMLInputElement;
     expect(input?.value).toBe('');
   });
 
   it('has the correct value when the field value is a valid date string', () => {
     renderDateField({}, { date_of_birth: '2000-06-15' });
-    const input = container.querySelector('input[type="date"]') as HTMLInputElement;
+    const input = container.querySelector(
+      'input[type="date"]'
+    ) as HTMLInputElement;
     expect(input?.value).toBe('2000-06-15');
   });
 });

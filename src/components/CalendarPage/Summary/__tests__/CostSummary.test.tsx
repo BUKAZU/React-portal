@@ -12,11 +12,15 @@ import { AppContext } from '../../../AppContext';
 import { BOOKING_PRICE_TOTAL_QUERY } from '../../../../_lib/gql';
 
 const mockUseQuery = jest.fn();
-const mockRentAndDiscount = jest.fn(() => <div data-testid="rent-and-discount" />);
-const mockInsurancesAndRequired = jest.fn(
-  () => <div data-testid="insurances-and-required" />
-);
-const mockOptionalNotOnSite = jest.fn(() => <div data-testid="optional-not-on-site" />);
+const mockRentAndDiscount = jest.fn(() => (
+  <div data-testid="rent-and-discount" />
+));
+const mockInsurancesAndRequired = jest.fn(() => (
+  <div data-testid="insurances-and-required" />
+));
+const mockOptionalNotOnSite = jest.fn(() => (
+  <div data-testid="optional-not-on-site" />
+));
 const mockOnSite = jest.fn(() => <div data-testid="on-site" />);
 const mockTotals = jest.fn(() => <div data-testid="totals" />);
 
@@ -69,7 +73,11 @@ jest.mock('../Totals', () => ({
 }));
 
 const baseValues = {
-  arrivalDate: { date: '2025-06-01', arrival_time_from: '14:00', arrival_time_to: '18:00' },
+  arrivalDate: {
+    date: '2025-06-01',
+    arrival_time_from: '14:00',
+    arrival_time_to: '18:00'
+  },
   departureDate: { date: '2025-06-08', departure_time: '10:00' },
   costs: { cleaning: 1 },
   adults: 2,
@@ -97,7 +105,9 @@ function renderComponent(values = baseValues) {
 
   act(() => {
     root?.render(
-      <AppContext.Provider value={{ portalCode: 'portal', objectCode: 'object', locale: 'en' }}>
+      <AppContext.Provider
+        value={{ portalCode: 'portal', objectCode: 'object', locale: 'en' }}
+      >
         <CostSummary values={values} house={house} />
       </AppContext.Provider>
     );
@@ -112,7 +122,11 @@ describe('CostSummary', () => {
   });
 
   it('renders loading state', () => {
-    mockUseQuery.mockReturnValue({ loading: true, error: undefined, data: undefined });
+    mockUseQuery.mockReturnValue({
+      loading: true,
+      error: undefined,
+      data: undefined
+    });
 
     const { container, root } = renderComponent();
 
@@ -180,7 +194,9 @@ describe('CostSummary', () => {
     expect(mockOnSite).toHaveBeenCalledWith({ prices });
     expect(mockTotals).toHaveBeenCalledWith({ prices });
 
-    expect(container.querySelector('[data-testid="rent-and-discount"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="rent-and-discount"]')
+    ).not.toBeNull();
     expect(container.querySelector('[data-testid="totals"]')).not.toBeNull();
 
     act(() => {

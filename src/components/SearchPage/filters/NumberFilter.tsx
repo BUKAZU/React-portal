@@ -34,4 +34,4 @@ function NumberFilter({
   );
 }
 
-export default NumberFilter
+export default NumberFilter;

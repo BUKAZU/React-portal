@@ -7,7 +7,9 @@ jest.mock('../../../_lib/gql', () => ({
 }));
 
 function makeMockClient(resolvedValue: unknown): GraphQLClient {
-  return { request: jest.fn().mockResolvedValue(resolvedValue) } as unknown as GraphQLClient;
+  return {
+    request: jest.fn().mockResolvedValue(resolvedValue)
+  } as unknown as GraphQLClient;
 }
 
 describe('loadReviewsHouse', () => {
@@ -32,7 +34,7 @@ describe('loadReviewsHouse', () => {
       client
     });
 
-    expect((client.request as jest.Mock)).toHaveBeenCalledWith(REVIEWS_QUERY, {
+    expect(client.request as jest.Mock).toHaveBeenCalledWith(REVIEWS_QUERY, {
       id: 'PORTAL1',
       house_id: 'HOUSE1'
     });

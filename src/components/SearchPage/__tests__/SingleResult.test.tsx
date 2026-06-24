@@ -5,7 +5,9 @@ import SingleResult from '../SingleResult';
 import { HouseType, FiltersFormType } from '../../../types';
 
 // Mock SVG icon
-jest.mock('../../icons/ArrowRight.svg', () => () => <svg data-testid="arrow-right" />);
+jest.mock('../../icons/ArrowRight.svg', () => () => (
+  <svg data-testid="arrow-right" />
+));
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -56,9 +58,7 @@ function renderSingleResult(
   options: FiltersFormType = mockOptions
 ) {
   act(() => {
-    root.render(
-      <SingleResult result={result} options={options} />
-    );
+    root.render(<SingleResult result={result} options={options} />);
   });
 }
 
@@ -196,9 +196,7 @@ describe('SingleResult', () => {
 
   it('should handle null options gracefully', () => {
     act(() => {
-      root.render(
-        <SingleResult result={mockResult} options={null as any} />
-      );
+      root.render(<SingleResult result={mockResult} options={null as any} />);
     });
 
     // Should render without crashing, just not show optional fields

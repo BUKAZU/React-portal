@@ -41,8 +41,7 @@ export function initSentry(dsn: string): void {
  * includes the current URL, portal code, object code, and locale.
  */
 export function setSentryContext(context: PortalContext): void {
-  const url =
-    typeof window !== 'undefined' ? window.location.href : undefined;
+  const url = typeof window !== 'undefined' ? window.location.href : undefined;
 
   setTag('portal_code', context.portalCode);
   setTag('object_code', context.objectCode ?? '');

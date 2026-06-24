@@ -6,7 +6,7 @@ import {
   isSameDay,
   isSameMonth,
   subDays
-} from 'date-fns';
+} from '../../../_lib/date_helper';
 import { BuDate, Discount } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
 
@@ -90,7 +90,8 @@ function DayClasses({
       isAfter(day, selectedDate) &&
       minimum &&
       maximum &&
-      prevBooked !== undefined && prevBooked.max_nights !== 0
+      prevBooked !== undefined &&
+      prevBooked.max_nights !== 0
     ) {
       classes.push('departure');
     }

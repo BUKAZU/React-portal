@@ -69,8 +69,6 @@ describe('ErrorBoundary', () => {
     });
 
     expect(container.querySelector('h1')).not.toBeNull();
-    expect(sentryLib.reportError).toHaveBeenCalledWith(
-      expect.any(Error)
-    );
+    expect(sentryLib.reportError).toHaveBeenCalledWith(expect.any(Error));
   });
 });

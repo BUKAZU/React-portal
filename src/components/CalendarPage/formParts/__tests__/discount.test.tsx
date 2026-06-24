@@ -9,9 +9,7 @@ import { BookingFormConfigurationType } from '../../../../types';
 
 // DiscountCode uses Apollo useMutation – mock the whole module so we can
 // verify it is rendered without needing a full Apollo provider.
-jest.mock('../DiscountCode', () => () => (
-  <div data-testid="discount-code" />
-));
+jest.mock('../DiscountCode', () => () => <div data-testid="discount-code" />);
 
 const baseHouse = {
   id: 1,
@@ -144,9 +142,13 @@ describe('Discount – discount select branch', () => {
   });
 
   it('shows the discount_reason error message when an error is present', () => {
-    renderDiscount({ discounts: '10' }, {}, {
-      discount_reason: 'Reason is required.'
-    });
+    renderDiscount(
+      { discounts: '10' },
+      {},
+      {
+        discount_reason: 'Reason is required.'
+      }
+    );
     const errorDiv = container.querySelector('.error-message');
     expect(errorDiv).not.toBeNull();
     expect(errorDiv?.textContent).toBe('Reason is required.');
@@ -165,19 +167,17 @@ describe('Discount – discount select branch', () => {
 
 describe('Discount – DiscountCode branch', () => {
   it('renders the DiscountCode component when showDiscountCode is true', () => {
-    renderDiscount(
-      { discounts: undefined },
-      { showDiscountCode: true }
-    );
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
+    renderDiscount({ discounts: undefined }, { showDiscountCode: true });
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
   });
 
   it('renders both discount select and DiscountCode when both conditions are met', () => {
-    renderDiscount(
-      { discounts: '10' },
-      { showDiscountCode: true }
-    );
+    renderDiscount({ discounts: '10' }, { showDiscountCode: true });
     expect(container.querySelector('select')).not.toBeNull();
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
   });
 });

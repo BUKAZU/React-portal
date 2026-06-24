@@ -17,7 +17,13 @@ interface Props {
   onFilterChange: Function;
 }
 
-function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.Element {
+function Field({
+  PortalSite,
+  field,
+  filters,
+  value,
+  onFilterChange
+}: Props): JSX.Element {
   let options = [];
   if (['countries', 'cities', 'regions'].includes(field.id)) {
     options = PortalSite[field.id];
@@ -56,7 +62,12 @@ function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.
     return <Radio {...default_settings} onChange={onFilterChange} />;
   } else if (field.type === 'number') {
     return (
-      <NumberFilter PortalSite={PortalSite} field={field} value={value} onChange={onFilterChange} />
+      <NumberFilter
+        PortalSite={PortalSite}
+        field={field}
+        value={value}
+        onChange={onFilterChange}
+      />
     );
   } else if (field.type === 'date') {
     return <DateFilter field={field} value={value} onChange={onFilterChange} />;

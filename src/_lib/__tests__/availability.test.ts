@@ -79,15 +79,21 @@ describe('availability REST client', () => {
 
       expect(result).toEqual(response);
 
-      const [calledUrl, calledOptions] = (mockHttp.get as jest.Mock).mock.calls[0];
+      const [calledUrl, calledOptions] = (mockHttp.get as jest.Mock).mock
+        .calls[0];
       expect(calledUrl).toContain('/portal_api/v1/accommodations/availability');
-      expect((calledOptions as { headers: Record<string, string> }).headers.locale).toBe('nl');
+      expect(
+        (calledOptions as { headers: Record<string, string> }).headers.locale
+      ).toBe('nl');
     });
 
     it('re-throws an HTTPError as a plain Error containing the status code', async () => {
       // Build a minimal HTTPError-like object that instanceof checks pass for.
       const fakeResponse = { status: 404 } as Response;
-      const fakeRequest = { method: 'GET', url: 'https://example.com' } as Request;
+      const fakeRequest = {
+        method: 'GET',
+        url: 'https://example.com'
+      } as Request;
       const httpError = new HTTPError(fakeResponse, fakeRequest, {} as never);
 
       (mockHttp.get as jest.Mock).mockReturnValue({
@@ -111,4 +117,3 @@ describe('availability REST client', () => {
     });
   });
 });
-

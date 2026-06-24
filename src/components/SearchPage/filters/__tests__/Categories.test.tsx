@@ -18,9 +18,7 @@ const mockCategories = [
   {
     id: 2,
     name: 'Views',
-    properties: [
-      { id: 20, name: 'Sea View' }
-    ]
+    properties: [{ id: 20, name: 'Sea View' }]
   }
 ];
 
@@ -139,10 +137,14 @@ describe('Categories (filter)', () => {
       );
     });
 
-    const poolCheckbox = container.querySelector('input[value="10"]') as HTMLInputElement;
+    const poolCheckbox = container.querySelector(
+      'input[value="10"]'
+    ) as HTMLInputElement;
     expect(poolCheckbox?.checked).toBe(true);
 
-    const wifiCheckbox = container.querySelector('input[value="11"]') as HTMLInputElement;
+    const wifiCheckbox = container.querySelector(
+      'input[value="11"]'
+    ) as HTMLInputElement;
     expect(wifiCheckbox?.checked).toBe(false);
   });
 
@@ -160,7 +162,9 @@ describe('Categories (filter)', () => {
       );
     });
 
-    const poolCheckbox = container.querySelector('input[value="10"]') as HTMLInputElement;
+    const poolCheckbox = container.querySelector(
+      'input[value="10"]'
+    ) as HTMLInputElement;
     act(() => {
       poolCheckbox.click();
     });

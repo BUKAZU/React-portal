@@ -97,7 +97,9 @@ jest.mock('../Summary', () => () => <div data-testid="summary" />);
 // ---------------------------------------------------------------------------
 jest.mock('../Calendar', () => {
   const ReactMock = require('react');
-  const { CalendarContextDispatch } = require('../CalendarParts/CalendarContext');
+  const {
+    CalendarContextDispatch
+  } = require('../CalendarParts/CalendarContext');
   const StartBooking = require('../CalendarParts/StartBooking').default;
 
   const arrivalDay = {
@@ -326,7 +328,11 @@ beforeEach(() => {
         data: {
           PortalSite: {
             houses: [
-              { id: 1, name: 'Test House', booking_price: { total_price: 1500 } }
+              {
+                id: 1,
+                name: 'Test House',
+                booking_price: { total_price: 1500 }
+              }
             ]
           }
         },
@@ -489,9 +495,7 @@ describe('Booking flow – integration', () => {
     renderApp();
     navigateToBookingForm();
 
-    expect(
-      container.querySelector('[data-testid="api-error"]')
-    ).not.toBeNull();
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
   });
 
   it('returns to the calendar view when the return link is clicked', () => {

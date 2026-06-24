@@ -55,7 +55,7 @@ export const RadioButtonGroup = ({
   touched,
   label,
   className,
-  children,
+  children
 }: RadioButtonGroupProps) => {
   return (
     <div className={className}>
