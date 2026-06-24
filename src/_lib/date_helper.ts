@@ -29,6 +29,22 @@ async function loadLocale(_localeId: LocaleType): Promise<void> {
 /**
  * Formats a date using the locale stored in `window.__localeId__`,
  * falling back to en-GB when the locale is absent or unrecognised.
+ *
+ * Pass an `Intl.DateTimeFormatOptions` object to control the output:
+ *
+ * ```ts
+ * // Month name + year  →  "January 2024"
+ * FormatIntl(date, { month: 'long', year: 'numeric' });
+ *
+ * // Short weekday name  →  "Mon"
+ * FormatIntl(date, { weekday: 'short' });
+ *
+ * // Day of month  →  "15"
+ * FormatIntl(date, { day: 'numeric' });
+ * ```
+ *
+ * To produce a locale-independent `yyyy-MM-dd` key string, use
+ * `formatDateKey(date)` instead.
  */
 function FormatIntl(
   date: Date | number,
