@@ -1,0 +1,209 @@
+name: PR Deploy to S3
+
+on:
+  pull_request:
+    branches: ['master']
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --runInBand
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build preview
+        run: npx vite build --config vite.preview.config.ts
+
+      - name: Check preview deployment configuration
+        id: deploy-config
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          missing=()
+
+          [[ -n "$AWS_ACCESS_KEY_ID" ]] || missing+=("AWS_ACCESS_KEY_ID")
+          [[ -n "$AWS_SECRET_ACCESS_KEY" ]] || missing+=("AWS_SECRET_ACCESS_KEY")
+          [[ -n "$AWS_REGION" ]] || missing+=("AWS_REGION")
+          [[ -n "$AWS_S3_BUCKET" ]] || missing+=("AWS_S3_BUCKET")
+
+          if [ ${#missing[@]} -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "missing=$(IFS=,; echo "${missing[*]}")" >> "$GITHUB_OUTPUT"
+            echo "::warning::Skipping S3 preview deployment because the following secrets are not configured: $(IFS=,; echo "${missing[*]}")"
+          fi
+
+      - name: Configure AWS credentials
+        if: steps.deploy-config.outputs.ready == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        if: steps.deploy-config.outputs.ready == 'true'
+        run: |
+          aws s3 sync preview-build/ s3://${{ secrets.AWS_S3_BUCKET }}/pr-${{ github.event.pull_request.number }}/ --delete
+
+      - name: Post PR comment when deployment is skipped
+        if: steps.deploy-config.outputs.ready != 'true'
+        uses: actions/github-script@v7
+        env:
+          MISSING_SECRETS: ${{ steps.deploy-config.outputs.missing }}
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+            const marker = '## 🚧 PR Preview Deployment Skipped';
+            const missingSecrets = process.env.MISSING_SECRETS
+              .split(',')
+              .map((secret) => secret.trim())
+              .filter(Boolean);
+
+            const body = [
+              marker,
+              '',
+              `**Commit:** \`${sha}\``,
+              '',
+              'The preview build completed, but deployment was skipped because the workflow is missing required AWS configuration.',
+              '',
+              `Missing configuration: \`${missingSecrets.join('`, `')}\``,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const markers = [
+              '## 🚀 PR Preview Deployed',
+              '## 🚧 PR Preview Deployment Skipped',
+            ];
+            const existing = comments.find(
+              (comment) =>
+                comment.user.login === 'github-actions[bot]' &&
+                markers.some((candidate) => comment.body.includes(candidate))
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }
+
+      - name: Post or update PR comment with preview URL
+        if: steps.deploy-config.outputs.ready == 'true'
+        uses: actions/github-script@v7
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const bucket = process.env.AWS_S3_BUCKET;
+            const region = process.env.AWS_REGION;
+            const baseUrl = `http://${bucket}.s3-website-${region}.amazonaws.com/pr-${prNumber}`;
+            const sha = context.payload.pull_request.head.sha.slice(0, 7);
+
+            const body = [
+              '## 🚀 PR Preview Deployed',
+              '',
+              `**Commit:** \`${sha}\``,
+              '',
+              '| Page | URL |',
+              '|------|-----|',
+              `| Main | [${baseUrl}/](${baseUrl}/) |`,
+              `| Calendar | [${baseUrl}/calendar.html](${baseUrl}/calendar.html) |`,
+              `| Reviews | [${baseUrl}/reviews.html](${baseUrl}/reviews.html) |`,
+              '',
+              '_Preview will be removed automatically when the PR is closed._',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const marker = '## 🚀 PR Preview Deployed';
+            const markers = [
+              '## 🚀 PR Preview Deployed',
+              '## 🚧 PR Preview Deployment Skipped',
+            ];
+            const existing = comments.find(
+              (comment) =>
+                comment.user.login === 'github-actions[bot]' &&
+                markers.some((candidate) => comment.body.includes(candidate))
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }

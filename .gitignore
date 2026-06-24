@@ -18,6 +18,9 @@ tmp
 coverage
 coverage/*
 
+# Preview build (PR deploy)
+preview-build
+
 # Playwright
 playwright-report/
 test-results/
