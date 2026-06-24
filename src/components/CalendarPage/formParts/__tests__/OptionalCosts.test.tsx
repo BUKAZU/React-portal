@@ -127,7 +127,7 @@ describe('OptionalCosts – costs with max_available > 1', () => {
   it('renders 0..max_available options for a multi-quantity cost', () => {
     renderOptionalCosts([{ ...baseCost, max_available: 3 }]);
     const options = container.querySelectorAll('select option');
-    // createPeronsArray(3) returns [0, 1, 2, 3] → 4 options
+    // createPersonsArray(3) returns [0, 1, 2, 3] → 4 options
     expect(options).toHaveLength(4);
     expect(options[0].value).toBe('0');
     expect(options[3].value).toBe('3');
