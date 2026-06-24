@@ -210,7 +210,7 @@ export default function OptionalBookingFields({
 
         if (input.type === 'booking_field' || isInt(normalizedId)) {
           const bookingField = PortalSite.booking_fields?.find(
-            (field) => field.id === normalizedId
+            (bookingFieldDef) => bookingFieldDef.id === normalizedId
           );
 
           if (!bookingField) {
