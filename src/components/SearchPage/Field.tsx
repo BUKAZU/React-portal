@@ -17,10 +17,22 @@ interface Props {
   onFilterChange: Function;
 }
 
-const NUMERIC_SELECT_FIELDS = ['persons_min', 'persons_max', 'bedrooms_min', 'bathrooms_min', 'weekprice_max'];
+const NUMERIC_SELECT_FIELDS = [
+  'persons_min',
+  'persons_max',
+  'bedrooms_min',
+  'bathrooms_min',
+  'weekprice_max'
+];
 const VALID_TYPES = ['select', 'list', 'radio', 'number', 'date', 'categories'];
 
-function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.Element {
+function Field({
+  PortalSite,
+  field,
+  filters,
+  value,
+  onFilterChange
+}: Props): JSX.Element {
   let options = [];
   if (['countries', 'cities', 'regions'].includes(field.id)) {
     options = PortalSite[field.id];
@@ -37,7 +49,8 @@ function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.
   }
 
   const effectiveType =
-    !VALID_TYPES.includes(field.type) && NUMERIC_SELECT_FIELDS.includes(field.id)
+    !VALID_TYPES.includes(field.type) &&
+    NUMERIC_SELECT_FIELDS.includes(field.id)
       ? 'select'
       : field.type;
 

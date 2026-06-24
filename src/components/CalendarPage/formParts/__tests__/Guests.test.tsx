@@ -89,21 +89,29 @@ describe('Guests', () => {
 
   it('renders children NumberSelect when childrenAllowed is true', () => {
     renderGuests({ children_allowed: true });
-    expect(container.querySelector('[data-testid="number-select-children"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-select-children"]')
+    ).not.toBeNull();
   });
 
   it('does not render children NumberSelect when childrenAllowed is false', () => {
     renderGuests({ children_allowed: false });
-    expect(container.querySelector('[data-testid="number-select-children"]')).toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-select-children"]')
+    ).toBeNull();
   });
 
   it('renders babies NumberSelect when babiesAllowed is true', () => {
     renderGuests({ babies_allowed: true });
-    expect(container.querySelector('[data-testid="number-select-babies"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-select-babies"]')
+    ).not.toBeNull();
   });
 
   it('does not render babies NumberSelect when babiesAllowed is false', () => {
     renderGuests({ babies_allowed: false });
-    expect(container.querySelector('[data-testid="number-select-babies"]')).toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-select-babies"]')
+    ).toBeNull();
   });
 });

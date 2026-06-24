@@ -161,18 +161,14 @@ describe('Discount – discount select branch', () => {
 
 describe('Discount – DiscountCode branch', () => {
   it('renders the DiscountCode component when showDiscountCode is true', () => {
-    renderDiscount(
-      { discounts: undefined },
-      { show_discount_code: true }
-    );
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
+    renderDiscount({ discounts: undefined }, { show_discount_code: true });
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
   });
 
   it('renders both discount select and DiscountCode when both conditions are met', () => {
-    renderDiscount(
-      { discounts: '10' },
-      { show_discount_code: true }
-    );
+    renderDiscount({ discounts: '10' }, { show_discount_code: true });
     expect(container.querySelector('select')).not.toBeNull();
     expect(
       container.querySelector('[data-testid="discount-code"]')

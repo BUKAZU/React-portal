@@ -57,11 +57,15 @@ let root: ReturnType<typeof createRoot>;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  act(() => { root = createRoot(container); });
+  act(() => {
+    root = createRoot(container);
+  });
 });
 
 afterEach(() => {
-  act(() => { root.unmount(); });
+  act(() => {
+    root.unmount();
+  });
   container.remove();
 });
 
@@ -126,8 +130,12 @@ describe('Categories (filter)', () => {
       );
     });
 
-    const pool = container.querySelector('input[value="10"]') as HTMLInputElement;
-    const wifi = container.querySelector('input[value="11"]') as HTMLInputElement;
+    const pool = container.querySelector(
+      'input[value="10"]'
+    ) as HTMLInputElement;
+    const wifi = container.querySelector(
+      'input[value="11"]'
+    ) as HTMLInputElement;
     expect(pool?.checked).toBe(true);
     expect(wifi?.checked).toBe(false);
   });
@@ -146,7 +154,9 @@ describe('Categories (filter)', () => {
     });
 
     act(() => {
-      (container.querySelector('input[value="10"]') as HTMLInputElement).click();
+      (
+        container.querySelector('input[value="10"]') as HTMLInputElement
+      ).click();
     });
 
     expect(onChange).toHaveBeenCalledWith('properties', [10]);
@@ -166,7 +176,9 @@ describe('Categories (filter)', () => {
     });
 
     act(() => {
-      (container.querySelector('input[value="10"]') as HTMLInputElement).click();
+      (
+        container.querySelector('input[value="10"]') as HTMLInputElement
+      ).click();
     });
 
     expect(onChange).toHaveBeenCalledWith('properties', [11]);
