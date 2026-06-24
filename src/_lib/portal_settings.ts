@@ -43,7 +43,6 @@ export type SettingsFiltersForm = {
   mode: 'grid' | 'list';
   no_results: number;
   fixed_mobile: boolean;
-  categories: number[];
   show_price: boolean;
   show_persons: boolean;
   show_bedrooms: boolean;

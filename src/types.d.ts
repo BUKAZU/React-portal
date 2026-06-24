@@ -9,7 +9,6 @@ export type FiltersFormType = {
   show_bedrooms: boolean;
   show_price: boolean;
   show_rating?: boolean;
-  categories: number[];
   no_results: number;
   location: string;
   mode: 'grid' | 'list';

@@ -156,12 +156,12 @@ describe('Field', () => {
     expect(container.querySelector('[data-testid="number-filter"]')).not.toBeNull();
   });
 
-  it('should render Categories when field id is properties', () => {
+  it('should render Categories when field type is categories', () => {
     act(() => {
       root.render(
         <Field
           PortalSite={mockPortalSite}
-          field={{ id: 'properties', type: 'select' }}
+          field={{ id: '1', type: 'categories' }}
           filters={{}}
           value=""
           onFilterChange={jest.fn()}

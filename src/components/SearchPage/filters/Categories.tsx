@@ -1,57 +1,46 @@
 import React, { SyntheticEvent } from 'react';
 import { PortalSiteType } from '../../../types';
-import { FiltersType } from './filter_types';
+import { Field, FiltersType } from './filter_types';
 
 interface Props {
   PortalSite: PortalSiteType;
+  field: Field;
   filters: FiltersType;
   onChange: Function;
 }
 
-function Categories({ PortalSite, filters, onChange }: Props): JSX.Element[] {
-  const properties = filters.properties || [];
-  let requiredCategories = PortalSite.options.filtersForm.categories;
-  let input: JSX.Element[] = [];
+function Categories({ PortalSite, field, filters, onChange }: Props): JSX.Element {
+  const selected = filters.properties || [];
+  const category = PortalSite.categories.find((c) => String(c.id) === field.id);
 
   const handleChange = (event: SyntheticEvent<any>) => {
     const value = Number(event.currentTarget.value);
-
-    if (properties.includes(value)) {
-      let index = properties.indexOf(value);
-      properties.splice(index, 1);
-    } else {
-      properties.push(value);
-    }
-    onChange('properties', properties);
+    const updated = selected.includes(value)
+      ? selected.filter((p) => p !== value)
+      : [...selected, value];
+    onChange('properties', updated);
   };
 
-  PortalSite.categories.map((category) => {
-    if (requiredCategories.includes(category.id)) {
-      input.push(
-        <div className="bu-properties" key={category.id}>
-          <strong>{category.name}</strong>
-          <ul>
-            {category.properties.map((property) => (
-              <li key={property.id}>
-                <label htmlFor={property.id.toString()}>
-                  <input
-                    type="checkbox"
-                    id={property.id.toString()}
-                    value={property.id}
-                    checked={properties.includes(property.id)}
-                    onChange={handleChange}
-                  />
-                  {property.name}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-      );
-    }
-  });
+  if (!category) return <></>;
 
-  return input;
+  return (
+    <ul>
+      {category.properties.map((property) => (
+        <li key={property.id}>
+          <label htmlFor={property.id.toString()}>
+            <input
+              type="checkbox"
+              id={property.id.toString()}
+              value={property.id}
+              checked={selected.includes(property.id)}
+              onChange={handleChange}
+            />
+            {property.name}
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 export default Categories;

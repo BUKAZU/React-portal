@@ -33,7 +33,6 @@ const mockPortalSite: PortalSiteType = {
   categories: mockCategories,
   options: {
     filtersForm: {
-      categories: [1, 2],
       show_city: false,
       show_region: false,
       show_country: false,
@@ -60,139 +59,118 @@ let root: ReturnType<typeof createRoot>;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  act(() => {
-    root = createRoot(container);
-  });
+  act(() => { root = createRoot(container); });
 });
 
 afterEach(() => {
-  act(() => {
-    root.unmount();
-  });
+  act(() => { root.unmount(); });
   container.remove();
 });
 
 describe('Categories (filter)', () => {
-  it('should render category group sections', () => {
+  it('renders checkboxes for the category group matching field.id', () => {
     act(() => {
       root.render(
-        <React.Fragment>
-          {Categories({
-            PortalSite: mockPortalSite,
-            filters: {},
-            onChange: jest.fn()
-          })}
-        </React.Fragment>
-      );
-    });
-
-    const categoryGroups = container.querySelectorAll('.bu-properties');
-    expect(categoryGroups.length).toBe(2);
-  });
-
-  it('should render category names as headings', () => {
-    act(() => {
-      root.render(
-        <React.Fragment>
-          {Categories({
-            PortalSite: mockPortalSite,
-            filters: {},
-            onChange: jest.fn()
-          })}
-        </React.Fragment>
-      );
-    });
-
-    const headings = container.querySelectorAll('.bu-properties strong');
-    expect(headings[0].textContent).toBe('Amenities');
-    expect(headings[1].textContent).toBe('Views');
-  });
-
-  it('should render a checkbox for each property', () => {
-    act(() => {
-      root.render(
-        <React.Fragment>
-          {Categories({
-            PortalSite: mockPortalSite,
-            filters: {},
-            onChange: jest.fn()
-          })}
-        </React.Fragment>
+        <Categories
+          PortalSite={mockPortalSite}
+          field={{ id: '1', type: 'categories', label: 'Amenities' }}
+          filters={{}}
+          onChange={jest.fn()}
+        />
       );
     });
 
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    // Pool + WiFi + Sea View = 3 checkboxes
-    expect(checkboxes.length).toBe(3);
+    expect(checkboxes.length).toBe(2); // Pool + WiFi
   });
 
-  it('should mark a property as checked when it is in filters.properties', () => {
+  it('renders only the matching group, not other groups', () => {
     act(() => {
       root.render(
-        <React.Fragment>
-          {Categories({
-            PortalSite: mockPortalSite,
-            filters: { properties: [10] },
-            onChange: jest.fn()
-          })}
-        </React.Fragment>
+        <Categories
+          PortalSite={mockPortalSite}
+          field={{ id: '2', type: 'categories', label: 'Views' }}
+          filters={{}}
+          onChange={jest.fn()}
+        />
       );
     });
 
-    const poolCheckbox = container.querySelector('input[value="10"]') as HTMLInputElement;
-    expect(poolCheckbox?.checked).toBe(true);
-
-    const wifiCheckbox = container.querySelector('input[value="11"]') as HTMLInputElement;
-    expect(wifiCheckbox?.checked).toBe(false);
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    expect(checkboxes.length).toBe(1); // Sea View only
   });
 
-  it('should call onChange when a property checkbox is toggled', () => {
+  it('renders nothing when field.id does not match any category', () => {
+    act(() => {
+      root.render(
+        <Categories
+          PortalSite={mockPortalSite}
+          field={{ id: '99', type: 'categories', label: null }}
+          filters={{}}
+          onChange={jest.fn()}
+        />
+      );
+    });
+
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    expect(checkboxes.length).toBe(0);
+  });
+
+  it('marks a property as checked when it is in filters.properties', () => {
+    act(() => {
+      root.render(
+        <Categories
+          PortalSite={mockPortalSite}
+          field={{ id: '1', type: 'categories', label: 'Amenities' }}
+          filters={{ properties: [10] }}
+          onChange={jest.fn()}
+        />
+      );
+    });
+
+    const pool = container.querySelector('input[value="10"]') as HTMLInputElement;
+    const wifi = container.querySelector('input[value="11"]') as HTMLInputElement;
+    expect(pool?.checked).toBe(true);
+    expect(wifi?.checked).toBe(false);
+  });
+
+  it('calls onChange with updated properties when a checkbox is toggled', () => {
     const onChange = jest.fn();
     act(() => {
       root.render(
-        <React.Fragment>
-          {Categories({
-            PortalSite: mockPortalSite,
-            filters: { properties: [] },
-            onChange
-          })}
-        </React.Fragment>
+        <Categories
+          PortalSite={mockPortalSite}
+          field={{ id: '1', type: 'categories', label: 'Amenities' }}
+          filters={{ properties: [] }}
+          onChange={onChange}
+        />
       );
     });
 
-    const poolCheckbox = container.querySelector('input[value="10"]') as HTMLInputElement;
     act(() => {
-      poolCheckbox.click();
+      (container.querySelector('input[value="10"]') as HTMLInputElement).click();
     });
 
-    expect(onChange).toHaveBeenCalledWith('properties', expect.any(Array));
+    expect(onChange).toHaveBeenCalledWith('properties', [10]);
   });
 
-  it('should only render categories that are in requiredCategories', () => {
-    const restrictedPortalSite: PortalSiteType = {
-      ...mockPortalSite,
-      options: {
-        ...mockPortalSite.options,
-        filtersForm: {
-          ...mockPortalSite.options.filtersForm,
-          categories: [1] // only Amenities
-        }
-      }
-    } as any;
-
+  it('removes a property from selection when already checked', () => {
+    const onChange = jest.fn();
     act(() => {
       root.render(
-        <React.Fragment>
-          {Categories({
-            PortalSite: restrictedPortalSite,
-            filters: {},
-            onChange: jest.fn()
-          })}
-        </React.Fragment>
+        <Categories
+          PortalSite={mockPortalSite}
+          field={{ id: '1', type: 'categories', label: 'Amenities' }}
+          filters={{ properties: [10, 11] }}
+          onChange={onChange}
+        />
       );
     });
 
-    const categoryGroups = container.querySelectorAll('.bu-properties');
-    expect(categoryGroups.length).toBe(1);
+    act(() => {
+      (container.querySelector('input[value="10"]') as HTMLInputElement).click();
+    });
+
+    expect(onChange).toHaveBeenCalledWith('properties', [11]);
   });
 });

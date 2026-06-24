@@ -17,6 +17,9 @@ interface Props {
   onFilterChange: Function;
 }
 
+const NUMERIC_SELECT_FIELDS = ['persons_min', 'persons_max', 'bedrooms_min', 'bathrooms_min', 'weekprice_max'];
+const VALID_TYPES = ['select', 'list', 'radio', 'number', 'date', 'categories'];
+
 function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.Element {
   let options = [];
   if (['countries', 'cities', 'regions'].includes(field.id)) {
@@ -33,6 +36,11 @@ function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.
     options = createNumberArray(PortalSite[field.id]);
   }
 
+  const effectiveType =
+    !VALID_TYPES.includes(field.type) && NUMERIC_SELECT_FIELDS.includes(field.id)
+      ? 'select'
+      : field.type;
+
   let default_settings = {
     options,
     field,
@@ -40,25 +48,26 @@ function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.
     value
   };
 
-  if (field.id === 'properties') {
+  if (effectiveType === 'categories') {
     return (
       <Categories
         PortalSite={PortalSite}
+        field={field}
         filters={filters}
         onChange={onFilterChange}
       />
     );
-  } else if (field.type === 'select') {
+  } else if (effectiveType === 'select') {
     return <Select {...default_settings} onChange={onFilterChange} />;
-  } else if (field.type === 'list') {
+  } else if (effectiveType === 'list') {
     return <List {...default_settings} onChange={onFilterChange} />;
-  } else if (field.type === 'radio') {
+  } else if (effectiveType === 'radio') {
     return <Radio {...default_settings} onChange={onFilterChange} />;
-  } else if (field.type === 'number') {
+  } else if (effectiveType === 'number') {
     return (
       <NumberFilter PortalSite={PortalSite} field={field} value={value} onChange={onFilterChange} />
     );
-  } else if (field.type === 'date') {
+  } else if (effectiveType === 'date') {
     return <DateFilter field={field} value={value} onChange={onFilterChange} />;
   } else {
     return (
