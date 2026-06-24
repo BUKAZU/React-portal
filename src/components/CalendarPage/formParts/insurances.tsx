@@ -18,9 +18,7 @@ function cancelInsurance(house: HouseType) {
   if (house.cancel_insurance) {
     return (
       <div className="form-row inline">
-        <label htmlFor="cancel_insurance">
-          {t('cancel_insurance')}
-        </label>
+        <label htmlFor="cancel_insurance">{t('cancel_insurance')}</label>
         <Field component="select" name="cancel_insurance" required={true}>
           {translatedOption('choose', '')}
           {/* {translatedOption('cancel_insurance_all_risk', '2')} */}
@@ -39,9 +37,7 @@ export const Insurances = ({ house, values }: Props) => {
   if (house.cancel_insurance) {
     return (
       <div className="form-section bup-16" id="insurances">
-        <h2>
-          {t('insurances')}
-        </h2>
+        <h2>{t('insurances')}</h2>
         {cancelInsurance(house)}
         {values.cancel_insurance && values.cancel_insurance !== '0' && (
           <DateField
@@ -49,9 +45,7 @@ export const Insurances = ({ house, values }: Props) => {
             name="extra_fields.date_of_birth"
             required
             inline={false}
-            description={
-              t('insurance_company_needs_date_of_birth')
-            }
+            description={t('insurance_company_needs_date_of_birth')}
           />
         )}
       </div>

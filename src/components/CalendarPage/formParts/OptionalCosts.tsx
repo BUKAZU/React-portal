@@ -11,9 +11,7 @@ function OptionalCosts({ costs }) {
   }
   return (
     <div className="form-section bup-16 optional_house_costs">
-      <h2>
-        {t('extra_costs_bookable')}
-      </h2>
+      <h2>{t('extra_costs_bookable')}</h2>
       <div>
         {costs.map((cost) => {
           if (

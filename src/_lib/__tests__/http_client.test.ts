@@ -39,7 +39,7 @@ describe('http_client', () => {
     it('does not send If-None-Match or If-Modified-Since on a fresh URL', async () => {
       const fetchMock = jest.fn().mockResolvedValue(
         makeResponse(JSON.stringify({ data: 'hello' }), 200, {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         })
       );
       globalThis.fetch = fetchMock;
@@ -61,13 +61,13 @@ describe('http_client', () => {
         .mockResolvedValueOnce(
           makeResponse(payload, 200, {
             'Content-Type': 'application/json',
-            ETag: '"v1"',
+            ETag: '"v1"'
           })
         )
         // Second call: respond with a fresh 200 (no change needed for this test).
         .mockResolvedValueOnce(
           makeResponse(payload, 200, {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           })
         );
       globalThis.fetch = fetchMock;
@@ -88,7 +88,7 @@ describe('http_client', () => {
         .mockResolvedValueOnce(
           makeResponse(payload, 200, {
             'Content-Type': 'application/json',
-            'Last-Modified': lastMod,
+            'Last-Modified': lastMod
           })
         )
         .mockResolvedValueOnce(
@@ -113,7 +113,7 @@ describe('http_client', () => {
         .mockResolvedValueOnce(
           makeResponse(payload, 200, {
             'Content-Type': 'application/json',
-            ETag: '"abc"',
+            ETag: '"abc"'
           })
         )
         .mockResolvedValueOnce(
@@ -149,7 +149,7 @@ describe('http_client', () => {
         .mockResolvedValueOnce(
           makeResponse(payload, 200, {
             'Content-Type': 'application/json',
-            ETag: '"xyz"',
+            ETag: '"xyz"'
           })
         )
         .mockResolvedValueOnce(

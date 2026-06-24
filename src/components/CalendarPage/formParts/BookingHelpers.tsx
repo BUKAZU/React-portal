@@ -1,5 +1,5 @@
-import { subYears, isAfter } from 'date-fns'
-import React from 'react'
+import { subYears, isAfter } from '../../../_lib/date_helper';
+import React from 'react';
 import { t } from '../../../intl';
 
 export function createPeronsArray(persons: number): number[] {
@@ -29,15 +29,13 @@ export function byString(o, s) {
   return o;
 }
 
-export function translatedOption(id:string, value: string):JSX.Element {
-  return (
-    <option value={value}>{t(id)}</option>
-  );
+export function translatedOption(id: string, value: string): JSX.Element {
+  return <option value={value}>{t(id)}</option>;
 }
 
 export function validateAge(string) {
-  const dob = new Date(string)
-  const minAge = subYears(new Date(), 18)
+  const dob = new Date(string);
+  const minAge = subYears(new Date(), 18);
 
   if (isAfter(dob, minAge)) {
     return true;

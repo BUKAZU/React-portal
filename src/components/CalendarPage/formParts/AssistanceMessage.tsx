@@ -18,8 +18,8 @@ function AssistanceMessage({ house }: { house: HouseType }): JSX.Element {
         {t(`${house.house_type}.you_picked_arrival_date`)}:{' '}
         {FormatIntl(Parse_EN_US(arrivalDate.date), LONG_DATE_FORMAT)}
         <br />
-        {t(`${house.house_type}.you_picked_departure_date`)}
-        : {FormatIntl(Parse_EN_US(departureDate.date), LONG_DATE_FORMAT)}
+        {t(`${house.house_type}.you_picked_departure_date`)}:{' '}
+        {FormatIntl(Parse_EN_US(departureDate.date), LONG_DATE_FORMAT)}
       </div>
     );
   }

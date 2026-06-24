@@ -1,6 +1,6 @@
 export type Field = {
   id: string;
-  type: string
+  type: string;
 };
 
 export type FiltersType = {
@@ -21,5 +21,5 @@ export type FiltersType = {
 export type OptionsType = {
   id: string;
   name: string;
-  country_id: string
+  country_id: string;
 };

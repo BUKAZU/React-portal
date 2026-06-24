@@ -49,12 +49,9 @@ export async function graphqlMutation<
 
   // Check for GraphQL errors
   if (result.errors) {
-    const errorMessage = result.errors
-      .map((e) => e.message)
-      .join('\n');
+    const errorMessage = result.errors.map((e) => e.message).join('\n');
     throw new Error(`GraphQL Error: ${errorMessage}`);
   }
 
   return result.data;
 }
-

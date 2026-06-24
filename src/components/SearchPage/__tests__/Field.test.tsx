@@ -9,9 +9,15 @@ jest.mock('../filters/List', () => ({ field, options }: any) => (
   <div data-testid="list" data-field={field.id} data-options={options.length} />
 ));
 jest.mock('../filters/Select', () => ({ field, options }: any) => (
-  <div data-testid="select" data-field={field.id} data-options={options.length} />
+  <div
+    data-testid="select"
+    data-field={field.id}
+    data-options={options.length}
+  />
 ));
-jest.mock('../filters/Categories', () => () => <div data-testid="categories" />);
+jest.mock('../filters/Categories', () => () => (
+  <div data-testid="categories" />
+));
 jest.mock('../filters/Radio', () => ({ field }: any) => (
   <div data-testid="radio" data-field={field.id} />
 ));
@@ -137,7 +143,9 @@ describe('Field', () => {
       );
     });
 
-    expect(container.querySelector('[data-testid="date-filter"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="date-filter"]')
+    ).not.toBeNull();
   });
 
   it('should render NumberFilter for a number-type field', () => {
@@ -153,7 +161,9 @@ describe('Field', () => {
       );
     });
 
-    expect(container.querySelector('[data-testid="number-filter"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-filter"]')
+    ).not.toBeNull();
   });
 
   it('should render Categories when field id is properties', () => {
@@ -169,7 +179,9 @@ describe('Field', () => {
       );
     });
 
-    expect(container.querySelector('[data-testid="categories"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="categories"]')
+    ).not.toBeNull();
   });
 
   it('should render a plain input for unknown type fields', () => {
@@ -203,6 +215,8 @@ describe('Field', () => {
       );
     });
 
-    expect(container.querySelector('[data-testid="number-filter"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-filter"]')
+    ).not.toBeNull();
   });
 });

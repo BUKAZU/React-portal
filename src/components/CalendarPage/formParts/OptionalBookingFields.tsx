@@ -174,10 +174,12 @@ export default function OptionalBookingFields({
         } else {
           return (
             <div className="form-row" key={input.id}>
-              <label
-                htmlFor={input.id}
-              >
-                {PortalSite[`${input.id.replace(/\./g, '_')}_label`] as React.ReactNode}{' '}
+              <label htmlFor={input.id}>
+                {
+                  PortalSite[
+                    `${input.id.replace(/\./g, '_')}_label`
+                  ] as React.ReactNode
+                }{' '}
                 {input.required && <span>*</span>}
               </label>
               <Field

@@ -29,9 +29,7 @@ function Modal({ children, buttonText, show = false }: Props) {
           <div className="bukazu-modal-content">{children}</div>
 
           <div className="bukazu-modal-footer">
-            <a onClick={() => setVisible(false)}>
-              {t('close')}
-            </a>
+            <a onClick={() => setVisible(false)}>{t('close')}</a>
           </div>
         </div>
       </div>

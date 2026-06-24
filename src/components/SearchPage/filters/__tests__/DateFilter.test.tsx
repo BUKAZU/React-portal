@@ -91,7 +91,9 @@ describe('DateFilter', () => {
     )!.set!;
     act(() => {
       nativeInputValueSetter.call(input as HTMLInputElement, '2025-06-15');
-      (input as HTMLInputElement).dispatchEvent(new Event('change', { bubbles: true }));
+      (input as HTMLInputElement).dispatchEvent(
+        new Event('change', { bubbles: true })
+      );
     });
 
     expect(onChange).toHaveBeenCalledWith('arrival_date', '2025-06-15');
@@ -117,7 +119,9 @@ describe('DateFilter', () => {
     )!.set!;
     act(() => {
       nativeInputValueSetter.call(input as HTMLInputElement, '');
-      (input as HTMLInputElement).dispatchEvent(new Event('change', { bubbles: true }));
+      (input as HTMLInputElement).dispatchEvent(
+        new Event('change', { bubbles: true })
+      );
     });
 
     expect(onChange).toHaveBeenCalledWith('departure_date', '');

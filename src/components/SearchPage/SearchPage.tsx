@@ -88,8 +88,8 @@ class SearchPage extends Component<MyProps, MyState> {
             ? options.filtersForm.location === 'right'
               ? 'bu-reverse'
               : options.filtersForm.location === 'top'
-              ? 'bu-column'
-              : ''
+                ? 'bu-column'
+                : ''
             : ''
         }
       >

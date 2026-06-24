@@ -1,4 +1,4 @@
-import { FormatIntl } from './date_helper';
+import { formatDateKey } from './date_helper';
 import { http } from './http_client';
 import { HTTPError } from 'ky';
 
@@ -59,8 +59,8 @@ export function buildAvailabilityUrl({
   url.search = new URLSearchParams({
     portal_code: portalCode,
     object_code: objectCode,
-    starts_date: FormatIntl(startsDate, 'yyyy-MM-dd'),
-    end_date: FormatIntl(endDate, 'yyyy-MM-dd')
+    starts_date: formatDateKey(startsDate),
+    end_date: formatDateKey(endDate)
   }).toString();
   return url.toString();
 }
@@ -86,7 +86,9 @@ export async function fetchAvailability({
   });
 
   try {
-    return await http.get(url, { headers: { locale } }).json<AvailabilityResponse>();
+    return await http
+      .get(url, { headers: { locale } })
+      .json<AvailabilityResponse>();
   } catch (error) {
     if (error instanceof HTTPError) {
       throw new Error(`Availability request failed (${error.response.status})`);

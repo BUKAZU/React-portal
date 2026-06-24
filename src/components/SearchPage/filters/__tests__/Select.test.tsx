@@ -124,10 +124,14 @@ describe('Select (filter)', () => {
       );
     });
 
-    const berlinOption = container.querySelector('option[value="BER"]') as HTMLOptionElement;
+    const berlinOption = container.querySelector(
+      'option[value="BER"]'
+    ) as HTMLOptionElement;
     expect(berlinOption?.hidden).toBe(true);
 
-    const amsterdamOption = container.querySelector('option[value="AMS"]') as HTMLOptionElement;
+    const amsterdamOption = container.querySelector(
+      'option[value="AMS"]'
+    ) as HTMLOptionElement;
     expect(amsterdamOption?.hidden).toBe(false);
   });
 

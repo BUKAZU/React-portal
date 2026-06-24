@@ -26,9 +26,9 @@ export default function List({
     }
   };
 
-  const handleChange = ( value: string ) => {
-    onChange(field.id, value)
-  }
+  const handleChange = (value: string) => {
+    onChange(field.id, value);
+  };
 
   if (['cities', 'regions'].includes(field.id)) {
     return (

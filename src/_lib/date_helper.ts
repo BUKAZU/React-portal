@@ -1,75 +1,201 @@
-import { format, parse, Locale } from 'date-fns';
-import { enGB } from 'date-fns/locale/en-GB';
 import { LocaleType } from '../types';
 
-// enGB is always available as a synchronous fallback; all other locales are
-// loaded on demand so they are excluded from the initial bundle.
-const localeCache: Partial<Record<LocaleType, Locale>> = {
-  en: enGB
+/** Maps app locale IDs to BCP-47 language tags for Intl APIs. */
+const BCP47_LOCALE: Record<LocaleType, string> = {
+  en: 'en-GB',
+  nl: 'nl-NL',
+  de: 'de-DE',
+  fr: 'fr-FR',
+  it: 'it-IT',
+  es: 'es-ES'
 };
 
-/**
- * Lazily loads the date-fns locale for the given locale ID and caches it.
- * Call this at application startup with the active locale so that the
- * correct locale is available by the time FormatIntl is invoked on
- * subsequent renders.  Safe to call multiple times – it is a no-op if the
- * locale is already cached.
- */
-async function loadLocale(localeId: LocaleType): Promise<void> {
-  if (localeCache[localeId]) {
-    return;
-  }
-  try {
-    switch (localeId) {
-      case 'nl': {
-        const { nl } = await import('date-fns/locale/nl');
-        localeCache['nl'] = nl;
-        break;
-      }
-      case 'de': {
-        const { de } = await import('date-fns/locale/de');
-        localeCache['de'] = de;
-        break;
-      }
-      case 'fr': {
-        const { fr } = await import('date-fns/locale/fr');
-        localeCache['fr'] = fr;
-        break;
-      }
-      case 'it': {
-        const { it } = await import('date-fns/locale/it');
-        localeCache['it'] = it;
-        break;
-      }
-      case 'es': {
-        const { es } = await import('date-fns/locale/es');
-        localeCache['es'] = es;
-        break;
-      }
-      default:
-        // 'en' is already in the cache; nothing to do.
-        return;
-    }
-  } catch (err) {
-    // If loading fails FormatIntl will fall back to enGB.
-    console.error(`Failed to load date-fns locale "${localeId}":`, err);
-  }
-}
-
-function FormatIntl(date: Date | number, formatStr: string): string {
+function getLocaleString(): string {
   const localeId = (
     typeof window !== 'undefined' ? window.__localeId__ : undefined
   ) as LocaleType | undefined;
-  const locale =
-    (localeId && localeCache[localeId]) || localeCache['en'] || enGB;
-  return format(date, formatStr, { locale });
+  return (localeId && BCP47_LOCALE[localeId]) ?? 'en-GB';
 }
 
-function Parse_EN_US(date_string: string) {
-  return parse(date_string, 'yyyy-MM-dd', new Date());
+/**
+ * No-op kept for backward compatibility.  Previously this lazily loaded
+ * date-fns locale modules; with Intl.DateTimeFormat the browser/engine
+ * handles locale data natively so no pre-loading is required.
+ */
+async function loadLocale(_localeId: LocaleType): Promise<void> {
+  // Nothing to load – Intl.DateTimeFormat resolves locales at call time.
 }
 
-const MONTH_FORMAT: string = 'MMMM yyyy';
-const LONG_DATE_FORMAT: string = 'EEEE dd MMMM yyyy';
+/**
+ * Formats a date using the locale stored in `window.__localeId__`,
+ * falling back to en-GB when the locale is absent or unrecognised.
+ */
+function FormatIntl(
+  date: Date | number,
+  options: Intl.DateTimeFormatOptions
+): string {
+  return new Intl.DateTimeFormat(getLocaleString(), options).format(date);
+}
 
-export { FormatIntl, Parse_EN_US, MONTH_FORMAT, LONG_DATE_FORMAT, loadLocale };
+/**
+ * Parses a `yyyy-MM-dd` string into a local-time Date.
+ * Unlike `new Date(string)`, this avoids UTC-midnight off-by-one errors in
+ * non-UTC timezones.
+ */
+function Parse_EN_US(date_string: string): Date {
+  const [year, month, day] = date_string.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/**
+ * Formats a Date as a `yyyy-MM-dd` local-date key string (e.g. "2024-01-15").
+ * Suitable for use as React keys or for matching availability date strings.
+ */
+function formatDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// ---------------------------------------------------------------------------
+// Date arithmetic helpers (replacements for the date-fns functions previously
+// used directly in calendar components and booking helpers).
+// ---------------------------------------------------------------------------
+
+function addDays(date: Date, amount: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + amount);
+  return d;
+}
+
+function subDays(date: Date, amount: number): Date {
+  return addDays(date, -amount);
+}
+
+function addMonths(date: Date, amount: number): Date {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + amount);
+  return d;
+}
+
+function subMonths(date: Date, amount: number): Date {
+  return addMonths(date, -amount);
+}
+
+function addYears(date: Date, amount: number): Date {
+  const d = new Date(date);
+  d.setFullYear(d.getFullYear() + amount);
+  return d;
+}
+
+function subYears(date: Date, amount: number): Date {
+  return addYears(date, -amount);
+}
+
+function startOfDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function startOfToday(): Date {
+  return startOfDay(new Date());
+}
+
+function startOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+function endOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}
+
+/**
+ * Returns the Sunday that starts the calendar week containing `date`.
+ * Matches date-fns default (weekStartsOn: 0).
+ */
+function startOfWeek(date: Date): Date {
+  const d = startOfDay(date);
+  d.setDate(d.getDate() - d.getDay());
+  return d;
+}
+
+function endOfWeek(date: Date): Date {
+  const d = startOfDay(date);
+  d.setDate(d.getDate() + (6 - d.getDay()));
+  return d;
+}
+
+function isSameDay(dateLeft: Date, dateRight: Date): boolean {
+  return (
+    dateLeft.getFullYear() === dateRight.getFullYear() &&
+    dateLeft.getMonth() === dateRight.getMonth() &&
+    dateLeft.getDate() === dateRight.getDate()
+  );
+}
+
+function isSameMonth(dateLeft: Date, dateRight: Date): boolean {
+  return (
+    dateLeft.getFullYear() === dateRight.getFullYear() &&
+    dateLeft.getMonth() === dateRight.getMonth()
+  );
+}
+
+function isAfter(date: Date, dateToCompare: Date): boolean {
+  return date.getTime() > dateToCompare.getTime();
+}
+
+function isBefore(date: Date, dateToCompare: Date): boolean {
+  return date.getTime() < dateToCompare.getTime();
+}
+
+/**
+ * Returns the number of full calendar days between two dates (ignores time).
+ * Positive when `dateLeft` is after `dateRight`, negative when before.
+ */
+function differenceInCalendarDays(dateLeft: Date, dateRight: Date): number {
+  const left = startOfDay(dateLeft).getTime();
+  const right = startOfDay(dateRight).getTime();
+  return Math.round((left - right) / (24 * 60 * 60 * 1000));
+}
+
+// ---------------------------------------------------------------------------
+// Format-options constants (replaces the old date-fns format strings).
+// ---------------------------------------------------------------------------
+
+const MONTH_FORMAT: Intl.DateTimeFormatOptions = {
+  month: 'long',
+  year: 'numeric'
+};
+const LONG_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+  weekday: 'long',
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric'
+};
+
+export {
+  FormatIntl,
+  Parse_EN_US,
+  formatDateKey,
+  MONTH_FORMAT,
+  LONG_DATE_FORMAT,
+  loadLocale,
+  // date arithmetic
+  addDays,
+  subDays,
+  addMonths,
+  subMonths,
+  addYears,
+  subYears,
+  startOfDay,
+  startOfToday,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  isSameDay,
+  isSameMonth,
+  isAfter,
+  isBefore,
+  differenceInCalendarDays
+};
