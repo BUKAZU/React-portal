@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Field } from 'formik';
 import { t } from '../../../intl';
 import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
+import { useBookingField } from '../BookingFormContext';
 import DefaultBookingFields from './DefaultBookingFields';
-import { SingleBookingFieldType, PossibleValues } from './form_types';
+import { PossibleValues, SingleBookingFieldType } from './form_types';
 
 interface BookingFieldDefinition {
   id: string;
@@ -34,6 +34,117 @@ export function isInt(value: unknown): boolean {
     (function (x) {
       return (x | 0) === x;
     })(parseFloat(value as string))
+  );
+}
+
+function NativeField({
+  name,
+  type = 'text',
+  onKeyPress
+}: {
+  name: string;
+  type?: string;
+  onKeyPress?: (event: React.KeyboardEvent) => void;
+}) {
+  const field = useBookingField(name);
+
+  if (type === 'textarea') {
+    return (
+      <textarea
+        id={name}
+        name={name}
+        value={String(field.value)}
+        onChange={field.onChange}
+        onBlur={field.onBlur}
+        onKeyPress={onKeyPress}
+      />
+    );
+  }
+
+  return (
+    <input
+      id={name}
+      type={type}
+      name={name}
+      value={String(field.value)}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      onKeyPress={onKeyPress}
+    />
+  );
+}
+
+function BookingFieldInput({
+  bookingField
+}: {
+  bookingField: BookingFieldDefinition;
+}) {
+  const field = useBookingField(
+    `extra_fields.booking_field_${bookingField.id}`
+  );
+
+  if (bookingField.field_type === 'textarea') {
+    return (
+      <textarea
+        id={`extra_fields.booking_field_${bookingField.id}`}
+        name={`extra_fields.booking_field_${bookingField.id}`}
+        value={String(field.value)}
+        onChange={field.onChange}
+        onBlur={field.onBlur}
+        onKeyPress={(event) => {
+          if (event.which === 13) {
+            event.preventDefault();
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <input
+      id={`extra_fields.booking_field_${bookingField.id}`}
+      type={
+        bookingField.field_type === 'text' ? 'text' : bookingField.field_type
+      }
+      name={`extra_fields.booking_field_${bookingField.id}`}
+      value={String(field.value)}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      onKeyPress={(event) => {
+        if (event.which === 13) {
+          event.preventDefault();
+        }
+      }}
+    />
+  );
+}
+
+function CountryField({
+  countries,
+  disabled
+}: {
+  countries: CountryEntry[];
+  disabled: boolean;
+}) {
+  const field = useBookingField('country');
+
+  return (
+    <select
+      name="country"
+      id="country"
+      disabled={disabled}
+      value={String(field.value)}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+    >
+      {countries.map((country) => {
+        return (
+          <option value={country.alpha2} key={country.alpha2}>
+            {country.name}
+          </option>
+        );
+      })}
+    </select>
   );
 }
 
@@ -74,14 +185,14 @@ export default function OptionalBookingFields({
     };
   }, []);
 
-  let fields: SingleBookingFieldType[] = [...bookingFields];
+  const fields: SingleBookingFieldType[] = [...bookingFields];
 
   const requiredFields = ['address', 'house_number', 'zipcode', 'city'];
   if (values.cancel_insurance === '1' || values.cancel_insurance === '2') {
     requiredFields.forEach((key) => {
       const defaultField = DefaultBookingFields.find((x) => x.id === key);
       if (!defaultField) return;
-      let index = bookingFields.findIndex((x) => x.id === key);
+      const index = bookingFields.findIndex((x) => x.id === key);
       if (index !== -1) {
         fields[index] = defaultField;
       } else {
@@ -89,43 +200,29 @@ export default function OptionalBookingFields({
       }
     });
   }
+
   return (
     <div className="form-section bup-16">
       <h2>{t('personal_details')}</h2>
       {fields.map((input) => {
-        if (input.id === 'telephone') {
-          input.id = 'phonenumber';
-        }
+        const normalizedId =
+          input.id === 'telephone' ? 'phonenumber' : input.id;
 
-        if (input.type === 'booking_field' || isInt(input.id)) {
+        if (input.type === 'booking_field' || isInt(normalizedId)) {
           const bookingField = PortalSite.booking_fields?.find(
-            (x) => x.id === input.id
+            (field) => field.id === normalizedId
           );
 
-          if (!bookingField) return null;
+          if (!bookingField) {
+            return null;
+          }
 
           return (
             <div className="form-row" key={bookingField.id}>
               <label htmlFor={`extra_fields.booking_field_${bookingField.id}`}>
                 {bookingField.label} {input.required && <span>*</span>}
               </label>
-              <Field
-                onKeyPress={(e: React.KeyboardEvent) => {
-                  e.which === 13 && e.preventDefault();
-                }}
-                id={`extra_fields.booking_field_${bookingField.id}`}
-                type={
-                  bookingField.field_type === 'text'
-                    ? 'input'
-                    : bookingField.field_type
-                }
-                component={
-                  bookingField.field_type === 'text'
-                    ? 'input'
-                    : bookingField.field_type
-                }
-                name={`extra_fields.booking_field_${bookingField.id}`}
-              />
+              <BookingFieldInput bookingField={bookingField} />
               {errors[input.id] &&
                 ((touched.extra_fields &&
                   (touched.extra_fields as Record<string, boolean>)[
@@ -138,65 +235,59 @@ export default function OptionalBookingFields({
                 )}
             </div>
           );
-        } else if (input.id === 'country') {
+        } else if (normalizedId === 'country') {
           return (
-            <div className="form-row" key={input.id}>
-              <label htmlFor={input.id}>
-                {PortalSite[`${input.id}_label`] as React.ReactNode}{' '}
+            <div className="form-row" key={normalizedId}>
+              <label htmlFor={normalizedId}>
+                {PortalSite[`${normalizedId}_label`] as React.ReactNode}{' '}
                 {input.required && <span>*</span>}
               </label>
-              <Field
-                component="select"
-                name={input.id}
-                disabled={countriesLoading}
-              >
-                {countries.map((country) => {
-                  return (
-                    <option value={country.alpha2} key={country.alpha2}>
-                      {country.name}
-                    </option>
-                  );
-                })}
-              </Field>
-              {errors[input.id] && (
+              <CountryField countries={countries} disabled={countriesLoading} />
+              {errors[normalizedId] && (
                 <div className="error-message bu-error-message">
-                  {errors[input.id]}
+                  {errors[normalizedId]}
                 </div>
               )}
             </div>
           );
         } else if (input.type === 'date') {
           return (
-            <div className="form-row" key={input.id}>
-              <DateField name={input.id} label={input.id} inline={false} />
-            </div>
-          );
-        } else {
-          return (
-            <div className="form-row" key={input.id}>
-              <label htmlFor={input.id}>
-                {
-                  PortalSite[
-                    `${input.id.replace(/\./g, '_')}_label`
-                  ] as React.ReactNode
-                }{' '}
-                {input.required && <span>*</span>}
-              </label>
-              <Field
-                type={input.type}
-                name={input.id}
-                onKeyPress={(e: React.KeyboardEvent) => {
-                  e.which === 13 && e.preventDefault();
-                }}
+            <div className="form-row" key={normalizedId}>
+              <DateField
+                name={normalizedId}
+                label={normalizedId}
+                inline={false}
               />
-              {errors[input.id] && touched[input.id] && (
-                <div className="error-message bu-error-message">
-                  {errors[input.id]}
-                </div>
-              )}
             </div>
           );
         }
+
+        return (
+          <div className="form-row" key={normalizedId}>
+            <label htmlFor={normalizedId}>
+              {
+                PortalSite[
+                  `${normalizedId.replace(/\./g, '_')}_label`
+                ] as React.ReactNode
+              }{' '}
+              {input.required && <span>*</span>}
+            </label>
+            <NativeField
+              type={input.type}
+              name={normalizedId}
+              onKeyPress={(event) => {
+                if (event.which === 13) {
+                  event.preventDefault();
+                }
+              }}
+            />
+            {errors[normalizedId] && touched[normalizedId] && (
+              <div className="error-message bu-error-message">
+                {errors[normalizedId]}
+              </div>
+            )}
+          </div>
+        );
       })}
     </div>
   );

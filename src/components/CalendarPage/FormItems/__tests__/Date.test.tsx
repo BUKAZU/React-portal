@@ -1,10 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import DateField from '../Date';
+import { BookingFormContext } from '../../BookingFormContext';
+import { setByString } from '../../formParts/BookingHelpers';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+
+function DateFieldHarness({
+  fieldProps,
+  initialValues,
+  initialErrors = {},
+  initialTouched = {},
+  onValuesChange
+}: {
+  fieldProps: {
+    label: string;
+    name: string;
+    inline: boolean;
+    description?: string | React.ReactNode;
+    required?: boolean;
+  };
+  initialValues: Record<string, any>;
+  initialErrors?: Record<string, string>;
+  initialTouched?: Record<string, any>;
+  onValuesChange?: (values: Record<string, any>) => void;
+}) {
+  const [values, setValues] = useState(initialValues);
+  const [touched, setTouched] = useState(initialTouched);
+
+  useEffect(() => {
+    onValuesChange?.(values);
+  }, [onValuesChange, values]);
+
+  return (
+    <BookingFormContext.Provider
+      value={{
+        values: values as any,
+        errors: initialErrors,
+        touched,
+        isSubmitting: false,
+        setFieldValue: (name, value) => {
+          setValues((currentValues) => setByString(currentValues, name, value));
+        },
+        setFieldTouched: (name, value = true) => {
+          setTouched((currentTouched) =>
+            setByString(currentTouched, name, value)
+          );
+        }
+      }}
+    >
+      <DateField {...fieldProps} />
+    </BookingFormContext.Provider>
+  );
+}
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -34,7 +83,10 @@ function renderDateField(
     description?: string | React.ReactNode;
     required?: boolean;
   } = {},
-  initialValues: Record<string, any> = {}
+  initialValues: Record<string, any> = {},
+  initialErrors: Record<string, string> = {},
+  initialTouched: Record<string, any> = {},
+  onValuesChange?: (values: Record<string, any>) => void
 ) {
   const {
     label = 'date_of_birth',
@@ -46,18 +98,13 @@ function renderDateField(
 
   act(() => {
     root.render(
-      <Formik
+      <DateFieldHarness
+        fieldProps={{ label, name, inline, description, required }}
         initialValues={{ [name]: '', ...initialValues }}
-        onSubmit={() => {}}
-      >
-        <DateField
-          label={label}
-          name={name}
-          inline={inline}
-          description={description}
-          required={required}
-        />
-      </Formik>
+        initialErrors={initialErrors}
+        initialTouched={initialTouched}
+        onValuesChange={onValuesChange}
+      />
     );
   });
 }
@@ -128,35 +175,23 @@ describe('DateField – description', () => {
 
 describe('DateField – validation error display', () => {
   it('shows the error message when the field is touched and has an error', () => {
-    act(() => {
-      root.render(
-        <Formik
-          initialValues={{ dob: '' }}
-          initialTouched={{ dob: true }}
-          initialErrors={{ dob: 'Date is required.' }}
-          onSubmit={() => {}}
-        >
-          <DateField label="date_of_birth" name="dob" inline={true} />
-        </Formik>
-      );
-    });
+    renderDateField(
+      { label: 'date_of_birth', name: 'dob', inline: true },
+      { dob: '' },
+      { dob: 'Date is required.' },
+      { dob: true }
+    );
     const errorDiv = container.querySelector('.error-message');
     expect(errorDiv).not.toBeNull();
     expect(errorDiv?.textContent).toBe('Date is required.');
   });
 
   it('does not show an error message when the field is not touched', () => {
-    act(() => {
-      root.render(
-        <Formik
-          initialValues={{ dob: '' }}
-          initialErrors={{ dob: 'Date is required.' }}
-          onSubmit={() => {}}
-        >
-          <DateField label="date_of_birth" name="dob" inline={true} />
-        </Formik>
-      );
-    });
+    renderDateField(
+      { label: 'date_of_birth', name: 'dob', inline: true },
+      { dob: '' },
+      { dob: 'Date is required.' }
+    );
     expect(container.querySelector('.error-message')).toBeNull();
   });
 });
@@ -164,21 +199,16 @@ describe('DateField – validation error display', () => {
 describe('DateField – onChange', () => {
   it('updates the field value when the date input changes', async () => {
     let formValues: Record<string, any> = {};
-    await act(async () => {
-      root.render(
-        <Formik
-          initialValues={{ dob: '' }}
-          onSubmit={(values) => {
-            formValues = values;
-          }}
-        >
-          {({ values }) => {
-            formValues = values;
-            return <DateField label="date_of_birth" name="dob" inline={true} />;
-          }}
-        </Formik>
-      );
-    });
+
+    renderDateField(
+      { label: 'date_of_birth', name: 'dob', inline: true },
+      { dob: '' },
+      {},
+      {},
+      (values) => {
+        formValues = values;
+      }
+    );
 
     const input = container.querySelector('input[type="date"]');
     expect(input).not.toBeNull();

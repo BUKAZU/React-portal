@@ -1,8 +1,8 @@
 import React from 'react';
-import { Field } from 'formik';
 import { t } from '../../../intl';
-import DiscountCode from './DiscountCode';
 import { BookingFormConfigurationType, HouseType } from '../../../types';
+import { useBookingField } from '../BookingFormContext';
+import DiscountCode from './DiscountCode';
 import { PossibleValues } from './form_types';
 
 interface Props {
@@ -18,28 +18,44 @@ const Discount = ({
   bookingFormConfiguration,
   values
 }: Props) => {
+  const discountField = useBookingField('discount');
+  const discountReasonField = useBookingField('discount_reason');
+
   if (
     (house.discounts && house.discounts !== '0') ||
     bookingFormConfiguration.showDiscountCode
   ) {
     const discounts = house.discounts ? house.discounts.split(',') : [];
+
     return (
       <div className="form-section bup-16">
         {house.discounts && house.discounts !== '0' && (
           <>
             <div className="form-row inline">
               <label htmlFor="discount">{t('discount')}</label>
-              <Field component="select" name="discount">
+              <select
+                id="discount"
+                name="discount"
+                value={String(discountField.value)}
+                onChange={discountField.onChange}
+                onBlur={discountField.onBlur}
+              >
                 {discounts.map((discount) => (
                   <option value={discount} key={discount}>
                     {discount}%
                   </option>
                 ))}
-              </Field>
+              </select>
             </div>
             <div className="form-row inline">
               <label htmlFor="discount_reason">{t('discount_reason')}</label>
-              <Field name="discount_reason" />
+              <input
+                id="discount_reason"
+                name="discount_reason"
+                value={String(discountReasonField.value)}
+                onChange={discountReasonField.onChange}
+                onBlur={discountReasonField.onBlur}
+              />
               {errors.discount_reason && (
                 <div className="error-message bu-error-message">
                   {errors.discount_reason}
@@ -56,9 +72,9 @@ const Discount = ({
         )}
       </div>
     );
-  } else {
-    return null;
   }
+
+  return null;
 };
 
 export default Discount;

@@ -368,6 +368,28 @@ describe('FormCreator', () => {
     expect(button?.disabled).toBe(false);
   });
 
+  it('should not submit when validation fails', async () => {
+    const mockCreateBooking = jest.fn().mockResolvedValue({});
+    const { useMutation } = require('@apollo/client');
+    (useMutation as jest.Mock).mockReturnValue([
+      mockCreateBooking,
+      { loading: false, error: null, data: null, reset: jest.fn() }
+    ]);
+
+    renderFormCreator(mockHouse, mockPortalSite, {
+      ...mockCalendarState,
+      persons: 0
+    });
+
+    await act(async () => {
+      (
+        container.querySelector('button[type="submit"]') as HTMLButtonElement
+      ).click();
+    });
+
+    expect(mockCreateBooking).not.toHaveBeenCalled();
+  });
+
   it('should render the form-content section', () => {
     renderFormCreator();
 

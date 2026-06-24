@@ -7,7 +7,9 @@ import {
   createPeronsArray,
   initializeBookingFields,
   byString,
-  validateAge
+  validateAge,
+  setByString,
+  calculatePersons
 } from '../BookingHelpers';
 
 describe('createPeronsArray', () => {
@@ -76,6 +78,54 @@ describe('byString', () => {
   it('should return undefined for a missing nested property', () => {
     const obj = { user: { name: 'Alice' } };
     expect(byString(obj, 'user.address.city')).toBeUndefined();
+  });
+});
+
+describe('setByString', () => {
+  it('should set a top-level property without mutating the source object', () => {
+    const source = { first_name: '' };
+    const result = setByString(source, 'first_name', 'Alice');
+
+    expect(result).toEqual({ first_name: 'Alice' });
+    expect(source).toEqual({ first_name: '' });
+  });
+
+  it('should set a nested property using dot notation', () => {
+    const result = setByString(
+      { extra_fields: {} },
+      'extra_fields.date_of_birth',
+      '2000-01-01'
+    );
+
+    expect(result).toEqual({
+      extra_fields: { date_of_birth: '2000-01-01' }
+    });
+  });
+
+  it('should set a nested property using bracket notation', () => {
+    const result = setByString({ costs: {} }, 'costs[42]', '1');
+
+    expect(result).toEqual({
+      costs: { '42': '1' }
+    });
+  });
+});
+
+describe('calculatePersons', () => {
+  const house = {
+    babies_extra: 1
+  } as any;
+
+  it('should include adults, children and chargeable babies', () => {
+    expect(
+      calculatePersons(house, { adults: 2, children: 1, babies: 2 } as any)
+    ).toBe(4);
+  });
+
+  it('should not allow babies_extra to reduce the total below zero babies', () => {
+    expect(
+      calculatePersons(house, { adults: 2, children: 1, babies: 0 } as any)
+    ).toBe(3);
   });
 });
 

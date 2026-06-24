@@ -7,15 +7,6 @@ import { RadioButton, RadioButtonGroup } from '../radioButtons';
 
 const noop = () => {};
 
-function makeField(name: string, value: string) {
-  return {
-    name,
-    value,
-    onChange: noop,
-    onBlur: noop
-  };
-}
-
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
@@ -39,7 +30,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -54,7 +49,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -68,7 +67,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -82,7 +85,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -96,7 +103,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'true')}
+          name="is_option"
+          value="true"
+          currentValue="true"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -110,7 +121,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -124,7 +139,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
@@ -138,7 +157,11 @@ describe('RadioButton', () => {
     act(() => {
       root.render(
         <RadioButton
-          field={makeField('is_option', 'false')}
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
           id="true"
           label="Option"
         />
