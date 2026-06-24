@@ -124,7 +124,21 @@ function subMonths(date: Date, amount: number): Date {
 
 function addYears(date: Date, amount: number): Date {
   const d = new Date(date);
+  const month = d.getMonth();
+  const dayOfMonth = d.getDate();
+
+  // Prevent overflow on dates like Feb 29 when the target year is not a leap year.
+  d.setDate(1);
   d.setFullYear(d.getFullYear() + amount);
+  d.setMonth(month);
+
+  const daysInTargetMonth = new Date(
+    d.getFullYear(),
+    d.getMonth() + 1,
+    0
+  ).getDate();
+
+  d.setDate(Math.min(dayOfMonth, daysInTargetMonth));
   return d;
 }
 
