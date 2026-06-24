@@ -4,7 +4,7 @@ import { t } from '../../../intl';
 import { HouseType } from '../../../types';
 import { PossibleValues } from './form_types';
 
-export function createPeronsArray(persons: number): number[] {
+export function createPersonsArray(persons: number): number[] {
   return Array.apply(null, { length: persons + 1 }).map(Number.call, Number);
 }
 

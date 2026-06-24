@@ -4,7 +4,7 @@ import {
   formatDateKey
 } from '../../../../_lib/date_helper';
 import {
-  createPeronsArray,
+  createPersonsArray,
   initializeBookingFields,
   byString,
   validateAge,
@@ -12,17 +12,17 @@ import {
   calculatePersons
 } from '../BookingHelpers';
 
-describe('createPeronsArray', () => {
+describe('createPersonsArray', () => {
   it('should create an array from 0 to persons (inclusive)', () => {
-    expect(createPeronsArray(3)).toStrictEqual([0, 1, 2, 3]);
+    expect(createPersonsArray(3)).toStrictEqual([0, 1, 2, 3]);
   });
 
   it('should return [0] for 0 persons', () => {
-    expect(createPeronsArray(0)).toStrictEqual([0]);
+    expect(createPersonsArray(0)).toStrictEqual([0]);
   });
 
   it('should create a correct array for a larger number', () => {
-    const result = createPeronsArray(5);
+    const result = createPersonsArray(5);
     expect(result).toHaveLength(6);
     expect(result[0]).toBe(0);
     expect(result[5]).toBe(5);

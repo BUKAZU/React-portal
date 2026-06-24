@@ -5,7 +5,7 @@ import {
   Parse_EN_US
 } from '../../../_lib/date_helper';
 import { t } from '../../../intl';
-import { createPeronsArray } from '../formParts/BookingHelpers';
+import { createPersonsArray } from '../formParts/BookingHelpers';
 import Price from './Price';
 import { HouseType } from '../../../types';
 import {
@@ -26,7 +26,7 @@ function PriceField({ house }: Props) {
   const { arrivalDate, departureDate } = useContext(CalendarContext);
   const dispatch = useContext(CalendarContextDispatch);
 
-  let adults = createPeronsArray(house.persons);
+  let adults = createPersonsArray(house.persons);
 
   return (
     <div className="calendar--picker">

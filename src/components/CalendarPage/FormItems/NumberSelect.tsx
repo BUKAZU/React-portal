@@ -1,7 +1,7 @@
 import React from 'react';
 import { t } from '../../../intl';
 import { useBookingField } from '../BookingFormContext';
-import { createPeronsArray } from '../formParts/BookingHelpers';
+import { createPersonsArray } from '../formParts/BookingHelpers';
 
 interface Props {
   label: string;
@@ -16,7 +16,7 @@ export default function NumberSelect({
   count = 0,
   name
 }: Props) {
-  const numbers = createPeronsArray(count);
+  const numbers = createPersonsArray(count);
   const field = useBookingField(name);
 
   return (

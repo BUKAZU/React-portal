@@ -159,15 +159,15 @@ describe('OptionalBookingFields - default (text/email/textarea) fields', () => {
   it('renders a required indicator (*) for required fields', () => {
     renderFields([{ id: 'first_name', type: 'text', required: true }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((span) => span.textContent === '*');
-    expect(star).not.toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).not.toBeUndefined();
   });
 
   it('does not render a required indicator for optional fields', () => {
     renderFields([{ id: 'first_name', type: 'text', required: false }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((span) => span.textContent === '*');
-    expect(star).toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).toBeUndefined();
   });
 
   it('renders an error message when there is an error and the field is touched', () => {
@@ -217,8 +217,8 @@ describe('OptionalBookingFields - country field', () => {
   it('renders a required indicator for a required country field', () => {
     renderFields([{ id: 'country', type: 'select', required: true }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((span) => span.textContent === '*');
-    expect(star).not.toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).not.toBeUndefined();
   });
 
   it('renders an error message for the country field when there is an error', () => {
@@ -297,8 +297,8 @@ describe('OptionalBookingFields - booking_field type (integer id)', () => {
   it('renders a required indicator for required booking fields', () => {
     renderFields([{ id: '42', type: 'booking_field', required: true }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((span) => span.textContent === '*');
-    expect(star).not.toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).not.toBeUndefined();
   });
 
   it('renders an error message when the booking_field has an error and is touched (via extra_fields)', () => {

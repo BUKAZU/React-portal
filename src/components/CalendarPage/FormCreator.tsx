@@ -156,8 +156,6 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   }, []);
 
   const sessionIdentifier = getSessionIdentifier();
-
-  console.log({ sessionIdentifier });
   const errors: BookingFormErrors = validateForm(values, house, bookingFields);
 
   const handleSubmit = useCallback(

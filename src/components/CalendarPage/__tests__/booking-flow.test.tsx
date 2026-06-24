@@ -248,7 +248,6 @@ const bookingPriceData = {
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
-let consoleSpy: jest.SpyInstance;
 
 function renderApp() {
   act(() => {
@@ -295,9 +294,6 @@ function navigateToBookingForm() {
 }
 
 beforeEach(() => {
-  // Suppress FormCreator's console.log({ sessionIdentifier }) noise
-  consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-
   (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -345,7 +341,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  consoleSpy.mockRestore();
   act(() => {
     root.unmount();
   });

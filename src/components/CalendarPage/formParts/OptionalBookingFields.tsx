@@ -27,6 +27,17 @@ interface Props {
   values: PossibleValues;
 }
 
+interface RenderOptionalFieldParams {
+  input: SingleBookingFieldType;
+  PortalSite: PortalSiteForBookingFields;
+  countries: CountryEntry[];
+  countriesLoading: boolean;
+  errors: Record<string, string | undefined>;
+  touched: Record<string, boolean | Record<string, boolean> | undefined> & {
+    extra_fields?: Record<string, boolean>;
+  };
+}
+
 export function isInt(value: unknown): boolean {
   if (typeof value !== 'string' && typeof value !== 'number') return false;
   return (
@@ -148,6 +159,98 @@ function CountryField({
   );
 }
 
+function renderOptionalField({
+  input,
+  PortalSite,
+  countries,
+  countriesLoading,
+  errors,
+  touched
+}: RenderOptionalFieldParams) {
+  const normalizedId = input.id === 'telephone' ? 'phonenumber' : input.id;
+
+  if (input.type === 'booking_field' || isInt(normalizedId)) {
+    const bookingField = PortalSite.booking_fields?.find(
+      (bookingFieldDef) => bookingFieldDef.id === normalizedId
+    );
+
+    if (!bookingField) {
+      return null;
+    }
+
+    return (
+      <div className="form-row" key={bookingField.id}>
+        <label htmlFor={`extra_fields.booking_field_${bookingField.id}`}>
+          {bookingField.label} {input.required && <span>*</span>}
+        </label>
+        <BookingFieldInput bookingField={bookingField} />
+        {errors[input.id] &&
+          ((touched.extra_fields &&
+            (touched.extra_fields as Record<string, boolean>)[
+              `booking_field_${bookingField.id}`
+            ]) ||
+            touched[input.id]) && (
+            <div className="error-message bu-error-message">
+              {errors[input.id]}
+            </div>
+          )}
+      </div>
+    );
+  }
+
+  if (normalizedId === 'country') {
+    return (
+      <div className="form-row" key={normalizedId}>
+        <label htmlFor={normalizedId}>
+          {PortalSite[`${normalizedId}_label`] as React.ReactNode}{' '}
+          {input.required && <span>*</span>}
+        </label>
+        <CountryField countries={countries} disabled={countriesLoading} />
+        {errors[normalizedId] && (
+          <div className="error-message bu-error-message">
+            {errors[normalizedId]}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (input.type === 'date') {
+    return (
+      <div className="form-row" key={normalizedId}>
+        <DateField name={normalizedId} label={normalizedId} inline={false} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="form-row" key={normalizedId}>
+      <label htmlFor={normalizedId}>
+        {
+          PortalSite[
+            `${normalizedId.replace(/\./g, '_')}_label`
+          ] as React.ReactNode
+        }{' '}
+        {input.required && <span>*</span>}
+      </label>
+      <NativeField
+        type={input.type}
+        name={normalizedId}
+        onKeyPress={(event) => {
+          if (event.which === 13) {
+            event.preventDefault();
+          }
+        }}
+      />
+      {errors[normalizedId] && touched[normalizedId] && (
+        <div className="error-message bu-error-message">
+          {errors[normalizedId]}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function OptionalBookingFields({
   bookingFields,
   errors,
@@ -204,91 +307,16 @@ export default function OptionalBookingFields({
   return (
     <div className="form-section bup-16">
       <h2>{t('personal_details')}</h2>
-      {fields.map((input) => {
-        const normalizedId =
-          input.id === 'telephone' ? 'phonenumber' : input.id;
-
-        if (input.type === 'booking_field' || isInt(normalizedId)) {
-          const bookingField = PortalSite.booking_fields?.find(
-            (bookingFieldDef) => bookingFieldDef.id === normalizedId
-          );
-
-          if (!bookingField) {
-            return null;
-          }
-
-          return (
-            <div className="form-row" key={bookingField.id}>
-              <label htmlFor={`extra_fields.booking_field_${bookingField.id}`}>
-                {bookingField.label} {input.required && <span>*</span>}
-              </label>
-              <BookingFieldInput bookingField={bookingField} />
-              {errors[input.id] &&
-                ((touched.extra_fields &&
-                  (touched.extra_fields as Record<string, boolean>)[
-                    `booking_field_${bookingField.id}`
-                  ]) ||
-                  touched[input.id]) && (
-                  <div className="error-message bu-error-message">
-                    {errors[input.id]}
-                  </div>
-                )}
-            </div>
-          );
-        } else if (normalizedId === 'country') {
-          return (
-            <div className="form-row" key={normalizedId}>
-              <label htmlFor={normalizedId}>
-                {PortalSite[`${normalizedId}_label`] as React.ReactNode}{' '}
-                {input.required && <span>*</span>}
-              </label>
-              <CountryField countries={countries} disabled={countriesLoading} />
-              {errors[normalizedId] && (
-                <div className="error-message bu-error-message">
-                  {errors[normalizedId]}
-                </div>
-              )}
-            </div>
-          );
-        } else if (input.type === 'date') {
-          return (
-            <div className="form-row" key={normalizedId}>
-              <DateField
-                name={normalizedId}
-                label={normalizedId}
-                inline={false}
-              />
-            </div>
-          );
-        }
-
-        return (
-          <div className="form-row" key={normalizedId}>
-            <label htmlFor={normalizedId}>
-              {
-                PortalSite[
-                  `${normalizedId.replace(/\./g, '_')}_label`
-                ] as React.ReactNode
-              }{' '}
-              {input.required && <span>*</span>}
-            </label>
-            <NativeField
-              type={input.type}
-              name={normalizedId}
-              onKeyPress={(event) => {
-                if (event.which === 13) {
-                  event.preventDefault();
-                }
-              }}
-            />
-            {errors[normalizedId] && touched[normalizedId] && (
-              <div className="error-message bu-error-message">
-                {errors[normalizedId]}
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {fields.map((input) =>
+        renderOptionalField({
+          input,
+          PortalSite,
+          countries,
+          countriesLoading,
+          errors,
+          touched
+        })
+      )}
     </div>
   );
 }

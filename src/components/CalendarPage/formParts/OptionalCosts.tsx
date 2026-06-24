@@ -3,7 +3,7 @@ import { t, formatNumber } from '../../../intl';
 import Modal from '../../Modal';
 import Icon from '../../icons/info.svg';
 import { useBookingField } from '../BookingFormContext';
-import { createPeronsArray } from './BookingHelpers';
+import { createPersonsArray } from './BookingHelpers';
 
 type CostType = {
   id: string;
@@ -39,7 +39,7 @@ function CostSelect({ cost }: { cost: CostType }) {
       onChange={field.onChange}
       onBlur={field.onBlur}
     >
-      {createPeronsArray(cost.max_available).map((option) => {
+      {createPersonsArray(cost.max_available).map((option) => {
         return (
           <option key={option} value={option}>
             {option}
