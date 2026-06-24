@@ -179,6 +179,16 @@ describe('addMonths / subMonths', () => {
     expect(result.getFullYear()).toBe(2024);
   });
 
+  it('clamps to the end of the target month when needed (leap year)', () => {
+    const result = addMonths(new Date(2024, 0, 31), 1);
+    expect(formatDateKey(result)).toBe('2024-02-29');
+  });
+
+  it('clamps to the end of the target month when needed (non-leap year)', () => {
+    const result = addMonths(new Date(2023, 0, 31), 1);
+    expect(formatDateKey(result)).toBe('2023-02-28');
+  });
+
   it('crosses a year boundary when adding months', () => {
     const result = addMonths(new Date(2024, 11, 15), 1);
     expect(result.getMonth()).toBe(0);
@@ -195,6 +205,11 @@ describe('addYears / subYears', () => {
   it('adds years correctly', () => {
     const result = addYears(new Date(2024, 0, 15), 1);
     expect(result.getFullYear()).toBe(2025);
+  });
+
+  it('clamps Feb 29 to Feb 28 when the target year is not a leap year', () => {
+    const result = addYears(new Date(2024, 1, 29), 1);
+    expect(formatDateKey(result)).toBe('2025-02-28');
   });
 
   it('subtracts years correctly', () => {

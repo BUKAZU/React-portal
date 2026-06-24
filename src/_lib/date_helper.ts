@@ -46,11 +46,22 @@ async function loadLocale(_localeId: LocaleType): Promise<void> {
  * To produce a locale-independent `yyyy-MM-dd` key string, use
  * `formatDateKey(date)` instead.
  */
+const DATE_TIME_FORMAT_CACHE = new Map<string, Intl.DateTimeFormat>();
+
 function FormatIntl(
   date: Date | number,
   options: Intl.DateTimeFormatOptions
 ): string {
-  return new Intl.DateTimeFormat(getLocaleString(), options).format(date);
+  const locale = getLocaleString();
+  const cacheKey = `${locale}:${JSON.stringify(options)}`;
+
+  let formatter = DATE_TIME_FORMAT_CACHE.get(cacheKey);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, options);
+    DATE_TIME_FORMAT_CACHE.set(cacheKey, formatter);
+  }
+
+  return formatter.format(date);
 }
 
 /**
@@ -91,7 +102,19 @@ function subDays(date: Date, amount: number): Date {
 
 function addMonths(date: Date, amount: number): Date {
   const d = new Date(date);
+  const dayOfMonth = d.getDate();
+
+  // Prevent month overflow (e.g. Jan 31 + 1 month) from skipping months.
+  d.setDate(1);
   d.setMonth(d.getMonth() + amount);
+
+  const daysInTargetMonth = new Date(
+    d.getFullYear(),
+    d.getMonth() + 1,
+    0
+  ).getDate();
+
+  d.setDate(Math.min(dayOfMonth, daysInTargetMonth));
   return d;
 }
 
