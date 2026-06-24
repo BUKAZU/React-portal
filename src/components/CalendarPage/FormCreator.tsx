@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { t } from '../../intl';
 import { CREATE_BOOKING_MUTATION } from '../../_lib/gql';
@@ -90,23 +84,19 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     DefaultBookingFields) as SingleBookingFieldType[];
   const bookingPrice = house.booking_price;
 
-  const costs = useMemo(() => {
+  const createInitialValues = useCallback((): PossibleValues => {
     const initialCosts: Record<string, string> = {};
 
     for (const cost of bookingPrice.optional_house_costs) {
       initialCosts[cost.id] = '0';
     }
 
-    return initialCosts;
-  }, [bookingPrice.optional_house_costs]);
-
-  const initialValues = useMemo<PossibleValues>(() => {
     const defaultValues = {
       ...initializeBookingFields(bookingFields),
       arrivalDate,
       departureDate,
       is_option: 'false' as const,
-      costs,
+      costs: initialCosts,
       adults: persons,
       children: 0,
       babies: 0,
@@ -122,27 +112,24 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
       ...defaultValues,
       persons: calculatePersons(house, defaultValues)
     };
-  }, [arrivalDate, bookingFields, costs, departureDate, house, persons]);
+  }, [
+    arrivalDate,
+    bookingFields,
+    bookingPrice.optional_house_costs,
+    departureDate,
+    house,
+    persons
+  ]);
 
-  const [values, setValues] = useState<PossibleValues>(initialValues);
+  const [values, setValues] = useState<PossibleValues>(() =>
+    createInitialValues()
+  );
   const [touched, setTouched] = useState<BookingFormTouched>({});
-  const [errors, setErrors] = useState<BookingFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [createBooking, { loading, error, data, reset }] = useMutation(
     CREATE_BOOKING_MUTATION
   );
-
-  useEffect(() => {
-    setValues(initialValues);
-    setTouched({});
-    setErrors({});
-    setIsSubmitting(false);
-  }, [initialValues]);
-
-  useEffect(() => {
-    setErrors(validateForm(values, house, bookingFields));
-  }, [bookingFields, house, values]);
 
   const setFieldValue = useCallback(
     (name: string, value: unknown) => {
@@ -171,6 +158,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const sessionIdentifier = getSessionIdentifier();
 
   console.log({ sessionIdentifier });
+  const errors: BookingFormErrors = validateForm(values, house, bookingFields);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -178,7 +166,6 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
       const nextErrors = validateForm(values, house, bookingFields);
 
-      setErrors(nextErrors);
       setTouched(createTouchedState(bookingFields, values));
 
       if (Object.keys(nextErrors).length > 0) {

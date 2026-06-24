@@ -52,9 +52,7 @@ export function setByString<T extends Record<string, unknown>>(
   value: unknown
 ): T {
   const segments = getPathSegments(path);
-  const result: Record<string, unknown> = Array.isArray(source)
-    ? [...source]
-    : { ...source };
+  const result: Record<string, unknown> = { ...source };
   let currentResult: Record<string, unknown> = result;
   let currentSource: unknown = source;
 
