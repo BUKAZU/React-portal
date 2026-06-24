@@ -28,9 +28,7 @@ const Discount = ({
         {house.discounts && house.discounts !== '0' && (
           <>
             <div className="form-row inline">
-              <label htmlFor="discount">
-                {t('discount')}
-              </label>
+              <label htmlFor="discount">{t('discount')}</label>
               <Field component="select" name="discount">
                 {discounts.map((discount) => (
                   <option value={discount} key={discount}>
@@ -40,9 +38,7 @@ const Discount = ({
               </Field>
             </div>
             <div className="form-row inline">
-              <label htmlFor="discount_reason">
-                {t('discount_reason')}
-              </label>
+              <label htmlFor="discount_reason">{t('discount_reason')}</label>
               <Field name="discount_reason" />
               {errors.discount_reason && (
                 <div className="error-message bu-error-message">

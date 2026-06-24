@@ -9,28 +9,36 @@ type Messages = { [key: string]: string };
 
 const messages: { [locale: string]: Messages } = { en, nl, de, fr, es, it };
 
-export function t(id: string, values?: Record<string, string | number>): string {
-    const locale = (typeof window !== 'undefined' && window.__localeId__) || 'en';
-    const localeMessages = messages[locale] || messages['en'];
-    let message = localeMessages[id] || id;
+export function t(
+  id: string,
+  values?: Record<string, string | number>
+): string {
+  const locale = (typeof window !== 'undefined' && window.__localeId__) || 'en';
+  const localeMessages = messages[locale] || messages['en'];
+  let message = localeMessages[id] || id;
 
-    if (values) {
-        Object.entries(values).forEach(([key, value]) => {
-            message = message.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
-        });
-    }
+  if (values) {
+    Object.entries(values).forEach(([key, value]) => {
+      message = message.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
+    });
+  }
 
-    return message;
+  return message;
 }
 
-export function formatNumber(value: number, options?: Intl.NumberFormatOptions): string {
-    const locale = (typeof window !== 'undefined' && window.__localeId__) || 'en';
-    return new Intl.NumberFormat(locale, options).format(value);
+export function formatNumber(
+  value: number,
+  options?: Intl.NumberFormatOptions
+): string {
+  const locale = (typeof window !== 'undefined' && window.__localeId__) || 'en';
+  return new Intl.NumberFormat(locale, options).format(value);
 }
 
 export function useLocale() {
-    return {
-        formatMessage: (descriptor: { id: string }, values?: Record<string, string | number>) =>
-            t(descriptor.id, values)
-    };
+  return {
+    formatMessage: (
+      descriptor: { id: string },
+      values?: Record<string, string | number>
+    ) => t(descriptor.id, values)
+  };
 }

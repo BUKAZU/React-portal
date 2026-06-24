@@ -22,9 +22,7 @@ function DateField({ label, description, name, inline }: Props) {
             className={`form-row ${inline && 'inline'}`}
             id={`bukazu_form_${name}`}
           >
-            <label htmlFor={name}>
-              {t(label)}
-            </label>
+            <label htmlFor={name}>{t(label)}</label>
             <input
               type="date"
               className="bukazu-date-picker"

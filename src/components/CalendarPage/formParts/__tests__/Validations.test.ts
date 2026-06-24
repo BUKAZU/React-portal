@@ -1,4 +1,4 @@
-import { subYears, format } from 'date-fns';
+import { subYears, formatDateKey } from '../../../../_lib/date_helper';
 import { validateForm } from '../Validations';
 import { HouseType } from '../../../../types';
 
@@ -53,7 +53,11 @@ describe('validateForm - required fields', () => {
 
   it('returns an error when a required field is absent from values', () => {
     const bookingFields = [{ id: 'last_name', required: true }];
-    const errors = validateForm({ ...baseValues }, baseHouse, bookingFields as any);
+    const errors = validateForm(
+      { ...baseValues },
+      baseHouse,
+      bookingFields as any
+    );
     expect(errors['last_name']).toBe('This field is required.');
   });
 
@@ -66,7 +70,11 @@ describe('validateForm - required fields', () => {
 
   it('does not return an error for a non-required field that is not present', () => {
     const bookingFields = [{ id: 'preposition', required: false }];
-    const errors = validateForm({ ...baseValues }, baseHouse, bookingFields as any);
+    const errors = validateForm(
+      { ...baseValues },
+      baseHouse,
+      bookingFields as any
+    );
     expect(errors['preposition']).toBeUndefined();
   });
 
@@ -76,7 +84,12 @@ describe('validateForm - required fields', () => {
       { id: 'last_name', required: true },
       { id: 'email', required: true }
     ];
-    const values = { ...baseValues, first_name: 'John', last_name: '', email: '' };
+    const values = {
+      ...baseValues,
+      first_name: 'John',
+      last_name: '',
+      email: ''
+    };
     const errors = validateForm(values, baseHouse, bookingFields as any);
     expect(errors['first_name']).toBeUndefined();
     expect(errors['last_name']).toBe('This field is required.');
@@ -84,12 +97,14 @@ describe('validateForm - required fields', () => {
   });
 
   it("does not require date_of_birth when cancel_insurance is '0' and DOB is still populated", () => {
-    const bookingFields = [{ id: 'extra_fields.date_of_birth', required: true }];
+    const bookingFields = [
+      { id: 'extra_fields.date_of_birth', required: true }
+    ];
     const values = {
       ...baseValues,
       cancel_insurance: '0',
       extra_fields: {
-        date_of_birth: format(subYears(new Date(), 30), 'yyyy-MM-dd')
+        date_of_birth: formatDateKey(subYears(new Date(), 30))
       }
     };
     const errors = validateForm(values, baseHouse, bookingFields as any);
@@ -107,7 +122,10 @@ describe('validateForm - booking_field type (integer id)', () => {
 
   it('does not return an error when a required booking_field is filled', () => {
     const bookingFields = [{ id: '42', required: true }];
-    const values = { ...baseValues, extra_fields: { booking_field_42: 'some value' } };
+    const values = {
+      ...baseValues,
+      extra_fields: { booking_field_42: 'some value' }
+    };
     const errors = validateForm(values, baseHouse, bookingFields as any);
     expect(errors['42']).toBeUndefined();
   });
@@ -173,11 +191,17 @@ describe('validateForm - discount reason', () => {
   it('returns an error when a discount is applied but no reason is given', () => {
     const values = { ...baseValues, discount: 50, discount_reason: '' };
     const errors = validateForm(values, baseHouse, [] as any);
-    expect(errors['discount_reason']).toBe('You must indicate a valid discount reason');
+    expect(errors['discount_reason']).toBe(
+      'You must indicate a valid discount reason'
+    );
   });
 
   it('does not return an error when a discount is applied and a reason is provided', () => {
-    const values = { ...baseValues, discount: 50, discount_reason: 'VIP guest' };
+    const values = {
+      ...baseValues,
+      discount: 50,
+      discount_reason: 'VIP guest'
+    };
     const errors = validateForm(values, baseHouse, [] as any);
     expect(errors['discount_reason']).toBeUndefined();
   });
@@ -191,7 +215,7 @@ describe('validateForm - discount reason', () => {
 
 describe('validateForm - age validation for cancel insurance', () => {
   it('returns an age error when cancel_insurance is non-zero and date_of_birth indicates under 18', () => {
-    const tenYearsAgo = format(subYears(new Date(), 10), 'yyyy-MM-dd');
+    const tenYearsAgo = formatDateKey(subYears(new Date(), 10));
     const values = {
       ...baseValues,
       cancel_insurance: '1',
@@ -203,7 +227,7 @@ describe('validateForm - age validation for cancel insurance', () => {
   });
 
   it('does not return an age error when date_of_birth indicates 18 or older', () => {
-    const twentyYearsAgo = format(subYears(new Date(), 20), 'yyyy-MM-dd');
+    const twentyYearsAgo = formatDateKey(subYears(new Date(), 20));
     const values = {
       ...baseValues,
       cancel_insurance: '1',

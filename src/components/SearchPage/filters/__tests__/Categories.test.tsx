@@ -18,9 +18,7 @@ const mockCategories = [
   {
     id: 2,
     name: 'Views',
-    properties: [
-      { id: 20, name: 'Sea View' }
-    ]
+    properties: [{ id: 20, name: 'Sea View' }]
   }
 ];
 

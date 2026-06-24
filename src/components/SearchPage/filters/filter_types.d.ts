@@ -22,5 +22,5 @@ export type FiltersType = {
 export type OptionsType = {
   id: string;
   name: string;
-  country_id: string
+  country_id: string;
 };

@@ -65,7 +65,12 @@ function Field({ PortalSite, field, filters, value, onFilterChange }:Props):JSX.
     return <Radio {...default_settings} onChange={onFilterChange} />;
   } else if (effectiveType === 'number') {
     return (
-      <NumberFilter PortalSite={PortalSite} field={field} value={value} onChange={onFilterChange} />
+      <NumberFilter
+        PortalSite={PortalSite}
+        field={field}
+        value={value}
+        onChange={onFilterChange}
+      />
     );
   } else if (effectiveType === 'date') {
     return <DateFilter field={field} value={value} onChange={onFilterChange} />;

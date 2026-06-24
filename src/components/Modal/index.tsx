@@ -12,9 +12,9 @@ function Modal({ children, buttonText, show = false }: Props) {
 
   if (!visible) {
     return (
-      <a className="info-button" onClick={() => setVisible(true)}>
+      <button type="button" className="info-button" onClick={() => setVisible(true)}>
         {buttonText}
-      </a>
+      </button>
     );
   }
 
@@ -29,9 +29,7 @@ function Modal({ children, buttonText, show = false }: Props) {
           <div className="bukazu-modal-content">{children}</div>
 
           <div className="bukazu-modal-footer">
-            <a onClick={() => setVisible(false)}>
-              {t('close')}
-            </a>
+            <button type="button" onClick={() => setVisible(false)}>{t('close')}</button>
           </div>
         </div>
       </div>

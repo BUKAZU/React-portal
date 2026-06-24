@@ -36,9 +36,7 @@ afterEach(() => {
 describe('IntegrationError', () => {
   it('renders nothing when all props are valid', () => {
     act(() => {
-      root.render(
-        <IntegrationError portalCode="VALID" locale="en" />
-      );
+      root.render(<IntegrationError portalCode="VALID" locale="en" />);
     });
 
     expect(container.innerHTML).toBe('');

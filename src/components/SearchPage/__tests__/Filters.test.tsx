@@ -5,7 +5,9 @@ import Filters from '../Filters';
 import { PortalOptions, PortalSiteType } from '../../../types';
 
 // Mock SVG and child components
-jest.mock('../../icons/Reload.svg', () => () => <svg data-testid="reload-icon" />);
+jest.mock('../../icons/Reload.svg', () => () => (
+  <svg data-testid="reload-icon" />
+));
 jest.mock('../Field', () => () => <div data-testid="field" />);
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -64,7 +66,9 @@ const defaultSearchFields = [
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
-function renderFilters(props: Partial<React.ComponentProps<typeof Filters>> = {}) {
+function renderFilters(
+  props: Partial<React.ComponentProps<typeof Filters>> = {}
+) {
   act(() => {
     root.render(
       <Filters
@@ -126,8 +130,12 @@ describe('Filters', () => {
   it('should toggle showOnMobile class when filters button is clicked', () => {
     renderFilters();
 
-    const filtersButton = container.querySelector('.filters-button') as HTMLElement;
-    const filtersDiv = container.querySelector('[class*="filters"]') as HTMLElement;
+    const filtersButton = container.querySelector(
+      '.filters-button'
+    ) as HTMLElement;
+    const filtersDiv = container.querySelector(
+      '[class*="filters"]'
+    ) as HTMLElement;
 
     // Initially not showing on mobile
     expect(filtersDiv.className).not.toContain('showOnMobile');
@@ -145,7 +153,9 @@ describe('Filters', () => {
     const onFilterChange = jest.fn();
     renderFilters({ onFilterChange });
 
-    const reloadButton = container.querySelector('.filters-reload') as HTMLElement;
+    const reloadButton = container.querySelector(
+      '.filters-reload'
+    ) as HTMLElement;
     act(() => {
       reloadButton.click();
     });
@@ -159,7 +169,9 @@ describe('Filters', () => {
       filtersForm: { ...mockOptions.filtersForm, show: false }
     } as any;
 
-    renderFilters({ options: { ...hiddenOptions, searchFields: defaultSearchFields } as any });
+    renderFilters({
+      options: { ...hiddenOptions, searchFields: defaultSearchFields } as any
+    });
 
     const filtersDiv = container.querySelector('.filters-hidden');
     expect(filtersDiv).not.toBeNull();
@@ -191,7 +203,9 @@ describe('Filters', () => {
       filtersForm: { ...mockOptions.filtersForm, fixed_mobile: true }
     } as any;
 
-    renderFilters({ options: { ...fixedOptions, searchFields: defaultSearchFields } as any });
+    renderFilters({
+      options: { ...fixedOptions, searchFields: defaultSearchFields } as any
+    });
 
     const fixedEl = container.querySelector('.fixed-mobile');
     expect(fixedEl).not.toBeNull();

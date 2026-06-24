@@ -82,7 +82,9 @@ function renderGuests(configPatch: Partial<BookingFormConfigurationType> = {}) {
 describe('Guests', () => {
   it('always renders the adults NumberSelect', () => {
     renderGuests();
-    expect(container.querySelector('[data-testid="number-select-adults"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-select-adults"]')
+    ).not.toBeNull();
   });
 
   it('renders children NumberSelect when childrenAllowed is true', () => {

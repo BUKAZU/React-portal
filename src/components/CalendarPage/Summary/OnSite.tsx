@@ -13,9 +13,7 @@ export default function OnSite({ prices }: Props): React.ReactNode {
   const { on_site } = required_costs;
   return (
     <div className="costs-section">
-      <strong>
-        {t('costs_on_site')}
-      </strong>
+      <strong>{t('costs_on_site')}</strong>
       <table>
         <tbody>
           {prices.required_house_costs.map((cost) => {

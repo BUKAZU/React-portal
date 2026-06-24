@@ -15,8 +15,12 @@ describe('SafeBooking', () => {
   });
 
   it('returns the correct label for each supported locale', () => {
-    expect(SafeBooking('de')).toContain('Gesichert und ermöglicht durch BUKAZU');
-    expect(SafeBooking('fr')).toContain('Sécurisé et rendu possible par BUKAZU');
+    expect(SafeBooking('de')).toContain(
+      'Gesichert und ermöglicht durch BUKAZU'
+    );
+    expect(SafeBooking('fr')).toContain(
+      'Sécurisé et rendu possible par BUKAZU'
+    );
     expect(SafeBooking('es')).toContain('Asegurado y hecho posible por BUKAZU');
     expect(SafeBooking('it')).toContain('Protetto e reso possibile da BUKAZU');
   });

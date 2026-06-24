@@ -9,9 +9,7 @@ import { BookingFormConfigurationType } from '../../../../types';
 
 // DiscountCode uses Apollo useMutation – mock the whole module so we can
 // verify it is rendered without needing a full Apollo provider.
-jest.mock('../DiscountCode', () => () => (
-  <div data-testid="discount-code" />
-));
+jest.mock('../DiscountCode', () => () => <div data-testid="discount-code" />);
 
 const baseHouse = {
   id: 1,
@@ -138,9 +136,13 @@ describe('Discount – discount select branch', () => {
   });
 
   it('shows the discount_reason error message when an error is present', () => {
-    renderDiscount({ discounts: '10' }, {}, {
-      discount_reason: 'Reason is required.'
-    });
+    renderDiscount(
+      { discounts: '10' },
+      {},
+      {
+        discount_reason: 'Reason is required.'
+      }
+    );
     const errorDiv = container.querySelector('.error-message');
     expect(errorDiv).not.toBeNull();
     expect(errorDiv?.textContent).toBe('Reason is required.');
@@ -172,6 +174,8 @@ describe('Discount – DiscountCode branch', () => {
       { show_discount_code: true }
     );
     expect(container.querySelector('select')).not.toBeNull();
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
   });
 });

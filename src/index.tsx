@@ -94,7 +94,11 @@ function Portal({
           }}
         >
           <div className="bu-portal">
-            <App pageType={pageType} locale={resolvedLocale} filters={filters} />
+            <App
+              pageType={pageType}
+              locale={resolvedLocale}
+              filters={filters}
+            />
           </div>
         </AppContext.Provider>
       </ApolloProvider>

@@ -1,4 +1,4 @@
-import { BookingFieldsType } from "./form_types";
+import { BookingFieldsType } from './form_types';
 
 const DefaultBookingFields: BookingFieldsType = [
   {
@@ -7,7 +7,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'preposition',
@@ -15,7 +15,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: false,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'last_name',
@@ -24,7 +24,7 @@ const DefaultBookingFields: BookingFieldsType = [
     options: ['text'],
     required: true,
     mandatory: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'address',
@@ -32,7 +32,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'house_number',
@@ -40,7 +40,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'zipcode',
@@ -48,7 +48,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'city',
@@ -56,7 +56,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'country',
@@ -65,7 +65,7 @@ const DefaultBookingFields: BookingFieldsType = [
     options: ['select'],
     required: true,
     mandatory: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'email',
@@ -74,7 +74,7 @@ const DefaultBookingFields: BookingFieldsType = [
     options: ['email'],
     required: true,
     mandatory: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'phone_mobile',
@@ -82,7 +82,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: false,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'phone',
@@ -90,7 +90,7 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: '',
+    placeholder: ''
   },
   {
     id: 'comment',
@@ -98,8 +98,8 @@ const DefaultBookingFields: BookingFieldsType = [
     type: 'textarea',
     options: ['textarea'],
     required: false,
-    rows: 10,
-  },
+    rows: 10
+  }
 ];
 
 export default DefaultBookingFields;

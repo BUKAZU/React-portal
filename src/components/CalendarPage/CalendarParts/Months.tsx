@@ -2,10 +2,10 @@ import {
   addMonths,
   endOfMonth,
   endOfWeek,
-  format,
+  formatDateKey,
   startOfMonth,
   startOfWeek
-} from 'date-fns';
+} from '../../../_lib/date_helper';
 import React, { useContext, useEffect, useState } from 'react';
 import { HouseType } from '../../../types';
 import {
@@ -88,7 +88,7 @@ function Months({
   for (let i = 0; i < numberOfMonths; i++) {
     template.push(
       <SingleMonth
-        key={format(addMonths(currentMonth, i), 'MM-yyyy')}
+        key={formatDateKey(addMonths(currentMonth, i)).slice(0, 7)}
         house={house}
         currentMonth={currentMonth}
         count={i}

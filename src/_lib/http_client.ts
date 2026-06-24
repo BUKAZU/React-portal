@@ -40,10 +40,10 @@ export const http: KyInstance = ky.create({
     // GraphQL mutations are never re-sent automatically, preventing duplicate
     // side-effects.
     methods: ['get', 'put', 'head', 'delete', 'options', 'trace'],
-    statusCodes: [408, 429, 500, 502, 503, 504],
+    statusCodes: [408, 429, 500, 502, 503, 504]
   },
   headers: {
-    Accept: 'application/json',
+    Accept: 'application/json'
   },
   hooks: {
     beforeRequest: [
@@ -57,7 +57,7 @@ export const http: KyInstance = ky.create({
         if (entry.lastModified) {
           request.headers.set('If-Modified-Since', entry.lastModified);
         }
-      },
+      }
     ],
     afterResponse: [
       async ({ request, response }) => {
@@ -70,7 +70,7 @@ export const http: KyInstance = ky.create({
           if (entry) {
             return new Response(entry.body, {
               status: 200,
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json' }
             });
           }
         }
@@ -78,7 +78,8 @@ export const http: KyInstance = ky.create({
         // Store ETag / Last-Modified whenever the server sends them.
         if (response.ok) {
           const etag = response.headers.get('ETag') ?? undefined;
-          const lastModified = response.headers.get('Last-Modified') ?? undefined;
+          const lastModified =
+            response.headers.get('Last-Modified') ?? undefined;
           if (etag !== undefined || lastModified !== undefined) {
             const body = await response.clone().text();
             responseCache.set(request.url, { etag, lastModified, body });
@@ -86,7 +87,7 @@ export const http: KyInstance = ky.create({
         }
 
         return response;
-      },
-    ],
-  },
+      }
+    ]
+  }
 });
