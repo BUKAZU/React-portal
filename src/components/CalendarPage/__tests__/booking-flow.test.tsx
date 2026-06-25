@@ -204,7 +204,6 @@ const mockPortalSite = {
   colorsConfiguration: {},
   bookingFormConfiguration: mockBookingFormConfiguration,
   booking_fields: [],
-  categories: [],
   countries: [],
   regions: [],
   cities: [],

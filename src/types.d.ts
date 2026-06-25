@@ -54,11 +54,6 @@ export type BookingFormConfigurationType = {
   show_months_in_a_row_amount: number;
 };
 
-type name_id_type = {
-  id: number;
-  name: string;
-};
-
 export type ColorsType = {
   arrival: string;
   booked: string;
@@ -80,7 +75,6 @@ export type PortalOptions = {
 };
 
 export type PortalSiteType = {
-  categories: { id: number; name: string; properties: name_id_type[] }[];
   options: PortalOptions;
   bookingFormConfiguration: BookingFormConfigurationType;
   max_persons: number;

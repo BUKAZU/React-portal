@@ -45,7 +45,6 @@ const settings = {
     mode: 'grid',
     no_results: 9,
     fixed_mobile: true,
-    categories: [1, 2],
     show_price: true,
     show_persons: true,
     show_bedrooms: true,

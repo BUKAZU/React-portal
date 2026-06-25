@@ -261,7 +261,6 @@ const mockPortalSite = {
   colorsConfiguration: {},
   bookingFormConfiguration: mockBookingFormConfiguration,
   booking_fields: [],
-  categories: [],
   max_persons: 10,
   max_bedrooms: 5,
   max_bathrooms: 3,

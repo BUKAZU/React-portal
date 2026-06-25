@@ -13,7 +13,6 @@ jest.mock('../Field', () => () => <div data-testid="field" />);
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockPortalSite: PortalSiteType = {
-  categories: [],
   options: {
     filtersForm: {
       show_city: false,
@@ -24,7 +23,6 @@ const mockPortalSite: PortalSiteType = {
       show_bedrooms: false,
       show_price: false,
       show_rating: false,
-      categories: [],
       no_results: 20,
       location: 'left',
       mode: 'grid',

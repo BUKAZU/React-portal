@@ -15,9 +15,6 @@ jest.mock('../filters/Select', () => ({ field, options }: any) => (
     data-options={options.length}
   />
 ));
-jest.mock('../filters/Categories', () => () => (
-  <div data-testid="categories" />
-));
 jest.mock('../filters/Radio', () => ({ field }: any) => (
   <div data-testid="radio" data-field={field.id} />
 ));
@@ -39,7 +36,6 @@ const mockPortalSite: PortalSiteType = {
   max_bedrooms: 5,
   max_bathrooms: 3,
   max_weekprice: 5000,
-  categories: [],
   options: {
     filtersForm: {
       show_city: false,
@@ -50,7 +46,6 @@ const mockPortalSite: PortalSiteType = {
       show_bedrooms: false,
       show_price: false,
       show_rating: false,
-      categories: [],
       no_results: 20,
       location: 'left',
       mode: 'grid',
@@ -163,24 +158,6 @@ describe('Field', () => {
 
     expect(
       container.querySelector('[data-testid="number-filter"]')
-    ).not.toBeNull();
-  });
-
-  it('should render Categories when field type is categories', () => {
-    act(() => {
-      root.render(
-        <Field
-          PortalSite={mockPortalSite}
-          field={{ id: '1', type: 'categories' }}
-          filters={{}}
-          value=""
-          onFilterChange={jest.fn()}
-        />
-      );
-    });
-
-    expect(
-      container.querySelector('[data-testid="categories"]')
     ).not.toBeNull();
   });
 

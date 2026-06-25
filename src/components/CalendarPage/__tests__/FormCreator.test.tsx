@@ -113,7 +113,6 @@ const mockHouse: HouseType = {
 
 const mockPortalSite: PortalSiteType = {
   portal_code: 'TEST',
-  categories: [],
   options: {
     filtersForm: {
       show_city: false,
@@ -124,7 +123,6 @@ const mockPortalSite: PortalSiteType = {
       show_bedrooms: false,
       show_price: false,
       show_rating: false,
-      categories: [],
       no_results: 20,
       location: 'left',
       mode: 'grid',

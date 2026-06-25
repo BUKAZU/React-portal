@@ -42,7 +42,6 @@ const mockOptions: FiltersFormType = {
   show_bathrooms: true,
   show_price: true,
   show_rating: true,
-  categories: [],
   no_results: 20,
   location: 'left',
   mode: 'grid',

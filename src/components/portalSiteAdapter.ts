@@ -112,7 +112,6 @@ export function buildAppPortalSite({
     colorsConfiguration,
     bookingFormConfiguration: settings.booking_form,
     booking_fields: mappedBookingFields,
-    categories: [],
     max_persons: 0,
     max_bedrooms: 0,
     max_bathrooms: 0,

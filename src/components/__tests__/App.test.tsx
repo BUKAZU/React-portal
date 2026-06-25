@@ -55,7 +55,6 @@ function makePortalSite(colorsConfiguration = fullColors): any {
     portal_code: 'TEST',
     options: {},
     colorsConfiguration,
-    categories: [],
     bookingFormConfiguration: {},
     max_persons: 0,
     name: 'Portal',
