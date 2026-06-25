@@ -248,6 +248,28 @@ function makeBookingPriceData(house: ReturnType<typeof makeHouseWithInsurance>) 
   };
 }
 
+const mockPortalSite = {
+  id: 'TEST',
+  portal_code: 'TEST',
+  name: 'Test Portal',
+  options: {
+    bookingFields: [],
+    bookingForm: {},
+    filtersForm: {},
+    searchFields: []
+  },
+  colorsConfiguration: {},
+  bookingFormConfiguration: mockBookingFormConfiguration,
+  booking_fields: [],
+  categories: [],
+  max_persons: 10,
+  max_bedrooms: 5,
+  max_bathrooms: 3,
+  max_weekprice: 5000,
+  form_submit_text: 'By booking you agree to our',
+  form_submit_button_text: 'Book now'
+} as any;
+
 // ---------------------------------------------------------------------------
 // Test helpers
 // ---------------------------------------------------------------------------
@@ -305,7 +327,7 @@ function renderApp() {
           apiUrl: 'https://api.bukazu.com/graphql'
         }}
       >
-        <CalendarWrapper />
+        <CalendarWrapper portalSite={mockPortalSite} />
       </AppContext.Provider>
     );
   });

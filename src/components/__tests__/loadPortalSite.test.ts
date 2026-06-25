@@ -2,14 +2,12 @@ import { loadPortalSite } from '../loadPortalSite';
 import {
   fetchBookingFields,
   fetchFilterFields,
-  fetchSearchFacets,
   fetchSettings
 } from '../../_lib/portal_settings';
 
 jest.mock('../../_lib/portal_settings');
 
 const mockedFetchSettings = jest.mocked(fetchSettings);
-const mockedFetchSearchFacets = jest.mocked(fetchSearchFacets);
 const mockedFetchFilterFields = jest.mocked(fetchFilterFields);
 const mockedFetchBookingFields = jest.mocked(fetchBookingFields);
 
@@ -59,27 +57,17 @@ const settings = {
   labels: { countries_label_nl: 'Land', countries_label_en: 'Country' }
 } as unknown as Awaited<ReturnType<typeof fetchSettings>>;
 
-const facets = {
-  countries: [{ id: 1, name: 'NL' }],
-  regions: [],
-  cities: [],
-  categories: [],
-  extra_search: [],
-  max: { persons: 8, bedrooms: 4, bathrooms: 2, nights: 21, weekprice: 2000 }
-} as unknown as Awaited<ReturnType<typeof fetchSearchFacets>>;
-
 const baseParams = { portalCode: 'P1', apiUrl: 'https://api/graphql', locale: 'nl' };
 
 beforeEach(() => {
   jest.clearAllMocks();
   mockedFetchSettings.mockResolvedValue(settings);
-  mockedFetchSearchFacets.mockResolvedValue(facets);
   mockedFetchFilterFields.mockResolvedValue([]);
   mockedFetchBookingFields.mockResolvedValue([]);
 });
 
 describe('loadPortalSite', () => {
-  it('fetches facets and filter fields on the search page', async () => {
+  it('fetches filter fields on the search page', async () => {
     const result = await loadPortalSite({
       ...baseParams,
       isSearchPage: true,
@@ -87,14 +75,11 @@ describe('loadPortalSite', () => {
     });
 
     expect(mockedFetchSettings).toHaveBeenCalledWith(baseParams);
-    expect(mockedFetchSearchFacets).toHaveBeenCalledWith(baseParams);
     expect(mockedFetchFilterFields).toHaveBeenCalledWith(baseParams);
     expect(mockedFetchBookingFields).not.toHaveBeenCalled();
 
-    // Adapter mapped the settings + facets into the consumed shape.
     expect(result.portal_code).toBe('P1');
     expect(result.colorsConfiguration.button_cta).toBe('#2');
-    expect(result.max_persons).toBe(8);
     expect(result.countries_label).toBe('Land');
   });
 
@@ -106,7 +91,6 @@ describe('loadPortalSite', () => {
     });
 
     expect(mockedFetchSettings).toHaveBeenCalledTimes(1);
-    expect(mockedFetchSearchFacets).not.toHaveBeenCalled();
     expect(mockedFetchFilterFields).not.toHaveBeenCalled();
     expect(mockedFetchBookingFields).not.toHaveBeenCalled();
   });

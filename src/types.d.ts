@@ -73,7 +73,7 @@ export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
   /** Search-filter fields to render, mapped from the filter-fields REST endpoint. */
-  searchFields?: { id: string; type: string; label: string | null }[];
+  searchFields?: { id: string; type: string; label: string | null; max?: number; options?: { id: number; name: string }[] }[];
   /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;

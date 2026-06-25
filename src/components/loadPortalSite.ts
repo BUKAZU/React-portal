@@ -1,7 +1,6 @@
 import {
   fetchBookingFields,
   fetchFilterFields,
-  fetchSearchFacets,
   fetchSettings
 } from '../_lib/portal_settings';
 import { buildAppPortalSite, type AppPortalSite } from './portalSiteAdapter';
@@ -32,9 +31,6 @@ export async function loadPortalSite({
   locale
 }: LoadPortalSiteParams): Promise<AppPortalSite> {
   const settingsPromise = fetchSettings({ apiUrl, locale, portalCode });
-  const facetsPromise = isSearchPage
-    ? fetchSearchFacets({ apiUrl, locale, portalCode })
-    : Promise.resolve(undefined);
   const filterFieldsPromise = isSearchPage
     ? fetchFilterFields({ apiUrl, locale, portalCode })
     : Promise.resolve(undefined);
@@ -42,9 +38,8 @@ export async function loadPortalSite({
     ? fetchBookingFields({ apiUrl, locale, portalCode })
     : Promise.resolve(undefined);
 
-  const [settings, facets, filterFields, bookingFields] = await Promise.all([
+  const [settings, filterFields, bookingFields] = await Promise.all([
     settingsPromise,
-    facetsPromise,
     filterFieldsPromise,
     bookingFieldsPromise
   ]);
@@ -55,7 +50,6 @@ export async function loadPortalSite({
 
   return buildAppPortalSite({
     settings,
-    facets,
     filterFields,
     bookingFields,
     locale

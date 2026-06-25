@@ -6,7 +6,6 @@
 import type {
   BookingFieldResponse,
   FilterFieldResponse,
-  SearchFacetsResponse,
   SettingsResponse
 } from '../_lib/portal_settings';
 import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
@@ -16,10 +15,6 @@ export interface AppPortalSite extends PortalSiteType {
   portal_code: string;
   options: PortalOptions;
   colorsConfiguration: ColorsType;
-  countries: SearchFacetsResponse['countries'];
-  regions: SearchFacetsResponse['regions'];
-  cities: SearchFacetsResponse['cities'];
-  extra_search: string[];
   booking_fields: MappedBookingField[];
   /** Dynamic localized labels exposed as bare `<field>_label` keys. */
   [key: string]: unknown;
@@ -71,47 +66,21 @@ export function mapBookingFields(
   }));
 }
 
-type MappedSearchFacets = {
-  countries: SearchFacetsResponse['countries'];
-  regions: SearchFacetsResponse['regions'];
-  cities: SearchFacetsResponse['cities'];
-  categories: SearchFacetsResponse['categories'];
-  extra_search: string[];
-  max_persons: number;
-  max_bedrooms: number;
-  max_bathrooms: number;
-  max_nights: number;
-  max_weekprice: number;
-};
-
-/** Flatten the search-facets response into the top-level fields the search UI reads. */
-export function mapSearchFacets(
-  facets: SearchFacetsResponse
-): MappedSearchFacets {
-  return {
-    countries: facets.countries,
-    regions: facets.regions,
-    cities: facets.cities,
-    categories: facets.categories,
-    extra_search: facets.extra_search,
-    max_persons: facets.max.persons,
-    max_bedrooms: facets.max.bedrooms,
-    max_bathrooms: facets.max.bathrooms,
-    max_nights: facets.max.nights,
-    max_weekprice: parseFloat(facets.max.weekprice)
-  };
-}
-
 /** Map the filter-fields endpoint into the `options.searchFields` list the search UI renders. */
 export function mapFilterFields(
   fields: FilterFieldResponse[]
-): { id: string; type: string; label: string | null }[] {
-  return (fields ?? []).map((f) => ({ id: f.id, type: f.field_type, label: f.label }));
+): { id: string; type: string; label: string | null; max?: number; options?: { id: number; name: string }[] }[] {
+  return (fields ?? []).map((f) => ({
+    id: f.id,
+    type: f.field_type,
+    label: f.label,
+    ...(f.max !== undefined && { max: f.max }),
+    ...(f.options !== undefined && { options: f.options })
+  }));
 }
 
 interface BuildAppPortalSiteParams {
   settings: SettingsResponse;
-  facets?: SearchFacetsResponse;
   filterFields?: FilterFieldResponse[];
   bookingFields?: BookingFieldResponse[];
   locale: string;
@@ -120,7 +89,6 @@ interface BuildAppPortalSiteParams {
 /** Assemble the full `AppPortalSite` from the config REST responses. */
 export function buildAppPortalSite({
   settings,
-  facets,
   filterFields,
   bookingFields,
   locale
@@ -137,19 +105,6 @@ export function buildAppPortalSite({
     colors: colorsConfiguration
   };
 
-  const emptyFacets: MappedSearchFacets = {
-    countries: [],
-    regions: [],
-    cities: [],
-    categories: [],
-    extra_search: [],
-    max_persons: 0,
-    max_bedrooms: 0,
-    max_bathrooms: 0,
-    max_nights: 0,
-    max_weekprice: 0
-  };
-
   return {
     name: settings.name,
     portal_code: settings.portal_code,
@@ -157,7 +112,11 @@ export function buildAppPortalSite({
     colorsConfiguration,
     bookingFormConfiguration: settings.booking_form,
     booking_fields: mappedBookingFields,
-    ...(facets ? mapSearchFacets(facets) : emptyFacets),
+    categories: [],
+    max_persons: 0,
+    max_bedrooms: 0,
+    max_bathrooms: 0,
+    max_weekprice: 0,
     ...mapLabels(settings.labels, locale)
   } as AppPortalSite;
 }

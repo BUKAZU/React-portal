@@ -1,7 +1,6 @@
 import {
   buildBookingFieldsUrl,
   buildFilterFieldsUrl,
-  buildSearchFacetsUrl,
   buildSettingsUrl,
   fetchSettings
 } from '../portal_settings';
@@ -29,10 +28,7 @@ describe('portal settings REST client', () => {
       expect(url.searchParams.get('portal_code')).toBe('TEST');
     });
 
-    it('builds the search-facets, booking-fields and filter-fields paths', () => {
-      expect(new URL(buildSearchFacetsUrl(baseParams)).pathname).toBe(
-        '/portal_api/v1/config/search-facets'
-      );
+    it('builds the booking-fields and filter-fields paths', () => {
       expect(new URL(buildBookingFieldsUrl(baseParams)).pathname).toBe(
         '/portal_api/v1/config/booking-fields'
       );

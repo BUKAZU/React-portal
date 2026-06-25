@@ -66,24 +66,6 @@ export type SettingsResponse = {
   labels: Record<string, string>;
 };
 
-type NameId = { id: number; name: string };
-
-/** Full response of GET /portal_api/v1/config/search-facets. */
-export type SearchFacetsResponse = {
-  countries: NameId[];
-  regions: Array<{ id: string; name: string; country_id: number }>;
-  cities: Array<{ id: string; name: string; region: string; country_id: number }>;
-  categories: Array<{ id: number; name: string; properties: NameId[] }>;
-  extra_search: string[];
-  max: {
-    persons: number;
-    bedrooms: number;
-    bathrooms: number;
-    nights: number;
-    weekprice: string;
-  };
-};
-
 /** A single entry of GET /portal_api/v1/config/booking-fields. */
 export type BookingFieldResponse = {
   id: string;
@@ -99,6 +81,10 @@ export type FilterFieldResponse = {
   id: string;
   field_type: string;
   label: string | null;
+  /** Upper bound for numeric select fields (e.g. persons_min). */
+  max?: number;
+  /** Selectable options for select/list fields (e.g. category properties). */
+  options?: { id: number; name: string }[];
 };
 
 interface ConfigRequestParams {
@@ -129,13 +115,6 @@ export function buildSettingsUrl({
   portalCode
 }: Omit<ConfigRequestParams, 'locale'>): string {
   return buildConfigUrl(apiUrl, 'settings', portalCode);
-}
-
-export function buildSearchFacetsUrl({
-  apiUrl,
-  portalCode
-}: Omit<ConfigRequestParams, 'locale'>): string {
-  return buildConfigUrl(apiUrl, 'search-facets', portalCode);
 }
 
 export function buildBookingFieldsUrl({
@@ -170,17 +149,6 @@ export function fetchSettings({
 }: ConfigRequestParams): Promise<SettingsResponse> {
   return fetchConfig<SettingsResponse>(
     buildSettingsUrl({ apiUrl, portalCode }),
-    locale
-  );
-}
-
-export function fetchSearchFacets({
-  apiUrl,
-  locale,
-  portalCode
-}: ConfigRequestParams): Promise<SearchFacetsResponse> {
-  return fetchConfig<SearchFacetsResponse>(
-    buildSearchFacetsUrl({ apiUrl, portalCode }),
     locale
   );
 }

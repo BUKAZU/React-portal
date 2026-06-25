@@ -2,13 +2,9 @@ import {
   buildAppPortalSite,
   mapBookingFields,
   mapFilterFields,
-  mapLabels,
-  mapSearchFacets
+  mapLabels
 } from '../portalSiteAdapter';
-import type {
-  SearchFacetsResponse,
-  SettingsResponse
-} from '../../_lib/portal_settings';
+import type { SettingsResponse } from '../../_lib/portal_settings';
 
 describe('portalSiteAdapter', () => {
   it('mapLabels strips the locale suffix for the requested locale only', () => {
@@ -25,27 +21,6 @@ describe('portalSiteAdapter', () => {
     expect(result.arrival_date_label).toBe('Aankomst');
     expect(result.form_submit_text).toBe('Voorwaarden');
     expect(result).not.toHaveProperty('countries_label_en');
-  });
-
-  it('mapSearchFacets flattens max into top-level max_* fields', () => {
-    const facets: SearchFacetsResponse = {
-      countries: [{ id: 1, name: 'NL' }],
-      regions: [],
-      cities: [],
-      categories: [],
-      extra_search: ['pool'],
-      max: { persons: 8, bedrooms: 4, bathrooms: 2, nights: 21, weekprice: '2000' }
-    };
-
-    const result = mapSearchFacets(facets);
-
-    expect(result.max_persons).toBe(8);
-    expect(result.max_bedrooms).toBe(4);
-    expect(result.max_bathrooms).toBe(2);
-    expect(result.max_nights).toBe(21);
-    expect(result.max_weekprice).toBe(2000);
-    expect(result.countries).toEqual([{ id: 1, name: 'NL' }]);
-    expect(result.extra_search).toEqual(['pool']);
   });
 
   it('mapBookingFields exposes both type and field_type', () => {
@@ -69,15 +44,18 @@ describe('portalSiteAdapter', () => {
     });
   });
 
-  it('mapFilterFields maps id, type, and label', () => {
+  it('mapFilterFields maps id, type, label and passes through max and options', () => {
+    const opts = [{ id: 101, name: 'Avontuur' }];
     const result = mapFilterFields([
-      { id: 'persons_min', field_type: 'number', label: 'Personen' },
-      { id: 'countries', field_type: 'select', label: 'Land' }
+      { id: 'persons_min', field_type: 'select', label: 'Personen', max: 6 },
+      { id: 'category_13', field_type: 'list', label: 'Type', options: opts },
+      { id: 'arrival_date', field_type: 'date', label: 'Aankomst' }
     ]);
 
     expect(result).toEqual([
-      { id: 'persons_min', type: 'number', label: 'Personen' },
-      { id: 'countries', type: 'select', label: 'Land' }
+      { id: 'persons_min', type: 'select', label: 'Personen', max: 6 },
+      { id: 'category_13', type: 'list', label: 'Type', options: opts },
+      { id: 'arrival_date', type: 'date', label: 'Aankomst' }
     ]);
   });
 
@@ -161,18 +139,8 @@ describe('portalSiteAdapter', () => {
       labels: { countries_label_nl: 'Land', form_submit_text_nl: 'Akkoord' }
     } as unknown as SettingsResponse;
 
-    const facets: SearchFacetsResponse = {
-      countries: [{ id: 1, name: 'NL' }],
-      regions: [],
-      cities: [],
-      categories: [],
-      extra_search: [],
-      max: { persons: 8, bedrooms: 4, bathrooms: 2, nights: 21, weekprice: '2000' }
-    };
-
     const result = buildAppPortalSite({
       settings,
-      facets,
       filterFields: [
         { id: 'countries', field_type: 'select', label: 'Land' }
       ],
@@ -186,8 +154,6 @@ describe('portalSiteAdapter', () => {
     expect(result.options.bookingFields).toEqual([]);
     expect(result.colorsConfiguration.button_cta).toBe('#2');
     expect(result.bookingFormConfiguration.show_months_amount).toBe(2);
-    expect(result.max_persons).toBe(8);
-    expect(result.countries).toEqual([{ id: 1, name: 'NL' }]);
     expect(result.countries_label).toBe('Land');
     expect(result.form_submit_text).toBe('Akkoord');
   });
