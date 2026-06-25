@@ -68,15 +68,17 @@ function Select({
         value={value}
       >
         <option value="" />
-        {options.map((opt) => {
-          let hidden = false;
-
-          return (
-            <option key={opt} value={opt} disabled={hidden} hidden={hidden}>
+        {options.map((opt) =>
+          typeof opt === 'object' ? (
+            <option key={opt.id} value={opt.id}>
+              {opt.name}
+            </option>
+          ) : (
+            <option key={opt} value={opt}>
               {opt}
             </option>
-          );
-        })}
+          )
+        )}
       </select>
     );
   }

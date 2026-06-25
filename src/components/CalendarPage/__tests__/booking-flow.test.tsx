@@ -174,70 +174,61 @@ const mockHouse = {
 };
 
 const mockBookingFormConfiguration = {
-  adultsFromAge: 18,
-  babiesAllowed: false,
-  babiesTillAge: 2,
-  childrenAllowed: false,
-  childrenFromAge: 3,
-  childrenTillAge: 17,
-  languageSelectorVisible: false,
-  redirectUrl: '',
-  redirectUrlNl: '',
-  redirectUrlEn: '',
-  redirectUrlDe: '',
-  redirectUrlFr: '',
-  redirectUrlEs: '',
-  redirectUrlIt: '',
-  showDiscountCode: false,
-  showMonthsAmount: 2,
-  showMonthsInARow: 2,
-  showMonthsInARowAmount: 2
+  adults_from_age: 18,
+  babies_allowed: false,
+  babies_till_age: 2,
+  children_allowed: false,
+  children_from_age: 3,
+  children_till_age: 17,
+  language_selector_visible: false,
+  redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
+  show_discount_code: false,
+  show_months_amount: 2,
+  show_months_in_a_row_amount: 2
 };
 
-/** Data returned by SINGLE_HOUSE_QUERY (GenerateCalendar) */
+/**
+ * Portal settings now arrive via props (loaded over REST by App), not through the
+ * GraphQL queries. This mirrors the AppPortalSite the adapter produces.
+ */
+const mockPortalSite = {
+  id: 'TEST',
+  portal_code: 'TEST',
+  name: 'Test Portal',
+  options: {
+    bookingFields: [],
+    bookingForm: {},
+    filtersForm: {},
+    searchFields: []
+  },
+  colorsConfiguration: {},
+  bookingFormConfiguration: mockBookingFormConfiguration,
+  booking_fields: [],
+  countries: [],
+  regions: [],
+  cities: [],
+  extra_search: [],
+  max_persons: 10,
+  max_bedrooms: 5,
+  max_bathrooms: 3,
+  max_nights: 14,
+  max_weekprice: 5000,
+  form_submit_text: 'By booking you agree to our',
+  form_submit_button_text: 'Book now'
+} as any;
+
+/** Data returned by SINGLE_HOUSE_QUERY (GenerateCalendar) — house data only. */
 const singleHouseData = {
   PortalSite: {
     id: 'TEST',
-    options: {
-      bookingFields: [],
-      bookingForm: {}
-    },
-    bookingFormConfiguration: mockBookingFormConfiguration,
     houses: [mockHouse]
   }
 };
 
-/** Data returned by BOOKING_PRICE_QUERY (BookingForm) */
+/** Data returned by BOOKING_PRICE_QUERY (BookingForm) — house data only. */
 const bookingPriceData = {
   PortalSite: {
     id: 'TEST',
-    options: {
-      bookingFields: [],
-      bookingForm: {
-        adults_from: 18,
-        children: false,
-        children_from: 0,
-        children_til: 12,
-        babies: false,
-        babies_til: 2,
-        showDiscountCode: false,
-        redirectUrl: null,
-        redirectUrlEn: null,
-        redirectUrlNl: null,
-        redirectUrlDe: null,
-        redirectUrlFr: null,
-        redirectUrlEs: null,
-        redirectUrlIt: null
-      }
-    },
-    bookingFormConfiguration: mockBookingFormConfiguration,
-    max_persons: 10,
-    name: 'Test Portal',
-    max_bedrooms: 5,
-    max_bathrooms: 3,
-    max_weekprice: 5000,
-    form_submit_text: 'By booking you agree to our',
-    form_submit_button_text: 'Book now',
     houses: [{ ...mockHouse }]
   }
 };
@@ -261,7 +252,7 @@ function renderApp() {
           apiUrl: 'https://api.bukazu.com/graphql'
         }}
       >
-        <CalendarWrapper />
+        <CalendarWrapper portalSite={mockPortalSite} />
       </AppContext.Provider>
     );
   });

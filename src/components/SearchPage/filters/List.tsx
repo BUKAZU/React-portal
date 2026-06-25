@@ -65,13 +65,13 @@ export default function List({
             <input
               name={field.id}
               type="checkbox"
-              id={opt.id}
+              id={String(opt.id)}
               value={opt.id}
-              checked={value === opt.id}
+              checked={value === String(opt.id)}
               onBlur={handleChange}
               onChange={updateList}
             />
-            <label htmlFor={opt.id}>{opt.name}</label>
+            <label htmlFor={String(opt.id)}>{opt.name}</label>
           </li>
         ))}
       </ul>

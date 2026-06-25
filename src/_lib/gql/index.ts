@@ -1,93 +1,9 @@
 import { gql } from '@apollo/client';
-import {
-  HOUSE_SEARCH_RESULT_FIELDS,
-  BOOKING_FORM_LABEL_FIELDS,
-  BOOKING_FORM_CONFIGURATION_FIELDS
-} from './fragments';
+import { HOUSE_SEARCH_RESULT_FIELDS } from './fragments';
 
 export * from './fragments';
 
-export const PORTAL_BASE_QUERY = gql`
-  query PortalSiteBaseQuery($id: ID!) {
-    PortalSite(id: $id) {
-      id
-      portal_code
-      options
-      colorsConfiguration {
-        arrival
-        booked
-        button
-        buttonCta
-        cell
-        departure
-        discount
-      }
-    }
-  }
-`;
-
-export const PORTAL_SEARCH_QUERY = gql`
-  query PortalSiteSearchQuery($id: ID!) {
-    PortalSite(id: $id) {
-      id
-      portal_code
-      options
-      colorsConfiguration {
-        arrival
-        booked
-        button
-        buttonCta
-        cell
-        departure
-        discount
-      }
-      countries {
-        id
-        name
-      }
-      regions {
-        id
-        name
-        country_id
-      }
-      cities {
-        id
-        name
-        region
-        country_id
-      }
-      extra_search
-      max_bathrooms
-      max_bedrooms
-      max_nights
-      max_persons
-      max_weekprice
-      country_placeholder
-      categories
-      countries_label
-      regions_label
-      cities_label
-      arrival_date_label
-      departure_date_label
-      max_weekprice_label
-      persons_min_label
-      persons_max_label
-      bedrooms_min_label
-      bathrooms_min_label
-      weekprice_max_label
-      no_nights_label
-      extra_search_label
-      properties_label
-    }
-  }
-`;
-
-/** @deprecated Use PORTAL_BASE_QUERY for Calendar/Reviews pages and PORTAL_SEARCH_QUERY for Search pages. */
-export const PORTAL_QUERY = PORTAL_SEARCH_QUERY;
-
 export const BOOKING_PRICE_QUERY = gql`
-  ${BOOKING_FORM_LABEL_FIELDS}
-  ${BOOKING_FORM_CONFIGURATION_FIELDS}
   query BookingFormQuery(
     $portalCode: ID!
     $objectCode: String!
@@ -96,18 +12,6 @@ export const BOOKING_PRICE_QUERY = gql`
   ) {
     PortalSite(id: $portalCode) {
       id
-      options
-      ...BookingFormLabelFields
-      bookingFormConfiguration {
-        ...BookingFormConfigurationFields
-      }
-      booking_fields {
-        id
-        label
-        field_type
-        options
-        placeholder
-      }
       houses(house_code: $objectCode) {
         id
         name
@@ -209,14 +113,9 @@ export const CREATE_BOOKING_MUTATION = gql`
 `;
 
 export const SINGLE_HOUSE_QUERY = gql`
-  ${BOOKING_FORM_CONFIGURATION_FIELDS}
   query PortalSiteSingleHouseQuery($portalCode: ID!, $objectCode: String!) {
     PortalSite(id: $portalCode) {
       id
-      options
-      bookingFormConfiguration {
-        ...BookingFormConfigurationFields
-      }
       houses(house_code: $objectCode) {
         id
         code
@@ -276,7 +175,7 @@ export const HOUSES_QUERY = gql`
 
 export const HOUSES_PRICE_QUERY = gql`
   ${HOUSE_SEARCH_RESULT_FIELDS}
-  query PortalSiteHousesQuery(
+  query PortalSiteHousePriceQuery(
     $id: ID!
     $country_id: ID
     $region_id: String

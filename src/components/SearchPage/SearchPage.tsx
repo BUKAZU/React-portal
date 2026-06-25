@@ -22,9 +22,7 @@ type MyState = {
 class SearchPage extends Component<MyProps, MyState> {
   constructor(props: MyProps) {
     super(props);
-    let limit = this.props.options.filtersForm
-      ? Number(this.props.options.filtersForm.no_results)
-      : 20;
+    let limit = Number(this.props.options.filtersForm.no_results);
     this.state = {
       filters: this.props.filters || {},
       activePage: 1,
@@ -84,12 +82,10 @@ class SearchPage extends Component<MyProps, MyState> {
       <div
         id="search-page"
         className={
-          options.filtersForm
-            ? options.filtersForm.location === 'right'
-              ? 'bu-reverse'
-              : options.filtersForm.location === 'top'
-                ? 'bu-column'
-                : ''
+          options.filtersForm.location === 'right'
+            ? 'bu-reverse'
+            : options.filtersForm.location === 'top'
+            ? 'bu-column'
             : ''
         }
       >

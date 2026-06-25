@@ -12,7 +12,6 @@ const mockPortalSite: PortalSiteType = {
   max_bedrooms: 5,
   max_bathrooms: 3,
   max_weekprice: 5000,
-  categories: [],
   options: {} as any,
   name: 'Test Portal'
 } as any;
