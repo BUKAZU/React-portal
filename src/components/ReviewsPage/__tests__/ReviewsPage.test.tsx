@@ -13,12 +13,6 @@ jest.mock('../../../intl', () => ({
 
 jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 
-jest.mock('../../Error', () => ({
-  ApiError: ({ errors }: { errors: any }) => (
-    <div data-testid="api-error">{errors[0]?.message}</div>
-  )
-}));
-
 jest.mock('../Score', () => ({
   getScore: (rating: number) => ({
     color: 'best',
@@ -34,7 +28,9 @@ jest.mock('../SingleReview', () => ({
     review: review.review,
     color: 'best',
     formatted: review.score.toFixed(1),
-    criteria: review.reviewCriteria.map((c: any) => ({
+    sourceName: review.sourceName ?? '',
+    reviewResponses: review.reviewResponses ?? [],
+    criteria: (review.reviewCriteria ?? []).map((c: any) => ({
       id: c.id,
       name: c.name,
       score: c.score,
@@ -87,6 +83,8 @@ const mockReviews = [
     review: 'Great place!',
     score: 9,
     createdAt: '2024-01-15',
+    sourceName: '',
+    reviewResponses: [],
     reviewCriteria: [{ id: 1, name: 'Cleanliness', score: 9 }]
   },
   {
@@ -95,23 +93,28 @@ const mockReviews = [
     review: 'Nice stay',
     score: 8,
     createdAt: '2024-02-20',
+    sourceName: 'Booking.com',
+    reviewResponses: [],
     reviewCriteria: [{ id: 2, name: 'Location', score: 8 }]
   }
 ];
 
-const mockData = {
-  PortalSite: {
-    houses: [
-      {
-        id: 'h1',
-        name: 'Test House',
-        rating: 8.5,
-        scoreAmount: 42,
-        reviews: mockReviews
-      }
-    ]
-  }
+const mockHouse = {
+  id: 'h1',
+  name: 'Test House',
+  rating: 8.5,
+  scoreAmount: 42,
+  reviews: mockReviews
 };
+
+const mockPageInfo = {
+  start_cursor: 'cursor1',
+  end_cursor: 'cursor2',
+  has_next_page: false,
+  has_previous_page: false
+};
+
+const mockResult = { house: mockHouse, pageInfo: mockPageInfo };
 
 describe('ReviewsPage', () => {
   beforeEach(() => {
@@ -123,7 +126,7 @@ describe('ReviewsPage', () => {
       heading.textContent = `${house.scoreAmount} reviews`;
       element.appendChild(heading);
 
-      house.reviews.forEach((review) => {
+      house.reviews.forEach((review: any) => {
         const item = document.createElement('div');
         item.className = 'bu_single_review';
         item.textContent = review.name;
@@ -157,12 +160,12 @@ describe('ReviewsPage', () => {
       await Promise.resolve();
     });
 
-    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
-    expect(container.textContent).toContain('Something went wrong');
+    expect(container.querySelector('[data-testid="error"]')).not.toBeNull();
+    expect(container.textContent).toContain('something_went_wrong_please_try_again');
   });
 
   it('renders reviews overview with score and count', async () => {
-    mockedLoadReviewsHouse.mockResolvedValue(mockData.PortalSite.houses[0]);
+    mockedLoadReviewsHouse.mockResolvedValue(mockResult);
 
     await renderPage();
 
@@ -170,15 +173,13 @@ describe('ReviewsPage', () => {
       await Promise.resolve();
     });
 
-    expect(mockedCreateReviewsPageView).toHaveBeenCalledWith(
-      mockData.PortalSite.houses[0]
-    );
+    expect(mockedCreateReviewsPageView).toHaveBeenCalledWith(mockHouse);
     expect(container.textContent).toContain('42');
     expect(container.textContent).toContain('reviews');
   });
 
   it('renders all reviews', async () => {
-    mockedLoadReviewsHouse.mockResolvedValue(mockData.PortalSite.houses[0]);
+    mockedLoadReviewsHouse.mockResolvedValue(mockResult);
 
     await renderPage();
 
@@ -193,7 +194,7 @@ describe('ReviewsPage', () => {
   });
 
   it('renders the note component', async () => {
-    mockedLoadReviewsHouse.mockResolvedValue(mockData.PortalSite.houses[0]);
+    mockedLoadReviewsHouse.mockResolvedValue(mockResult);
 
     await renderPage();
 
@@ -217,5 +218,69 @@ describe('ReviewsPage', () => {
         objectCode: 'HOUSE1'
       })
     );
+  });
+
+  it('shows Load More button when hasNextPage is true', async () => {
+    const withNextPage = {
+      ...mockResult,
+      pageInfo: { ...mockPageInfo, has_next_page: true, end_cursor: 'nextCursor' }
+    };
+    mockedLoadReviewsHouse.mockResolvedValue(withNextPage);
+
+    await renderPage();
+    await act(async () => { await Promise.resolve(); });
+
+    expect(container.querySelector('.bu_load_more')).not.toBeNull();
+    expect(container.textContent).toContain('load_more_reviews');
+  });
+
+  it('does not show Load More button when hasNextPage is false', async () => {
+    mockedLoadReviewsHouse.mockResolvedValue(mockResult);
+
+    await renderPage();
+    await act(async () => { await Promise.resolve(); });
+
+    expect(container.querySelector('.bu_load_more')).toBeNull();
+  });
+
+  it('loads next page and appends reviews on Load More click', async () => {
+    const firstPage = {
+      house: { ...mockHouse, reviews: [mockReviews[0]] },
+      pageInfo: { ...mockPageInfo, has_next_page: true, end_cursor: 'cursor2' }
+    };
+    const secondPage = {
+      house: { ...mockHouse, reviews: [mockReviews[1]] },
+      pageInfo: { ...mockPageInfo, has_next_page: false, end_cursor: null }
+    };
+
+    mockedLoadReviewsHouse
+      .mockResolvedValueOnce(firstPage)
+      .mockResolvedValueOnce(secondPage);
+
+    await renderPage();
+    await act(async () => { await Promise.resolve(); });
+
+    const loadMoreButton = container.querySelector('.bu_load_more') as HTMLButtonElement;
+    expect(loadMoreButton).not.toBeNull();
+
+    await act(async () => {
+      loadMoreButton.click();
+      await Promise.resolve();
+    });
+
+    expect(mockedLoadReviewsHouse).toHaveBeenCalledWith(
+      expect.objectContaining({ after: 'cursor2' })
+    );
+
+    expect(mockedCreateReviewsPageView).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        reviews: expect.arrayContaining([
+          expect.objectContaining({ name: 'Alice' }),
+          expect.objectContaining({ name: 'Bob' })
+        ])
+      })
+    );
+
+    expect(container.querySelector('.bu_load_more')).toBeNull();
   });
 });
