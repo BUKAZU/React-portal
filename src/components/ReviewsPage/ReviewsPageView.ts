@@ -1,7 +1,14 @@
+import { FormatIntl, Parse_EN_US } from '../../_lib/date_helper';
 import { t } from '../../intl';
 import { getScore } from './Score';
 import type { ReviewsHouse } from './ReviewsPage';
 import { processReview } from './SingleReview';
+
+const REVIEW_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+};
 
 function createDiv(className?: string, text?: string): HTMLDivElement {
   const element = document.createElement('div');
@@ -12,6 +19,10 @@ function createDiv(className?: string, text?: string): HTMLDivElement {
     element.textContent = text;
   }
   return element;
+}
+
+function formatReviewDate(date: string): string {
+  return FormatIntl(Parse_EN_US(date), REVIEW_DATE_FORMAT);
 }
 
 export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
@@ -52,11 +63,14 @@ export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
     }
 
     const dateName = createDiv('bu_review_summary__date_name');
-    const formattedDate = new Date(processed.createdAt).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    const formattedDate = new Date(processed.createdAt).toLocaleDateString(
+      undefined,
+      {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }
+    );
     const date = createDiv(undefined, `${formattedDate}, `);
     const name = createDiv('bu_review_summary__name', processed.name);
     dateName.appendChild(date);
@@ -66,7 +80,10 @@ export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
     summary.appendChild(dateName);
 
     if (processed.sourceName) {
-      const source = createDiv('bu_review_summary__source', processed.sourceName);
+      const source = createDiv(
+        'bu_review_summary__source',
+        processed.sourceName
+      );
       summary.appendChild(source);
     }
 
@@ -102,15 +119,18 @@ export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
       const responses = createDiv('bu_review_responses');
       processed.reviewResponses.forEach((resp) => {
         const responseDiv = createDiv('bu_review_response');
-        const label = createDiv('bu_review_response__label', t('review_response_label'));
+        const label = createDiv(
+          'bu_review_response__label',
+          t('review_response_label')
+        );
         const header = createDiv('bu_review_response__header');
-        const formattedRespDate = new Date(resp.created_at).toLocaleDateString(undefined, {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
-        header.appendChild(createDiv('bu_review_response__sender', resp.sender));
-        header.appendChild(createDiv('bu_review_response__date', formattedRespDate));
+        const formattedRespDate = formatReviewDate(resp.created_at);
+        header.appendChild(
+          createDiv('bu_review_response__sender', resp.sender)
+        );
+        header.appendChild(
+          createDiv('bu_review_response__date', formattedRespDate)
+        );
         const message = document.createElement('p');
         message.className = 'bu_review_response__message';
         message.textContent = resp.message;

@@ -20,7 +20,11 @@ jest.mock('../SingleReview', () => ({
     review: string;
     score: number;
     sourceName: string;
-    reviewResponses: Array<{ created_at: string; sender: string; message: string }>;
+    reviewResponses: Array<{
+      created_at: string;
+      sender: string;
+      message: string;
+    }>;
     reviewCriteria: Array<{ id: number; name: string; score: number }>;
   }) => ({
     id: review.id,
@@ -92,10 +96,14 @@ describe('createReviewsPageView', () => {
     };
 
     const node = createReviewsPageView(house);
-    expect(node.querySelector('.bu_review_summary__source')?.textContent).toBe('Booking.com');
+    expect(node.querySelector('.bu_review_summary__source')?.textContent).toBe(
+      'Booking.com'
+    );
   });
 
   it('renders review responses when present', () => {
+    (window as any).__localeId__ = 'en';
+
     const house: ReviewsHouse = {
       id: 'h1',
       name: 'House',
@@ -109,7 +117,13 @@ describe('createReviewsPageView', () => {
           review: 'Lovely',
           score: 9,
           sourceName: '',
-          reviewResponses: [{ created_at: '2024-03-02', sender: 'landlord', message: 'Thank you!' }],
+          reviewResponses: [
+            {
+              created_at: '2024-03-02',
+              sender: 'landlord',
+              message: 'Thank you!'
+            }
+          ],
           reviewCriteria: []
         }
       ]
@@ -117,12 +131,20 @@ describe('createReviewsPageView', () => {
 
     const node = createReviewsPageView(house);
     expect(node.querySelector('.bu_review_responses')).not.toBeNull();
-    expect(node.querySelector('.bu_review_response__label')?.textContent).toBe('review_response_label');
-    expect(node.querySelector('.bu_review_response__message')?.textContent).toBe('Thank you!');
-    expect(node.querySelector('.bu_review_response__sender')?.textContent).toBe('landlord');
-    expect(node.querySelector('.bu_review_response__date')?.textContent).toBe(
-      new Date('2024-03-02').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+    expect(node.querySelector('.bu_review_response__label')?.textContent).toBe(
+      'review_response_label'
     );
+    expect(
+      node.querySelector('.bu_review_response__message')?.textContent
+    ).toBe('Thank you!');
+    expect(node.querySelector('.bu_review_response__sender')?.textContent).toBe(
+      'landlord'
+    );
+    expect(node.querySelector('.bu_review_response__date')?.textContent).toBe(
+      '2 March 2024'
+    );
+
+    delete (window as any).__localeId__;
   });
 
   it('does not render review responses section when empty', () => {
