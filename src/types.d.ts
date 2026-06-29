@@ -129,4 +129,5 @@ export type HouseType = {
   booking_price?: {
     total_price: number;
   };
+  rating?: number;
 };

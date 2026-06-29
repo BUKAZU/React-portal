@@ -4,45 +4,45 @@
   }
 }
 #bukazu-app #results {
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
   padding: 16px;
-  align-items: stretch;
-  align-content: flex-start;
-  @container (max-width: 992px) {
-    justify-content: space-around;
-  }
-  
+
   .bu-paginator {
-        display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 8px 16px 0;
-  .pagination {
+    grid-column: 1 / -1;
     display: flex;
-    list-style: none;
-    li {
-      padding: 8px;
-      a {
-        text-decoration: none;
-        color: #000;
-      }
-      &.disabled {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 8px 0 0;
+    .pagination {
+      display: flex;
+      list-style: none;
+      li {
+        padding: 8px;
         a {
-          color: rgba(0, 0, 0, 0.5);
+          text-decoration: none;
+          color: #000;
         }
-      }
-      &.active {
-        border: 1px solid var(--bukazu-button);
-        a {
-          color: #000 !important;
+        &.disabled {
+          a {
+            color: rgba(0, 0, 0, 0.5);
+          }
+        }
+        &.active {
+          border: 1px solid var(--bukazu-button);
+          a {
+            color: #000 !important;
+          }
         }
       }
     }
   }
-  }
+}
+
+#bukazu-app #results.list {
+  grid-template-columns: 1fr;
 }
 
 #bukazu-app #results .object-inner {
