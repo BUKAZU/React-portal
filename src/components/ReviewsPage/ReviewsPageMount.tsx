@@ -124,7 +124,7 @@ function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Elemen
         </div>
       )}
       {!isLoadingMore && hasNextPage && (
-        <button className="bu_load_more" onClick={handleLoadMore}>
+        <button type="button" className="bu_load_more" onClick={handleLoadMore}>
           {t('load_more_reviews')}
         </button>
       )}
