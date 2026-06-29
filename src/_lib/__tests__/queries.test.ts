@@ -13,7 +13,6 @@ import {
   HOUSE_COUNT_QUERY,
   BOOKING_PRICE_TOTAL_QUERY,
   PRICE_FIELD_BOOKING_PRICE_QUERY,
-  REVIEWS_QUERY,
   CHECK_DISCOUNT_CODE,
   HOUSE_SEARCH_RESULT_FIELDS
 } from '../gql';
@@ -31,7 +30,6 @@ const allQueries: Array<{ name: string; document: DocumentNode }> = [
     name: 'PRICE_FIELD_BOOKING_PRICE_QUERY',
     document: PRICE_FIELD_BOOKING_PRICE_QUERY
   },
-  { name: 'REVIEWS_QUERY', document: REVIEWS_QUERY },
   { name: 'CHECK_DISCOUNT_CODE', document: CHECK_DISCOUNT_CODE }
 ];
 

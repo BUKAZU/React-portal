@@ -39,6 +39,7 @@ const restResponse = {
 };
 
 beforeEach(() => {
+  (mockHttp.get as jest.Mock).mockClear();
   (mockHttp.get as jest.Mock).mockReturnValue({
     json: jest.fn().mockResolvedValue(restResponse)
   });
