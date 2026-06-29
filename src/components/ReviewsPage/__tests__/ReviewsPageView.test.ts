@@ -68,9 +68,7 @@ describe('createReviewsPageView', () => {
     expect(node.textContent).toContain('42 reviews');
     expect(node.textContent).toContain('Alice');
     expect(node.textContent).toContain('Great place');
-    expect(node.querySelector('.bu_reviews__note a')?.textContent).toBe(
-      'reviews_note_link'
-    );
+    expect(node.querySelector('.bu_reviews__note')).toBeNull();
   });
 
   it('renders sourceName when present', () => {
@@ -119,8 +117,12 @@ describe('createReviewsPageView', () => {
 
     const node = createReviewsPageView(house);
     expect(node.querySelector('.bu_review_responses')).not.toBeNull();
+    expect(node.querySelector('.bu_review_response__label')?.textContent).toBe('review_response_label');
     expect(node.querySelector('.bu_review_response__message')?.textContent).toBe('Thank you!');
     expect(node.querySelector('.bu_review_response__sender')?.textContent).toBe('landlord');
+    expect(node.querySelector('.bu_review_response__date')?.textContent).toBe(
+      new Date('2024-03-02').toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+    );
   });
 
   it('does not render review responses section when empty', () => {

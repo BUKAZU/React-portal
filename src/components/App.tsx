@@ -12,7 +12,6 @@ import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
-import { toGraphQLErrors } from '../_lib/graphql_request';
 
 interface Props {
   pageType?: string;
@@ -54,7 +53,8 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
         if (!isMounted) {
           return;
         }
-        setState({ status: 'error', error: toGraphQLErrors(error) });
+        const message = error instanceof Error ? error.message : 'A portal settings request failed';
+        setState({ status: 'error', error: [new GraphQLError(message)] });
       });
 
     return () => {

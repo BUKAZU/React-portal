@@ -174,5 +174,7 @@
   "minimum_nights": "Minstens {minimum} nachten",
   "can_only_take_insurance_in_de_be_nl": "U kunt alleen een verzekering afsluiten, wanneer u woont in Nederland, Duitsland of België.",
   "price_from": "Prijs vanaf",
-  "reviews": "Reviews"
+  "reviews": "Reviews",
+  "load_more_reviews": "Meer reviews laden",
+  "review_response_label": "Reactie van de verhuurder"
 }
