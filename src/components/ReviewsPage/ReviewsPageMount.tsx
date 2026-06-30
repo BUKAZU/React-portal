@@ -35,9 +35,8 @@ function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
 
 function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Element {
   const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
-  const mountedRef = useRef(true);
-
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
       mountedRef.current = false;
     };
