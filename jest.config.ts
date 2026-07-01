@@ -7,7 +7,8 @@ const config: Config = {
   testEnvironment: 'jsdom',
   setupFiles: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
-    '\\.css$': '<rootDir>/src/__mocks__/fileMock.ts'
+    '\\.css$': '<rootDir>/src/__mocks__/fileMock.ts',
+    '\\.msgpack\\?url$': '<rootDir>/src/__mocks__/urlMock.ts',
   },
   testMatch: ['<rootDir>/src/**/__tests__/**/*.{ts,tsx}', '<rootDir>/src/**/*.{spec,test}.{ts,tsx}'],
   collectCoverage: true,

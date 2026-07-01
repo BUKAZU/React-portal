@@ -1,3 +1,5 @@
+import { decode } from '@msgpack/msgpack';
+
 export type CountryEntry = {
   name: string;
   alpha2: string;
@@ -12,13 +14,34 @@ function isSupportedLocale(locale: string): locale is SupportedLocale {
 
 const cache = new Map<SupportedLocale, CountryEntry[]>();
 
+const countryMsgpackLoaders: Record<SupportedLocale, () => Promise<string>> = {
+  en: async () => (await import('./countries/en.msgpack?url')).default,
+  nl: async () => (await import('./countries/nl.msgpack?url')).default,
+  de: async () => (await import('./countries/de.msgpack?url')).default,
+  fr: async () => (await import('./countries/fr.msgpack?url')).default,
+  es: async () => (await import('./countries/es.msgpack?url')).default,
+  it: async () => (await import('./countries/it.msgpack?url')).default,
+};
+
+async function loadCountryDataFromMsgpack(locale: SupportedLocale): Promise<CountryEntry[]> {
+  const assetUrl = await countryMsgpackLoaders[locale]();
+  const response = await fetch(assetUrl);
+
+  if (!response.ok) {
+    throw new Error(`Failed to load country data for locale "${locale}"`);
+  }
+
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  return decode(bytes) as CountryEntry[];
+}
+
 /**
  * Lazily loads the country list for the given locale.
  * The result is cached so each locale file is only fetched once.
  *
  * To add a new locale, add its key to SUPPORTED_LOCALES and a corresponding
- * case in the switch statement below, then place the JSON file at
- * `src/_lib/countries/<locale>.json`.
+ * then place the locale JSON source file at `src/_lib/countries/<locale>.json`
+ * and re-generate MessagePack assets with `npm run countries:pack`.
  */
 export async function loadCountries(locale: string): Promise<CountryEntry[]> {
   const key: SupportedLocale = isSupportedLocale(locale) ? locale : 'en';
@@ -27,39 +50,7 @@ export async function loadCountries(locale: string): Promise<CountryEntry[]> {
     return cache.get(key)!;
   }
 
-  let data: CountryEntry[];
-
-  switch (key) {
-    case 'nl':
-      data = (
-        (await import('./countries/nl.json')) as { default: CountryEntry[] }
-      ).default;
-      break;
-    case 'de':
-      data = (
-        (await import('./countries/de.json')) as { default: CountryEntry[] }
-      ).default;
-      break;
-    case 'fr':
-      data = (
-        (await import('./countries/fr.json')) as { default: CountryEntry[] }
-      ).default;
-      break;
-    case 'es':
-      data = (
-        (await import('./countries/es.json')) as { default: CountryEntry[] }
-      ).default;
-      break;
-    case 'it':
-      data = (
-        (await import('./countries/it.json')) as { default: CountryEntry[] }
-      ).default;
-      break;
-    default:
-      data = (
-        (await import('./countries/en.json')) as { default: CountryEntry[] }
-      ).default;
-  }
+  const data = await loadCountryDataFromMsgpack(key);
 
   cache.set(key, data);
   return data;
