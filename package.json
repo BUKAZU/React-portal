@@ -75,7 +75,7 @@
     "./index.css": "./build/index.css",
     "./build/index.css": "./build/index.css"
   },
-  "sideEffects": false,
+  "sideEffects": ["*.css"],
   "eslintConfig": {
     "extends": [
       "eslint:recommended",
