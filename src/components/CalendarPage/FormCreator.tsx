@@ -31,11 +31,12 @@ import OptionalCosts from './formParts/OptionalCosts';
 import Guests from './formParts/Guests';
 import { validateForm } from './formParts/Validations';
 import { PossibleValues, SingleBookingFieldType } from './formParts/form_types';
-import { HouseType, PortalSiteType } from '../../types';
+import { HouseType } from '../../types';
+import type { AppPortalSite } from '../loadPortalSite';
 
 interface Props {
   house: HouseType;
-  PortalSite: PortalSiteType;
+  PortalSite: AppPortalSite;
   booking?: BookingType;
 }
 
@@ -81,7 +82,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     (field) =>
       field.id === 'telephone' ? { ...field, id: 'phonenumber' } : field
   );
-  const bookingPrice = house.booking_price;
+  const bookingPrice = house.booking_price!;
 
   const createInitialValues = useCallback((): PossibleValues => {
     const initialCosts: Record<string, string> = {};
@@ -92,8 +93,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
     const defaultValues = {
       ...initializeBookingFields(bookingFields),
-      arrivalDate,
-      departureDate,
+      arrivalDate: arrivalDate!,
+      departureDate: departureDate!,
       is_option: 'false' as const,
       costs: initialCosts,
       adults: persons,
@@ -149,7 +150,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   );
 
   const setFieldTouched = useCallback((name: string, isTouched = true) => {
-    setTouched((currentTouched) =>
+    setTouched((currentTouched: BookingFormTouched) =>
       setByString(currentTouched, name, isTouched)
     );
   }, []);
@@ -200,7 +201,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
         const localeRedirectUrl = redirect_urls[locale];
         if (localeRedirectUrl && localeRedirectUrl !== '') {
-          window.location = localeRedirectUrl;
+          window.location.href = localeRedirectUrl;
         } else {
           setTimeout(() => {
             dispatch({

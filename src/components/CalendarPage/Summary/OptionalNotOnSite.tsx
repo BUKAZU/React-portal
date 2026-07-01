@@ -18,7 +18,7 @@ export default function OptionalNotOnSite({ prices }: Props): JSX.Element {
               if (cost.method === 'none') {
                 return <CostRow key={cost.id} {...cost} />;
               } else if (cost.method === 'on_site') {
-                if (not_on_site.find((x) => x.id == cost.id).nr_of_items > 0) {
+                if ((not_on_site.find((x) => x.id == cost.id)?.nr_of_items ?? 0) > 0) {
                   return (
                     <CostRow
                       key={cost.id}
@@ -29,7 +29,7 @@ export default function OptionalNotOnSite({ prices }: Props): JSX.Element {
                   );
                 }
               } else {
-                let amount = not_on_site.find((x) => x.id == cost.id).amount;
+                let amount = not_on_site.find((x) => x.id == cost.id)?.amount ?? 0;
                 if (amount > 0) {
                   return <CostRow key={cost.id} {...cost} amount={amount} />;
                 }

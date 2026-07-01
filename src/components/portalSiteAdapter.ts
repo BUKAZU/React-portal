@@ -12,10 +12,11 @@ import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
 
 /** The portal-site object assembled for the app, mirroring the legacy GraphQL shape. */
 export interface AppPortalSite extends PortalSiteType {
-  portal_code: string;
   options: PortalOptions;
   colorsConfiguration: ColorsType;
   booking_fields: MappedBookingField[];
+  form_submit_text?: string;
+  form_submit_button_text?: string;
   /** Dynamic localized labels exposed as bare `<field>_label` keys. */
   [key: string]: unknown;
 }

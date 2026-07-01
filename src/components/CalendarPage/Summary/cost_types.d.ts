@@ -5,6 +5,7 @@ export type CostType = {
   id: number;
   amount: number;
   name: string;
+  nr_of_items?: number;
 };
 
 export type PricesType = {

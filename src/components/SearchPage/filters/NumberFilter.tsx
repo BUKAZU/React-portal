@@ -1,9 +1,9 @@
 import React, { SyntheticEvent } from 'react';
-import { PortalSiteType } from '../../../types';
+import type { AppPortalSite } from '../../loadPortalSite';
 import { Field } from './filter_types';
 
 interface Props {
-  PortalSite: PortalSiteType;
+  PortalSite: AppPortalSite;
   field: Field;
   value: string;
   onChange: Function;
@@ -27,7 +27,7 @@ function NumberFilter({
       max={
         field.id === 'persons_min'
           ? PortalSite.max_persons
-          : PortalSite[field.id]
+          : PortalSite[field.id] as number | undefined
       }
       onBlur={handleChange}
     />

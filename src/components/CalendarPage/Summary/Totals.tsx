@@ -2,7 +2,7 @@ import React from 'react';
 import CostRow from './CostRow';
 import CostSection from './CostSection';
 import { t, formatNumber } from '../../../intl';
-import { PricesType } from './cost_types';
+import { CostType, PricesType } from './cost_types';
 
 interface Props {
   prices: PricesType;
@@ -16,7 +16,7 @@ function Totals({ prices }: Props): JSX.Element {
           <th
             style={{
               textAlign: 'left',
-              testTransform: 'capitalize'
+              textTransform: 'capitalize'
             }}
           >
             {t('total')}
@@ -53,7 +53,7 @@ function Totals({ prices }: Props): JSX.Element {
           <th
             style={{
               textAlign: 'left',
-              testTransform: 'capitalize'
+              textTransform: 'capitalize'
             }}
           >
             {t('total')}
@@ -73,12 +73,12 @@ function Totals({ prices }: Props): JSX.Element {
 
 export default Totals;
 
-function Deposit({ cost_array, price_array }) {
+function Deposit({ cost_array, price_array }: { cost_array: CostType[]; price_array: CostType[] }) {
   return (
     <>
       {cost_array.map((cost) => {
         let price = price_array.find((x) => x.id == cost.id);
-        if (cost.gl === '0120' && price?.amount > 0) {
+        if (cost.gl === '0120' && price && price.amount > 0) {
           return <CostRow key={cost.id} {...cost} amount={price.amount} />;
         }
       })}

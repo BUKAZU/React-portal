@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useQuery } from '@apollo/client';
-import InsurancesAndRequired from './InsurancesAndRequired.tsx';
+import InsurancesAndRequired from './InsurancesAndRequired';
 import { BOOKING_PRICE_TOTAL_QUERY } from '../../../_lib/gql';
 import RentAndDiscount from './RentAndDiscount';
 import OptionalNotOnSite from './OptionalNotOnSite';
@@ -15,7 +15,7 @@ interface Props {
   house: HouseType;
 }
 
-function CostSummary({ values, house }: Props): React.ReactNode {
+function CostSummary({ values, house }: Props): JSX.Element {
   let babies = Number(values.babies) - Number(house.babies_extra);
   if (babies < 0) {
     babies = 0;
@@ -39,7 +39,7 @@ function CostSummary({ values, house }: Props): React.ReactNode {
   });
 
   if (loading) {
-    return 'Loading...';
+    return <span>Loading...</span>;
   }
   if (error) {
     return <div>{JSON.stringify(error)}</div>;

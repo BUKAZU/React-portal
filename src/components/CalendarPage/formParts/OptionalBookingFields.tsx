@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { t } from '../../../intl';
 import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
-import { useBookingField } from '../BookingFormContext';
+import { useBookingField, type BookingFormTouched } from '../BookingFormContext';
 import RequiredBookingFields from './RequiredBookingFields';
 import { PossibleValues, SingleBookingFieldType } from './form_types';
 import { isInt } from '../../../_lib/utils';
@@ -21,9 +21,7 @@ interface PortalSiteForBookingFields {
 interface Props {
   bookingFields: SingleBookingFieldType[];
   errors: Record<string, string | undefined>;
-  touched: Record<string, boolean | Record<string, boolean> | undefined> & {
-    extra_fields?: Record<string, boolean>;
-  };
+  touched: BookingFormTouched;
   PortalSite: PortalSiteForBookingFields;
   values: PossibleValues;
 }
@@ -34,9 +32,7 @@ interface RenderOptionalFieldParams {
   countries: CountryEntry[];
   countriesLoading: boolean;
   errors: Record<string, string | undefined>;
-  touched: Record<string, boolean | Record<string, boolean> | undefined> & {
-    extra_fields?: Record<string, boolean>;
-  };
+  touched: BookingFormTouched;
 }
 
 function NativeField({
