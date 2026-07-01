@@ -38,9 +38,22 @@ jest.mock('../formParts/insurances', () => ({
 jest.mock('../formParts/OptionalCosts', () => () => (
   <div data-testid="optional-costs" />
 ));
-jest.mock('../formParts/OptionalBookingFields', () => () => (
-  <div data-testid="optional-booking-fields" />
-));
+
+let lastOptionalBookingFieldsProps: { bookingFields?: any[] } = {};
+jest.mock('../formParts/OptionalBookingFields', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    lastOptionalBookingFieldsProps = props;
+    return <div data-testid="optional-booking-fields" />;
+  },
+  isInt: (value: unknown): boolean => {
+    if (typeof value !== 'string' && typeof value !== 'number') return false;
+    return (
+      !isNaN(value as number) &&
+      ((x: number) => (x | 0) === x)(parseFloat(String(value)))
+    );
+  }
+}));
 jest.mock('../Summary', () => () => <div data-testid="summary" />);
 jest.mock('../formParts/SuccessMessage', () => () => (
   <div data-testid="success-message" />
@@ -360,6 +373,28 @@ describe('FormCreator', () => {
     expect(button?.disabled).toBe(false);
   });
 
+  it('should not submit when validation fails', async () => {
+    const mockCreateBooking = jest.fn().mockResolvedValue({});
+    const { useMutation } = require('@apollo/client');
+    (useMutation as jest.Mock).mockReturnValue([
+      mockCreateBooking,
+      { loading: false, error: null, data: null, reset: jest.fn() }
+    ]);
+
+    renderFormCreator(mockHouse, mockPortalSite, {
+      ...mockCalendarState,
+      persons: 0
+    });
+
+    await act(async () => {
+      (
+        container.querySelector('button[type="submit"]') as HTMLButtonElement
+      ).click();
+    });
+
+    expect(mockCreateBooking).not.toHaveBeenCalled();
+  });
+
   it('should render the form-content section', () => {
     renderFormCreator();
 
@@ -400,5 +435,21 @@ describe('FormCreator', () => {
       s.textContent?.toLowerCase().includes('option')
     );
     expect(optionSpan).toBeUndefined();
+  });
+
+  it('should normalize a bookingField id of "telephone" to "phonenumber" before passing it to child components', () => {
+    const portalSiteWithTelephone: PortalSiteType = {
+      ...mockPortalSite,
+      options: {
+        ...mockPortalSite.options,
+        bookingFields: [{ id: 'telephone', required: false, type: 'text' }]
+      }
+    } as any;
+
+    renderFormCreator(mockHouse, portalSiteWithTelephone);
+
+    expect(lastOptionalBookingFieldsProps.bookingFields).toEqual([
+      { id: 'phonenumber', required: false, type: 'text' }
+    ]);
   });
 });

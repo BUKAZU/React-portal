@@ -1,32 +1,30 @@
 import React, { ReactNode } from 'react';
-import { Field } from 'formik';
-import { t } from '../../../intl';
 import { useMutation } from '@apollo/client';
-import { HouseType } from '../../../types';
+import { t } from '../../../intl';
 import { CHECK_DISCOUNT_CODE } from '../../../_lib/gql';
+import { HouseType } from '../../../types';
+import { useBookingField } from '../BookingFormContext';
 
 function DiscountCode({ house }: { house: HouseType }): ReactNode {
   const [checkCode, { loading, error, data }] =
     useMutation(CHECK_DISCOUNT_CODE);
+  const field = useBookingField('discount_code');
 
   return (
     <div className="form-row inline">
       <label htmlFor="discount_code">{t('discount_code')}</label>
-      <Field name="discount_code">
-        {({ field, form }) => {
-          return (
-            <input
-              {...field}
-              onChange={(e) => {
-                checkCode({
-                  variables: { code: e.target.value, house_code: house.code }
-                });
-                form.setFieldValue(field.name, e.target.value);
-              }}
-            ></input>
-          );
+      <input
+        id="discount_code"
+        name="discount_code"
+        value={String(field.value)}
+        onBlur={field.onBlur}
+        onChange={(event) => {
+          checkCode({
+            variables: { code: event.target.value, house_code: house.code }
+          });
+          field.onChange(event);
         }}
-      </Field>
+      />
       {loading && <div className="bu_discount_code">Loading...</div>}
       {error && (
         <div className="bu_discount_code">{t('no_discount_code_found')}</div>

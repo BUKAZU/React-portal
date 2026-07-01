@@ -1,23 +1,29 @@
 import React from 'react';
-import { FieldInputProps } from 'formik';
 
 interface InputFeedbackProps {
   error?: React.ReactNode;
 }
 
-// Input feedback
 const InputFeedback = ({ error }: InputFeedbackProps) =>
   error ? <div className="input-feedback">{error}</div> : null;
 
 interface RadioButtonProps {
-  field: FieldInputProps<string>;
+  name: string;
+  value: string;
+  currentValue: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: () => void;
   id: string;
   label: React.ReactNode;
+  disabled?: boolean;
 }
 
-// Radio input
 export const RadioButton = ({
-  field: { name, value, onChange, onBlur },
+  name,
+  value,
+  currentValue,
+  onChange,
+  onBlur,
   id,
   label,
   ...props
@@ -28,8 +34,8 @@ export const RadioButton = ({
         name={name}
         id={id}
         type="radio"
-        value={id} // could be something else for output?
-        checked={id === value}
+        value={value}
+        checked={value === currentValue}
         onChange={onChange}
         onBlur={onBlur}
         className="radio-button"
@@ -49,7 +55,6 @@ interface RadioButtonGroupProps {
   children: React.ReactNode;
 }
 
-// Radio group
 export const RadioButtonGroup = ({
   error,
   touched,

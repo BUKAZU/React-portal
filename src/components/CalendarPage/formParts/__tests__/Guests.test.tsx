@@ -1,7 +1,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import Guests from '../Guests';
 import { BookingFormConfigurationType, HouseType } from '../../../../types';
 
@@ -71,11 +70,7 @@ afterEach(() => {
 function renderGuests(configPatch: Partial<BookingFormConfigurationType> = {}) {
   const config = { ...baseConfig, ...configPatch };
   act(() => {
-    root.render(
-      <Formik initialValues={{}} onSubmit={() => {}}>
-        <Guests bookingFormConfiguration={config} house={baseHouse} />
-      </Formik>
-    );
+    root.render(<Guests bookingFormConfiguration={config} house={baseHouse} />);
   });
 }
 

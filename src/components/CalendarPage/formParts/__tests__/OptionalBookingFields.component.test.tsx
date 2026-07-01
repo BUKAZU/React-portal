@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import OptionalBookingFields from '../OptionalBookingFields';
+import { BookingFormContext } from '../../BookingFormContext';
+import { setByString } from '../BookingHelpers';
 import { loadCountries } from '../../../../_lib/countries';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -32,13 +33,67 @@ const mockPortalSite = {
 };
 
 const defaultValues = {
+  arrivalDate: {} as any,
+  departureDate: {} as any,
+  is_option: 'false' as const,
+  costs: {},
+  adults: 2,
+  children: 0,
+  babies: 0,
+  persons: 2,
+  discount: 0,
+  country: '',
+  cancel_insurance: '0' as const,
+  discount_code: '',
+  extra_fields: {},
   first_name: '',
   last_name: '',
-  email: '',
-  cancel_insurance: '0',
-  country: '',
-  extra_fields: {}
+  email: ''
 };
+
+function OptionalFieldsHarness({
+  bookingFields,
+  initialValues,
+  errors,
+  initialTouched,
+  portalSite
+}: {
+  bookingFields: any[];
+  initialValues: Record<string, any>;
+  errors: Record<string, string>;
+  initialTouched: Record<string, any>;
+  portalSite: typeof mockPortalSite;
+}) {
+  const [values, setValues] = useState(initialValues);
+  const [touched, setTouched] = useState(initialTouched);
+
+  return (
+    <BookingFormContext.Provider
+      value={{
+        values: values as any,
+        errors,
+        touched,
+        isSubmitting: false,
+        setFieldValue: (name, value) => {
+          setValues((currentValues) => setByString(currentValues, name, value));
+        },
+        setFieldTouched: (name, value = true) => {
+          setTouched((currentTouched) =>
+            setByString(currentTouched, name, value)
+          );
+        }
+      }}
+    >
+      <OptionalBookingFields
+        bookingFields={bookingFields}
+        errors={errors}
+        touched={touched}
+        PortalSite={portalSite}
+        values={values as any}
+      />
+    </BookingFormContext.Provider>
+  );
+}
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -64,19 +119,18 @@ function renderFields(
   bookingFields: any[],
   values: Record<string, any> = defaultValues,
   errors: Record<string, string> = {},
-  touched: Record<string, any> = {}
+  touched: Record<string, any> = {},
+  portalSite = mockPortalSite
 ) {
   act(() => {
     root.render(
-      <Formik initialValues={values} onSubmit={() => {}}>
-        <OptionalBookingFields
-          bookingFields={bookingFields}
-          errors={errors}
-          touched={touched}
-          PortalSite={mockPortalSite}
-          values={values}
-        />
-      </Formik>
+      <OptionalFieldsHarness
+        bookingFields={bookingFields}
+        initialValues={values}
+        errors={errors}
+        initialTouched={touched}
+        portalSite={portalSite}
+      />
     );
   });
 }
@@ -105,15 +159,15 @@ describe('OptionalBookingFields - default (text/email/textarea) fields', () => {
   it('renders a required indicator (*) for required fields', () => {
     renderFields([{ id: 'first_name', type: 'text', required: true }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((s) => s.textContent === '*');
-    expect(star).not.toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).not.toBeUndefined();
   });
 
   it('does not render a required indicator for optional fields', () => {
     renderFields([{ id: 'first_name', type: 'text', required: false }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((s) => s.textContent === '*');
-    expect(star).toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).toBeUndefined();
   });
 
   it('renders an error message when there is an error and the field is touched', () => {
@@ -163,8 +217,8 @@ describe('OptionalBookingFields - country field', () => {
   it('renders a required indicator for a required country field', () => {
     renderFields([{ id: 'country', type: 'select', required: true }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((s) => s.textContent === '*');
-    expect(star).not.toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).not.toBeUndefined();
   });
 
   it('renders an error message for the country field when there is an error', () => {
@@ -179,7 +233,6 @@ describe('OptionalBookingFields - country field', () => {
   });
 
   it('disables the select while countries are loading', () => {
-    // loadCountries returns a never-resolving promise to simulate in-flight
     mockLoadCountries.mockReturnValueOnce(new Promise(() => {}));
     renderFields([{ id: 'country', type: 'select', required: true }]);
     const select = container.querySelector('select');
@@ -204,18 +257,16 @@ describe('OptionalBookingFields - country field', () => {
   });
 
   it('does not update state after unmount', async () => {
-    let resolveCountries!: (v: { name: string; alpha2: string }[]) => void;
+    let resolveCountries!: (value: { name: string; alpha2: string }[]) => void;
     mockLoadCountries.mockReturnValueOnce(
-      new Promise((res) => {
-        resolveCountries = res;
+      new Promise((resolve) => {
+        resolveCountries = resolve;
       })
     );
     renderFields([{ id: 'country', type: 'select', required: true }]);
-    // Unmount before the promise resolves
     act(() => {
       root.unmount();
     });
-    // Resolving after unmount should not throw or warn
     await act(async () => {
       resolveCountries([{ name: 'Test Country', alpha2: 'xx' }]);
     });
@@ -246,8 +297,8 @@ describe('OptionalBookingFields - booking_field type (integer id)', () => {
   it('renders a required indicator for required booking fields', () => {
     renderFields([{ id: '42', type: 'booking_field', required: true }]);
     const spans = Array.from(container.querySelectorAll('span'));
-    const star = spans.find((s) => s.textContent === '*');
-    expect(star).not.toBeUndefined();
+    const requiredIndicator = spans.find((span) => span.textContent === '*');
+    expect(requiredIndicator).not.toBeUndefined();
   });
 
   it('renders an error message when the booking_field has an error and is touched (via extra_fields)', () => {
@@ -285,8 +336,6 @@ describe('OptionalBookingFields - booking_field type (integer id)', () => {
   });
 
   it('detects booking_field via integer string id (isInt)', () => {
-    // Verify that a numeric string id is treated as a booking_field via isInt.
-    // We add it to PortalSite.booking_fields so the component can find the field.
     const portalSiteWithExtraField = {
       ...mockPortalSite,
       booking_fields: [
@@ -294,19 +343,13 @@ describe('OptionalBookingFields - booking_field type (integer id)', () => {
         { id: '99', label: 'Extra field', field_type: 'text' }
       ]
     };
-    act(() => {
-      root.render(
-        <Formik initialValues={defaultValues} onSubmit={() => {}}>
-          <OptionalBookingFields
-            bookingFields={[{ id: '99', type: 'text', required: false }]}
-            errors={{}}
-            touched={{}}
-            PortalSite={portalSiteWithExtraField}
-            values={defaultValues}
-          />
-        </Formik>
-      );
-    });
+    renderFields(
+      [{ id: '99', type: 'text', required: false }],
+      defaultValues,
+      {},
+      {},
+      portalSiteWithExtraField
+    );
     const label = container.querySelector('label');
     expect(label?.textContent?.trim()).toBe('Extra field');
   });
@@ -315,7 +358,6 @@ describe('OptionalBookingFields - booking_field type (integer id)', () => {
 describe('OptionalBookingFields - telephone id normalisation', () => {
   it('renames a field with id "telephone" to "phonenumber" before rendering', () => {
     renderFields([{ id: 'telephone', type: 'text', required: false }]);
-    // After renaming, the label should use the phonenumber_label from PortalSite
     const label = container.querySelector('label');
     expect(label?.textContent?.trim()).toBe('Phone');
   });
