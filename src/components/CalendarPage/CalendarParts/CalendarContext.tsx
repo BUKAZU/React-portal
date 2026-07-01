@@ -19,7 +19,7 @@ export function CalendarProvider({
   children
 }: {
   children: React.ReactNode;
-}): React.ReactNode {
+}): JSX.Element {
   const [booking_state, dispatch] = useReducer(calendarReducer, initialBooking);
   return (
     <CalendarContext.Provider value={booking_state}>

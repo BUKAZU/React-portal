@@ -5,11 +5,11 @@ import Select from './filters/Select';
 import Radio from './filters/Radio';
 import DateFilter from './filters/DateFilter';
 import NumberFilter from './filters/NumberFilter';
-import { PortalSiteType } from '../../types';
-import { Field as FieldType, FiltersType } from './filters/filter_types';
+import type { AppPortalSite } from '../loadPortalSite';
+import { Field as FieldType, FiltersType, OptionsType } from './filters/filter_types';
 
 interface Props {
-  PortalSite: PortalSiteType;
+  PortalSite: AppPortalSite;
   field: FieldType;
   filters: FiltersType;
   value: string;
@@ -32,7 +32,7 @@ function Field({
   value,
   onFilterChange
 }: Props): JSX.Element {
-  let options = [];
+  let options: unknown[] = [];
   if (field.options) {
     options = field.options;
   } else if (field.max !== undefined) {
@@ -40,7 +40,7 @@ function Field({
       ? createPriceArray(field.max)
       : createNumberArray(field.max);
   } else if (['countries', 'cities', 'regions'].includes(field.id)) {
-    options = PortalSite[field.id] || [];
+    options = (PortalSite[field.id] as unknown[]) || [];
   }
 
   const effectiveType =
@@ -49,19 +49,12 @@ function Field({
       ? 'select'
       : field.type;
 
-  let default_settings = {
-    options,
-    field,
-    filters,
-    value
-  };
-
   if (effectiveType === 'select') {
-    return <Select {...default_settings} onChange={onFilterChange} />;
+    return <Select options={options as OptionsType[]} field={field} filters={filters} value={value} onChange={onFilterChange} />;
   } else if (effectiveType === 'list') {
-    return <List {...default_settings} onChange={onFilterChange} />;
+    return <List options={options as OptionsType[]} field={field} filters={filters} value={value} onChange={onFilterChange} />;
   } else if (effectiveType === 'radio') {
-    return <Radio {...default_settings} onChange={onFilterChange} />;
+    return <Radio options={options as (OptionsType | string)[]} field={field} filters={filters} onChange={onFilterChange} />;
   } else if (effectiveType === 'number') {
     return (
       <NumberFilter

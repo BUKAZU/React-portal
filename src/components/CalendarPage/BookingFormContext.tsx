@@ -3,7 +3,9 @@ import { byString } from './formParts/BookingHelpers';
 import { PossibleValues } from './formParts/form_types';
 
 export type BookingFormErrors = Record<string, string | undefined>;
-export type BookingFormTouched = Record<string, boolean | BookingFormTouched>;
+export interface BookingFormTouched {
+  [key: string]: boolean | BookingFormTouched | undefined;
+}
 
 export interface BookingFormContextValue {
   values: PossibleValues;

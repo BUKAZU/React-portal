@@ -2,7 +2,7 @@ import React, { SyntheticEvent } from 'react';
 import { Field, FiltersType, OptionsType } from './filter_types';
 
 interface Props {
-  options: OptionsType[];
+  options: (OptionsType | string)[];
   filters: FiltersType;
   onChange: Function;
   field: Field;
@@ -17,28 +17,31 @@ function Radio({ options, filters, onChange, field }: Props): JSX.Element {
 
   return (
     <ul className="radioList">
-      {options.map((opt) => (
-        <li
-          key={opt.id || opt}
-          className={`bu-list-item ${
-            countries && !countries.includes(opt.country_id)
-              ? 'bu-disabled'
-              : ''
-          }`}
-        >
-          <input
-            name={field.id}
-            type="radio"
-            id={opt.id || opt}
-            value={opt.id || opt}
-            disabled={countries ? !countries.includes(opt.country_id) : false}
-            // checked={value === opt.id || opt}
-            onBlur={handleChange}
-            onChange={handleChange}
-          />
-          <label htmlFor={opt.id || opt}>{opt.name || opt}</label>
-        </li>
-      ))}
+      {options.map((opt) => {
+        const id = typeof opt === 'string' ? opt : opt.id;
+        const name = typeof opt === 'string' ? opt : opt.name;
+        const countryId = typeof opt === 'string' ? undefined : opt.country_id;
+        const isDisabled = countries && countryId
+          ? !countries.includes(countryId)
+          : false;
+        return (
+          <li
+            key={id}
+            className={`bu-list-item ${isDisabled ? 'bu-disabled' : ''}`}
+          >
+            <input
+              name={field.id}
+              type="radio"
+              id={id}
+              value={id}
+              disabled={isDisabled}
+              onBlur={handleChange}
+              onChange={handleChange}
+            />
+            <label htmlFor={id}>{name}</label>
+          </li>
+        );
+      })}
     </ul>
   );
 }

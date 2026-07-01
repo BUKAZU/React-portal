@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import Filters from './Filters';
 import Results from './Results';
-import { PortalOptions, PortalSiteType } from '../../types';
+import { PortalOptions } from '../../types';
 import { FiltersType } from './filters/filter_types';
 import { TrackEvent } from '../../_lib/Tracking';
+import type { AppPortalSite } from '../loadPortalSite';
 
 type MyProps = {
   options: PortalOptions;
   filters?: FiltersType;
-  PortalSite: PortalSiteType;
+  PortalSite: AppPortalSite;
   locale: string;
 };
 

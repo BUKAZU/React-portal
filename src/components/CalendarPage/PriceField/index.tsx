@@ -66,7 +66,7 @@ function PriceField({ house }: Props) {
             className="calendar--picker--persons"
             value={persons}
             onChange={(e) => {
-              setPersons(e.target.value);
+              setPersons(Number(e.target.value));
             }}
           >
             {adults.map((person) => (
@@ -80,7 +80,7 @@ function PriceField({ house }: Props) {
       <div className="calendar--picker--date">
         {arrivalDate && departureDate && (
           <Price
-            persons={parseInt(persons)}
+            persons={persons}
             variables={{
               starts_at: arrivalDate?.date,
               ends_at: departureDate?.date

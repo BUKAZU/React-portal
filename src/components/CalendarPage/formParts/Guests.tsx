@@ -11,7 +11,7 @@ interface Props {
 export default function Guests({
   bookingFormConfiguration,
   house
-}: Props): React.ReactNode {
+}: Props): JSX.Element {
   return (
     <>
       <NumberSelect
