@@ -72,4 +72,49 @@ describe('intl MessagePack translations', () => {
       'Oops, something went wrong, please try again later.'
     );
   });
+
+  it('deduplicates concurrent requests for the same locale', async () => {
+    const messages = { greeting: 'Hallo' };
+    const packed = encode(messages);
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      arrayBuffer: async () =>
+        packed.buffer.slice(
+          packed.byteOffset,
+          packed.byteOffset + packed.byteLength
+        )
+    });
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+      writable: true
+    });
+
+    const intl = await import('../intl');
+    const [first, second] = await Promise.all([
+      intl.loadTranslations('nl'),
+      intl.loadTranslations('nl')
+    ]);
+
+    expect(first).toEqual(messages);
+    expect(second).toEqual(messages);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns english fallback when fetch is unavailable', async () => {
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: undefined,
+      writable: true
+    });
+
+    const intl = await import('../intl');
+    await intl.loadTranslations('nl');
+    window.__localeId__ = 'nl';
+
+    expect(intl.t('something_went_wrong_please_try_again')).toBe(
+      'Oops, something went wrong, please try again later.'
+    );
+  });
 });

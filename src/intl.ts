@@ -1,14 +1,11 @@
-import { decode } from '@msgpack/msgpack';
 import en from './locales/en.json';
+import {
+  resolveSupportedLocale,
+  type SupportedLocale
+} from './_lib/locales';
+import { loadDecodedMsgpack } from './_lib/msgpack';
 
 type Messages = { [key: string]: string };
-
-const SUPPORTED_LOCALES = ['en', 'nl', 'de', 'fr', 'es', 'it'] as const;
-type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
-
-function isSupportedLocale(locale: string): locale is SupportedLocale {
-  return (SUPPORTED_LOCALES as readonly string[]).includes(locale);
-}
 
 const messages = new Map<SupportedLocale, Messages>([['en', en]]);
 const loadingPromises = new Map<SupportedLocale, Promise<Messages>>();
@@ -30,18 +27,14 @@ async function loadMessagesFromMsgpack(
   }
 
   const assetUrl = await localeMsgpackLoaders[locale]();
-  const response = await fetch(assetUrl);
-
-  if (!response.ok) {
-    throw new Error(`Failed to load translations for locale "${locale}"`);
-  }
-
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  return decode(bytes) as Messages;
+  return loadDecodedMsgpack<Messages>(
+    assetUrl,
+    `Failed to load translations for locale "${locale}"`
+  );
 }
 
 export async function loadTranslations(locale: string): Promise<Messages> {
-  const key: SupportedLocale = isSupportedLocale(locale) ? locale : 'en';
+  const key = resolveSupportedLocale(locale);
   const cachedMessages = messages.get(key);
 
   if (cachedMessages) {
@@ -72,7 +65,7 @@ export function t(
   values?: Record<string, string | number>
 ): string {
   const locale = (typeof window !== 'undefined' && window.__localeId__) || 'en';
-  const key: SupportedLocale = isSupportedLocale(locale) ? locale : 'en';
+  const key = resolveSupportedLocale(locale);
   const localeMessages = messages.get(key) ?? messages.get('en') ?? {};
 
   if (!messages.has(key)) {

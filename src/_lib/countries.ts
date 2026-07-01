@@ -1,16 +1,10 @@
-import { decode } from '@msgpack/msgpack';
+import { resolveSupportedLocale, type SupportedLocale } from './locales';
+import { loadDecodedMsgpack } from './msgpack';
 
 export type CountryEntry = {
   name: string;
   alpha2: string;
 };
-
-const SUPPORTED_LOCALES = ['en', 'nl', 'de', 'fr', 'es', 'it'] as const;
-type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
-
-function isSupportedLocale(locale: string): locale is SupportedLocale {
-  return (SUPPORTED_LOCALES as readonly string[]).includes(locale);
-}
 
 const cache = new Map<SupportedLocale, CountryEntry[]>();
 
@@ -27,14 +21,10 @@ async function loadCountryDataFromMsgpack(
   locale: SupportedLocale
 ): Promise<CountryEntry[]> {
   const assetUrl = await countryMsgpackLoaders[locale]();
-  const response = await fetch(assetUrl);
-
-  if (!response.ok) {
-    throw new Error(`Failed to load country data for locale "${locale}"`);
-  }
-
-  const bytes = new Uint8Array(await response.arrayBuffer());
-  return decode(bytes) as CountryEntry[];
+  return loadDecodedMsgpack<CountryEntry[]>(
+    assetUrl,
+    `Failed to load country data for locale "${locale}"`
+  );
 }
 
 /**
@@ -46,7 +36,7 @@ async function loadCountryDataFromMsgpack(
  * and re-generate MessagePack assets with `npm run countries:pack`.
  */
 export async function loadCountries(locale: string): Promise<CountryEntry[]> {
-  const key: SupportedLocale = isSupportedLocale(locale) ? locale : 'en';
+  const key = resolveSupportedLocale(locale);
 
   if (cache.has(key)) {
     return cache.get(key)!;
