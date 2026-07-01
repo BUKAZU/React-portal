@@ -1,7 +1,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import OptionalCosts from '../OptionalCosts';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -39,11 +38,7 @@ afterEach(() => {
 
 function renderOptionalCosts(costs: any[]) {
   act(() => {
-    root.render(
-      <Formik initialValues={{}} onSubmit={() => {}}>
-        <OptionalCosts costs={costs} />
-      </Formik>
-    );
+    root.render(<OptionalCosts costs={costs} />);
   });
 }
 

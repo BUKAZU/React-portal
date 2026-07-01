@@ -64,7 +64,6 @@
   "dependencies": {
     "@apollo/client": "^3.11.8",
     "@sentry/browser": "^10.45.0",
-    "formik": "^2.2.9",
     "graphql": "^16.11.0",
     "ky": "^2.0.2"
   },
