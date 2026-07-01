@@ -49,6 +49,8 @@ export default function IntegrationError({
   const errorsKey = JSON.stringify(errors);
   useEffect(() => {
     errors.forEach((message) => reportMessage(message));
+    // Depend on the derived string key so the effect only fires when the
+    // message contents change instead of whenever a new array instance exists.
   }, [errorsKey]);
 
   if (errors.length === 0) {
