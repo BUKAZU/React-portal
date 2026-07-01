@@ -1,7 +1,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import { Insurances } from '../insurances';
 import { HouseType } from '../../../../types';
 
@@ -65,9 +64,7 @@ function renderInsurances(
 
   act(() => {
     root.render(
-      <Formik initialValues={values} onSubmit={() => {}}>
-        <Insurances house={house as unknown as HouseType} values={values as any} />
-      </Formik>
+      <Insurances house={house as unknown as HouseType} values={values as any} />
     );
   });
 }
