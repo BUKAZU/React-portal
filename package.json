@@ -68,16 +68,14 @@
     "graphql": "^16.11.0",
     "ky": "^2.0.2"
   },
-  "main": "./build/portal.umd.js",
-  "module": "./build/portal.es.js",
   "exports": {
     ".": {
-      "import": "./build/portal.es.js",
-      "require": "./build/portal.umd.js"
+      "import": "./build/portal.es.js"
     },
     "./index.css": "./build/index.css",
     "./build/index.css": "./build/index.css"
   },
+  "sideEffects": false,
   "eslintConfig": {
     "extends": [
       "eslint:recommended",

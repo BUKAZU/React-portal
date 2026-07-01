@@ -19,6 +19,12 @@ export default defineConfig({
         ]
       : [])
   ],
+  resolve: {
+    mainFields: ['module', 'browser', 'main'],
+    alias: {
+      rehackt: 'react'
+    }
+  },
   server: {
     host: true
   },
@@ -38,9 +44,8 @@ export default defineConfig({
     },
     lib: {
       entry: resolve(__dirname, 'src/index.tsx'),
-      name: 'BukazuPortal',
-      formats: ['es', 'umd'],
-      fileName: (format) => `portal.${format}.js`,
+      formats: ['es'],
+      fileName: () => 'portal.es.js',
       cssFileName: 'index'
     },
     rolldownOptions: {
@@ -51,12 +56,6 @@ export default defineConfig({
         'react/jsx-dev-runtime'
       ],
       output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          'react/jsx-runtime': 'ReactJSXRuntime',
-          'react/jsx-dev-runtime': 'ReactJSXDevRuntime'
-        },
         minify: true
       }
     }
