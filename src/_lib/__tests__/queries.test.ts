@@ -41,7 +41,6 @@ describe('GraphQL queries comply with API schema', () => {
   let schema: GraphQLSchema;
 
   beforeAll(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema = buildClientSchema(introspectionResult as any);
   });
 

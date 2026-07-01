@@ -17,6 +17,15 @@ function CalendarHeader({
 }: Props): JSX.Element {
   const dispatch = useContext(CalendarContextDispatch);
 
+  function handleKeyDown(action: () => void) {
+    return (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        action();
+      }
+    };
+  }
+
   function next() {
     changeMonth(addMonths(currentMonth, numberOfMonths));
   }
@@ -32,6 +41,7 @@ function CalendarHeader({
         onClick={prev}
         tabIndex={0}
         role="button"
+        onKeyDown={handleKeyDown(prev)}
       >
         <div className="icon bu-rounded bu-hover-bright">
           <svg
@@ -58,6 +68,11 @@ function CalendarHeader({
         style={{ textAlign: 'center' }}
         tabIndex={0}
         role="button"
+        onKeyDown={handleKeyDown(() => {
+          dispatch({
+            type: 'reset'
+          });
+        })}
       >
         <div className="icon bu-rounded bu-hover-bright">
           <Reload />
@@ -69,6 +84,7 @@ function CalendarHeader({
         style={{ textAlign: 'center' }}
         tabIndex={0}
         role="button"
+        onKeyDown={handleKeyDown(next)}
       >
         <div className="icon bu-rounded bu-hover-bright">
           <ArrowRight />

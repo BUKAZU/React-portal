@@ -253,10 +253,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
         <div className="form-content">
           <div className="form-section bup-16">
-            <a
+            <button
+              type="button"
               className="return-link"
-              role="link"
-              tabIndex={0}
               onClick={() => {
                 dispatch({
                   type: 'return'
@@ -264,7 +263,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
               }}
             >
               {t('return_to_calendar')}
-            </a>
+            </button>
             <h2>{t('stay_details')}</h2>
             <Guests
               bookingFormConfiguration={bookingFormConfiguration}

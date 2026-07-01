@@ -35,6 +35,17 @@ function RenderCells({
   const dispatch = useContext(CalendarContextDispatch);
   const dates = useContext(CalendarContext);
 
+  function selectDay(cloneDay: AvailabilityEntry) {
+    if (isBefore(Parse_EN_US(cloneDay.date), new Date())) {
+      return;
+    }
+    dispatch({
+      type: 'clicked',
+      day: cloneDay,
+      house
+    });
+  }
+
   const monthStart = startOfMonth(month);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
@@ -80,15 +91,12 @@ function RenderCells({
           key={daz.date}
           role="button"
           tabIndex={0}
-          onClick={() => {
-            if (isBefore(Parse_EN_US(cloneDay.date), new Date())) {
-              return;
+          onClick={() => selectDay(cloneDay)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              selectDay(cloneDay);
             }
-            dispatch({
-              type: 'clicked',
-              day: cloneDay,
-              house
-            });
           }}
         >
           <span>{FormatIntl(day, { day: 'numeric' })}</span>
