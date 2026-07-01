@@ -238,7 +238,8 @@ const REVIEW_DATE_FORMAT: Intl.DateTimeFormatOptions = {
  * with the rest of the app.
  */
 function formatReviewDate(date: string): string {
-  return FormatIntl(Parse_EN_US(date), REVIEW_DATE_FORMAT);
+  // The API may return a full ISO datetime; Parse_EN_US only handles yyyy-MM-dd.
+  return FormatIntl(Parse_EN_US(date.slice(0, 10)), REVIEW_DATE_FORMAT);
 }
 
 export {
