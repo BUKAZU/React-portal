@@ -1,6 +1,14 @@
 import { http } from './http_client';
 
-export async function TrackEvent(data: any) {
+interface TrackEventData {
+  portal_code: string;
+  interaction_type: string;
+  locale: string;
+  house_code?: string;
+  interaction_data?: Record<string, unknown>;
+}
+
+export async function TrackEvent(data: TrackEventData) {
   const cookie = getCookie('bu_portal_session');
   const all_data = {
     ...data,
@@ -23,7 +31,7 @@ export function getSessionIdentifier() {
   }
 }
 
-function setCookie(cname, cvalue, exdays) {
+function setCookie(cname: string, cvalue: string, exdays: number) {
   const d = new Date();
   d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
   let expires = 'expires=' + d.toUTCString();
