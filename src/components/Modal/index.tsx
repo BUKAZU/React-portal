@@ -27,10 +27,12 @@ function Modal({ children, buttonText, show = false, onClose }: Props) {
   return (
     <div className="bukazu-modal-container">
       <div className="bukazu-modal-container-inner">
-        <div
+        <button
+          type="button"
           className="bukazu-modal-escape"
           onClick={handleClose}
-        ></div>
+          aria-label={t('close')}
+        ></button>
         <div className="bukazu-modal">
           <div className="bukazu-modal-content">{children}</div>
 

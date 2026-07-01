@@ -30,6 +30,16 @@
   "ignorePatterns": ["build/", "coverage/", "node_modules/"],
   "overrides": [
     {
+      "files": ["**/*.{ts,tsx}"],
+      "rules": {
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "no-redeclare": "off",
+        "react/prop-types": "off",
+        "react/display-name": "off"
+      }
+    },
+    {
       "files": ["**/__tests__/**/*.{js,ts,tsx}", "**/*.{test,spec}.{js,ts,tsx}"],
       "env": {
         "jest": true

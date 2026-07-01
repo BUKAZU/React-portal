@@ -61,7 +61,7 @@ describe('CostRow', () => {
     const cells = container.querySelectorAll('td');
     expect(cells[0].textContent).toContain('t_rent_price');
     expect(
-      container.querySelector('[data-testid=\"description\"]')?.textContent
+      container.querySelector('[data-testid="description"]')?.textContent
     ).toBe('more info');
     expect(cells[1].textContent).toContain('€');
     expect(cells[1].textContent).toContain('formatted_50.00');

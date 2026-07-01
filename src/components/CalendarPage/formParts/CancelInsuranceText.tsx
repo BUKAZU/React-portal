@@ -29,7 +29,7 @@ const CancelInsuranceText = () => {
       <h3>{t('cancel_insurance_questions')}</h3>
       <p>
         {t('cancel_insurance_questions_explain_1')}
-        <a href={links[locale]} target="_blank">
+        <a href={links[locale]} target="_blank" rel="noopener noreferrer">
           {t('cancel_insurance_questions_explain_link')}
         </a>
         {t('cancel_insurance_questions_explain_2')}

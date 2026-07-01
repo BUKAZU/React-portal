@@ -22,7 +22,7 @@ interface GraphQLMutationOptions<TVariables = Record<string, unknown>> {
  * @throws {Error} When the request fails or returns errors
  */
 export async function graphqlMutation<
-  TData = any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  TData = any,
   TVariables = Record<string, unknown>
 >(options: GraphQLMutationOptions<TVariables>): Promise<TData> {
   const {
