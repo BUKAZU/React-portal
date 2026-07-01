@@ -21,6 +21,7 @@ function CostSelect({ cost }: { cost: CostType }) {
   if (cost.max_available === 1) {
     return (
       <select
+        id={cost.id}
         name={`costs[${cost.id}]`}
         value={String(field.value)}
         onChange={field.onChange}
