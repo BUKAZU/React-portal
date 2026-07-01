@@ -35,6 +35,7 @@ function CostSelect({ cost }: { cost: CostType }) {
 
   return (
     <select
+      id={cost.id}
       name={`costs[${cost.id}]`}
       value={String(field.value)}
       onChange={field.onChange}

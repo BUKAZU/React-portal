@@ -34,8 +34,8 @@ export const RadioButton = ({
         name={name}
         id={id}
         type="radio"
-        value={id}
-        checked={id === currentValue}
+        value={value}
+        checked={value === currentValue}
         onChange={onChange}
         onBlur={onBlur}
         className="radio-button"

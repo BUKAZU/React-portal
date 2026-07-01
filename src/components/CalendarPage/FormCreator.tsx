@@ -38,7 +38,7 @@ import { HouseType, LocaleType, PortalSiteType } from '../../types';
 interface Props {
   house: HouseType;
   PortalSite: PortalSiteType;
-  booking: BookingType;
+  booking?: BookingType;
 }
 
 function createTouchedState(
