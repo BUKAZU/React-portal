@@ -80,8 +80,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const dispatch = useContext(CalendarContextDispatch);
   const { options } = PortalSite;
   const bookingFormConfiguration = PortalSite.bookingFormConfiguration;
-  const bookingFields = (options.bookingFields ||
-    DefaultBookingFields) as SingleBookingFieldType[];
+  const bookingFields = ((options.bookingFields ||
+    DefaultBookingFields) as SingleBookingFieldType[]).map((field) =>
+    field.id === 'telephone' ? { ...field, id: 'phonenumber' } : field
+  );
   const bookingPrice = house.booking_price;
 
   const createInitialValues = useCallback((): PossibleValues => {
