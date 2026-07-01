@@ -9,7 +9,9 @@ const countriesDir = path.resolve(__dirname, '../src/_lib/countries');
 
 async function generateCountryMsgpackFiles() {
   const entries = await fs.readdir(countriesDir, { withFileTypes: true });
-  const jsonFiles = entries.filter((entry) => entry.isFile() && entry.name.endsWith('.json'));
+  const jsonFiles = entries.filter(
+    (entry) => entry.isFile() && entry.name.endsWith('.json')
+  );
 
   await Promise.all(
     jsonFiles.map(async (file) => {
@@ -21,7 +23,7 @@ async function generateCountryMsgpackFiles() {
       const packed = encode(countryData);
 
       await fs.writeFile(outputPath, Buffer.from(packed));
-    }),
+    })
   );
 }
 

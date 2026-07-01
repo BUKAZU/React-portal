@@ -9,12 +9,19 @@ describe('loadCountries', () => {
   it('loads and caches country data', async () => {
     const countries = [{ name: 'Netherlands', alpha2: 'NL' }];
     const packed = encode(countries);
-    const fetchMock = jest.fn().mockResolvedValue(new Response(packed, { status: 200 }));
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      arrayBuffer: async () =>
+        packed.buffer.slice(
+          packed.byteOffset,
+          packed.byteOffset + packed.byteLength
+        )
+    });
 
     Object.defineProperty(globalThis, 'fetch', {
       configurable: true,
       value: fetchMock,
-      writable: true,
+      writable: true
     });
 
     const { loadCountries } = await import('../countries');
@@ -30,12 +37,19 @@ describe('loadCountries', () => {
   it('falls back to English for unsupported locales', async () => {
     const countries = [{ name: 'United Kingdom', alpha2: 'GB' }];
     const packed = encode(countries);
-    const fetchMock = jest.fn().mockResolvedValue(new Response(packed, { status: 200 }));
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      arrayBuffer: async () =>
+        packed.buffer.slice(
+          packed.byteOffset,
+          packed.byteOffset + packed.byteLength
+        )
+    });
 
     Object.defineProperty(globalThis, 'fetch', {
       configurable: true,
       value: fetchMock,
-      writable: true,
+      writable: true
     });
 
     const { loadCountries } = await import('../countries');
@@ -46,20 +60,21 @@ describe('loadCountries', () => {
   });
 
   it('throws when MessagePack asset cannot be fetched', async () => {
-    const fetchMock = jest
-      .fn()
-      .mockResolvedValue(new Response(new Uint8Array(), { status: 404 }));
+    const fetchMock = jest.fn().mockResolvedValue({
+      ok: false,
+      arrayBuffer: async () => new ArrayBuffer(0)
+    });
 
     Object.defineProperty(globalThis, 'fetch', {
       configurable: true,
       value: fetchMock,
-      writable: true,
+      writable: true
     });
 
     const { loadCountries } = await import('../countries');
 
     await expect(loadCountries('en')).rejects.toThrow(
-      'Failed to load country data for locale "en"',
+      'Failed to load country data for locale "en"'
     );
   });
 });

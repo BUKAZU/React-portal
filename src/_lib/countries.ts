@@ -20,10 +20,12 @@ const countryMsgpackLoaders: Record<SupportedLocale, () => Promise<string>> = {
   de: async () => (await import('./countries/de.msgpack?url')).default,
   fr: async () => (await import('./countries/fr.msgpack?url')).default,
   es: async () => (await import('./countries/es.msgpack?url')).default,
-  it: async () => (await import('./countries/it.msgpack?url')).default,
+  it: async () => (await import('./countries/it.msgpack?url')).default
 };
 
-async function loadCountryDataFromMsgpack(locale: SupportedLocale): Promise<CountryEntry[]> {
+async function loadCountryDataFromMsgpack(
+  locale: SupportedLocale
+): Promise<CountryEntry[]> {
   const assetUrl = await countryMsgpackLoaders[locale]();
   const response = await fetch(assetUrl);
 
