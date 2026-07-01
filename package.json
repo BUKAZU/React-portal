@@ -11,6 +11,7 @@
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "build": "vite build",
     "build:analyze": "cross-env ANALYZE=true vite build",
     "dev": "vite"
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@babel/eslint-parser": "^7.29.7",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
@@ -37,6 +39,7 @@
     "autoprefixer": "^10.4.13",
     "chalk": "5.6.2",
     "cross-env": "^10.1.0",
+    "@babel/eslint-parser": "^7.29.7",
     "eslint": "^8.49.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^5.5.4",
@@ -76,30 +79,5 @@
   },
   "sideEffects": [
     "*.css"
-  ],
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended",
-      "plugin:jsx-a11y/recommended"
-    ],
-    "parser": "babel-eslint",
-    "env": {
-      "browser": true,
-      "node": true
-    },
-    "rules": {
-      "strict": 0,
-      "no-console": "warn",
-      "quotes": [
-        "warn",
-        "single"
-      ],
-      "prettier/prettier": "warn"
-    },
-    "plugins": [
-      "prettier",
-      "jsx-a11y"
-    ]
-  }
+  ]
 }

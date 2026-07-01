@@ -1,14 +1,41 @@
 {
+  "root": true,
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "configFile": "./babel.config.json"
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es2022": true
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "ignorePatterns": ["build/", "coverage/", "node_modules/"],
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*.{js,ts,tsx}", "**/*.{test,spec}.{js,ts,tsx}"],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
   "rules": {
     "strict": 0,
     "no-console": "warn",
