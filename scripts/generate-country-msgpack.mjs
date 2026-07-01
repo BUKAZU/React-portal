@@ -6,16 +6,17 @@ import { encode } from '@msgpack/msgpack';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const countriesDir = path.resolve(__dirname, '../src/_lib/countries');
+const localesDir = path.resolve(__dirname, '../src/locales');
 
-async function generateCountryMsgpackFiles() {
-  const entries = await fs.readdir(countriesDir, { withFileTypes: true });
+async function generateMsgpackFilesForDirectory(directory) {
+  const entries = await fs.readdir(directory, { withFileTypes: true });
   const jsonFiles = entries.filter(
     (entry) => entry.isFile() && entry.name.endsWith('.json')
   );
 
   await Promise.all(
     jsonFiles.map(async (file) => {
-      const inputPath = path.join(countriesDir, file.name);
+      const inputPath = path.join(directory, file.name);
       const outputPath = inputPath.replace(/\.json$/u, '.msgpack');
 
       const json = await fs.readFile(inputPath, 'utf8');
@@ -27,7 +28,12 @@ async function generateCountryMsgpackFiles() {
   );
 }
 
-generateCountryMsgpackFiles().catch((error) => {
+async function generateMsgpackFiles() {
+  await generateMsgpackFilesForDirectory(countriesDir);
+  await generateMsgpackFilesForDirectory(localesDir);
+}
+
+generateMsgpackFiles().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
