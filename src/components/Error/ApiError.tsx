@@ -1,6 +1,6 @@
 import React from 'react';
 import { t } from '../../intl';
-import { GraphQLError } from 'graphql';
+import type { GraphQLError } from 'graphql';
 import { ApolloError } from '@apollo/client';
 import { reportError } from '../../_lib/sentry';
 
