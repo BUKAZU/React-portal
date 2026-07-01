@@ -1,6 +1,6 @@
 {
   "name": "bukazu-portal-react",
-  "version": "4.0.0-beta.0",
+  "version": "4.0.0-beta.1",
   "engines": {
     "node": ">=22"
   },
@@ -75,7 +75,9 @@
     "./index.css": "./build/index.css",
     "./build/index.css": "./build/index.css"
   },
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "eslintConfig": {
     "extends": [
       "eslint:recommended",
