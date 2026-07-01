@@ -35,6 +35,13 @@ function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
 
 function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Element {
   const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -71,6 +78,7 @@ function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Elemen
 
     void loadReviewsHouse({ portalCode, objectCode, apiUrl, after: cursor ?? undefined })
       .then(({ house: nextPage, pageInfo }) => {
+        if (!mountedRef.current) return;
         setState({
           status: 'ready',
           house: { ...currentHouse, reviews: [...currentHouse.reviews, ...nextPage.reviews] },
@@ -79,6 +87,7 @@ function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Elemen
         });
       })
       .catch((error: unknown) => {
+        if (!mountedRef.current) return;
         setState({
           status: 'error',
           error: error instanceof Error ? error : new Error(String(error))
@@ -115,10 +124,15 @@ function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Elemen
         </div>
       )}
       {!isLoadingMore && hasNextPage && (
-        <button className="bu_load_more" onClick={handleLoadMore}>
+        <button type="button" className="bu_load_more" onClick={handleLoadMore}>
           {t('load_more_reviews')}
         </button>
       )}
+      <div className="bu_reviews__note">
+        <a href="https://www.bukazu.com" target="_blank" rel="noopener noreferrer">
+          {t('reviews_note_link')}
+        </a>
+      </div>
     </>
   );
 }

@@ -225,13 +225,30 @@ const LONG_DATE_FORMAT: Intl.DateTimeFormatOptions = {
   month: 'long',
   year: 'numeric'
 };
+const REVIEW_DATE_FORMAT: Intl.DateTimeFormatOptions = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+};
+
+/**
+ * Formats a `yyyy-MM-dd` date string for display in review-related UI.
+ * Uses the app locale (`window.__localeId__`) with an `en-GB` fallback so
+ * the output is stable across timezones (no UTC off-by-one) and consistent
+ * with the rest of the app.
+ */
+function formatReviewDate(date: string): string {
+  return FormatIntl(Parse_EN_US(date), REVIEW_DATE_FORMAT);
+}
 
 export {
   FormatIntl,
   Parse_EN_US,
   formatDateKey,
+  formatReviewDate,
   MONTH_FORMAT,
   LONG_DATE_FORMAT,
+  REVIEW_DATE_FORMAT,
   loadLocale,
   // date arithmetic
   addDays,
