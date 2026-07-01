@@ -1,79 +1,49 @@
-.bukazu-modal-container {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color:rgba(0,0,0,0.3);
-  padding: 50px;
-  z-index: 1;
-  display: flex;
-  @container (max-width: 992px) {
-    padding: 50px 16px;
-  }
-}
-.bukazu-modal-container-inner {
-  position: relative;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.bukazu-modal-escape {
-  position: absolute;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-}
-
-.bukazu-modal {
-  position: absolute;
+dialog.bukazu-modal[open] {
   background-color: #fff;
   width: 500px;
-  min-width: 50vw;
+  min-width: min(50vw, calc(100% - 32px));
   min-height: 200px;
-  max-height: 90%;
+  max-height: 90vh;
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.25);
-  z-index: 3;
-  margin: 0 auto;
+  border: none;
   border-radius: 5px;
   padding: 30px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+dialog.bukazu-modal::backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.bukazu-modal-content {
+  flex: 1 1 auto;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 16px 0 32px;
+}
+
+.bukazu-modal-footer {
+  position: absolute;
+  height: 50px;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  button {
     display: flex;
-    flex-direction: column;
-
-  .bukazu-modal-content {
-    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
     height: 100%;
-    max-height: 100%;
-    overflow-y: auto;
-    padding: 16px 0 32px;
-  }
-  .bukazu-modal-footer {
-    position: absolute;
-    height: 50px;
     width: 100%;
-    left: 0;
-    bottom: 0;
-    a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      width: 100%;
-      color: #fff;
-      font-weight: bold;
-      background: #004fa7;
-      border: 0;
-      appearance: none;
-      cursor: pointer;
-      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.25);
-      border-radius: 0 0 5px 5px;
-
-    }
+    color: #fff;
+    font-weight: bold;
+    background: #004fa7;
+    border: 0;
+    appearance: none;
+    cursor: pointer;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 0 0 5px 5px;
   }
 }
