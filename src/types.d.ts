@@ -82,6 +82,7 @@ export type PortalSiteType = {
   max_bedrooms: number;
   max_bathrooms: number;
   max_weekprice: number;
+  portal_code: string;
 };
 
 export type LocaleType = 'nl' | 'en' | 'de' | 'es' | 'fr' | 'it';
@@ -104,6 +105,16 @@ export type BuDate = {
   departure_time?: string | null;
 };
 
+export type OptionalHouseCostType = {
+  id: string;
+  name: string;
+  method: string;
+  max_available: number;
+  amount: number;
+  method_name: string;
+  description?: string;
+};
+
 export type HouseType = {
   id: number;
   code: string;
@@ -116,6 +127,7 @@ export type HouseType = {
   bathrooms: number;
   minimum_week_price: number;
   max_nights: number;
+  last_minute_days: number;
   allow_option?: boolean;
   cancel_insurance?: boolean;
   discounts?: string;
@@ -123,10 +135,12 @@ export type HouseType = {
   babies_extra: number;
   city: string;
   province: string;
-  province: string;
   country_name: string;
   description: string;
+  rental_terms?: string;
+  rating?: number;
   booking_price?: {
     total_price: number;
+    optional_house_costs: OptionalHouseCostType[];
   };
 };

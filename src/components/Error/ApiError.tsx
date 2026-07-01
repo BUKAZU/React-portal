@@ -1,26 +1,31 @@
 import React from 'react';
 import { t } from '../../intl';
 import { GraphQLError } from 'graphql';
+import { ApolloError } from '@apollo/client';
 import { reportError } from '../../_lib/sentry';
 
+type ErrorWithMessage = { message: string };
+
 type GraphQLErrorSource = {
-  graphQLErrors: readonly GraphQLError[];
+  graphQLErrors: readonly ErrorWithMessage[];
 };
 
 type ApiErrorProps = {
-  errors: readonly GraphQLError[] | GraphQLErrorSource;
+  errors: ApolloError | readonly GraphQLError[] | GraphQLErrorSource;
 };
 
 const reportedErrors = new WeakSet<object>();
 
 function getGraphQLErrors(
-  errorSource: readonly GraphQLError[] | GraphQLErrorSource
-): readonly GraphQLError[] {
+  errorSource: ApolloError | readonly GraphQLError[] | GraphQLErrorSource
+): readonly ErrorWithMessage[] {
+  if (Array.isArray(errorSource)) {
+    return errorSource as readonly GraphQLError[];
+  }
   if ('graphQLErrors' in errorSource) {
     return errorSource.graphQLErrors;
   }
-
-  return errorSource;
+  return [];
 }
 
 function ApiError(errors: ApiErrorProps): JSX.Element {

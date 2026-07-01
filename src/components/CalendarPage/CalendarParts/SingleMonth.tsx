@@ -27,7 +27,7 @@ function SingleMonth({
   const month = addMonths(currentMonth, count);
 
   return (
-    <div className="bu-calendar calendar bup-16" key={month}>
+    <div className="bu-calendar calendar bup-16" key={month.toISOString()}>
       <MonthHeader month={month} />
       <WeekDays month={month} />
       <RenderCells

@@ -68,7 +68,7 @@ const Discount = ({
           </>
         )}
         {bookingFormConfiguration.show_discount_code && (
-          <DiscountCode errors={errors} house={house} values={values} />
+          <DiscountCode house={house} />
         )}
       </div>
     );

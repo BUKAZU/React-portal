@@ -7,13 +7,12 @@ export function createPriceArray(max_price: number): number[] {
   return Array.from({ length: rounded + 1 }, (v, k) => k * 100);
 }
 
-export const defaultFilter = [
+import type { Field } from './filter_types';
+
+export const defaultFilter: Field[] = [
   {
     label: 'Land',
     id: 'countries',
-    type: 'select',
-    required: false,
-    mandatory: true,
-    options: ['select', 'list', 'radio', 'text']
+    type: 'select'
   }
 ];

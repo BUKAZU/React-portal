@@ -20,8 +20,8 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     variables: {
       portalCode,
       objectCode,
-      starts_at: arrivalDate.date,
-      ends_at: departureDate.date
+      starts_at: arrivalDate!.date,
+      ends_at: departureDate!.date
     }
   });
 
@@ -43,8 +43,8 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     locale: locale,
     interaction_type: 'booking_started',
     interaction_data: {
-      arrival_date: arrivalDate.date,
-      departure_date: departureDate.date
+      arrival_date: arrivalDate!.date,
+      departure_date: departureDate!.date
     }
   });
 

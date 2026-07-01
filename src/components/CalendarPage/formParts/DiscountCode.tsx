@@ -5,7 +5,7 @@ import { CHECK_DISCOUNT_CODE } from '../../../_lib/gql';
 import { HouseType } from '../../../types';
 import { useBookingField } from '../BookingFormContext';
 
-function DiscountCode({ house }: { house: HouseType }): ReactNode {
+function DiscountCode({ house }: { house: HouseType }): JSX.Element {
   const [checkCode, { loading, error, data }] =
     useMutation(CHECK_DISCOUNT_CODE);
   const field = useBookingField('discount_code');

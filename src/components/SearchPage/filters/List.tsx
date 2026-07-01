@@ -26,7 +26,7 @@ export default function List({
     }
   };
 
-  const handleChange = (value: string) => {
+  const handleChange = (value: string | null) => {
     onChange(field.id, value);
   };
 
@@ -49,8 +49,8 @@ export default function List({
               value={opt.id}
               disabled={countries ? !countries.includes(opt.country_id) : false}
               checked={value === opt.id}
-              onBlur={handleChange}
-              onChange={handleChange}
+              onBlur={(e) => handleChange(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
             />
             <label htmlFor={opt.id}>{opt.name}</label>
           </li>
@@ -68,7 +68,7 @@ export default function List({
               id={String(opt.id)}
               value={opt.id}
               checked={value === String(opt.id)}
-              onBlur={handleChange}
+              onBlur={(e) => handleChange(e.target.value)}
               onChange={updateList}
             />
             <label htmlFor={String(opt.id)}>{opt.name}</label>

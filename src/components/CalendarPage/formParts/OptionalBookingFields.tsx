@@ -5,6 +5,7 @@ import { DateField } from '../FormItems';
 import { useBookingField } from '../BookingFormContext';
 import DefaultBookingFields from './DefaultBookingFields';
 import { PossibleValues, SingleBookingFieldType } from './form_types';
+import { BookingFormTouched } from '../BookingFormContext';
 
 interface BookingFieldDefinition {
   id: string;
@@ -20,9 +21,7 @@ interface PortalSiteForBookingFields {
 interface Props {
   bookingFields: SingleBookingFieldType[];
   errors: Record<string, string | undefined>;
-  touched: Record<string, boolean | Record<string, boolean> | undefined> & {
-    extra_fields?: Record<string, boolean>;
-  };
+  touched: BookingFormTouched;
   PortalSite: PortalSiteForBookingFields;
   values: PossibleValues;
 }
@@ -33,9 +32,7 @@ interface RenderOptionalFieldParams {
   countries: CountryEntry[];
   countriesLoading: boolean;
   errors: Record<string, string | undefined>;
-  touched: Record<string, boolean | Record<string, boolean> | undefined> & {
-    extra_fields?: Record<string, boolean>;
-  };
+  touched: BookingFormTouched;
 }
 
 export function isInt(value: unknown): boolean {

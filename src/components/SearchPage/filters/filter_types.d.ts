@@ -25,4 +25,5 @@ export type OptionsType = {
   id: string;
   name: string;
   country_id: string;
+  region?: string;
 };
