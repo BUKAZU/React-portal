@@ -56,7 +56,7 @@ describe('TrackEvent', () => {
   it('posts to the tracking endpoint', async () => {
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
 
-    await TrackEvent({ event: 'click' });
+    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'click', locale: 'en' });
 
     const [calledUrl] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
     expect(calledUrl).toBe(TRACKING_URL);
@@ -65,11 +65,18 @@ describe('TrackEvent', () => {
   it('merges event data with url and session_identifier', async () => {
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
 
-    await TrackEvent({ event: 'click', label: 'button' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'click',
+      locale: 'en',
+      house_code: 'house-1'
+    });
 
     const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.event).toBe('click');
-    expect(options.json.label).toBe('button');
+    expect(options.json.portal_code).toBe('test-portal');
+    expect(options.json.interaction_type).toBe('click');
+    expect(options.json.locale).toBe('en');
+    expect(options.json.house_code).toBe('house-1');
     expect(options.json.url).toBe(window.location.href);
     expect('session_identifier' in options.json).toBe(true);
   });
@@ -77,7 +84,7 @@ describe('TrackEvent', () => {
   it('includes the current page URL in the posted payload', async () => {
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
 
-    await TrackEvent({});
+    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
 
     const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
     expect(options.json.url).toBe(window.location.href);
@@ -86,7 +93,7 @@ describe('TrackEvent', () => {
   it('sends empty string as session_identifier when no cookie is set', async () => {
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
 
-    await TrackEvent({});
+    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
 
     const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
     expect(options.json.session_identifier).toBe('');
@@ -96,7 +103,7 @@ describe('TrackEvent', () => {
     document.cookie = 'bu_portal_session=existing-session';
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
 
-    await TrackEvent({ event: 'pageview' });
+    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'pageview', locale: 'en' });
 
     const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
     expect(options.json.session_identifier).toBe('existing-session');
@@ -105,7 +112,7 @@ describe('TrackEvent', () => {
   it('stores the returned session id in the bu_portal_session cookie', async () => {
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('srv-session-42') });
 
-    await TrackEvent({ event: 'test' });
+    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
 
     expect(document.cookie).toContain('bu_portal_session=srv-session-42');
   });
@@ -114,19 +121,23 @@ describe('TrackEvent', () => {
     document.cookie = 'bu_portal_session=old-session';
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('refreshed-session') });
 
-    await TrackEvent({ event: 'test' });
+    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
 
     expect(document.cookie).toContain('bu_portal_session=refreshed-session');
     expect(document.cookie).not.toContain('old-session');
   });
 
-  it('does not drop additional properties from the event data', async () => {
+  it('does not drop interaction_data from the event data', async () => {
     (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
 
-    await TrackEvent({ custom_field: 'value', count: 42 });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'test',
+      locale: 'en',
+      interaction_data: { custom_field: 'value', count: 42 }
+    });
 
     const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.custom_field).toBe('value');
-    expect(options.json.count).toBe(42);
+    expect(options.json.interaction_data).toEqual({ custom_field: 'value', count: 42 });
   });
 });
