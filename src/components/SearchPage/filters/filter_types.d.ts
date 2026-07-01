@@ -1,6 +1,9 @@
 export type Field = {
   id: string;
   type: string;
+  label: string | null;
+  max?: number;
+  options?: { id: number; name: string }[];
 };
 
 export type FiltersType = {

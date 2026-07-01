@@ -23,7 +23,7 @@ const Discount = ({
 
   if (
     (house.discounts && house.discounts !== '0') ||
-    bookingFormConfiguration.showDiscountCode
+    bookingFormConfiguration.show_discount_code
   ) {
     const discounts = house.discounts ? house.discounts.split(',') : [];
 
@@ -67,7 +67,7 @@ const Discount = ({
             </div>
           </>
         )}
-        {bookingFormConfiguration.showDiscountCode && (
+        {bookingFormConfiguration.show_discount_code && (
           <DiscountCode errors={errors} house={house} values={values} />
         )}
       </div>

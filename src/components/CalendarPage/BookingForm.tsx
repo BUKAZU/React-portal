@@ -6,8 +6,13 @@ import { useQuery } from '@apollo/client';
 import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
+import type { AppPortalSite } from '../loadPortalSite';
 
-function BookingForm(): JSX.Element {
+interface Props {
+  portalSite: AppPortalSite;
+}
+
+function BookingForm({ portalSite }: Props): JSX.Element {
   const { portalCode, objectCode, locale } = useContext(AppContext);
   const { arrivalDate, departureDate } = useContext(CalendarContext);
 
@@ -43,7 +48,7 @@ function BookingForm(): JSX.Element {
     }
   });
 
-  return <FormCreator house={result} PortalSite={data.PortalSite} />;
+  return <FormCreator house={result} PortalSite={portalSite} />;
 }
 
 export default BookingForm;

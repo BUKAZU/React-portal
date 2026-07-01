@@ -28,23 +28,17 @@ const baseHouse = {
 };
 
 const baseConfig: BookingFormConfigurationType = {
-  adultsFromAge: 18,
-  babiesAllowed: false,
-  babiesTillAge: 2,
-  childrenAllowed: false,
-  childrenFromAge: 3,
-  childrenTillAge: 17,
-  languageSelectorVisible: false,
-  redirectUrl: '',
-  redirectUrlNl: '',
-  redirectUrlEn: '',
-  redirectUrlDe: '',
-  redirectUrlFr: '',
-  redirectUrlEs: '',
-  redirectUrlIt: '',
-  showDiscountCode: false,
-  showMonthsAmount: 2,
-  showMonthsInARowAmount: 2
+  adults_from_age: 18,
+  babies_allowed: false,
+  babies_till_age: 2,
+  children_allowed: false,
+  children_from_age: 3,
+  children_till_age: 17,
+  language_selector_visible: false,
+  redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
+  show_discount_code: false,
+  show_months_amount: 2,
+  show_months_in_a_row_amount: 2
 };
 
 const baseValues = {
@@ -203,14 +197,14 @@ describe('Discount – discount select branch', () => {
 
 describe('Discount – DiscountCode branch', () => {
   it('renders the DiscountCode component when showDiscountCode is true', () => {
-    renderDiscount({ discounts: undefined }, { showDiscountCode: true });
+    renderDiscount({ discounts: undefined }, { show_discount_code: true });
     expect(
       container.querySelector('[data-testid="discount-code"]')
     ).not.toBeNull();
   });
 
   it('renders both discount select and DiscountCode when both conditions are met', () => {
-    renderDiscount({ discounts: '10' }, { showDiscountCode: true });
+    renderDiscount({ discounts: '10' }, { show_discount_code: true });
     expect(container.querySelector('select')).not.toBeNull();
     expect(
       container.querySelector('[data-testid="discount-code"]')

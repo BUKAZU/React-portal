@@ -33,7 +33,7 @@ import OptionalCosts from './formParts/OptionalCosts';
 import Guests from './formParts/Guests';
 import { validateForm } from './formParts/Validations';
 import { PossibleValues, SingleBookingFieldType } from './formParts/form_types';
-import { HouseType, LocaleType, PortalSiteType } from '../../types';
+import { HouseType, PortalSiteType } from '../../types';
 
 interface Props {
   house: HouseType;
@@ -78,10 +78,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const { persons, arrivalDate, departureDate } = useContext(CalendarContext);
   const { locale, portalCode, objectCode } = useContext(AppContext);
   const dispatch = useContext(CalendarContextDispatch);
-  const { options } = PortalSite;
-  const bookingFormConfiguration = PortalSite.bookingFormConfiguration;
-  const bookingFields = ((options.bookingFields ||
-    DefaultBookingFields) as SingleBookingFieldType[]).map((field) =>
+  const { options, bookingFormConfiguration } = PortalSite;
+  const bookingFields = (options.bookingFields as SingleBookingFieldType[]).map((field) =>
     field.id === 'telephone' ? { ...field, id: 'phonenumber' } : field
   );
   const bookingPrice = house.booking_price;
@@ -200,34 +198,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
         await createBooking({ variables });
 
-        const localeRedirectKeyMap: Record<
-          LocaleType,
-          | 'redirectUrlNl'
-          | 'redirectUrlEn'
-          | 'redirectUrlDe'
-          | 'redirectUrlFr'
-          | 'redirectUrlEs'
-          | 'redirectUrlIt'
-        > = {
-          nl: 'redirectUrlNl',
-          en: 'redirectUrlEn',
-          de: 'redirectUrlDe',
-          fr: 'redirectUrlFr',
-          es: 'redirectUrlEs',
-          it: 'redirectUrlIt'
-        };
-        const localeRedirectKey = localeRedirectKeyMap[locale as LocaleType];
-        const localeRedirectUrl = localeRedirectKey
-          ? bookingFormConfiguration[localeRedirectKey]
-          : undefined;
-
+        const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
+        const localeRedirectUrl = redirect_urls[locale];
         if (localeRedirectUrl && localeRedirectUrl !== '') {
           window.location = localeRedirectUrl;
-        } else if (
-          bookingFormConfiguration.redirectUrl &&
-          bookingFormConfiguration.redirectUrl !== ''
-        ) {
-          window.location = bookingFormConfiguration.redirectUrl;
         } else {
           setTimeout(() => {
             dispatch({

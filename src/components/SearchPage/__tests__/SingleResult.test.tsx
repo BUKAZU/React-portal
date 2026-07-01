@@ -34,20 +34,19 @@ const mockResult: HouseType = {
 };
 
 const mockOptions: FiltersFormType = {
-  showCity: true,
-  showRegion: true,
-  showCountry: true,
-  showPersons: true,
-  showBedrooms: true,
-  showBathrooms: true,
-  showPrice: true,
-  showRating: true,
-  categories: [],
+  show_city: true,
+  show_region: true,
+  show_country: true,
+  show_persons: true,
+  show_bedrooms: true,
+  show_bathrooms: true,
+  show_price: true,
+  show_rating: true,
   no_results: 20,
   location: 'left',
   mode: 'grid',
   show: true,
-  fixedMobile: false
+  fixed_mobile: false
 } as any;
 
 let container: HTMLDivElement;
@@ -111,7 +110,7 @@ describe('SingleResult', () => {
   });
 
   it('should not display city when showCity is false', () => {
-    renderSingleResult(mockResult, { ...mockOptions, showCity: false });
+    renderSingleResult(mockResult, { ...mockOptions, show_city: false });
 
     const place = container.querySelector('.result-place');
     expect(place?.textContent).not.toContain(mockResult.city);

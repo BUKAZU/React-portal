@@ -1,17 +1,19 @@
 import { PricesType } from './components/CalendarPage/Summary/cost_types';
 
 export type FiltersFormType = {
-  showCity: boolean;
-  showRegion: boolean;
-  showCountry: boolean;
-  showPersons: boolean;
-  showBathrooms: boolean;
-  showBedrooms: boolean;
-  showPrice: boolean;
-  categories: number[];
+  show_city: boolean;
+  show_region: boolean;
+  show_country: boolean;
+  show_persons: boolean;
+  show_bathrooms: boolean;
+  show_bedrooms: boolean;
+  show_price: boolean;
+  show_rating?: boolean;
   no_results: number;
   location: string;
   mode: 'grid' | 'list';
+  show?: boolean;
+  fixed_mobile?: boolean;
 };
 
 /**
@@ -20,12 +22,12 @@ export type FiltersFormType = {
  * the bookingFormConfiguration returned directly by the API.
  */
 type BookingFormType = {
-  adults_from: number;
-  children: boolean;
-  children_from: number;
-  children_til: number;
-  babies: boolean;
-  babies_til: number;
+  adults_from_age: number;
+  children_allowed: boolean;
+  children_from_age: number;
+  children_till_age: number;
+  babies_allowed: boolean;
+  babies_till_age: number;
   showDiscountCode: boolean;
   redirectUrl: string | null;
   redirectUrl_en: string | null;
@@ -38,35 +40,25 @@ type BookingFormType = {
 
 /** Booking form configuration returned directly by the portal site API. */
 export type BookingFormConfigurationType = {
-  adultsFromAge: number;
-  babiesAllowed: boolean;
-  babiesTillAge: number;
-  childrenAllowed: boolean;
-  childrenFromAge: number;
-  childrenTillAge: number;
-  languageSelectorVisible: boolean;
-  redirectUrl: string;
-  redirectUrlNl: string;
-  redirectUrlEn: string;
-  redirectUrlDe: string;
-  redirectUrlFr: string;
-  redirectUrlEs: string;
-  redirectUrlIt: string;
-  showDiscountCode: boolean;
-  showMonthsAmount: number;
-  showMonthsInARowAmount: number;
-};
-
-type name_id_type = {
-  id: number;
-  name: string;
+  adults_from_age: number;
+  babies_allowed: boolean;
+  babies_till_age: number;
+  children_allowed: boolean;
+  children_from_age: number;
+  children_till_age: number;
+  language_selector_visible: boolean;
+  /** Per-locale redirect URLs after booking. Keys are locale codes ('nl', 'en', 'de', 'fr', 'es', 'it'); values may be null when not configured. */
+  redirect_urls: Record<string, string | null>;
+  show_discount_code: boolean;
+  show_months_amount: number;
+  show_months_in_a_row_amount: number;
 };
 
 export type ColorsType = {
   arrival: string;
   booked: string;
   button: string;
-  buttonCta: string;
+  button_cta: string;
   cell: string;
   departure: string;
   discount: string;
@@ -75,13 +67,14 @@ export type ColorsType = {
 export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
+  /** Search-filter fields to render, mapped from the filter-fields REST endpoint. */
+  searchFields?: { id: string; type: string; label: string | null; max?: number; options?: { id: number; name: string }[] }[];
   /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;
 };
 
 export type PortalSiteType = {
-  categories: { id: number; name: string; properties: name_id_type[] }[];
   options: PortalOptions;
   bookingFormConfiguration: BookingFormConfigurationType;
   max_persons: number;

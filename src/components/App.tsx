@@ -13,7 +13,6 @@ import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
 import { toGraphQLErrors } from '../_lib/graphql_request';
-import { GraphQLClientContext } from '../_lib/GraphQLClientContext';
 
 interface Props {
   pageType?: string;
@@ -27,17 +26,24 @@ type AppState =
   | { status: 'ready'; portalSite: AppPortalSite };
 
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
-  const client = useContext(GraphQLClientContext);
+  const { portalCode, objectCode, apiUrl, locale: contextLocale } =
+    useContext(AppContext);
   const [state, setState] = useState<AppState>({ status: 'loading' });
 
   const isSearchPage = !objectCode;
+  const isBookingPage = !!objectCode && pageType !== 'reviews';
 
   useEffect(() => {
     let isMounted = true;
     setState({ status: 'loading' });
 
-    void loadPortalSite({ portalCode, isSearchPage, client })
+    void loadPortalSite({
+      portalCode,
+      isSearchPage,
+      isBookingPage,
+      apiUrl,
+      locale: contextLocale
+    })
       .then((portalSite) => {
         if (!isMounted) {
           return;
@@ -54,7 +60,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     return () => {
       isMounted = false;
     };
-  }, [portalCode, isSearchPage, client]);
+  }, [portalCode, isSearchPage, isBookingPage, apiUrl, contextLocale]);
 
   if (state.status === 'loading') {
     return <Loading />;
@@ -76,19 +82,19 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   root.style.setProperty('--bukazu-booked', colors.booked);
   root.style.setProperty('--bukazu-departure', colors.departure);
   root.style.setProperty('--bukazu-button', colors.button);
-  root.style.setProperty('--bukazu-button_cta', colors.buttonCta);
+  root.style.setProperty('--bukazu-button_cta', colors.button_cta);
 
   let page;
 
   if (objectCode && objectCode !== null && pageType !== 'reviews') {
     page = (
       <ErrorBoundary>
-        <CalendarPage />
+        <CalendarPage portalSite={portalSite} />
         <div dangerouslySetInnerHTML={{ __html: SafeBooking(locale) }} />
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
-    page = <ReviewsPageMount objectCode={objectCode} portalCode={portalCode} />;
+    page = <ReviewsPageMount objectCode={objectCode} portalCode={portalCode} apiUrl={apiUrl} />;
   } else {
     page = (
       <SearchPage

@@ -20,11 +20,11 @@ export default function Guests({
         count={house.persons}
         description={
           <div className="age-description">
-            {t('adults_from', { age: bookingFormConfiguration.adultsFromAge })}
+            {t('adults_from', { age: bookingFormConfiguration.adults_from_age })}
           </div>
         }
       />
-      {!bookingFormConfiguration.childrenAllowed ? null : (
+      {!bookingFormConfiguration.children_allowed ? null : (
         <NumberSelect
           name="children"
           label="children"
@@ -32,14 +32,14 @@ export default function Guests({
           description={
             <div className="age-description">
               {t('children_from', {
-                from: bookingFormConfiguration.childrenFromAge,
-                til: bookingFormConfiguration.childrenTillAge
+                from: bookingFormConfiguration.children_from_age,
+                til: bookingFormConfiguration.children_till_age
               })}
             </div>
           }
         />
       )}
-      {!bookingFormConfiguration.babiesAllowed ? null : (
+      {!bookingFormConfiguration.babies_allowed ? null : (
         <NumberSelect
           name="babies"
           label="babies"
@@ -47,7 +47,7 @@ export default function Guests({
           description={
             <div className="age-description">
               {t('babies_from', {
-                babies: bookingFormConfiguration.babiesTillAge
+                babies: bookingFormConfiguration.babies_till_age
               })}
             </div>
           }

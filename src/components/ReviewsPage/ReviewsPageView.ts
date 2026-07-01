@@ -58,6 +58,11 @@ export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
     dateName.appendChild(date);
     dateName.appendChild(name);
 
+    if (processed.sourceName) {
+      const source = createDiv('bu_review_summary__source', processed.sourceName);
+      dateName.appendChild(source);
+    }
+
     summary.appendChild(reviewScore);
     summary.appendChild(dateName);
 
@@ -84,6 +89,24 @@ export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
     reviewCard.appendChild(summary);
     reviewCard.appendChild(quote);
     reviewCard.appendChild(criteria);
+
+    if (processed.reviewResponses?.length > 0) {
+      const responses = createDiv('bu_review_responses');
+      processed.reviewResponses.forEach((resp) => {
+        const responseDiv = createDiv('bu_review_response');
+        const header = createDiv('bu_review_response__header');
+        header.appendChild(createDiv('bu_review_response__sender', resp.sender));
+        header.appendChild(createDiv(undefined, resp.created_at));
+        const message = document.createElement('p');
+        message.className = 'bu_review_response__message';
+        message.textContent = resp.message;
+        responseDiv.appendChild(header);
+        responseDiv.appendChild(message);
+        responses.appendChild(responseDiv);
+      });
+      reviewCard.appendChild(responses);
+    }
+
     root.appendChild(reviewCard);
   });
 
