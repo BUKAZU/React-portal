@@ -1,14 +1,8 @@
-import { FormatIntl, Parse_EN_US } from '../../_lib/date_helper';
+import { formatReviewDate } from '../../_lib/date_helper';
 import { t } from '../../intl';
 import { getScore } from './Score';
 import type { ReviewsHouse } from './ReviewsPage';
 import { processReview } from './SingleReview';
-
-const REVIEW_DATE_FORMAT: Intl.DateTimeFormatOptions = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-};
 
 function createDiv(className?: string, text?: string): HTMLDivElement {
   const element = document.createElement('div');
@@ -19,10 +13,6 @@ function createDiv(className?: string, text?: string): HTMLDivElement {
     element.textContent = text;
   }
   return element;
-}
-
-function formatReviewDate(date: string): string {
-  return FormatIntl(Parse_EN_US(date), REVIEW_DATE_FORMAT);
 }
 
 export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
@@ -63,14 +53,7 @@ export function createReviewsPageView(house: ReviewsHouse): HTMLDivElement {
     }
 
     const dateName = createDiv('bu_review_summary__date_name');
-    const formattedDate = new Date(processed.createdAt).toLocaleDateString(
-      undefined,
-      {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }
-    );
+    const formattedDate = formatReviewDate(processed.createdAt);
     const date = createDiv(undefined, `${formattedDate}, `);
     const name = createDiv('bu_review_summary__name', processed.name);
     dateName.appendChild(date);

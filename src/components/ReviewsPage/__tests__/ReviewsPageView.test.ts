@@ -1,4 +1,5 @@
 import { createReviewsPageView } from '../ReviewsPageView';
+import { formatReviewDate } from '../../../_lib/date_helper';
 import type { ReviewsHouse } from '../ReviewsPage';
 
 jest.mock('../../../intl', () => ({
@@ -141,7 +142,7 @@ describe('createReviewsPageView', () => {
       'landlord'
     );
     expect(node.querySelector('.bu_review_response__date')?.textContent).toBe(
-      '2 March 2024'
+      formatReviewDate('2024-03-02')
     );
 
     delete (window as any).__localeId__;
