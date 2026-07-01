@@ -12,6 +12,7 @@ import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
+import { loadTranslations } from '../intl';
 
 interface Props {
   pageType?: string;
@@ -25,8 +26,12 @@ type AppState =
   | { status: 'ready'; portalSite: AppPortalSite };
 
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
-  const { portalCode, objectCode, apiUrl, locale: contextLocale } =
-    useContext(AppContext);
+  const {
+    portalCode,
+    objectCode,
+    apiUrl,
+    locale: contextLocale
+  } = useContext(AppContext);
   const [state, setState] = useState<AppState>({ status: 'loading' });
 
   const isSearchPage = !objectCode;
@@ -36,6 +41,8 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     let isMounted = true;
     setState({ status: 'loading' });
 
+    const translationsPromise = loadTranslations(contextLocale);
+
     void loadPortalSite({
       portalCode,
       isSearchPage,
@@ -43,17 +50,22 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
       apiUrl,
       locale: contextLocale
     })
-      .then((portalSite) => {
+      .then(async (portalSite) => {
+        await translationsPromise;
         if (!isMounted) {
           return;
         }
         setState({ status: 'ready', portalSite });
       })
-      .catch((error: unknown) => {
+      .catch(async (error: unknown) => {
+        await translationsPromise;
         if (!isMounted) {
           return;
         }
-        const message = error instanceof Error ? error.message : 'A portal settings request failed';
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'A portal settings request failed';
         setState({ status: 'error', error: [new GraphQLError(message)] });
       });
 
@@ -94,7 +106,13 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
-    page = <ReviewsPageMount objectCode={objectCode} portalCode={portalCode} apiUrl={apiUrl} />;
+    page = (
+      <ReviewsPageMount
+        objectCode={objectCode}
+        portalCode={portalCode}
+        apiUrl={apiUrl}
+      />
+    );
   } else {
     page = (
       <SearchPage
