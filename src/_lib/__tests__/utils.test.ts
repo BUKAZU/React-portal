@@ -1,4 +1,4 @@
-import { isInt } from '../OptionalBookingFields';
+import { isInt } from '../utils';
 
 describe('isInt', () => {
   it('should return true for integer strings', () => {
@@ -23,7 +23,17 @@ describe('isInt', () => {
   it('should return false for non-numeric strings', () => {
     expect(isInt('abc')).toBe(false);
     expect(isInt('first_name')).toBe(false);
+    expect(isInt('1abc')).toBe(false);
+    expect(isInt('abc1')).toBe(false);
+    expect(isInt('1.0.0')).toBe(false);
     expect(isInt('')).toBe(false);
+  });
+
+  it('should return true for values outside 32-bit range', () => {
+    expect(isInt('2147483648')).toBe(true);
+    expect(isInt(2147483648)).toBe(true);
+    expect(isInt('-2147483649')).toBe(true);
+    expect(isInt(-2147483649)).toBe(true);
   });
 
   it('should return false for null and undefined', () => {

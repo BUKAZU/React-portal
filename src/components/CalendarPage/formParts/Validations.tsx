@@ -1,7 +1,7 @@
 import { HouseType } from '../../../types';
 import { t } from '../../../intl';
 import { byString, calculatePersons, validateAge } from './BookingHelpers';
-import { isInt } from './OptionalBookingFields';
+import { isInt } from '../../../_lib/utils';
 import { PossibleValues, SingleBookingFieldType } from './form_types';
 
 export function validateForm(

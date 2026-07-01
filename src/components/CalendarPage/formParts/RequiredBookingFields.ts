@@ -1,20 +1,12 @@
 import { BookingFieldsType } from './form_types';
 
-const DefaultBookingFields: BookingFieldsType = [
+const RequiredBookingFields: BookingFieldsType = [
   {
     id: 'first_name',
     label: 'Voornaam',
     type: 'text',
     options: ['text'],
     required: true,
-    placeholder: ''
-  },
-  {
-    id: 'preposition',
-    label: 'Tussenvoegsel',
-    type: 'text',
-    options: ['text'],
-    required: false,
     placeholder: ''
   },
   {
@@ -77,29 +69,13 @@ const DefaultBookingFields: BookingFieldsType = [
     placeholder: ''
   },
   {
-    id: 'phone_mobile',
-    label: 'Mobiel telefoonnummer',
-    type: 'text',
-    options: ['text'],
-    required: false,
-    placeholder: ''
-  },
-  {
     id: 'phone',
     label: 'Telefoonnummer',
     type: 'text',
     options: ['text'],
     required: true,
     placeholder: ''
-  },
-  {
-    id: 'comment',
-    label: 'Opmerking',
-    type: 'textarea',
-    options: ['textarea'],
-    required: false,
-    rows: 10
   }
 ];
 
-export default DefaultBookingFields;
+export default RequiredBookingFields;
