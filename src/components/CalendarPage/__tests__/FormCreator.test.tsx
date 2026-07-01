@@ -46,13 +46,6 @@ jest.mock('../formParts/OptionalBookingFields', () => ({
     lastOptionalBookingFieldsProps = props;
     return <div data-testid="optional-booking-fields" />;
   },
-  isInt: (value: unknown): boolean => {
-    if (typeof value !== 'string' && typeof value !== 'number') return false;
-    return (
-      !isNaN(value as number) &&
-      ((x: number) => (x | 0) === x)(parseFloat(String(value)))
-    );
-  }
 }));
 jest.mock('../Summary', () => () => <div data-testid="summary" />);
 jest.mock('../formParts/SuccessMessage', () => () => (
@@ -64,7 +57,7 @@ jest.mock('../../Modal', () => ({ children, onClose, buttonText }: any) => (
 jest.mock('../../Error', () => ({
   ApiError: () => <div data-testid="api-error" />
 }));
-jest.mock('../formParts/DefaultBookingFields', () => []);
+jest.mock('../formParts/RequiredBookingFields', () => []);
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 

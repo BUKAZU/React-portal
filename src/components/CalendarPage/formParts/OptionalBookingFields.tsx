@@ -3,8 +3,9 @@ import { t } from '../../../intl';
 import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
 import { useBookingField } from '../BookingFormContext';
-import DefaultBookingFields from './DefaultBookingFields';
+import RequiredBookingFields from './RequiredBookingFields';
 import { PossibleValues, SingleBookingFieldType } from './form_types';
+import { isInt } from '../../../_lib/utils';
 
 interface BookingFieldDefinition {
   id: string;
@@ -36,16 +37,6 @@ interface RenderOptionalFieldParams {
   touched: Record<string, boolean | Record<string, boolean> | undefined> & {
     extra_fields?: Record<string, boolean>;
   };
-}
-
-export function isInt(value: unknown): boolean {
-  if (typeof value !== 'string' && typeof value !== 'number') return false;
-  return (
-    !isNaN(value as number) &&
-    (function (x) {
-      return (x | 0) === x;
-    })(parseFloat(value as string))
-  );
 }
 
 function NativeField({
@@ -294,7 +285,7 @@ export default function OptionalBookingFields({
 
     if (values.cancel_insurance === '1' || values.cancel_insurance === '2') {
       requiredFields.forEach((key) => {
-        const defaultField = DefaultBookingFields.find(
+        const defaultField = RequiredBookingFields.find(
           (field) => field.id === key
         );
         if (!defaultField) return;

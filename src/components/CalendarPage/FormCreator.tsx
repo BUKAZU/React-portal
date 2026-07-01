@@ -19,11 +19,9 @@ import Summary from './Summary';
 import { BookingType } from './calender_types';
 import { Insurances } from './formParts/insurances';
 import Discount from './formParts/discount';
-import DefaultBookingFields from './formParts/DefaultBookingFields';
 import SuccessMessage from './formParts/SuccessMessage';
-import OptionalBookingFields, {
-  isInt
-} from './formParts/OptionalBookingFields';
+import OptionalBookingFields from './formParts/OptionalBookingFields';
+import { isInt } from '../../_lib/utils';
 import {
   calculatePersons,
   initializeBookingFields,
@@ -79,8 +77,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const { locale, portalCode, objectCode } = useContext(AppContext);
   const dispatch = useContext(CalendarContextDispatch);
   const { options, bookingFormConfiguration } = PortalSite;
-  const bookingFields = (options.bookingFields as SingleBookingFieldType[]).map((field) =>
-    field.id === 'telephone' ? { ...field, id: 'phonenumber' } : field
+  const bookingFields = (options.bookingFields as SingleBookingFieldType[]).map(
+    (field) =>
+      field.id === 'telephone' ? { ...field, id: 'phonenumber' } : field
   );
   const bookingPrice = house.booking_price;
 

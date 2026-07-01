@@ -1,4 +1,4 @@
-import { isInt } from '../OptionalBookingFields';
+import { isInt } from '../utils';
 
 describe('isInt', () => {
   it('should return true for integer strings', () => {
