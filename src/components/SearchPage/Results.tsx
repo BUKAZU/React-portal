@@ -43,10 +43,14 @@ function Results({
   } else if (filters.arrival_date) {
     min_nights = 1;
   }
-  let filterProperties = filters.properties || [];
-  filterProperties = filterProperties.map((e) => {
-    return JSON.stringify(e);
-  });
+  const categoryIds = Object.entries(filters as Record<string, unknown>)
+    .filter(([key, val]) => /^category_\d+$/.test(key) && val)
+    .map(([, val]) => Number(val))
+    .filter((n) => !isNaN(n));
+
+  const filterProperties = [...(filters.properties || []), ...categoryIds].map(
+    (e) => JSON.stringify(e)
+  );
 
   let properties = filterProperties.join(',');
 
