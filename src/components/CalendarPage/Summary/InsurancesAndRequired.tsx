@@ -14,6 +14,7 @@ interface Props {
       };
     };
     required_house_costs: CostType[];
+    currency: string;
   };
 }
 
@@ -22,6 +23,7 @@ export default function InsurancesAndRequired({
 }: Props): JSX.Element {
   const { insurances, required_costs } = prices.total_costs;
   const { not_on_site } = required_costs;
+  const { currency } = prices;
 
   return (
     <div className="costs-section">
@@ -38,6 +40,7 @@ export default function InsurancesAndRequired({
                       key={key}
                       formatName={true}
                       amount={val}
+                      currency={currency}
                     />
                   );
                 }
@@ -47,7 +50,9 @@ export default function InsurancesAndRequired({
           {prices.required_house_costs.map((cost) => {
             if (!cost.on_site && cost.gl !== '0120') {
               if (cost.method === 'none') {
-                return <CostRow key={cost.id} {...cost} />;
+                return (
+                  <CostRow key={cost.id} {...cost} currency={currency} />
+                );
               } else {
                 if (cost.amount === 0) {
                   return null;
@@ -57,6 +62,7 @@ export default function InsurancesAndRequired({
                     key={cost.id}
                     {...cost}
                     amount={not_on_site?.find((x) => x.id == cost.id)?.amount ?? 0}
+                    currency={currency}
                   />
                 );
               }

@@ -40,9 +40,16 @@ jest.mock('@apollo/client', () => ({
 // ---------------------------------------------------------------------------
 jest.mock('../../../_lib/gql', () => ({
   SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  BOOKING_PRICE_QUERY: 'BOOKING_PRICE_QUERY',
-  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION',
-  PRICE_FIELD_BOOKING_PRICE_QUERY: 'PRICE_FIELD_BOOKING_PRICE_QUERY'
+  HOUSE_DETAILS_QUERY: 'HOUSE_DETAILS_QUERY',
+  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
+}));
+
+// ---------------------------------------------------------------------------
+// Mock the REST price client (replaces the legacy GraphQL price queries)
+// ---------------------------------------------------------------------------
+const mockFetchPrice = jest.fn();
+jest.mock('../../../_lib/price', () => ({
+  fetchPrice: (...args: unknown[]) => mockFetchPrice(...args)
 }));
 
 // ---------------------------------------------------------------------------
@@ -225,12 +232,20 @@ const singleHouseData = {
   }
 };
 
-/** Data returned by BOOKING_PRICE_QUERY (BookingForm) — house data only. */
-const bookingPriceData = {
+/** Data returned by HOUSE_DETAILS_QUERY (BookingForm) — house data only, no price. */
+const houseDetailsData = {
   PortalSite: {
     id: 'TEST',
     houses: [{ ...mockHouse }]
   }
+};
+
+/** Price returned by the REST price endpoint (fetchPrice), used by both
+ * PriceField/Price (calendar preview) and BookingForm (optional costs). */
+const mockPriceResponse = {
+  total_price: 1500,
+  currency: 'EUR',
+  optional_house_costs: []
 };
 
 // ---------------------------------------------------------------------------
@@ -257,8 +272,16 @@ function renderApp() {
   });
 }
 
+/** Flush the microtask queue so pending fetchPrice promises resolve. */
+async function flush() {
+  await act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+}
+
 /** Simulate clicking on an arrival date then a departure date */
-function selectDates() {
+async function selectDates() {
   act(() => {
     (
       container.querySelector('[data-testid="select-arrival"]') as HTMLElement
@@ -269,19 +292,23 @@ function selectDates() {
       container.querySelector('[data-testid="select-departure"]') as HTMLElement
     ).click();
   });
+  // Selecting both dates renders PriceField's <Price>, which fetches via REST.
+  await flush();
 }
 
 /** Click the "Calculate / Start booking" button in PriceField */
-function clickCalculate() {
+async function clickCalculate() {
   act(() => {
     (container.querySelector('button.button') as HTMLElement).click();
   });
+  // BookingForm fetches its own price (for optional_house_costs) on mount.
+  await flush();
 }
 
 /** Navigate from the calendar view to the booking form */
-function navigateToBookingForm() {
-  selectDates();
-  clickCalculate();
+async function navigateToBookingForm() {
+  await selectDates();
+  await clickCalculate();
 }
 
 beforeEach(() => {
@@ -307,28 +334,13 @@ beforeEach(() => {
     if (query === 'SINGLE_HOUSE_QUERY') {
       return { data: singleHouseData, loading: false, error: null };
     }
-    if (query === 'BOOKING_PRICE_QUERY') {
-      return { data: bookingPriceData, loading: false, error: null };
-    }
-    if (query === 'PRICE_FIELD_BOOKING_PRICE_QUERY') {
-      return {
-        data: {
-          PortalSite: {
-            houses: [
-              {
-                id: 1,
-                name: 'Test House',
-                booking_price: { total_price: 1500 }
-              }
-            ]
-          }
-        },
-        loading: false,
-        error: null
-      };
+    if (query === 'HOUSE_DETAILS_QUERY') {
+      return { data: houseDetailsData, loading: false, error: null };
     }
     return { data: null, loading: false, error: null };
   });
+
+  mockFetchPrice.mockResolvedValue(mockPriceResponse);
 });
 
 afterEach(() => {
@@ -369,10 +381,10 @@ describe('Booking flow – integration', () => {
     expect(calcButton!.disabled).toBe(true);
   });
 
-  it('enables the Calculate button once arrival and departure dates are selected', () => {
+  it('enables the Calculate button once arrival and departure dates are selected', async () => {
     renderApp();
 
-    selectDates();
+    await selectDates();
 
     const calcButton = container.querySelector(
       'button.button'
@@ -380,10 +392,10 @@ describe('Booking flow – integration', () => {
     expect(calcButton.disabled).toBe(false);
   });
 
-  it('transitions from the calendar view to the booking form after clicking Calculate', () => {
+  it('transitions from the calendar view to the booking form after clicking Calculate', async () => {
     renderApp();
 
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     // Calendar is no longer shown
     expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
@@ -391,10 +403,10 @@ describe('Booking flow – integration', () => {
     expect(container.querySelector('form.form')).not.toBeNull();
   });
 
-  it('renders the submit button inside the booking form', () => {
+  it('renders the submit button inside the booking form', async () => {
     renderApp();
 
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const submitButton = container.querySelector('button[type="submit"]');
     expect(submitButton).not.toBeNull();
@@ -410,7 +422,7 @@ describe('Booking flow – integration', () => {
     ]);
 
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     // Submit the form and wait for Formik's async validation + onSubmit to settle
     await act(async () => {
@@ -430,7 +442,7 @@ describe('Booking flow – integration', () => {
     );
   });
 
-  it('shows the success modal when the mutation returns booking data', () => {
+  it('shows the success modal when the mutation returns booking data', async () => {
     const { useMutation } = require('@apollo/client');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn().mockResolvedValue({}),
@@ -443,7 +455,7 @@ describe('Booking flow – integration', () => {
     ]);
 
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     // The success modal container and SuccessMessage component must be rendered
     const modalContainer = container.querySelector('.bukazu-modal');
@@ -451,7 +463,7 @@ describe('Booking flow – integration', () => {
     expect(modalContainer!.querySelector('.success-message')).not.toBeNull();
   });
 
-  it('shows "Creating booking..." loading text while the mutation is in flight', () => {
+  it('shows "Creating booking..." loading text while the mutation is in flight', async () => {
     const { useMutation } = require('@apollo/client');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn().mockResolvedValue({}),
@@ -459,14 +471,14 @@ describe('Booking flow – integration', () => {
     ]);
 
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const loadingMsg = container.querySelector('.return-message');
     expect(loadingMsg).not.toBeNull();
     expect(loadingMsg!.textContent).toBe('Creating booking...');
   });
 
-  it('shows an error modal when the booking mutation returns an error', () => {
+  it('shows an error modal when the booking mutation returns an error', async () => {
     const { useMutation } = require('@apollo/client');
     (useMutation as jest.Mock).mockReturnValue([
       jest.fn().mockResolvedValue({}),
@@ -479,15 +491,15 @@ describe('Booking flow – integration', () => {
     ]);
 
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
   });
 
-  it('returns to the calendar view when the return link is clicked', () => {
+  it('returns to the calendar view when the return link is clicked', async () => {
     renderApp();
 
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     // Confirm the form is showing
     expect(container.querySelector('form.form')).not.toBeNull();

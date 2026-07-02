@@ -14,6 +14,7 @@ export type PricesType = {
     total_price: number;
     insurances: {
       cancel_insurance: number;
+      insurance_costs: number;
     };
     required_costs: {
       not_on_site: CostType[];
@@ -29,4 +30,6 @@ export type PricesType = {
   rent_price: number;
   discount: number;
   discounted_price: number;
+  /** ISO 4217 currency code, e.g. "EUR". Returned by the REST price endpoint. */
+  currency: string;
 };

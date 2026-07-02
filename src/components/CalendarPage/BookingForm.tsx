@@ -1,41 +1,74 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
-import { BOOKING_PRICE_QUERY } from '../../_lib/gql';
+import { HOUSE_DETAILS_QUERY } from '../../_lib/gql';
 import { useQuery } from '@apollo/client';
+import { fetchPrice } from '../../_lib/price';
 import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
 import type { AppPortalSite } from '../loadPortalSite';
+import type { HouseType } from '../../types';
 
 interface Props {
   portalSite: AppPortalSite;
 }
 
 function BookingForm({ portalSite }: Props): JSX.Element {
-  const { portalCode, objectCode, locale } = useContext(AppContext);
+  const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const { arrivalDate, departureDate } = useContext(CalendarContext);
 
-  const { data, loading, error } = useQuery(BOOKING_PRICE_QUERY, {
-    variables: {
-      portalCode,
-      objectCode,
-      starts_at: arrivalDate!.date,
-      ends_at: departureDate!.date
-    }
+  const { data, loading, error } = useQuery(HOUSE_DETAILS_QUERY, {
+    variables: { portalCode, objectCode }
   });
 
-  if (loading)
+  const [bookingPrice, setBookingPrice] = useState<
+    HouseType['booking_price'] | null
+  >(null);
+  const [priceError, setPriceError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchPrice({
+      apiUrl,
+      locale,
+      portalCode,
+      objectCode,
+      startsAt: arrivalDate!.date,
+      endsAt: departureDate!.date
+    })
+      .then((price) => {
+        if (!cancelled) {
+          // The REST response's cost shape is a superset of OptionalHouseCostType.
+          setBookingPrice({
+            total_price: price.total_price,
+            optional_house_costs: price.optional_house_costs
+          } as unknown as HouseType['booking_price']);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPriceError(true);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiUrl, locale, portalCode, objectCode, arrivalDate, departureDate]);
+
+  if (loading || (!bookingPrice && !priceError))
     return (
       <div>
         <Loading />
       </div>
     );
-  if (error) {
+  if (error || priceError) {
     return <div>Error</div>;
   }
 
-  const result = data.PortalSite.houses[0];
+  const result: HouseType = { ...data.PortalSite.houses[0], booking_price: bookingPrice! };
 
   TrackEvent({
     house_code: objectCode,
