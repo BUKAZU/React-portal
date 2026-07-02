@@ -5,31 +5,22 @@ import {
   DocumentNode
 } from 'graphql';
 import {
-  BOOKING_PRICE_QUERY,
+  HOUSE_DETAILS_QUERY,
   CREATE_BOOKING_MUTATION,
   SINGLE_HOUSE_QUERY,
   HOUSES_QUERY,
-  HOUSES_PRICE_QUERY,
   HOUSE_COUNT_QUERY,
-  BOOKING_PRICE_TOTAL_QUERY,
-  PRICE_FIELD_BOOKING_PRICE_QUERY,
   CHECK_DISCOUNT_CODE,
   HOUSE_SEARCH_RESULT_FIELDS
 } from '../gql';
 import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
-  { name: 'BOOKING_PRICE_QUERY', document: BOOKING_PRICE_QUERY },
+  { name: 'HOUSE_DETAILS_QUERY', document: HOUSE_DETAILS_QUERY },
   { name: 'CREATE_BOOKING_MUTATION', document: CREATE_BOOKING_MUTATION },
   { name: 'SINGLE_HOUSE_QUERY', document: SINGLE_HOUSE_QUERY },
   { name: 'HOUSES_QUERY', document: HOUSES_QUERY },
-  { name: 'HOUSES_PRICE_QUERY', document: HOUSES_PRICE_QUERY },
   { name: 'HOUSE_COUNT_QUERY', document: HOUSE_COUNT_QUERY },
-  { name: 'BOOKING_PRICE_TOTAL_QUERY', document: BOOKING_PRICE_TOTAL_QUERY },
-  {
-    name: 'PRICE_FIELD_BOOKING_PRICE_QUERY',
-    document: PRICE_FIELD_BOOKING_PRICE_QUERY
-  },
   { name: 'CHECK_DISCOUNT_CODE', document: CHECK_DISCOUNT_CODE }
 ];
 

@@ -12,11 +12,16 @@ jest.mock('@apollo/client', () => ({
 }));
 
 jest.mock('../../../_lib/gql', () => ({
-  HOUSES_QUERY: 'HOUSES_QUERY',
-  HOUSES_PRICE_QUERY: 'HOUSES_PRICE_QUERY'
+  HOUSES_QUERY: 'HOUSES_QUERY'
 }));
 
-jest.mock('../SingleResult', () => () => <div data-testid="single-result" />);
+jest.mock('../SingleResult', () => (props: { startsAt?: string; endsAt?: string }) => (
+  <div
+    data-testid="single-result"
+    data-starts-at={props.startsAt ?? ''}
+    data-ends-at={props.endsAt ?? ''}
+  />
+));
 jest.mock('../Paginator', () => () => <div data-testid="paginator" />);
 jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 jest.mock('../../Error', () => ({
@@ -196,11 +201,11 @@ describe('Results', () => {
     expect((useQuery as jest.Mock).mock.calls[0][0]).toBe('HOUSES_QUERY');
   });
 
-  it('should use HOUSES_PRICE_QUERY when both arrival and departure dates are set', () => {
+  it('should pass startsAt/endsAt to SingleResult when both arrival and departure dates are set', () => {
     (useQuery as jest.Mock).mockReturnValue({
       loading: false,
       error: undefined,
-      data: { PortalSite: { houses: [] } }
+      data: { PortalSite: { houses: [mockHouse] } }
     });
 
     renderResults({
@@ -208,7 +213,10 @@ describe('Results', () => {
       filters: { arrival_date: '01/15/2026', departure_date: '01/22/2026' }
     });
 
-    expect((useQuery as jest.Mock).mock.calls[0][0]).toBe('HOUSES_PRICE_QUERY');
+    expect((useQuery as jest.Mock).mock.calls[0][0]).toBe('HOUSES_QUERY');
+    const result = container.querySelector('[data-testid="single-result"]');
+    expect(result?.getAttribute('data-starts-at')).toBe('01/15/2026');
+    expect(result?.getAttribute('data-ends-at')).toBe('01/22/2026');
   });
 
   it('should render paginator twice (top and bottom)', () => {

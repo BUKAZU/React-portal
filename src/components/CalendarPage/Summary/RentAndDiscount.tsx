@@ -7,19 +7,30 @@ interface Props {
 }
 
 export default function RentAndDiscount({ prices }: Props): JSX.Element {
-  const { rent_price, discount, discounted_price } = prices;
+  const { rent_price, discount, discounted_price, currency } = prices;
   return (
     <div className="costs-section">
       <table>
         <tbody>
-          <CostRow name="rent_price" formatName={true} amount={rent_price} />
+          <CostRow
+            name="rent_price"
+            formatName={true}
+            amount={rent_price}
+            currency={currency}
+          />
           {discount > 0 ? (
             <>
-              <CostRow name="discount" formatName={true} amount={discount} />
+              <CostRow
+                name="discount"
+                formatName={true}
+                amount={discount}
+                currency={currency}
+              />
               <CostRow
                 name="price_after_discount"
                 formatName={true}
                 amount={discounted_price}
+                currency={currency}
               />
             </>
           ) : null}
