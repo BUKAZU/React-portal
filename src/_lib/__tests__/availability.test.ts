@@ -7,11 +7,13 @@ import { HTTPError } from 'ky';
 
 // Explicit factory mock for the shared HTTP client so tests do not perform real HTTP requests.
 jest.mock('../http_client', () => ({
-  http: { get: jest.fn() }
+  http: { get: jest.fn() },
+  parseResponse: jest.fn()
 }));
-import { http } from '../http_client';
+import { http, parseResponse } from '../http_client';
 
 const mockHttp = http as jest.Mocked<typeof http>;
+const mockParseResponse = parseResponse as jest.Mock;
 
 describe('availability REST client', () => {
   const baseParams = {
@@ -72,8 +74,8 @@ describe('availability REST client', () => {
     });
 
     it('calls http.get with the correct URL and locale header, returning parsed JSON', async () => {
-      const mockJson = jest.fn().mockResolvedValue(response);
-      (mockHttp.get as jest.Mock).mockReturnValue({ json: mockJson });
+      (mockHttp.get as jest.Mock).mockResolvedValue({});
+      mockParseResponse.mockResolvedValue(response);
 
       const result = await fetchAvailability({ ...baseParams, locale: 'nl' });
 
@@ -88,7 +90,6 @@ describe('availability REST client', () => {
     });
 
     it('re-throws an HTTPError as a plain Error containing the status code', async () => {
-      // Build a minimal HTTPError-like object that instanceof checks pass for.
       const fakeResponse = { status: 404 } as Response;
       const fakeRequest = {
         method: 'GET',
@@ -96,9 +97,7 @@ describe('availability REST client', () => {
       } as Request;
       const httpError = new HTTPError(fakeResponse, fakeRequest, {} as never);
 
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(httpError)
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(httpError);
 
       await expect(
         fetchAvailability({ ...baseParams, locale: 'nl' })
@@ -107,9 +106,7 @@ describe('availability REST client', () => {
 
     it('re-throws non-HTTP errors unchanged', async () => {
       const networkError = new Error('Network failure');
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(networkError)
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(networkError);
 
       await expect(
         fetchAvailability({ ...baseParams, locale: 'nl' })

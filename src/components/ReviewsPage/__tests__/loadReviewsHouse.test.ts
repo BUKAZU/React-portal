@@ -3,10 +3,13 @@ import { http } from '../../../_lib/http_client';
 import { loadReviewsHouse } from '../ReviewsPage';
 
 jest.mock('../../../_lib/http_client', () => ({
-  http: { get: jest.fn() }
+  http: { get: jest.fn() },
+  parseResponse: jest.fn()
 }));
+import { parseResponse } from '../../../_lib/http_client';
 
 const mockHttp = http as jest.Mocked<typeof http>;
+const mockParseResponse = parseResponse as jest.Mock;
 
 const fakeRequest = { method: 'GET', url: 'https://example.com' } as Request;
 
@@ -40,9 +43,9 @@ const restResponse = {
 
 beforeEach(() => {
   (mockHttp.get as jest.Mock).mockClear();
-  (mockHttp.get as jest.Mock).mockReturnValue({
-    json: jest.fn().mockResolvedValue(restResponse)
-  });
+  mockParseResponse.mockClear();
+  (mockHttp.get as jest.Mock).mockResolvedValue({});
+  mockParseResponse.mockResolvedValue(restResponse);
 });
 
 describe('loadReviewsHouse', () => {
@@ -121,12 +124,10 @@ describe('loadReviewsHouse', () => {
     });
 
     it('handles empty items list', async () => {
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockResolvedValue({
-          ...restResponse,
-          items: [],
-          page_info: { start_cursor: null, end_cursor: null, has_next_page: false, has_previous_page: false }
-        })
+      mockParseResponse.mockResolvedValue({
+        ...restResponse,
+        items: [],
+        page_info: { start_cursor: null, end_cursor: null, has_next_page: false, has_previous_page: false }
       });
       const { house, pageInfo } = await loadReviewsHouse(baseParams);
       expect(house.reviews).toHaveLength(0);
@@ -135,11 +136,9 @@ describe('loadReviewsHouse', () => {
     });
 
     it('handles review with empty review_criteria and review_responses', async () => {
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockResolvedValue({
-          ...restResponse,
-          items: [{ ...restResponse.items[0], review_criteria: [], review_responses: [] }]
-        })
+      mockParseResponse.mockResolvedValue({
+        ...restResponse,
+        items: [{ ...restResponse.items[0], review_criteria: [], review_responses: [] }]
       });
       const { house } = await loadReviewsHouse(baseParams);
       expect(house.reviews[0].reviewCriteria).toEqual([]);
@@ -149,18 +148,14 @@ describe('loadReviewsHouse', () => {
 
   describe('error handling', () => {
     it('wraps HTTPError with status code in message', async () => {
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(makeHttpError(404))
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(makeHttpError(404));
       await expect(loadReviewsHouse(baseParams)).rejects.toThrow(
         'Reviews request failed (404)'
       );
     });
 
     it('wraps HTTPError 500 with status code in message', async () => {
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(makeHttpError(500))
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(makeHttpError(500));
       await expect(loadReviewsHouse(baseParams)).rejects.toThrow(
         'Reviews request failed (500)'
       );
@@ -168,9 +163,7 @@ describe('loadReviewsHouse', () => {
 
     it('rethrows non-HTTP errors unchanged', async () => {
       const networkError = new TypeError('Failed to fetch');
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(networkError)
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(networkError);
       await expect(loadReviewsHouse(baseParams)).rejects.toBe(networkError);
     });
   });

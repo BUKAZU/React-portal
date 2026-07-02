@@ -7,11 +7,13 @@ import {
 import { HTTPError } from 'ky';
 
 jest.mock('../http_client', () => ({
-  http: { get: jest.fn() }
+  http: { get: jest.fn() },
+  parseResponse: jest.fn()
 }));
-import { http } from '../http_client';
+import { http, parseResponse } from '../http_client';
 
 const mockHttp = http as jest.Mocked<typeof http>;
+const mockParseResponse = parseResponse as jest.Mock;
 
 const baseParams = {
   apiUrl: 'https://api.bukazu.com/graphql',
@@ -54,8 +56,8 @@ describe('portal settings REST client', () => {
 
     it('calls http.get with the correct URL and locale header, returning parsed JSON', async () => {
       const response = { name: 'House', portal_code: 'TEST' };
-      const mockJson = jest.fn().mockResolvedValue(response);
-      (mockHttp.get as jest.Mock).mockReturnValue({ json: mockJson });
+      (mockHttp.get as jest.Mock).mockResolvedValue({});
+      mockParseResponse.mockResolvedValue(response);
 
       const result = await fetchSettings({ ...baseParams, locale: 'nl' });
 
@@ -70,9 +72,7 @@ describe('portal settings REST client', () => {
       const fakeRequest = { method: 'GET', url: 'https://example.com' } as Request;
       const httpError = new HTTPError(fakeResponse, fakeRequest, {} as never);
 
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(httpError)
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(httpError);
 
       await expect(
         fetchSettings({ ...baseParams, locale: 'nl' })
@@ -81,9 +81,7 @@ describe('portal settings REST client', () => {
 
     it('re-throws non-HTTP errors unchanged', async () => {
       const networkError = new Error('Network failure');
-      (mockHttp.get as jest.Mock).mockReturnValue({
-        json: jest.fn().mockRejectedValue(networkError)
-      });
+      (mockHttp.get as jest.Mock).mockRejectedValue(networkError);
 
       await expect(
         fetchSettings({ ...baseParams, locale: 'nl' })

@@ -1,5 +1,5 @@
 import { HTTPError } from 'ky';
-import { http } from '../../_lib/http_client';
+import { http, parseResponse } from '../../_lib/http_client';
 import type { Review } from './SingleReview';
 
 type RestReviewCriterium = { score: number; name: string };
@@ -60,7 +60,7 @@ export async function loadReviewsHouse({
   const url = `${origin}/portal_api/v1/accommodations/reviews?${params.toString()}`;
 
   try {
-    const data = await http.get(url).json<RestReviewsResponse>();
+    const data = await parseResponse<RestReviewsResponse>(await http.get(url));
     return {
       house: {
         id: '',

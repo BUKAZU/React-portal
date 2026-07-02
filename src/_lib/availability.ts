@@ -1,5 +1,5 @@
 import { formatDateKey } from './date_helper';
-import { http } from './http_client';
+import { http, parseResponse } from './http_client';
 import { HTTPError } from 'ky';
 
 /** A single date entry as returned by the REST availability endpoint. */
@@ -86,9 +86,9 @@ export async function fetchAvailability({
   });
 
   try {
-    return await http
-      .get(url, { headers: { locale } })
-      .json<AvailabilityResponse>();
+    return await parseResponse<AvailabilityResponse>(
+      await http.get(url, { headers: { locale } })
+    );
   } catch (error) {
     if (error instanceof HTTPError) {
       throw new Error(`Availability request failed (${error.response.status})`);

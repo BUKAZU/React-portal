@@ -8,7 +8,7 @@
 
 import { HTTPError } from 'ky';
 
-import { http } from './http_client';
+import { http, parseResponse } from './http_client';
 
 /** Colour configuration as returned by the settings endpoint. */
 export type SettingsColors = {
@@ -133,7 +133,7 @@ export function buildFilterFieldsUrl({
 
 async function fetchConfig<T>(url: string, locale: string): Promise<T> {
   try {
-    return await http.get(url, { headers: { locale } }).json<T>();
+    return await parseResponse<T>(await http.get(url, { headers: { locale } }));
   } catch (error) {
     if (error instanceof HTTPError) {
       throw new Error(`Portal settings request failed (${error.response.status})`);
