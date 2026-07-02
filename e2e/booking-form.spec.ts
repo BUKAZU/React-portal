@@ -231,3 +231,123 @@ test.describe('Booking form – error boundary', () => {
     await expect(page.locator('h1')).toHaveText('Bukazu Test Calendar');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Modal – open / close interactions
+// ---------------------------------------------------------------------------
+
+const AVAILABILITY_URL = 'https://api.bukazu.com/portal_api/**';
+
+function makeAvailabilityResponse() {
+  const availabilities = [];
+  // Cover a wide range so every calendar cell has an entry (incl. partial
+  // weeks shown at the edges of each month).
+  const start = new Date('2026-06-20');
+  const end = new Date('2026-09-30');
+  for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    availabilities.push({
+      date: d.toISOString().split('T')[0],
+      arrival: true,
+      arrival_time_from: null,
+      arrival_time_to: null,
+      departure: true,
+      departure_time: null,
+      min_nights: 3,
+      max_nights: 14,
+      special_offer: 0
+    });
+  }
+  return {
+    name: 'E2E Test House',
+    last_minute_days: 0,
+    availabilities,
+    discounts: []
+  };
+}
+
+async function interceptAvailability(page: import('@playwright/test').Page) {
+  await page.route(AVAILABILITY_URL, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(makeAvailabilityResponse())
+    })
+  );
+}
+
+const houseWithOptionalCostDescription = makeHouse(false, {
+  booking_price: {
+    total_price: 1200,
+    optional_house_costs: [
+      {
+        id: '1',
+        name: 'Cleaning fee',
+        method: 'per_booking',
+        max_available: 1,
+        amount: 50,
+        method_name: 'Per booking',
+        description: 'Mandatory cleaning service included in your booking.'
+      }
+    ]
+  }
+});
+
+async function navigateToBookingForm(page: import('@playwright/test').Page) {
+  await page.goto('/calendar.html');
+  // Select an arrival date (first available cell in the current month).
+  await page.locator('.arrival').first().click();
+  // Select a departure date (min_nights=3, so at least 3 nights after arrival).
+  await page.locator('.departure').first().click();
+  // Click the "Calculate" button to start the booking form.
+  await page.locator('button.button').click();
+  // Wait for the booking form to mount.
+  await page.locator('.info-button').first().waitFor({ state: 'attached' });
+}
+
+test.describe('Booking form – modal', () => {
+  test.beforeEach(async ({ page }) => {
+    await interceptAvailability(page);
+    await interceptGraphQL(page, houseWithOptionalCostDescription);
+  });
+
+  test('dialog is closed on load', async ({ page }) => {
+    await page.goto('/calendar.html');
+    await expect(page.locator('dialog[open]')).not.toBeAttached();
+  });
+
+  test('opens the dialog when the info button is clicked', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).toBeVisible();
+  });
+
+  test('shows the optional cost description inside the modal', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).toContainText(
+      'Mandatory cleaning service included in your booking.'
+    );
+  });
+
+  test('closes the dialog when the close button is clicked', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await page.locator('dialog.bukazu-modal[open] .bukazu-modal-footer button').click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).not.toBeAttached();
+  });
+
+  test('closes the dialog when the Escape key is pressed', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('dialog.bukazu-modal[open]')).not.toBeAttached();
+  });
+
+  test('can be reopened after closing', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await page.locator('dialog.bukazu-modal[open] .bukazu-modal-footer button').click();
+    await page.locator('.info-button').first().click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).toBeVisible();
+  });
+});
