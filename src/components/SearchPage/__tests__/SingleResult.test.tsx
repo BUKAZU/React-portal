@@ -194,7 +194,7 @@ describe('SingleResult', () => {
   });
 
   it('should fetch and display the REST price when startsAt/endsAt are given', async () => {
-    mockFetchPrice.mockResolvedValue({ total_price: 750 });
+    mockFetchPrice.mockResolvedValue({ total_price: 750, currency: 'EUR' });
 
     await act(async () => {
       renderSingleResult(mockResult, mockOptions, {

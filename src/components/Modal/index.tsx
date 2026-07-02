@@ -18,7 +18,11 @@ function Modal({ children, buttonText, show = false, onClose }: Props) {
 
   if (!visible) {
     return (
-      <button type="button" className="info-button" onClick={() => setVisible(true)}>
+      <button
+        type="button"
+        className="info-button"
+        onClick={() => setVisible(true)}
+      >
         {buttonText}
       </button>
     );
@@ -27,15 +31,14 @@ function Modal({ children, buttonText, show = false, onClose }: Props) {
   return (
     <div className="bukazu-modal-container">
       <div className="bukazu-modal-container-inner">
-        <div
-          className="bukazu-modal-escape"
-          onClick={handleClose}
-        ></div>
+        <div className="bukazu-modal-escape" onClick={handleClose}></div>
         <div className="bukazu-modal">
           <div className="bukazu-modal-content">{children}</div>
 
           <div className="bukazu-modal-footer">
-            <button type="button" onClick={handleClose}>{t('close')}</button>
+            <button type="button" onClick={handleClose}>
+              {t('close')}
+            </button>
           </div>
         </div>
       </div>

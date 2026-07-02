@@ -27,7 +27,6 @@ function CostRow({
         {formatName ? t(name) : name}
         {description && (
           <>
-            {' '}
             <Description description={description} />
           </>
         )}

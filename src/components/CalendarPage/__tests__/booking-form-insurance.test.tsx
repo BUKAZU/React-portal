@@ -302,6 +302,7 @@ function setupUseQuery(house: ReturnType<typeof makeHouseWithInsurance>) {
   });
   mockFetchPrice.mockResolvedValue({
     total_price: 1500,
+    currency: 'EUR',
     optional_house_costs: []
   });
 }
