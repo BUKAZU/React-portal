@@ -14,7 +14,7 @@
  * • Mocked heavy sub-components that are already covered by their own unit
  *   tests: Calendar (replaced with simple arrival/departure buttons that drive
  *   the CalendarContext), Guests, Summary, Discount, Insurances, OptionalCosts,
- *   OptionalBookingFields, DefaultBookingFields (→ [] so no required fields).
+ *   OptionalBookingFields, RequiredBookingFields (→ [] so no required fields).
  */
 
 import React from 'react';
@@ -68,9 +68,9 @@ jest.mock('../../icons/loading.svg', () => () => (
 ));
 
 // ---------------------------------------------------------------------------
-// Mock DefaultBookingFields → empty array so validation never blocks submit
+// Mock RequiredBookingFields → empty array so validation never blocks submit
 // ---------------------------------------------------------------------------
-jest.mock('../formParts/DefaultBookingFields', () => []);
+jest.mock('../formParts/RequiredBookingFields', () => []);
 
 // ---------------------------------------------------------------------------
 // Mock heavy form sub-components (each has its own unit-test suite)

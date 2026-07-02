@@ -1,6 +1,6 @@
 {
   "name": "bukazu-portal-react",
-  "version": "3.9.0",
+  "version": "4.0.0-beta.1",
   "engines": {
     "node": ">=22"
   },
@@ -64,20 +64,19 @@
   "dependencies": {
     "@apollo/client": "^3.11.8",
     "@sentry/browser": "^10.45.0",
-    "formik": "^2.2.9",
     "graphql": "^16.11.0",
     "ky": "^2.0.2"
   },
-  "main": "./build/portal.umd.js",
-  "module": "./build/portal.es.js",
   "exports": {
     ".": {
-      "import": "./build/portal.es.js",
-      "require": "./build/portal.umd.js"
+      "import": "./build/portal.es.js"
     },
     "./index.css": "./build/index.css",
     "./build/index.css": "./build/index.css"
   },
+  "sideEffects": [
+    "*.css"
+  ],
   "eslintConfig": {
     "extends": [
       "eslint:recommended",

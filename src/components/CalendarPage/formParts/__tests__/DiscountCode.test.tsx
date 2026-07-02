@@ -1,7 +1,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import DiscountCode from '../DiscountCode';
 import { HouseType } from '../../../../types';
 
@@ -63,11 +62,7 @@ function renderDiscountCode(mutationState: {
   ]);
 
   act(() => {
-    root.render(
-      <Formik initialValues={{ discount_code: '' }} onSubmit={() => {}}>
-        <DiscountCode house={baseHouse} />
-      </Formik>
-    );
+    root.render(<DiscountCode house={baseHouse} />);
   });
 }
 
@@ -170,11 +165,7 @@ describe('DiscountCode – input interaction', () => {
     ]);
 
     act(() => {
-      root.render(
-        <Formik initialValues={{ discount_code: '' }} onSubmit={() => {}}>
-          <DiscountCode house={baseHouse} />
-        </Formik>
-      );
+      root.render(<DiscountCode house={baseHouse} />);
     });
 
     const input = container.querySelector('input') as HTMLInputElement;

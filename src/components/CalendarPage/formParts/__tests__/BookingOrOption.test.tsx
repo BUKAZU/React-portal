@@ -1,7 +1,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import BookingOrOption from '../BookingOrOption';
 import { HouseType } from '../../../../types';
 
@@ -42,9 +41,7 @@ function renderBookingOrOption(housePatch: Partial<typeof baseHouse> = {}) {
   const house = { ...baseHouse, ...housePatch };
   act(() => {
     root.render(
-      <Formik initialValues={{ is_option: 'false' }} onSubmit={() => {}}>
-        <BookingOrOption house={house as unknown as HouseType} />
-      </Formik>
+      <BookingOrOption house={house as unknown as HouseType} />
     );
   });
 }

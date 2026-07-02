@@ -30,10 +30,20 @@ export interface PortalContext {
  * Initialise Sentry with the given DSN.
  * If Sentry has already been initialised (by this call or by the host
  * application), the call is ignored to avoid double-initialisation.
+ *
+ * The `GlobalHandlers` integration is removed so that Sentry does NOT hook
+ * into `window.onerror` / `window.onunhandledrejection`. This prevents the
+ * portal from capturing unrelated errors from the host page or third-party
+ * scripts. Only errors that are explicitly reported via `reportError` or
+ * `reportMessage` will be sent to Sentry.
  */
 export function initSentry(dsn: string): void {
   if (getClient() !== undefined) return;
-  init({ dsn });
+  init({
+    dsn,
+    integrations: (integrations) =>
+      integrations.filter((i) => i.name !== 'GlobalHandlers')
+  });
 }
 
 /**

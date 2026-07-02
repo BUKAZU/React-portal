@@ -5,6 +5,7 @@ import {
   MONTH_FORMAT,
   LONG_DATE_FORMAT,
   formatDateKey,
+  formatReviewDate,
   addDays,
   subDays,
   addMonths,
@@ -349,5 +350,24 @@ describe('differenceInCalendarDays', () => {
     const a = new Date(2024, 0, 16, 23, 59);
     const b = new Date(2024, 0, 15, 0, 0);
     expect(differenceInCalendarDays(a, b)).toBe(1);
+  });
+});
+
+describe('formatReviewDate', () => {
+  it('formats a yyyy-MM-dd string', () => {
+    (window as any).__localeId__ = 'en';
+    const result = formatReviewDate('2024-01-15');
+    expect(result).toMatch(/January/);
+    expect(result).toMatch(/15/);
+    expect(result).toMatch(/2024/);
+  });
+
+  it('handles a full ISO datetime string without throwing', () => {
+    (window as any).__localeId__ = 'en';
+    expect(() => formatReviewDate('2024-01-15T10:30:00Z')).not.toThrow();
+    const result = formatReviewDate('2024-01-15T10:30:00Z');
+    expect(result).toMatch(/January/);
+    expect(result).toMatch(/15/);
+    expect(result).toMatch(/2024/);
   });
 });

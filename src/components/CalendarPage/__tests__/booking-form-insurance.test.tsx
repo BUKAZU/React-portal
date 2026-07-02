@@ -78,9 +78,9 @@ jest.mock('../FormItems', () => ({
 }));
 
 // ---------------------------------------------------------------------------
-// Mock DefaultBookingFields → [] so no extra required fields block submit
+// Mock RequiredBookingFields → [] so no extra required fields block submit
 // ---------------------------------------------------------------------------
-jest.mock('../formParts/DefaultBookingFields', () => []);
+jest.mock('../formParts/RequiredBookingFields', () => []);
 
 // ---------------------------------------------------------------------------
 // Mock heavy sub-components NOT under test
