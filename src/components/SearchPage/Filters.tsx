@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Field from './Field';
 import Reload from '../icons/Reload.svg';
 import { t } from '../../intl';
-import { defaultFilter } from './filters/helper';
 import { FiltersType } from './filters/filter_types';
 import { PortalOptions } from '../../types';
 import type { AppPortalSite } from '../loadPortalSite';
@@ -28,7 +27,7 @@ function Filters({
 
   const [show, setShow] = useState(false);
 
-  const searchFields = options.searchFields || defaultFilter;
+  const searchFields = options.searchFields ?? [];
 
   let fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : null;
 
