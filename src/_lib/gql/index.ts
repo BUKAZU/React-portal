@@ -167,6 +167,53 @@ export const HOUSES_QUERY = gql`
   }
 `;
 
+export const HOUSES_PRICE_QUERY = gql`
+  ${HOUSE_SEARCH_RESULT_FIELDS}
+  query PortalSiteHousesPriceQuery(
+    $id: ID!
+    $country_id: ID
+    $region_id: String
+    $city_id: String
+    $persons_min: Int
+    $persons_max: Int
+    $bedrooms_min: Int
+    $bathrooms_min: Int
+    $arrival_date: String
+    $starts_at: String
+    $ends_at: String
+    $no_nights: Int
+    $properties: String
+    $weekprice_max: Int
+    $limit: Int
+    $skip: Int
+  ) {
+    PortalSite(id: $id) {
+      id
+      houses(
+        country_id: $country_id
+        region_id: $region_id
+        city_id: $city_id
+        persons_min: $persons_min
+        persons_max: $persons_max
+        bedrooms_min: $bedrooms_min
+        bathrooms_min: $bathrooms_min
+        arrival_date: $arrival_date
+        weekprice_max: $weekprice_max
+        no_nights_min: $no_nights
+        properties: $properties
+        limit: $limit
+        skip: $skip
+      ) {
+        ...HouseSearchResultFields
+        scoreAmount
+        booking_price(starts_at: $starts_at, ends_at: $ends_at) {
+          total_price
+        }
+      }
+    }
+  }
+`;
+
 export const HOUSE_COUNT_QUERY = gql`
   query PortalSiteHouseCountQuery(
     $id: ID!
