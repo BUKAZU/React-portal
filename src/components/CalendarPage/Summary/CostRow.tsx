@@ -9,6 +9,7 @@ interface Props {
   method_name?: string;
   formatName?: boolean;
   forceMethod?: boolean;
+  currency?: string;
 }
 
 function CostRow({
@@ -17,7 +18,8 @@ function CostRow({
   description,
   method_name,
   formatName,
-  forceMethod
+  forceMethod,
+  currency = 'EUR'
 }: Props): JSX.Element {
   return (
     <tr>
@@ -33,11 +35,7 @@ function CostRow({
       <td className="price">
         {amount && amount > 0 ? (
           <>
-            €{' '}
-            {formatNumber(amount, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}
+            {formatNumber(amount, { style: 'currency', currency })}
             {forceMethod && <> {method_name}</>}
           </>
         ) : (

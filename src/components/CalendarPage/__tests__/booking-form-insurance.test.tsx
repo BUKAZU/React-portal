@@ -34,9 +34,13 @@ jest.mock('@apollo/client', () => ({
 
 jest.mock('../../../_lib/gql', () => ({
   SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  BOOKING_PRICE_QUERY: 'BOOKING_PRICE_QUERY',
-  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION',
-  PRICE_FIELD_BOOKING_PRICE_QUERY: 'PRICE_FIELD_BOOKING_PRICE_QUERY'
+  HOUSE_DETAILS_QUERY: 'HOUSE_DETAILS_QUERY',
+  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
+}));
+
+const mockFetchPrice = jest.fn();
+jest.mock('../../../_lib/price', () => ({
+  fetchPrice: (...args: unknown[]) => mockFetchPrice(...args)
 }));
 
 jest.mock('../../../_lib/Tracking', () => ({
@@ -287,31 +291,19 @@ function setupUseQuery(house: ReturnType<typeof makeHouseWithInsurance>) {
         error: null
       };
     }
-    if (query === 'BOOKING_PRICE_QUERY') {
+    if (query === 'HOUSE_DETAILS_QUERY') {
       return {
         data: makeBookingPriceData(house),
         loading: false,
         error: null
       };
     }
-    if (query === 'PRICE_FIELD_BOOKING_PRICE_QUERY') {
-      return {
-        data: {
-          PortalSite: {
-            houses: [
-              {
-                id: 1,
-                name: 'Insurance Test House',
-                booking_price: { total_price: 1500 }
-              }
-            ]
-          }
-        },
-        loading: false,
-        error: null
-      };
-    }
     return { data: null, loading: false, error: null };
+  });
+  mockFetchPrice.mockResolvedValue({
+    total_price: 1500,
+    currency: 'EUR',
+    optional_house_costs: []
   });
 }
 
@@ -332,7 +324,14 @@ function renderApp() {
   });
 }
 
-function selectDates() {
+async function flush() {
+  await act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+}
+
+async function selectDates() {
   act(() => {
     (
       container.querySelector('[data-testid="select-arrival"]') as HTMLElement
@@ -343,17 +342,19 @@ function selectDates() {
       container.querySelector('[data-testid="select-departure"]') as HTMLElement
     ).click();
   });
+  await flush();
 }
 
-function clickCalculate() {
+async function clickCalculate() {
   act(() => {
     (container.querySelector('button.button') as HTMLElement).click();
   });
+  await flush();
 }
 
-function navigateToBookingForm() {
-  selectDates();
-  clickCalculate();
+async function navigateToBookingForm() {
+  await selectDates();
+  await clickCalculate();
 }
 
 beforeEach(() => {
@@ -386,18 +387,18 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('Booking form – cancel_insurance disabled on house', () => {
-  it('does not render the insurances section when house.cancel_insurance is false', () => {
+  it('does not render the insurances section when house.cancel_insurance is false', async () => {
     setupUseQuery(makeHouseWithInsurance(false));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     expect(container.querySelector('#insurances')).toBeNull();
   });
 
-  it('renders the booking form without any insurance select', () => {
+  it('renders the booking form without any insurance select', async () => {
     setupUseQuery(makeHouseWithInsurance(false));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const selects = container.querySelectorAll(
       'select[name="cancel_insurance"]'
@@ -407,36 +408,36 @@ describe('Booking form – cancel_insurance disabled on house', () => {
 });
 
 describe('Booking form – cancel_insurance enabled on house', () => {
-  it('renders the insurances section when house.cancel_insurance is true', () => {
+  it('renders the insurances section when house.cancel_insurance is true', async () => {
     setupUseQuery(makeHouseWithInsurance(true));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     expect(container.querySelector('#insurances')).not.toBeNull();
   });
 
-  it('renders the "Insurances" heading', () => {
+  it('renders the "Insurances" heading', async () => {
     setupUseQuery(makeHouseWithInsurance(true));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const heading = container.querySelector('#insurances h2');
     expect(heading?.textContent).toBe('Insurances');
   });
 
-  it('renders the cancel_insurance select dropdown', () => {
+  it('renders the cancel_insurance select dropdown', async () => {
     setupUseQuery(makeHouseWithInsurance(true));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const select = container.querySelector('select[name="cancel_insurance"]');
     expect(select).not.toBeNull();
   });
 
-  it('does NOT show the date-of-birth field before any insurance is selected', () => {
+  it('does NOT show the date-of-birth field before any insurance is selected', async () => {
     setupUseQuery(makeHouseWithInsurance(true));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     // The default value is '' (the choose option), so DOB must be hidden
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
@@ -445,7 +446,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   it('shows the date-of-birth field after selecting insurance option "1"', async () => {
     setupUseQuery(makeHouseWithInsurance(true));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const select = container.querySelector(
       'select[name="cancel_insurance"]'
@@ -471,7 +472,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   it('hides the date-of-birth field after switching back to "None" (value "0")', async () => {
     setupUseQuery(makeHouseWithInsurance(true));
     renderApp();
-    navigateToBookingForm();
+    await navigateToBookingForm();
 
     const select = container.querySelector(
       'select[name="cancel_insurance"]'

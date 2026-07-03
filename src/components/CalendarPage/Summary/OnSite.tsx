@@ -19,10 +19,19 @@ export default function OnSite({ prices }: Props): JSX.Element {
           {prices.required_house_costs.map((cost) => {
             if (cost.on_site && cost.gl !== '0120') {
               if (cost.method === 'none') {
-                return <CostRow key={cost.id} {...cost} />;
+                return (
+                  <CostRow key={cost.id} {...cost} currency={prices.currency} />
+                );
               } else {
                 let amount = on_site.find((x) => x.id == cost.id)?.amount ?? 0;
-                return <CostRow key={cost.id} {...cost} amount={amount} />;
+                return (
+                  <CostRow
+                    key={cost.id}
+                    {...cost}
+                    amount={amount}
+                    currency={prices.currency}
+                  />
+                );
               }
             }
           })}
