@@ -169,7 +169,7 @@ export const HOUSES_QUERY = gql`
 
 export const HOUSES_PRICE_QUERY = gql`
   ${HOUSE_SEARCH_RESULT_FIELDS}
-  query PortalSiteHousesPriceQuery(
+  query PortalSiteHousePriceQuery(
     $id: ID!
     $country_id: ID
     $region_id: String
@@ -179,8 +179,8 @@ export const HOUSES_PRICE_QUERY = gql`
     $bedrooms_min: Int
     $bathrooms_min: Int
     $arrival_date: String
-    $starts_at: String
-    $ends_at: String
+    $starts_at: Date!
+    $ends_at: Date!
     $no_nights: Int
     $properties: String
     $weekprice_max: Int
@@ -205,10 +205,8 @@ export const HOUSES_PRICE_QUERY = gql`
         skip: $skip
       ) {
         ...HouseSearchResultFields
-        scoreAmount
-        booking_price(starts_at: $starts_at, ends_at: $ends_at) {
-          total_price
-        }
+        score_amount
+        booking_price(starts_at: $starts_at, ends_at: $ends_at)
       }
     }
   }
