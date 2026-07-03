@@ -35,9 +35,11 @@ function Modal({ children, buttonText, show = false, onClose }: Props) {
 
   return (
     <>
-      <button type="button" className="info-button" onClick={() => setVisible(true)}>
-        {buttonText}
-      </button>
+      {!visible && buttonText && (
+        <button type="button" className="info-button" onClick={() => setVisible(true)}>
+          {buttonText}
+        </button>
+      )}
       <dialog ref={dialogRef} className="bukazu-modal" onCancel={handleClose} onClick={handleDialogClick}>
         <div className="bukazu-modal-content">{children}</div>
         <div className="bukazu-modal-footer">

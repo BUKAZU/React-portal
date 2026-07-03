@@ -68,7 +68,9 @@
     background: rgba(0, 0, 0, 0);
     cursor: pointer;
     padding: 0;
-    line-height: 0;
+    line-height: normal;
+    display: inline-flex;
+    align-items: center;
   }
 
   .bu_discount_code {

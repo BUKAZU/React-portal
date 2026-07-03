@@ -158,7 +158,9 @@
       background: none;
       color: inherit;
       font-size: inherit;
-      line-height: 0;
+      line-height: normal;
+      display: inline-flex;
+      align-items: center;
     }
   }
   &-row {

@@ -86,6 +86,11 @@ it('opens immediately when show=true is passed', () => {
   expect(dialog().hasAttribute('open')).toBe(true);
 });
 
+it('does not render the trigger button when show=true is passed', () => {
+  render({ show: true });
+  expect(triggerButton()).toBeNull();
+});
+
 // ---------------------------------------------------------------------------
 // Closing via close button
 // ---------------------------------------------------------------------------

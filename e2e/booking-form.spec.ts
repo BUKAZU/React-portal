@@ -240,11 +240,12 @@ const AVAILABILITY_URL = 'https://api.bukazu.com/portal_api/**';
 
 function makeAvailabilityResponse() {
   const availabilities = [];
-  // Cover a wide range so every calendar cell has an entry (incl. partial
-  // weeks shown at the edges of each month).
-  const start = new Date('2026-06-20');
-  const end = new Date('2026-09-30');
-  for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+  // Cover a wide range around the current date so every calendar cell has an
+  // entry (incl. partial weeks shown at the edges of each month).
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 20));
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 3, 30));
+  for (const d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
     availabilities.push({
       date: d.toISOString().split('T')[0],
       arrival: true,
