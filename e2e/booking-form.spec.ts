@@ -125,14 +125,23 @@ function makeBookingPriceResponse(house: object) {
 }
 
 function makePriceFieldResponse(house: object) {
+  const houseData = house as {
+    booking_price?: { optional_house_costs?: unknown[]; total_price?: number };
+    [key: string]: unknown;
+  };
+
   return {
     data: {
       PortalSite: {
         houses: [
           {
-            id: 1,
-            name: 'E2E Test House',
-            booking_price: { total_price: 1200 }
+            ...houseData,
+            booking_price: {
+              ...(houseData.booking_price ?? {}),
+              total_price: houseData.booking_price?.total_price ?? 1200,
+              optional_house_costs:
+                houseData.booking_price?.optional_house_costs ?? []
+            }
           }
         ]
       }
@@ -229,5 +238,233 @@ test.describe('Booking form – error boundary', () => {
   test('invalid-calendar page renders the page heading', async ({ page }) => {
     await page.goto('/invalid-calendar.html');
     await expect(page.locator('h1')).toHaveText('Bukazu Test Calendar');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Modal – open / close interactions
+// ---------------------------------------------------------------------------
+
+const AVAILABILITY_URL =
+  'https://api.bukazu.com/portal_api/v1/accommodations/availability**';
+const PORTAL_CONFIG_URL = 'https://api.bukazu.com/portal_api/v1/config/**';
+const AVAILABILITY_MONTHS_BEFORE = 1;
+const AVAILABILITY_START_DAY = 20;
+const AVAILABILITY_MONTHS_AFTER = 3;
+const AVAILABILITY_END_DAY = 30;
+
+function makeAvailabilityResponse() {
+  const availabilities = [];
+  // Cover a wide range around the current date so every calendar cell has an
+  // entry (incl. partial weeks shown at the edges of each month).
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - AVAILABILITY_MONTHS_BEFORE, AVAILABILITY_START_DAY));
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + AVAILABILITY_MONTHS_AFTER, AVAILABILITY_END_DAY));
+  for (const d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+    availabilities.push({
+      date: d.toISOString().split('T')[0],
+      arrival: true,
+      arrival_time_from: null,
+      arrival_time_to: null,
+      departure: true,
+      departure_time: null,
+      min_nights: 3,
+      max_nights: 14,
+      special_offer: 0
+    });
+  }
+  return {
+    name: 'E2E Test House',
+    last_minute_days: 0,
+    availabilities,
+    discounts: []
+  };
+}
+
+async function interceptAvailability(page: import('@playwright/test').Page) {
+  await page.route(AVAILABILITY_URL, (route) => {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(makeAvailabilityResponse())
+    });
+  });
+}
+
+async function interceptPortalConfig(page: import('@playwright/test').Page) {
+  await page.route(PORTAL_CONFIG_URL, (route) => {
+    const pathname = new URL(route.request().url()).pathname;
+    if (pathname.endsWith('/settings')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          name: 'E2E Portal',
+          domain: 'example.com',
+          portal_code: 'E2E',
+          commission: '',
+          use_custom_commission: false,
+          colors: {
+            button: '#111',
+            button_cta: '#111',
+            discount: '#111',
+            cell: '#111',
+            booked: '#111',
+            arrival: '#111',
+            departure: '#111'
+          },
+          booking_form: {
+            show_months_amount: 2,
+            show_months_in_a_row_amount: 2,
+            children_allowed: false,
+            babies_allowed: false,
+            babies_till_age: 2,
+            children_from_age: 3,
+            children_till_age: 17,
+            adults_from_age: 18,
+            show_discount_code: false,
+            language_selector_visible: false,
+            redirect_urls: {
+              nl: null,
+              en: null,
+              de: null,
+              fr: null,
+              es: null,
+              it: null
+            }
+          },
+          filters_form: {
+            show: false,
+            location: 'left',
+            mode: 'grid',
+            no_results: 0,
+            fixed_mobile: false,
+            show_price: true,
+            show_persons: true,
+            show_bedrooms: true,
+            show_bathrooms: true,
+            show_country: true,
+            show_region: true,
+            show_city: true
+          },
+          labels: {}
+        })
+      });
+    }
+    if (
+      pathname.endsWith('/booking-fields') ||
+      pathname.endsWith('/filter-fields')
+    ) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([])
+      });
+    }
+    return route.continue();
+  });
+}
+
+const houseWithOptionalCostDescription = makeHouse(false, {
+  booking_price: {
+    total_price: 1200,
+    required_house_costs: [],
+    total_costs: {
+      sub_total: 1200,
+      total_price: 1200,
+      insurances: { cancel_insurance: 0, insurance_costs: 0 },
+      required_costs: { not_on_site: [], on_site: [] },
+      optional_costs: { not_on_site: [], on_site: [] }
+    },
+    optional_house_costs: [
+      {
+        id: '1',
+        name: 'Cleaning fee',
+        method: 'per_booking',
+        max_available: 1,
+        amount: 50,
+        method_name: 'Per booking',
+        description: 'Mandatory cleaning service included in your booking.'
+      }
+    ]
+  }
+});
+
+async function navigateToBookingForm(page: import('@playwright/test').Page) {
+  await page.goto('/calendar.html');
+  const arrivalCandidates = page.locator(
+    'div[role="button"].arrival, div[role="button"].departure-arrival'
+  );
+  const departureCandidates = page.locator('div[role="button"].departure');
+  await arrivalCandidates.first().waitFor({ state: 'visible' });
+
+  // Select the first arrival date that yields departure options.
+  const arrivalCount = await arrivalCandidates.count();
+  let hasDeparture = false;
+  for (let i = 0; i < arrivalCount; i += 1) {
+    await arrivalCandidates.nth(i).click();
+    try {
+      await departureCandidates.first().waitFor({ state: 'visible', timeout: 1000 });
+      hasDeparture = true;
+      break;
+    } catch {
+      // Try the next arrival candidate.
+    }
+  }
+  expect(hasDeparture).toBe(true);
+  // Select a departure date (min_nights=3, so at least 3 nights after arrival).
+  await departureCandidates.first().click();
+  // Click the "Calculate" button to start the booking form.
+  await page.locator('button.button').click();
+  // Wait for the booking form to mount.
+  await page.locator('.info-button').first().waitFor({ state: 'attached' });
+}
+
+test.describe('Booking form – modal', () => {
+  test.beforeEach(async ({ page }) => {
+    await interceptPortalConfig(page);
+    await interceptAvailability(page);
+    await interceptGraphQL(page, houseWithOptionalCostDescription);
+  });
+
+  test('dialog is closed on load', async ({ page }) => {
+    await page.goto('/calendar.html');
+    await expect(page.locator('dialog[open]')).not.toBeAttached();
+  });
+
+  test('opens the dialog when the info button is clicked', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).toBeVisible();
+  });
+
+  test('shows the optional cost description inside the modal', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).toContainText(
+      'Mandatory cleaning service included in your booking.'
+    );
+  });
+
+  test('closes the dialog when the close button is clicked', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await page.locator('dialog.bukazu-modal[open] .bukazu-modal-footer button').click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).not.toBeAttached();
+  });
+
+  test('closes the dialog when the Escape key is pressed', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('dialog.bukazu-modal[open]')).not.toBeAttached();
+  });
+
+  test('can be reopened after closing', async ({ page }) => {
+    await navigateToBookingForm(page);
+    await page.locator('.info-button').first().click();
+    await page.locator('dialog.bukazu-modal[open] .bukazu-modal-footer button').click();
+    await page.locator('.info-button').first().click();
+    await expect(page.locator('dialog.bukazu-modal[open]')).toBeVisible();
   });
 });

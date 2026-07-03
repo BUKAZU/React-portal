@@ -19,3 +19,8 @@ declare module '*.json' {
   const content: object;
   export default content;
 }
+
+declare module '*.msgpack?url' {
+  const content: string;
+  export default content;
+}

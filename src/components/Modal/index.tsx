@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { t } from '../../intl';
 
 interface Props {
@@ -10,39 +10,43 @@ interface Props {
 
 function Modal({ children, buttonText, show = false, onClose }: Props) {
   const [visible, setVisible] = useState(show);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (visible) {
+      dialog.showModal();
+    } else {
+      dialog.close();
+    }
+  }, [visible]);
 
   const handleClose = () => {
     setVisible(false);
     onClose?.();
   };
 
-  if (!visible) {
-    return (
-      <button
-        type="button"
-        className="info-button"
-        onClick={() => setVisible(true)}
-      >
-        {buttonText}
-      </button>
-    );
-  }
+  const handleDialogClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+    if (e.target === dialogRef.current) {
+      handleClose();
+    }
+  };
 
   return (
-    <div className="bukazu-modal-container">
-      <div className="bukazu-modal-container-inner">
-        <div className="bukazu-modal-escape" onClick={handleClose}></div>
-        <div className="bukazu-modal">
-          <div className="bukazu-modal-content">{children}</div>
-
-          <div className="bukazu-modal-footer">
-            <button type="button" onClick={handleClose}>
-              {t('close')}
-            </button>
-          </div>
+    <>
+      {!visible && buttonText && (
+        <button type="button" className="info-button" onClick={() => setVisible(true)}>
+          {buttonText}
+        </button>
+      )}
+      <dialog ref={dialogRef} className="bukazu-modal" onCancel={handleClose} onClick={handleDialogClick}>
+        <div className="bukazu-modal-content">{children}</div>
+        <div className="bukazu-modal-footer">
+          <button type="button" onClick={handleClose}>{t('close')}</button>
         </div>
-      </div>
-    </div>
+      </dialog>
+    </>
   );
 }
 
