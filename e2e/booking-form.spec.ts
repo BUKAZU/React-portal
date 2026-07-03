@@ -247,6 +247,8 @@ test.describe('Booking form – error boundary', () => {
 
 const AVAILABILITY_URL =
   'https://api.bukazu.com/portal_api/v1/accommodations/availability**';
+const PRICE_URL =
+  'https://api.bukazu.com/portal_api/v1/accommodations/price**';
 const PORTAL_CONFIG_URL = 'https://api.bukazu.com/portal_api/v1/config/**';
 const AVAILABILITY_MONTHS_BEFORE = 1;
 const AVAILABILITY_START_DAY = 20;
@@ -287,6 +289,41 @@ async function interceptAvailability(page: import('@playwright/test').Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(makeAvailabilityResponse())
+    });
+  });
+}
+
+function makeRestPriceResponse(house: object) {
+  const houseData = house as {
+    booking_price?: { optional_house_costs?: unknown[]; total_price?: number };
+    [key: string]: unknown;
+  };
+  return {
+    arrival_date: '2025-01-01',
+    departure_date: '2025-01-05',
+    arrival_time: null,
+    departure_time: null,
+    currency: 'EUR',
+    nights: 4,
+    base_price: houseData.booking_price?.total_price ?? 1200,
+    total_price: houseData.booking_price?.total_price ?? 1200,
+    insurances: {},
+    on_site_house_costs: [],
+    optional_house_costs: houseData.booking_price?.optional_house_costs ?? [],
+    person_percentages: null,
+    night_percentages: null
+  };
+}
+
+async function interceptPrice(
+  page: import('@playwright/test').Page,
+  house: object
+) {
+  await page.route(PRICE_URL, (route) => {
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(makeRestPriceResponse(house))
     });
   });
 }
@@ -424,6 +461,7 @@ test.describe('Booking form – modal', () => {
   test.beforeEach(async ({ page }) => {
     await interceptPortalConfig(page);
     await interceptAvailability(page);
+    await interceptPrice(page, houseWithOptionalCostDescription);
     await interceptGraphQL(page, houseWithOptionalCostDescription);
   });
 
