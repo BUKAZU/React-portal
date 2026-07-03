@@ -125,14 +125,23 @@ function makeBookingPriceResponse(house: object) {
 }
 
 function makePriceFieldResponse(house: object) {
+  const houseData = house as {
+    booking_price?: { optional_house_costs?: unknown[]; total_price?: number };
+    [key: string]: unknown;
+  };
+
   return {
     data: {
       PortalSite: {
         houses: [
           {
-            id: 1,
-            name: 'E2E Test House',
-            booking_price: { total_price: 1200 }
+            ...houseData,
+            booking_price: {
+              ...(houseData.booking_price ?? {}),
+              total_price: houseData.booking_price?.total_price ?? 1200,
+              optional_house_costs:
+                houseData.booking_price?.optional_house_costs ?? []
+            }
           }
         ]
       }
@@ -236,7 +245,9 @@ test.describe('Booking form – error boundary', () => {
 // Modal – open / close interactions
 // ---------------------------------------------------------------------------
 
-const AVAILABILITY_URL = 'https://api.bukazu.com/portal_api/**';
+const AVAILABILITY_URL =
+  'https://api.bukazu.com/portal_api/v1/accommodations/availability**';
+const PORTAL_CONFIG_URL = 'https://api.bukazu.com/portal_api/v1/config/**';
 const AVAILABILITY_MONTHS_BEFORE = 1;
 const AVAILABILITY_START_DAY = 20;
 const AVAILABILITY_MONTHS_AFTER = 3;
@@ -271,18 +282,100 @@ function makeAvailabilityResponse() {
 }
 
 async function interceptAvailability(page: import('@playwright/test').Page) {
-  await page.route(AVAILABILITY_URL, (route) =>
-    route.fulfill({
+  await page.route(AVAILABILITY_URL, (route) => {
+    return route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(makeAvailabilityResponse())
-    })
-  );
+    });
+  });
+}
+
+async function interceptPortalConfig(page: import('@playwright/test').Page) {
+  await page.route(PORTAL_CONFIG_URL, (route) => {
+    const pathname = new URL(route.request().url()).pathname;
+    if (pathname.endsWith('/settings')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          name: 'E2E Portal',
+          domain: 'example.com',
+          portal_code: 'E2E',
+          commission: '',
+          use_custom_commission: false,
+          colors: {
+            button: '#111',
+            button_cta: '#111',
+            discount: '#111',
+            cell: '#111',
+            booked: '#111',
+            arrival: '#111',
+            departure: '#111'
+          },
+          booking_form: {
+            show_months_amount: 2,
+            show_months_in_a_row_amount: 2,
+            children_allowed: false,
+            babies_allowed: false,
+            babies_till_age: 2,
+            children_from_age: 3,
+            children_till_age: 17,
+            adults_from_age: 18,
+            show_discount_code: false,
+            language_selector_visible: false,
+            redirect_urls: {
+              nl: null,
+              en: null,
+              de: null,
+              fr: null,
+              es: null,
+              it: null
+            }
+          },
+          filters_form: {
+            show: false,
+            location: 'left',
+            mode: 'grid',
+            no_results: 0,
+            fixed_mobile: false,
+            show_price: true,
+            show_persons: true,
+            show_bedrooms: true,
+            show_bathrooms: true,
+            show_country: true,
+            show_region: true,
+            show_city: true
+          },
+          labels: {}
+        })
+      });
+    }
+    if (
+      pathname.endsWith('/booking-fields') ||
+      pathname.endsWith('/filter-fields')
+    ) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([])
+      });
+    }
+    return route.continue();
+  });
 }
 
 const houseWithOptionalCostDescription = makeHouse(false, {
   booking_price: {
     total_price: 1200,
+    required_house_costs: [],
+    total_costs: {
+      sub_total: 1200,
+      total_price: 1200,
+      insurances: { cancel_insurance: 0, insurance_costs: 0 },
+      required_costs: { not_on_site: [], on_site: [] },
+      optional_costs: { not_on_site: [], on_site: [] }
+    },
     optional_house_costs: [
       {
         id: '1',
@@ -299,10 +392,28 @@ const houseWithOptionalCostDescription = makeHouse(false, {
 
 async function navigateToBookingForm(page: import('@playwright/test').Page) {
   await page.goto('/calendar.html');
-  // Select an arrival date (first available cell in the current month).
-  await page.locator('.arrival').first().click();
+  const arrivalCandidates = page.locator(
+    'div[role="button"].arrival, div[role="button"].departure-arrival'
+  );
+  const departureCandidates = page.locator('div[role="button"].departure');
+  await arrivalCandidates.first().waitFor({ state: 'visible' });
+
+  // Select the first arrival date that yields departure options.
+  const arrivalCount = await arrivalCandidates.count();
+  let hasDeparture = false;
+  for (let i = 0; i < arrivalCount; i += 1) {
+    await arrivalCandidates.nth(i).click();
+    try {
+      await departureCandidates.first().waitFor({ state: 'visible', timeout: 1000 });
+      hasDeparture = true;
+      break;
+    } catch {
+      // Try the next arrival candidate.
+    }
+  }
+  expect(hasDeparture).toBe(true);
   // Select a departure date (min_nights=3, so at least 3 nights after arrival).
-  await page.locator('.departure').first().click();
+  await departureCandidates.first().click();
   // Click the "Calculate" button to start the booking form.
   await page.locator('button.button').click();
   // Wait for the booking form to mount.
@@ -311,6 +422,7 @@ async function navigateToBookingForm(page: import('@playwright/test').Page) {
 
 test.describe('Booking form – modal', () => {
   test.beforeEach(async ({ page }) => {
+    await interceptPortalConfig(page);
     await interceptAvailability(page);
     await interceptGraphQL(page, houseWithOptionalCostDescription);
   });
