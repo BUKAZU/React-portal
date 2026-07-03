@@ -7,7 +7,7 @@ import { loadDecodedMsgpack } from './_lib/msgpack';
 
 type Messages = { [key: string]: string };
 
-const messages = new Map<SupportedLocale, Messages>([['en', en]]);
+const messages = new Map<SupportedLocale, Messages>([['en', en as Messages]]);
 const loadingPromises = new Map<SupportedLocale, Promise<Messages>>();
 
 const localeMsgpackLoaders: Record<SupportedLocale, () => Promise<string>> = {
@@ -22,10 +22,6 @@ const localeMsgpackLoaders: Record<SupportedLocale, () => Promise<string>> = {
 async function loadMessagesFromMsgpack(
   locale: SupportedLocale
 ): Promise<Messages> {
-  if (typeof fetch !== 'function') {
-    return messages.get('en') ?? {};
-  }
-
   const assetUrl = await localeMsgpackLoaders[locale]();
   return loadDecodedMsgpack<Messages>(
     assetUrl,

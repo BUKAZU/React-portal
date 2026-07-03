@@ -4,7 +4,12 @@ export async function loadDecodedMsgpack<T>(
   assetUrl: string,
   errorMessage: string
 ): Promise<T> {
-  const response = await fetch(assetUrl);
+  let response: Response;
+  try {
+    response = await fetch(assetUrl);
+  } catch {
+    throw new Error(errorMessage);
+  }
 
   if (!response.ok) {
     throw new Error(errorMessage);

@@ -51,4 +51,20 @@ describe('loadDecodedMsgpack', () => {
       loadDecodedMsgpack('/mocked-asset-url', 'custom failure')
     ).rejects.toThrow('custom failure');
   });
+
+  it('throws with the provided error message when fetch rejects', async () => {
+    const fetchMock = jest.fn().mockRejectedValue(new Error('Network error'));
+
+    Object.defineProperty(globalThis, 'fetch', {
+      configurable: true,
+      value: fetchMock,
+      writable: true
+    });
+
+    const { loadDecodedMsgpack } = await import('../msgpack');
+
+    await expect(
+      loadDecodedMsgpack('/mocked-asset-url', 'custom failure')
+    ).rejects.toThrow('custom failure');
+  });
 });

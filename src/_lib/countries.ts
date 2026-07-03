@@ -31,9 +31,10 @@ async function loadCountryDataFromMsgpack(
  * Lazily loads the country list for the given locale.
  * The result is cached so each locale file is only fetched once.
  *
- * To add a new locale, add its key to SUPPORTED_LOCALES and a corresponding
- * then place the locale JSON source file at `src/_lib/countries/<locale>.json`
- * and re-generate MessagePack assets with `npm run countries:pack`.
+ * To add a new locale, add its key to SUPPORTED_LOCALES in `src/_lib/locales.ts`,
+ * add a corresponding entry to `countryMsgpackLoaders` below, then place the
+ * locale JSON source file at `src/_lib/countries/<locale>.json` and re-generate
+ * MessagePack assets with `npm run countries:pack`.
  */
 export async function loadCountries(locale: string): Promise<CountryEntry[]> {
   const key = resolveSupportedLocale(locale);
