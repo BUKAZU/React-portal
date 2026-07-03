@@ -9,14 +9,6 @@ jest.mock('../../icons/ArrowRight.svg', () => () => (
   <svg data-testid="arrow-right" />
 ));
 
-jest.mock('../../../_lib/price', () => ({
-  fetchPrice: jest.fn()
-}));
-
-import { fetchPrice } from '../../../_lib/price';
-
-const mockFetchPrice = fetchPrice as jest.Mock;
-
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockResult: HouseType = {
@@ -62,18 +54,10 @@ let root: ReturnType<typeof createRoot>;
 
 function renderSingleResult(
   result: HouseType = mockResult,
-  options: FiltersFormType = mockOptions,
-  dates: { startsAt?: string; endsAt?: string } = {}
+  options: FiltersFormType = mockOptions
 ) {
   act(() => {
-    root.render(
-      <SingleResult
-        result={result}
-        options={options}
-        startsAt={dates.startsAt}
-        endsAt={dates.endsAt}
-      />
-    );
+    root.render(<SingleResult result={result} options={options} />);
   });
 }
 
@@ -84,7 +68,6 @@ beforeEach(() => {
   act(() => {
     root = createRoot(container);
   });
-  mockFetchPrice.mockReset();
 });
 
 afterEach(() => {
@@ -184,33 +167,21 @@ describe('SingleResult', () => {
     expect(rating).toBeNull();
   });
 
-  it('should display minimum_week_price when no date range is given', () => {
+  it('should display minimum_week_price when no booking_price', () => {
     renderSingleResult();
 
     const price = container.querySelector('.result-price');
     expect(price).not.toBeNull();
     expect(price?.textContent).toContain('1,000');
-    expect(mockFetchPrice).not.toHaveBeenCalled();
   });
 
-  it('should fetch and display the REST price when startsAt/endsAt are given', async () => {
-    mockFetchPrice.mockResolvedValue({ total_price: 750, currency: 'EUR' });
+  it('should display booking_price when available', () => {
+    const resultWithBookingPrice = {
+      ...mockResult,
+      booking_price: { total_price: 750 }
+    };
+    renderSingleResult(resultWithBookingPrice);
 
-    await act(async () => {
-      renderSingleResult(mockResult, mockOptions, {
-        startsAt: '2026-01-15',
-        endsAt: '2026-01-22'
-      });
-      await Promise.resolve();
-    });
-
-    expect(mockFetchPrice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        objectCode: mockResult.code,
-        startsAt: '2026-01-15',
-        endsAt: '2026-01-22'
-      })
-    );
     const price = container.querySelector('.result-price');
     expect(price?.textContent).toContain('750');
   });

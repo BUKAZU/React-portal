@@ -1,60 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { t, formatNumber } from '../../intl';
 import { FiltersFormType, HouseType } from '../../types';
 import ArrowRight from '../icons/ArrowRight.svg';
-import { AppContext } from '../AppContext';
-import { fetchPrice } from '../../_lib/price';
 
 interface Props {
   result: HouseType;
   options: FiltersFormType;
-  /** When both are set, fetch the house's price for this date range from the REST API. */
-  startsAt?: string;
-  endsAt?: string;
 }
 
-function SingleResult({ result, options, startsAt, endsAt }: Props): JSX.Element {
+function SingleResult({ result, options }: Props): JSX.Element {
   let thisOptions = options || {};
-  const { portalCode, locale, apiUrl } = useContext(AppContext);
-  const [price, setPrice] = useState<{
-    total_price: number;
-    currency: string;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!startsAt || !endsAt) {
-      setPrice(null);
-      return;
-    }
-
-    let cancelled = false;
-
-    fetchPrice({
-      apiUrl,
-      locale,
-      portalCode,
-      objectCode: result.code,
-      startsAt,
-      endsAt
-    })
-      .then((fetchedPrice) => {
-        if (!cancelled) {
-          setPrice({
-            total_price: fetchedPrice.total_price,
-            currency: fetchedPrice.currency
-          });
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setPrice(null);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [apiUrl, locale, portalCode, result.code, startsAt, endsAt]);
 
   return (
     <a className="bukazu-result bu_card" href={result.house_url}>
@@ -99,13 +54,12 @@ function SingleResult({ result, options, startsAt, endsAt }: Props): JSX.Element
           )}
           {thisOptions.show_price && (
             <div className="result-price">
-              {price !== null ? (
+              {result.booking_price ? (
                 <>
                   {t('price_from')}
                   <span className="price">
-                    {formatNumber(price.total_price, {
-                      style: 'currency',
-                      currency: price.currency,
+                    €{' '}
+                    {formatNumber(result.booking_price.total_price, {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0
                     })}

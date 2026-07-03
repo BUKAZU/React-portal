@@ -5,7 +5,7 @@ import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';
 
-import { HOUSES_QUERY } from '../../_lib/gql';
+import { HOUSES_PRICE_QUERY, HOUSES_QUERY } from '../../_lib/gql';
 import { ApiError } from '../Error';
 import { useQuery } from '@apollo/client';
 import { FiltersType } from './filters/filter_types';
@@ -74,7 +74,10 @@ function Results({
     skip
   };
 
-  const { loading, error, data } = useQuery(HOUSES_QUERY, { variables });
+  const { loading, error, data } = useQuery(
+    requestPrices ? HOUSES_PRICE_QUERY : HOUSES_QUERY,
+    { variables }
+  );
 
   if (loading)
     return (
@@ -116,8 +119,6 @@ function Results({
           key={result.id}
           result={result}
           options={PortalSite.options.filtersForm}
-          startsAt={requestPrices ? filters.arrival_date : undefined}
-          endsAt={requestPrices ? filters.departure_date : undefined}
         />
       ))}
       {Pagination}
