@@ -298,6 +298,7 @@ function makeRestPriceResponse(house: object) {
     booking_price?: { optional_house_costs?: unknown[]; total_price?: number };
     [key: string]: unknown;
   };
+  const totalPrice = houseData.booking_price?.total_price ?? 1200;
   return {
     arrival_date: '2025-01-01',
     departure_date: '2025-01-05',
@@ -305,11 +306,31 @@ function makeRestPriceResponse(house: object) {
     departure_time: null,
     currency: 'EUR',
     nights: 4,
-    base_price: houseData.booking_price?.total_price ?? 1200,
-    total_price: houseData.booking_price?.total_price ?? 1200,
-    insurances: {},
+    base_price: totalPrice,
+    total_price: totalPrice,
+    insurances: { cancel_insurance: 0, insurance_costs: 0 },
     on_site_house_costs: [],
     optional_house_costs: houseData.booking_price?.optional_house_costs ?? [],
+    required_house_costs: [],
+    rent_price: totalPrice,
+    discount: 0,
+    discounted_price: totalPrice,
+    total_costs: {
+      sub_total: totalPrice,
+      total_price: totalPrice,
+      insurances: {
+        cancel_insurance: 0,
+        insurance_costs: 0
+      },
+      required_costs: {
+        not_on_site: [],
+        on_site: []
+      },
+      optional_costs: {
+        not_on_site: [],
+        on_site: []
+      }
+    },
     person_percentages: null,
     night_percentages: null
   };
