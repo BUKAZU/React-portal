@@ -16,7 +16,10 @@ jest.mock('../../../_lib/gql', () => ({
   HOUSES_PRICE_QUERY: 'HOUSES_PRICE_QUERY'
 }));
 
-jest.mock('../SingleResult', () => () => <div data-testid="single-result" />);
+jest.mock(
+  '../SingleResult',
+  () => () => '<div data-testid="single-result"></div>'
+);
 jest.mock('../Paginator', () => () => <div data-testid="paginator" />);
 jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 jest.mock('../../Error', () => ({

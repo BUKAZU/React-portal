@@ -1,15 +1,5 @@
-import React from 'react';
-import { act } from 'react';
-import { createRoot } from 'react-dom/client';
 import SingleResult from '../SingleResult';
 import { HouseType, FiltersFormType } from '../../../types';
-
-// Mock SVG icon
-jest.mock('../../icons/ArrowRight.svg', () => () => (
-  <svg data-testid="arrow-right" />
-));
-
-(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockResult: HouseType = {
   id: 1,
@@ -50,30 +40,21 @@ const mockOptions: FiltersFormType = {
 } as any;
 
 let container: HTMLDivElement;
-let root: ReturnType<typeof createRoot>;
 
 function renderSingleResult(
   result: HouseType = mockResult,
   options: FiltersFormType = mockOptions
 ) {
-  act(() => {
-    root.render(<SingleResult result={result} options={options} />);
-  });
+  container.innerHTML = SingleResult({ result, options });
 }
 
 beforeEach(() => {
   (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
-  act(() => {
-    root = createRoot(container);
-  });
 });
 
 afterEach(() => {
-  act(() => {
-    root.unmount();
-  });
   container.remove();
 });
 
@@ -194,11 +175,25 @@ describe('SingleResult', () => {
   });
 
   it('should handle null options gracefully', () => {
-    act(() => {
-      root.render(<SingleResult result={mockResult} options={null as any} />);
+    container.innerHTML = SingleResult({
+      result: mockResult,
+      options: null as any
     });
 
     // Should render without crashing, just not show optional fields
     expect(container.querySelector('.bukazu-result')).not.toBeNull();
+  });
+
+  it('should escape HTML in dynamic text fields to prevent XSS', () => {
+    const maliciousResult = {
+      ...mockResult,
+      name: '<img src=x onerror=alert(1)>'
+    };
+    renderSingleResult(maliciousResult);
+
+    expect(container.querySelector('.result-title img')).toBeNull();
+    expect(container.querySelector('.result-title')?.textContent).toBe(
+      maliciousResult.name
+    );
   });
 });
