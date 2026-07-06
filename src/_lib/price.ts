@@ -1,6 +1,9 @@
 import { http } from './http_client';
 import { HTTPError } from 'ky';
-import { CostType, PricesType } from '../components/CalendarPage/Summary/cost_types';
+import {
+  CostType,
+  PricesType
+} from '../components/CalendarPage/Summary/cost_types';
 
 /** Accommodation metadata returned when requested with includeAccommodation. */
 export interface PriceAccommodation {

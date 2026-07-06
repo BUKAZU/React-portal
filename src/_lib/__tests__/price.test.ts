@@ -32,7 +32,10 @@ describe('price REST client', () => {
 
     it('respects a custom (staging/local) api_url origin', () => {
       const url = new URL(
-        buildPriceUrl({ ...baseParams, apiUrl: 'http://localhost:3000/graphql' })
+        buildPriceUrl({
+          ...baseParams,
+          apiUrl: 'http://localhost:3000/graphql'
+        })
       );
 
       expect(url.origin).toBe('http://localhost:3000');
@@ -61,9 +64,9 @@ describe('price REST client', () => {
       expect(withAccommodation.searchParams.get('include_accommodation')).toBe(
         'true'
       );
-      expect(withoutAccommodation.searchParams.has('include_accommodation')).toBe(
-        false
-      );
+      expect(
+        withoutAccommodation.searchParams.has('include_accommodation')
+      ).toBe(false);
     });
 
     it('serialises optional params when provided', () => {
@@ -166,9 +169,9 @@ describe('price REST client', () => {
         json: jest.fn().mockRejectedValue(httpError)
       });
 
-      await expect(
-        fetchPrice({ ...baseParams, locale: 'nl' })
-      ).rejects.toThrow('404');
+      await expect(fetchPrice({ ...baseParams, locale: 'nl' })).rejects.toThrow(
+        '404'
+      );
     });
 
     it('re-throws non-HTTP errors unchanged', async () => {
@@ -177,9 +180,9 @@ describe('price REST client', () => {
         json: jest.fn().mockRejectedValue(networkError)
       });
 
-      await expect(
-        fetchPrice({ ...baseParams, locale: 'nl' })
-      ).rejects.toThrow('Network failure');
+      await expect(fetchPrice({ ...baseParams, locale: 'nl' })).rejects.toThrow(
+        'Network failure'
+      );
     });
   });
 });

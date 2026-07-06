@@ -448,7 +448,9 @@ describe('Booking form – cancel_insurance enabled on house', () => {
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
-    expect(container.querySelector('[data-testid="date-field"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="date-field"]')
+    ).not.toBeNull();
 
     // Switch back to None
     await act(async () => {
