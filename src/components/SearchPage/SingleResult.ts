@@ -55,12 +55,14 @@ function SingleResult({ result, options }: Props): string {
     : '';
 
   return `
-    <a class="bukazu-result bu_card" href="${escapeHtml(result.house_url)}">
+    <a class="bukazu-result bu_card"${
+      result.house_url ? ` href="${escapeHtml(result.house_url)}"` : ''
+    }>
       <div class="bukazu-result-inner">
         <div class="image-holder">
-          <img src="${escapeHtml(result.image_url)}" alt="${escapeHtml(
-            result.name
-          )}" />
+          <img${
+            result.image_url ? ` src="${escapeHtml(result.image_url)}"` : ''
+          } alt="${escapeHtml(result.name)}" />
         </div>
         <div class="result">
           <div class="result-title">${escapeHtml(result.name)}</div>

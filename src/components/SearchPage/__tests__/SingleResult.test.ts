@@ -83,6 +83,20 @@ describe('SingleResult', () => {
     expect(img?.getAttribute('alt')).toBe(mockResult.name);
   });
 
+  it('should omit href and src attributes when urls are undefined', () => {
+    renderSingleResult({
+      ...mockResult,
+      house_url: undefined,
+      image_url: undefined
+    });
+
+    const link = container.querySelector('a.bukazu-result');
+    const img = container.querySelector('.image-holder img');
+
+    expect(link?.hasAttribute('href')).toBe(false);
+    expect(img?.hasAttribute('src')).toBe(false);
+  });
+
   it('should display city when showCity is true', () => {
     renderSingleResult();
 
