@@ -21,6 +21,8 @@ function BookingForm({ portalSite }: Props): JSX.Element {
 
   useEffect(() => {
     let cancelled = false;
+    setHouse(null);
+    setPriceError(false);
 
     fetchPrice({
       apiUrl,
@@ -32,16 +34,19 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       includeAccommodation: true
     })
       .then((price) => {
-        if (!cancelled) {
-          // The REST response's cost shape is a superset of OptionalHouseCostType.
-          setHouse({
-            ...price.accommodation,
-            booking_price: {
-              total_price: price.total_price,
-              optional_house_costs: price.optional_house_costs
-            }
-          } as unknown as HouseType);
+        if (cancelled) return;
+        if (!price.accommodation) {
+          setPriceError(true);
+          return;
         }
+        // The REST response's cost shape is a superset of OptionalHouseCostType.
+        setHouse({
+          ...price.accommodation,
+          booking_price: {
+            total_price: price.total_price,
+            optional_house_costs: price.optional_house_costs
+          }
+        } as unknown as HouseType);
       })
       .catch(() => {
         if (!cancelled) {
