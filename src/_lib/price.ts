@@ -20,7 +20,6 @@ export interface PriceAccommodation {
   travel_insurance: boolean;
   babies_extra: number;
 }
-
 /** Full response of GET /portal_api/v1/accommodations/price. */
 export type PriceResponse = PricesType & {
   arrival_date: string;

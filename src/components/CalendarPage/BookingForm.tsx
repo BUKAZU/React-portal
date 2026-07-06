@@ -63,7 +63,6 @@ function BookingForm({ portalSite }: Props): JSX.Element {
   if (priceError || !house) {
     return <div>Error</div>;
   }
-
   TrackEvent({
     house_code: objectCode,
     portal_code: portalCode,

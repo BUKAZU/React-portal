@@ -2,7 +2,6 @@ import { gql } from '@apollo/client';
 import { HOUSE_SEARCH_RESULT_FIELDS } from './fragments';
 
 export * from './fragments';
-
 export const CREATE_BOOKING_MUTATION = gql`
   mutation CreateBooking(
     $first_name: String!
