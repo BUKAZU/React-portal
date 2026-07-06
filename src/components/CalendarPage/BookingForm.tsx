@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
-import { HOUSE_DETAILS_QUERY } from '../../_lib/gql';
-import { useQuery } from '@apollo/client';
 import { fetchPrice } from '../../_lib/price';
 import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
@@ -18,17 +16,13 @@ function BookingForm({ portalSite }: Props): JSX.Element {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const { arrivalDate, departureDate } = useContext(CalendarContext);
 
-  const { data, loading, error } = useQuery(HOUSE_DETAILS_QUERY, {
-    variables: { portalCode, objectCode }
-  });
-
-  const [bookingPrice, setBookingPrice] = useState<
-    HouseType['booking_price'] | null
-  >(null);
+  const [house, setHouse] = useState<HouseType | null>(null);
   const [priceError, setPriceError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    setHouse(null);
+    setPriceError(false);
 
     fetchPrice({
       apiUrl,
@@ -36,16 +30,23 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       portalCode,
       objectCode,
       startsAt: arrivalDate!.date,
-      endsAt: departureDate!.date
+      endsAt: departureDate!.date,
+      includeAccommodation: true
     })
       .then((price) => {
-        if (!cancelled) {
-          // The REST response's cost shape is a superset of OptionalHouseCostType.
-          setBookingPrice({
+        if (cancelled) return;
+        if (!price.accommodation) {
+          setPriceError(true);
+          return;
+        }
+        // The REST response's cost shape is a superset of OptionalHouseCostType.
+        setHouse({
+          ...price.accommodation,
+          booking_price: {
             total_price: price.total_price,
             optional_house_costs: price.optional_house_costs
-          } as unknown as HouseType['booking_price']);
-        }
+          }
+        } as unknown as HouseType);
       })
       .catch(() => {
         if (!cancelled) {
@@ -58,18 +59,15 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     };
   }, [apiUrl, locale, portalCode, objectCode, arrivalDate, departureDate]);
 
-  if (loading || (!bookingPrice && !priceError))
+  if (!house && !priceError)
     return (
       <div>
         <Loading />
       </div>
     );
-  if (error || priceError) {
+  if (priceError || !house) {
     return <div>Error</div>;
   }
-
-  const result: HouseType = { ...data.PortalSite.houses[0], booking_price: bookingPrice! };
-
   TrackEvent({
     house_code: objectCode,
     portal_code: portalCode,
@@ -81,7 +79,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     }
   });
 
-  return <FormCreator house={result} PortalSite={portalSite} />;
+  return <FormCreator house={house} PortalSite={portalSite} />;
 }
 
 export default BookingForm;

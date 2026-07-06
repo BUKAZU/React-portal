@@ -34,7 +34,6 @@ jest.mock('@apollo/client', () => ({
 
 jest.mock('../../../_lib/gql', () => ({
   SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  HOUSE_DETAILS_QUERY: 'HOUSE_DETAILS_QUERY',
   CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
 }));
 
@@ -216,42 +215,6 @@ function makeSingleHouseData(house: ReturnType<typeof makeHouseWithInsurance>) {
   };
 }
 
-function makeBookingPriceData(house: ReturnType<typeof makeHouseWithInsurance>) {
-  return {
-    PortalSite: {
-      id: 'TEST',
-      options: {
-        bookingFields: [],
-        bookingForm: {
-          adults_from: 18,
-          children: false,
-          children_from: 0,
-          children_til: 12,
-          babies: false,
-          babies_til: 2,
-          showDiscountCode: false,
-          redirectUrl: null,
-          redirectUrlEn: null,
-          redirectUrlNl: null,
-          redirectUrlDe: null,
-          redirectUrlFr: null,
-          redirectUrlEs: null,
-          redirectUrlIt: null
-        }
-      },
-      bookingFormConfiguration: mockBookingFormConfiguration,
-      max_persons: 10,
-      name: 'Test Portal',
-      max_bedrooms: 5,
-      max_bathrooms: 3,
-      max_weekprice: 5000,
-      form_submit_text: 'By booking you agree to our',
-      form_submit_button_text: 'Book now',
-      houses: [{ ...house }]
-    }
-  };
-}
-
 const mockPortalSite = {
   id: 'TEST',
   portal_code: 'TEST',
@@ -291,19 +254,16 @@ function setupUseQuery(house: ReturnType<typeof makeHouseWithInsurance>) {
         error: null
       };
     }
-    if (query === 'HOUSE_DETAILS_QUERY') {
-      return {
-        data: makeBookingPriceData(house),
-        loading: false,
-        error: null
-      };
-    }
     return { data: null, loading: false, error: null };
   });
+  // The booking form now receives the accommodation metadata via the REST
+  // price response (include_accommodation) instead of a separate GraphQL query.
+  const { booking_price: _ignoredBookingPrice, ...accommodation } = house;
   mockFetchPrice.mockResolvedValue({
     total_price: 1500,
     currency: 'EUR',
-    optional_house_costs: []
+    optional_house_costs: [],
+    accommodation
   });
 }
 
@@ -488,7 +448,9 @@ describe('Booking form – cancel_insurance enabled on house', () => {
       select.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
-    expect(container.querySelector('[data-testid="date-field"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="date-field"]')
+    ).not.toBeNull();
 
     // Switch back to None
     await act(async () => {

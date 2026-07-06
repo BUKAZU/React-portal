@@ -1,7 +1,28 @@
 import { http } from './http_client';
 import { HTTPError } from 'ky';
-import { CostType, PricesType } from '../components/CalendarPage/Summary/cost_types';
+import {
+  CostType,
+  PricesType
+} from '../components/CalendarPage/Summary/cost_types';
 
+/** Accommodation metadata returned when requested with includeAccommodation. */
+export interface PriceAccommodation {
+  id: number;
+  name: string;
+  code: string;
+  allow_option: boolean;
+  persons: number;
+  image_url: string | null;
+  discounts: string | null;
+  discounts_info: string | null;
+  house_type: string;
+  rental_terms: string | null;
+  cancel_insurance: boolean;
+  damage_insurance: boolean;
+  damage_insurance_required: boolean;
+  travel_insurance: boolean;
+  babies_extra: number;
+}
 /** Full response of GET /portal_api/v1/accommodations/price. */
 export type PriceResponse = PricesType & {
   arrival_date: string;
@@ -16,6 +37,8 @@ export type PriceResponse = PricesType & {
   on_site_house_costs: CostType[];
   person_percentages: unknown;
   night_percentages: unknown;
+  /** Only present when requested with includeAccommodation. */
+  accommodation?: PriceAccommodation;
 };
 
 interface FetchPriceParams {
@@ -35,6 +58,8 @@ interface FetchPriceParams {
   discountCode?: string;
   /** Selected optional costs, keyed by house cost id. */
   costs?: Record<string, string | number>;
+  /** Also return the accommodation metadata (booking form only). */
+  includeAccommodation?: boolean;
 }
 
 const PRICE_PATH = '/portal_api/v1/accommodations/price';
@@ -54,7 +79,8 @@ export function buildPriceUrl({
   cancelInsurance,
   discount,
   discountCode,
-  costs
+  costs,
+  includeAccommodation
 }: Omit<FetchPriceParams, 'locale'>): string {
   const url = new URL(PRICE_PATH, new URL(apiUrl).origin);
   const params = new URLSearchParams({
@@ -75,6 +101,7 @@ export function buildPriceUrl({
       params.set(`costs[${id}]`, String(amount));
     }
   }
+  if (includeAccommodation) params.set('include_accommodation', 'true');
 
   url.search = params.toString();
   return url.toString();

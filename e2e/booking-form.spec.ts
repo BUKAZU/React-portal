@@ -247,8 +247,7 @@ test.describe('Booking form – error boundary', () => {
 
 const AVAILABILITY_URL =
   'https://api.bukazu.com/portal_api/v1/accommodations/availability**';
-const PRICE_URL =
-  'https://api.bukazu.com/portal_api/v1/accommodations/price**';
+const PRICE_URL = 'https://api.bukazu.com/portal_api/v1/accommodations/price**';
 const PORTAL_CONFIG_URL = 'https://api.bukazu.com/portal_api/v1/config/**';
 const AVAILABILITY_MONTHS_BEFORE = 1;
 const AVAILABILITY_START_DAY = 20;
@@ -260,8 +259,20 @@ function makeAvailabilityResponse() {
   // Cover a wide range around the current date so every calendar cell has an
   // entry (incl. partial weeks shown at the edges of each month).
   const now = new Date();
-  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - AVAILABILITY_MONTHS_BEFORE, AVAILABILITY_START_DAY));
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + AVAILABILITY_MONTHS_AFTER, AVAILABILITY_END_DAY));
+  const start = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth() - AVAILABILITY_MONTHS_BEFORE,
+      AVAILABILITY_START_DAY
+    )
+  );
+  const end = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth() + AVAILABILITY_MONTHS_AFTER,
+      AVAILABILITY_END_DAY
+    )
+  );
   for (const d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
     availabilities.push({
       date: d.toISOString().split('T')[0],
@@ -341,10 +352,19 @@ async function interceptPrice(
   house: object
 ) {
   await page.route(PRICE_URL, (route) => {
+    const response = makeRestPriceResponse(house);
+    // The booking form requests the accommodation metadata along with the
+    // price so it no longer needs a separate GraphQL call.
+    const url = new URL(route.request().url());
+    if (url.searchParams.get('include_accommodation') === 'true') {
+      const { booking_price: _ignoredBookingPrice, ...accommodation } =
+        house as { booking_price?: unknown; [key: string]: unknown };
+      Object.assign(response, { accommodation });
+    }
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(makeRestPriceResponse(house))
+      body: JSON.stringify(response)
     });
   });
 }
@@ -462,7 +482,9 @@ async function navigateToBookingForm(page: import('@playwright/test').Page) {
   for (let i = 0; i < arrivalCount; i += 1) {
     await arrivalCandidates.nth(i).click();
     try {
-      await departureCandidates.first().waitFor({ state: 'visible', timeout: 1000 });
+      await departureCandidates
+        .first()
+        .waitFor({ state: 'visible', timeout: 1000 });
       hasDeparture = true;
       break;
     } catch {
@@ -497,7 +519,9 @@ test.describe('Booking form – modal', () => {
     await expect(page.locator('dialog.bukazu-modal[open]')).toBeVisible();
   });
 
-  test('shows the optional cost description inside the modal', async ({ page }) => {
+  test('shows the optional cost description inside the modal', async ({
+    page
+  }) => {
     await navigateToBookingForm(page);
     await page.locator('.info-button').first().click();
     await expect(page.locator('dialog.bukazu-modal[open]')).toContainText(
@@ -505,10 +529,14 @@ test.describe('Booking form – modal', () => {
     );
   });
 
-  test('closes the dialog when the close button is clicked', async ({ page }) => {
+  test('closes the dialog when the close button is clicked', async ({
+    page
+  }) => {
     await navigateToBookingForm(page);
     await page.locator('.info-button').first().click();
-    await page.locator('dialog.bukazu-modal[open] .bukazu-modal-footer button').click();
+    await page
+      .locator('dialog.bukazu-modal[open] .bukazu-modal-footer button')
+      .click();
     await expect(page.locator('dialog.bukazu-modal[open]')).not.toBeAttached();
   });
 
@@ -522,7 +550,9 @@ test.describe('Booking form – modal', () => {
   test('can be reopened after closing', async ({ page }) => {
     await navigateToBookingForm(page);
     await page.locator('.info-button').first().click();
-    await page.locator('dialog.bukazu-modal[open] .bukazu-modal-footer button').click();
+    await page
+      .locator('dialog.bukazu-modal[open] .bukazu-modal-footer button')
+      .click();
     await page.locator('.info-button').first().click();
     await expect(page.locator('dialog.bukazu-modal[open]')).toBeVisible();
   });
