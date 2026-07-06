@@ -22,9 +22,7 @@ function SingleResult({ result, options }: Props): string {
     options.show_bedrooms &&
       `<div>${escapeHtml(result.bedrooms)} ${escapeHtml(t('bedrooms'))}</div>`,
     options.show_bathrooms &&
-      `<div>${escapeHtml(result.bathrooms)} ${escapeHtml(
-        t('bathrooms')
-      )}</div>`
+      `<div>${escapeHtml(result.bathrooms)} ${escapeHtml(t('bathrooms'))}</div>`
   ]
     .filter(Boolean)
     .join('');
@@ -61,8 +59,8 @@ function SingleResult({ result, options }: Props): string {
       <div class="bukazu-result-inner">
         <div class="image-holder">
           <img src="${escapeHtml(result.image_url)}" alt="${escapeHtml(
-    result.name
-  )}" />
+            result.name
+          )}" />
         </div>
         <div class="result">
           <div class="result-title">${escapeHtml(result.name)}</div>

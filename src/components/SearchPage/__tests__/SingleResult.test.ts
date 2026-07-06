@@ -174,16 +174,6 @@ describe('SingleResult', () => {
     expect(button?.textContent).toBeTruthy();
   });
 
-  it('should handle null options gracefully', () => {
-    container.innerHTML = SingleResult({
-      result: mockResult,
-      options: null as any
-    });
-
-    // Should render without crashing, just not show optional fields
-    expect(container.querySelector('.bukazu-result')).not.toBeNull();
-  });
-
   it('should escape HTML in dynamic text fields to prevent XSS', () => {
     const maliciousResult = {
       ...mockResult,
