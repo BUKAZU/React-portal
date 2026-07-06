@@ -1,4 +1,15 @@
-import { isInt } from '../utils';
+import { escapeHtml, isInt } from '../utils';
+
+describe('escapeHtml', () => {
+  it('should escape HTML special characters', () => {
+    expect(escapeHtml(`&<>"'`)).toBe('&amp;&lt;&gt;&quot;&#39;');
+  });
+
+  it('should convert null and undefined to strings', () => {
+    expect(escapeHtml(null)).toBe('null');
+    expect(escapeHtml(undefined)).toBe('undefined');
+  });
+});
 
 describe('isInt', () => {
   it('should return true for integer strings', () => {
