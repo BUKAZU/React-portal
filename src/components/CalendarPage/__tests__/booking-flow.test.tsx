@@ -40,7 +40,6 @@ jest.mock('@apollo/client', () => ({
 // ---------------------------------------------------------------------------
 jest.mock('../../../_lib/gql', () => ({
   SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  HOUSE_DETAILS_QUERY: 'HOUSE_DETAILS_QUERY',
   CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
 }));
 
@@ -232,20 +231,16 @@ const singleHouseData = {
   }
 };
 
-/** Data returned by HOUSE_DETAILS_QUERY (BookingForm) — house data only, no price. */
-const houseDetailsData = {
-  PortalSite: {
-    id: 'TEST',
-    houses: [{ ...mockHouse }]
-  }
-};
+/** Metadata under the `accommodation` key of the REST price response. */
+const { booking_price: _ignoredBookingPrice, ...mockAccommodation } = mockHouse;
 
 /** Price returned by the REST price endpoint (fetchPrice), used by both
- * PriceField/Price (calendar preview) and BookingForm (optional costs). */
+ * PriceField/Price (calendar preview) and BookingForm (accommodation + costs). */
 const mockPriceResponse = {
   total_price: 1500,
   currency: 'EUR',
-  optional_house_costs: []
+  optional_house_costs: [],
+  accommodation: mockAccommodation
 };
 
 // ---------------------------------------------------------------------------
@@ -334,9 +329,6 @@ beforeEach(() => {
     if (query === 'SINGLE_HOUSE_QUERY') {
       return { data: singleHouseData, loading: false, error: null };
     }
-    if (query === 'HOUSE_DETAILS_QUERY') {
-      return { data: houseDetailsData, loading: false, error: null };
-    }
     return { data: null, loading: false, error: null };
   });
 
@@ -401,6 +393,16 @@ describe('Booking flow – integration', () => {
     expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
     // Booking form is now rendered
     expect(container.querySelector('form.form')).not.toBeNull();
+  });
+
+  it('requests the accommodation metadata along with the price for the booking form', async () => {
+    renderApp();
+
+    await navigateToBookingForm();
+
+    expect(mockFetchPrice).toHaveBeenCalledWith(
+      expect.objectContaining({ includeAccommodation: true })
+    );
   });
 
   it('renders the submit button inside the booking form', async () => {

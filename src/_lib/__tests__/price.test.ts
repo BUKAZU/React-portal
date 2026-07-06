@@ -47,6 +47,23 @@ describe('price REST client', () => {
       expect(url.searchParams.has('cancel_insurance')).toBe(false);
       expect(url.searchParams.has('discount')).toBe(false);
       expect(url.searchParams.has('discount_code')).toBe(false);
+      expect(url.searchParams.has('include_accommodation')).toBe(false);
+    });
+
+    it('adds include_accommodation only when requested', () => {
+      const withAccommodation = new URL(
+        buildPriceUrl({ ...baseParams, includeAccommodation: true })
+      );
+      const withoutAccommodation = new URL(
+        buildPriceUrl({ ...baseParams, includeAccommodation: false })
+      );
+
+      expect(withAccommodation.searchParams.get('include_accommodation')).toBe(
+        'true'
+      );
+      expect(withoutAccommodation.searchParams.has('include_accommodation')).toBe(
+        false
+      );
     });
 
     it('serialises optional params when provided', () => {
@@ -97,6 +114,23 @@ describe('price REST client', () => {
         insurances: { cancel_insurance: 0, insurance_costs: 0 },
         required_costs: { not_on_site: [], on_site: [] },
         optional_costs: { not_on_site: [], on_site: [] }
+      },
+      accommodation: {
+        id: 1,
+        name: 'Test House',
+        code: 'HOUSE1',
+        allow_option: false,
+        persons: 6,
+        image_url: null,
+        discounts: null,
+        discounts_info: null,
+        house_type: 'house',
+        rental_terms: null,
+        cancel_insurance: false,
+        damage_insurance: false,
+        damage_insurance_required: false,
+        travel_insurance: false,
+        babies_extra: 0
       }
     };
 

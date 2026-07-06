@@ -320,10 +320,19 @@ async function interceptPrice(
   house: object
 ) {
   await page.route(PRICE_URL, (route) => {
+    const response = makeRestPriceResponse(house);
+    // The booking form requests the accommodation metadata along with the
+    // price so it no longer needs a separate GraphQL call.
+    const url = new URL(route.request().url());
+    if (url.searchParams.get('include_accommodation') === 'true') {
+      const { booking_price: _ignoredBookingPrice, ...accommodation } =
+        house as { booking_price?: unknown; [key: string]: unknown };
+      Object.assign(response, { accommodation });
+    }
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(makeRestPriceResponse(house))
+      body: JSON.stringify(response)
     });
   });
 }

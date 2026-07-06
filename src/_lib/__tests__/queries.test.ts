@@ -5,7 +5,6 @@ import {
   DocumentNode
 } from 'graphql';
 import {
-  HOUSE_DETAILS_QUERY,
   CREATE_BOOKING_MUTATION,
   SINGLE_HOUSE_QUERY,
   HOUSES_QUERY,
@@ -16,7 +15,6 @@ import {
 import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
-  { name: 'HOUSE_DETAILS_QUERY', document: HOUSE_DETAILS_QUERY },
   { name: 'CREATE_BOOKING_MUTATION', document: CREATE_BOOKING_MUTATION },
   { name: 'SINGLE_HOUSE_QUERY', document: SINGLE_HOUSE_QUERY },
   { name: 'HOUSES_QUERY', document: HOUSES_QUERY },

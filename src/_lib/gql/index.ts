@@ -3,31 +3,6 @@ import { HOUSE_SEARCH_RESULT_FIELDS } from './fragments';
 
 export * from './fragments';
 
-export const HOUSE_DETAILS_QUERY = gql`
-  query BookingFormQuery($portalCode: ID!, $objectCode: String!) {
-    PortalSite(id: $portalCode) {
-      id
-      houses(house_code: $objectCode) {
-        id
-        name
-        code
-        allow_option
-        persons
-        image_url
-        discounts
-        discounts_info
-        house_type
-        rental_terms
-        cancel_insurance
-        damage_insurance
-        damage_insurance_required
-        travel_insurance
-        babies_extra
-      }
-    }
-  }
-`;
-
 export const CREATE_BOOKING_MUTATION = gql`
   mutation CreateBooking(
     $first_name: String!
