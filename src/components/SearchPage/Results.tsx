@@ -115,10 +115,15 @@ function Results({
         <div className="bu-noresults">{t('no_results')}</div>
       ) : null}
       {Results.map((result) => (
-        <SingleResult
+        <div
           key={result.id}
-          result={result}
-          options={PortalSite.options.filtersForm}
+          style={{ display: 'contents' }}
+          dangerouslySetInnerHTML={{
+            __html: SingleResult({
+              result,
+              options: PortalSite.options.filtersForm
+            })
+          }}
         />
       ))}
       {Pagination}
