@@ -48,7 +48,7 @@ export function useBookingFormContext(): BookingFormContextValue {
 }
 
 export function useBookingField(name: string) {
-  const { values, errors, touched, setFieldValue, setFieldTouched } =
+  const { values, errors, touched, setFieldValue } =
     useBookingFormContext();
 
   const directError = errors[name];
@@ -75,7 +75,7 @@ export function useBookingField(name: string) {
     error: fieldError,
     touched: isTouched,
     value: fieldValue ?? '',
-    onBlur: () => setFieldTouched(name, true),
+    onBlur: () => undefined,
     onChange: (
       event: React.ChangeEvent<
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
