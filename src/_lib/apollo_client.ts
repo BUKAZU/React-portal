@@ -21,9 +21,13 @@ export function createApolloClient(
       max: MAX_RETRY_ATTEMPTS,
       retryIf: (error): boolean => {
         // Only retry when a network-level error is present.
-        const networkError = (error as { networkError?: unknown }).networkError as {
-          statusCode?: number;
-        } | null | undefined;
+        const networkError = (error as { networkError?: unknown })
+          .networkError as
+          | {
+              statusCode?: number;
+            }
+          | null
+          | undefined;
 
         if (!networkError) {
           return false;

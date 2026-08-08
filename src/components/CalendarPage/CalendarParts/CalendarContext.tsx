@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, isAfter } from 'date-fns';
+import { differenceInCalendarDays, isAfter } from '../../../_lib/date_helper';
 import React, { createContext, useReducer } from 'react';
 import { BuDate, HouseType } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
@@ -19,7 +19,7 @@ export function CalendarProvider({
   children
 }: {
   children: React.ReactNode;
-}): React.ReactNode {
+}): JSX.Element {
   const [booking_state, dispatch] = useReducer(calendarReducer, initialBooking);
   return (
     <CalendarContext.Provider value={booking_state}>

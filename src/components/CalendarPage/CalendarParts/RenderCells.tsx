@@ -7,9 +7,10 @@ import {
   startOfWeek,
   subDays,
   isBefore,
-  parse
-} from 'date-fns';
-import { FormatIntl } from '../../../_lib/date_helper';
+  Parse_EN_US,
+  formatDateKey,
+  FormatIntl
+} from '../../../_lib/date_helper';
 import DayClasses from './DayClasses';
 import { HouseType } from '../../../types';
 import {
@@ -46,8 +47,8 @@ function RenderCells({
   while (day <= endDate) {
     // for (let daz of dayz) {
     for (let i = 0; i < 7; i++) {
-      let date = FormatIntl(day, 'yyyy-MM-dd');
-      let yesterday = FormatIntl(subDays(day, 1), 'yyyy-MM-dd');
+      let date = formatDateKey(day);
+      let yesterday = formatDateKey(subDays(day, 1));
       const daz = availabilities.find((x) => x.date === date);
       const prevBooked = availabilities.find((x) => x.date === yesterday);
 
@@ -56,7 +57,7 @@ function RenderCells({
       if (!daz) {
         days.push(
           <div className="bu-grid bu-center disabled" key={date}>
-            <span>{FormatIntl(day, 'd')}</span>
+            <span>{FormatIntl(day, { day: 'numeric' })}</span>
           </div>
         );
         day = addDays(day, 1);
@@ -80,12 +81,7 @@ function RenderCells({
           role="button"
           tabIndex={0}
           onClick={() => {
-            if (
-              isBefore(
-                parse(cloneDay.date, 'yyyy-MM-dd', new Date()),
-                new Date()
-              )
-            ) {
+            if (isBefore(Parse_EN_US(cloneDay.date), new Date())) {
               return;
             }
             dispatch({
@@ -95,7 +91,7 @@ function RenderCells({
             });
           }}
         >
-          <span>{FormatIntl(day, 'd')}</span>
+          <span>{FormatIntl(day, { day: 'numeric' })}</span>
         </div>
       );
       day = addDays(day, 1);

@@ -92,10 +92,14 @@ describe('Radio (filter)', () => {
       );
     });
 
-    const berlinInput = container.querySelector('input[value="BER"]') as HTMLInputElement;
+    const berlinInput = container.querySelector(
+      'input[value="BER"]'
+    ) as HTMLInputElement;
     expect(berlinInput?.disabled).toBe(true);
 
-    const amsterdamInput = container.querySelector('input[value="AMS"]') as HTMLInputElement;
+    const amsterdamInput = container.querySelector(
+      'input[value="AMS"]'
+    ) as HTMLInputElement;
     expect(amsterdamInput?.disabled).toBe(false);
   });
 
@@ -131,7 +135,9 @@ describe('Radio (filter)', () => {
       );
     });
 
-    const input = container.querySelector('input[value="NL"]') as HTMLInputElement;
+    const input = container.querySelector(
+      'input[value="NL"]'
+    ) as HTMLInputElement;
     act(() => {
       input.click();
     });

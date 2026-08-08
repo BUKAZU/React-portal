@@ -6,12 +6,20 @@ interface ReviewCriterion {
   id: number;
 }
 
+export interface ReviewResponse {
+  created_at: string;
+  sender: string;
+  message: string;
+}
+
 export interface Review {
   id: string;
   score: number;
   name: string;
   createdAt: string;
   review: string;
+  sourceName: string;
+  reviewResponses: ReviewResponse[];
   reviewCriteria: ReviewCriterion[];
 }
 
@@ -30,6 +38,8 @@ export interface ProcessedReview {
   review: string;
   color: string;
   formatted: string;
+  sourceName: string;
+  reviewResponses: ReviewResponse[];
   criteria: ProcessedCriterion[];
 }
 
@@ -42,6 +52,8 @@ export function processReview(review: Review): ProcessedReview {
     review: review.review,
     color: score.color,
     formatted: score.formatted,
+    sourceName: review.sourceName,
+    reviewResponses: review.reviewResponses,
     criteria: review.reviewCriteria.map((crit) => {
       const critScore = getScore(crit.score);
       return {

@@ -1,13 +1,5 @@
-import React from 'react';
-import { act } from 'react';
-import { createRoot } from 'react-dom/client';
 import SingleResult from '../SingleResult';
 import { HouseType, FiltersFormType } from '../../../types';
-
-// Mock SVG icon
-jest.mock('../../icons/ArrowRight.svg', () => () => <svg data-testid="arrow-right" />);
-
-(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockResult: HouseType = {
   id: 1,
@@ -32,49 +24,37 @@ const mockResult: HouseType = {
 };
 
 const mockOptions: FiltersFormType = {
-  showCity: true,
-  showRegion: true,
-  showCountry: true,
-  showPersons: true,
-  showBedrooms: true,
-  showBathrooms: true,
-  showPrice: true,
-  showRating: true,
-  categories: [],
+  show_city: true,
+  show_region: true,
+  show_country: true,
+  show_persons: true,
+  show_bedrooms: true,
+  show_bathrooms: true,
+  show_price: true,
+  show_rating: true,
   no_results: 20,
   location: 'left',
   mode: 'grid',
   show: true,
-  fixedMobile: false
+  fixed_mobile: false
 } as any;
 
 let container: HTMLDivElement;
-let root: ReturnType<typeof createRoot>;
 
 function renderSingleResult(
   result: HouseType = mockResult,
   options: FiltersFormType = mockOptions
 ) {
-  act(() => {
-    root.render(
-      <SingleResult result={result} options={options} />
-    );
-  });
+  container.innerHTML = SingleResult({ result, options });
 }
 
 beforeEach(() => {
   (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
-  act(() => {
-    root = createRoot(container);
-  });
 });
 
 afterEach(() => {
-  act(() => {
-    root.unmount();
-  });
   container.remove();
 });
 
@@ -103,6 +83,20 @@ describe('SingleResult', () => {
     expect(img?.getAttribute('alt')).toBe(mockResult.name);
   });
 
+  it('should omit href and src attributes when urls are undefined', () => {
+    renderSingleResult({
+      ...mockResult,
+      house_url: undefined,
+      image_url: undefined
+    });
+
+    const link = container.querySelector('a.bukazu-result');
+    const img = container.querySelector('.image-holder img');
+
+    expect(link?.hasAttribute('href')).toBe(false);
+    expect(img?.hasAttribute('src')).toBe(false);
+  });
+
   it('should display city when showCity is true', () => {
     renderSingleResult();
 
@@ -111,7 +105,7 @@ describe('SingleResult', () => {
   });
 
   it('should not display city when showCity is false', () => {
-    renderSingleResult(mockResult, { ...mockOptions, showCity: false });
+    renderSingleResult(mockResult, { ...mockOptions, show_city: false });
 
     const place = container.querySelector('.result-place');
     expect(place?.textContent).not.toContain(mockResult.city);
@@ -194,14 +188,16 @@ describe('SingleResult', () => {
     expect(button?.textContent).toBeTruthy();
   });
 
-  it('should handle null options gracefully', () => {
-    act(() => {
-      root.render(
-        <SingleResult result={mockResult} options={null as any} />
-      );
-    });
+  it('should escape HTML in dynamic text fields to prevent XSS', () => {
+    const maliciousResult = {
+      ...mockResult,
+      name: '<img src=x onerror=alert(1)>'
+    };
+    renderSingleResult(maliciousResult);
 
-    // Should render without crashing, just not show optional fields
-    expect(container.querySelector('.bukazu-result')).not.toBeNull();
+    expect(container.querySelector('.result-title img')).toBeNull();
+    expect(container.querySelector('.result-title')?.textContent).toBe(
+      maliciousResult.name
+    );
   });
 });

@@ -1,6 +1,9 @@
 export type Field = {
   id: string;
-  type: string
+  type: string;
+  label: string | null;
+  max?: number;
+  options?: { id: number; name: string }[];
 };
 
 export type FiltersType = {
@@ -21,5 +24,6 @@ export type FiltersType = {
 export type OptionsType = {
   id: string;
   name: string;
-  country_id: string
+  country_id: string;
+  region?: string;
 };

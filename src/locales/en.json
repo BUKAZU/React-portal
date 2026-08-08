@@ -173,5 +173,7 @@
   "can_only_take_insurance_in_de_be_nl": "You can only take out insurance if you live in the Netherlands, Germany or Belgium.",
   "price_from": "Price from",
   "reviews": "Reviews",
+  "load_more_reviews": "Load more reviews",
+  "review_response_label": "Response from host",
   "reviews_note_link": "BUKAZU Booking System maintains independent reviews. These reviews are collected after guests stay in the accommodation. There is verification of the combination of booking number and email address."
 }

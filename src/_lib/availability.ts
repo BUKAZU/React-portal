@@ -1,4 +1,6 @@
-import { FormatIntl } from './date_helper';
+import { formatDateKey } from './date_helper';
+import { http } from './http_client';
+import { HTTPError } from 'ky';
 
 /** A single date entry as returned by the REST availability endpoint. */
 export type AvailabilityEntry = {
@@ -57,8 +59,8 @@ export function buildAvailabilityUrl({
   url.search = new URLSearchParams({
     portal_code: portalCode,
     object_code: objectCode,
-    starts_date: FormatIntl(startsDate, 'yyyy-MM-dd'),
-    end_date: FormatIntl(endDate, 'yyyy-MM-dd')
+    starts_date: formatDateKey(startsDate),
+    end_date: formatDateKey(endDate)
   }).toString();
   return url.toString();
 }
@@ -83,13 +85,14 @@ export async function fetchAvailability({
     endDate
   });
 
-  const response = await fetch(url, {
-    headers: { locale, Accept: 'application/json' }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Availability request failed (${response.status})`);
+  try {
+    return await http
+      .get(url, { headers: { locale } })
+      .json<AvailabilityResponse>();
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      throw new Error(`Availability request failed (${error.response.status})`);
+    }
+    throw error;
   }
-
-  return (await response.json()) as AvailabilityResponse;
 }

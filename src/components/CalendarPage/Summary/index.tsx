@@ -11,7 +11,7 @@ interface Props {
   house: HouseType;
 }
 
-function Summary({ values, house }: Props): React.ReactNode {
+function Summary({ values, house }: Props): JSX.Element {
   const objectDetailsRef = useRef<ObjectDetails | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 

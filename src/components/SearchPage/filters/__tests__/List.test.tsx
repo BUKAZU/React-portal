@@ -64,7 +64,9 @@ describe('List (filter)', () => {
       );
     });
 
-    const checkedInput = container.querySelector('input[value="NL"]') as HTMLInputElement;
+    const checkedInput = container.querySelector(
+      'input[value="NL"]'
+    ) as HTMLInputElement;
     expect(checkedInput?.checked).toBe(true);
   });
 
@@ -82,7 +84,9 @@ describe('List (filter)', () => {
       );
     });
 
-    const input = container.querySelector('input[value="NL"]') as HTMLInputElement;
+    const input = container.querySelector(
+      'input[value="NL"]'
+    ) as HTMLInputElement;
     act(() => {
       input.click();
     });
@@ -103,10 +107,14 @@ describe('List (filter)', () => {
       );
     });
 
-    const berlinInput = container.querySelector('input[value="BER"]') as HTMLInputElement;
+    const berlinInput = container.querySelector(
+      'input[value="BER"]'
+    ) as HTMLInputElement;
     expect(berlinInput?.disabled).toBe(true);
 
-    const amsterdamInput = container.querySelector('input[value="AMS"]') as HTMLInputElement;
+    const amsterdamInput = container.querySelector(
+      'input[value="AMS"]'
+    ) as HTMLInputElement;
     expect(amsterdamInput?.disabled).toBe(false);
   });
 

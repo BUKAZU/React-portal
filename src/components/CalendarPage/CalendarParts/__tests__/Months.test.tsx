@@ -16,10 +16,13 @@ jest.mock('../SingleMonth', () => {
   };
 });
 
-jest.mock('../../../icons/loading.svg', () => () => <div data-testid="loading" />);
+jest.mock('../../../icons/loading.svg', () => () => (
+  <div data-testid="loading" />
+));
 
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
-  true;
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockedFetchAvailability = jest.mocked(fetchAvailability);
 
@@ -107,10 +110,14 @@ describe('Months', () => {
       portalCode: 'portal',
       objectCode: 'house',
       startsDate: new Date(2024, 11, 29),
-      endDate: new Date(2025, 2, 1, 23, 59, 59, 999)
+      endDate: new Date(2025, 2, 1)
     });
-    expect(container.querySelector('[data-testid="single-month-0"]')).not.toBeNull();
-    expect(container.querySelector('[data-testid="single-month-1"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="single-month-0"]')
+    ).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="single-month-1"]')
+    ).not.toBeNull();
   });
 
   it('renders an error when availability fetch fails', async () => {

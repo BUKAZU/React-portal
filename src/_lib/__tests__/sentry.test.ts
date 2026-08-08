@@ -1,5 +1,10 @@
 import * as SentryBrowser from '@sentry/browser';
-import { initSentry, setSentryContext, reportError, reportMessage } from '../sentry';
+import {
+  initSentry,
+  setSentryContext,
+  reportError,
+  reportMessage
+} from '../sentry';
 
 jest.mock('@sentry/browser', () => ({
   init: jest.fn(),
@@ -20,9 +25,25 @@ describe('sentry helpers', () => {
   describe('initSentry', () => {
     it('calls Sentry.init with the provided DSN when not already initialised', () => {
       initSentry('https://key@sentry.io/123');
-      expect(SentryBrowser.init).toHaveBeenCalledWith({
-        dsn: 'https://key@sentry.io/123'
-      });
+      expect(SentryBrowser.init).toHaveBeenCalledWith(
+        expect.objectContaining({ dsn: 'https://key@sentry.io/123' })
+      );
+    });
+
+    it('passes an integrations filter function that removes GlobalHandlers', () => {
+      initSentry('https://key@sentry.io/123');
+      const callArg = (SentryBrowser.init as jest.Mock).mock.calls[0][0];
+      expect(typeof callArg.integrations).toBe('function');
+
+      const kept = callArg.integrations([
+        { name: 'GlobalHandlers' },
+        { name: 'Breadcrumbs' },
+        { name: 'InboundFilters' }
+      ]);
+      expect(kept).toEqual([
+        { name: 'Breadcrumbs' },
+        { name: 'InboundFilters' }
+      ]);
     });
 
     it('does not call Sentry.init when Sentry is already initialised', () => {
@@ -35,7 +56,10 @@ describe('sentry helpers', () => {
   describe('setSentryContext', () => {
     it('sets portal_code tag', () => {
       setSentryContext({ portalCode: 'PORTAL1' });
-      expect(SentryBrowser.setTag).toHaveBeenCalledWith('portal_code', 'PORTAL1');
+      expect(SentryBrowser.setTag).toHaveBeenCalledWith(
+        'portal_code',
+        'PORTAL1'
+      );
     });
 
     it('sets object_code tag when objectCode is provided', () => {
@@ -54,7 +78,11 @@ describe('sentry helpers', () => {
     });
 
     it('sets the bukazu context object with all fields', () => {
-      setSentryContext({ portalCode: 'PORTAL1', objectCode: 'OBJ42', locale: 'en' });
+      setSentryContext({
+        portalCode: 'PORTAL1',
+        objectCode: 'OBJ42',
+        locale: 'en'
+      });
       expect(SentryBrowser.setContext).toHaveBeenCalledWith(
         'bukazu',
         expect.objectContaining({

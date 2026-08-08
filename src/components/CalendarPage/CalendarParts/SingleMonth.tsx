@@ -1,4 +1,4 @@
-import { addMonths } from 'date-fns';
+import { addMonths } from '../../../_lib/date_helper';
 import React from 'react';
 import { HouseType } from '../../../types';
 import {
@@ -27,7 +27,7 @@ function SingleMonth({
   const month = addMonths(currentMonth, count);
 
   return (
-    <div className="bu-calendar calendar bup-16" key={month}>
+    <div className="bu-calendar calendar bup-16" key={month.toISOString()}>
       <MonthHeader month={month} />
       <WeekDays month={month} />
       <RenderCells

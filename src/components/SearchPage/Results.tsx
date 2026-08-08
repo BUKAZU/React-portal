@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { t } from '../../intl';
-import { differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays } from '../../_lib/date_helper';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';
@@ -43,10 +43,14 @@ function Results({
   } else if (filters.arrival_date) {
     min_nights = 1;
   }
-  let filterProperties = filters.properties || [];
-  filterProperties = filterProperties.map((e) => {
-    return JSON.stringify(e);
-  });
+  const categoryIds = Object.entries(filters as Record<string, unknown>)
+    .filter(([key, val]) => /^category_\d+$/.test(key) && val)
+    .map(([, val]) => Number(val))
+    .filter((n) => !isNaN(n));
+
+  const filterProperties = [...(filters.properties || []), ...categoryIds].map(
+    (e) => JSON.stringify(e)
+  );
 
   let properties = filterProperties.join(',');
 
@@ -103,9 +107,7 @@ function Results({
     <div
       id="results"
       className={
-        PortalSite.options.filtersForm
-          ? PortalSite.options.filtersForm.mode
-          : ''
+        PortalSite.options.filtersForm.mode
       }
     >
       {Pagination}
@@ -113,10 +115,15 @@ function Results({
         <div className="bu-noresults">{t('no_results')}</div>
       ) : null}
       {Results.map((result) => (
-        <SingleResult
+        <div
           key={result.id}
-          result={result}
-          options={PortalSite.options.filtersForm}
+          style={{ display: 'contents' }}
+          dangerouslySetInnerHTML={{
+            __html: SingleResult({
+              result,
+              options: PortalSite.options.filtersForm
+            })
+          }}
         />
       ))}
       {Pagination}

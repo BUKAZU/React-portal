@@ -1,10 +1,16 @@
-import { addDays, subDays, startOfToday, startOfMonth, format } from 'date-fns';
+import {
+  addDays,
+  subDays,
+  startOfToday,
+  startOfMonth,
+  formatDateKey
+} from '../../../../_lib/date_helper';
 import DayClasses from '../DayClasses';
 
 describe('DayClasses', () => {
   // Mock date for consistent testing
   const today = startOfToday();
-  const todayString = format(today, 'yyyy-MM-dd');
+  const todayString = formatDateKey(today);
   const monthStart = startOfMonth(today);
 
   // Default test props
@@ -147,8 +153,8 @@ describe('DayClasses', () => {
       ...defaultProps,
       discounts: [
         {
-          discount_starts_at: format(subDays(today, 2), 'yyyy-MM-dd'),
-          discount_ends_at: format(addDays(today, 2), 'yyyy-MM-dd')
+          discount_starts_at: formatDateKey(subDays(today, 2)),
+          discount_ends_at: formatDateKey(addDays(today, 2))
         }
       ]
     };

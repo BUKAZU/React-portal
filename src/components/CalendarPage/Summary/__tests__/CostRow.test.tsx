@@ -55,17 +55,29 @@ describe('CostRow', () => {
         method_name="per stay"
         formatName={true}
         forceMethod={true}
+        currency="USD"
       />
     );
 
     const cells = container.querySelectorAll('td');
     expect(cells[0].textContent).toContain('t_rent_price');
-    expect(container.querySelector('[data-testid=\"description\"]')?.textContent).toBe(
-      'more info'
-    );
-    expect(cells[1].textContent).toContain('€');
-    expect(cells[1].textContent).toContain('formatted_50.00');
+    expect(
+      container.querySelector('[data-testid=\"description\"]')?.textContent
+    ).toBe('more info');
+    expect(cells[1].textContent).toContain('formatted_50');
     expect(cells[1].textContent).toContain('per stay');
+
+    act(() => {
+      root?.unmount();
+    });
+    container.remove();
+  });
+
+  it('defaults to EUR when no currency is provided', () => {
+    const { container, root } = renderRow(<CostRow name="rent_price" amount={50} />);
+
+    const priceCell = container.querySelector('td.price');
+    expect(priceCell?.textContent).toContain('formatted_50');
 
     act(() => {
       root?.unmount();

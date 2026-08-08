@@ -24,6 +24,7 @@ function Select({
     ? filters.regions
     : [filters.regions].filter((e) => String(e).trim());
   if (options && ['countries', 'cities', 'regions'].includes(field.id)) {
+    const typedOptions = options as OptionsType[];
     return (
       <select
         name={field.id}
@@ -32,7 +33,7 @@ function Select({
         value={value}
       >
         <option value="" />
-        {options.map((opt) => {
+        {typedOptions.map((opt) => {
           let hidden = false;
           if (['cities', 'regions'].includes(field.id)) {
             if (countries && !countries.includes(opt.country_id)) {
@@ -68,15 +69,17 @@ function Select({
         value={value}
       >
         <option value="" />
-        {options.map((opt) => {
-          let hidden = false;
-
-          return (
-            <option key={opt} value={opt} disabled={hidden} hidden={hidden}>
+        {options.map((opt) =>
+          typeof opt === 'object' ? (
+            <option key={opt.id} value={opt.id}>
+              {opt.name}
+            </option>
+          ) : (
+            <option key={opt} value={opt}>
               {opt}
             </option>
-          );
-        })}
+          )
+        )}
       </select>
     );
   }

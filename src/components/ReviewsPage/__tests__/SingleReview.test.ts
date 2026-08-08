@@ -6,6 +6,8 @@ const mockReview: Review = {
   name: 'Alice',
   createdAt: '2024-01-15',
   review: 'Great place!',
+  sourceName: 'Booking.com',
+  reviewResponses: [{ created_at: '2024-01-16', sender: 'landlord', message: 'Thank you!' }],
   reviewCriteria: [
     { id: 1, name: 'Cleanliness', score: 9 },
     { id: 2, name: 'Location', score: 5 }
@@ -19,6 +21,12 @@ describe('processReview', () => {
     expect(result.name).toBe('Alice');
     expect(result.createdAt).toBe('2024-01-15');
     expect(result.review).toBe('Great place!');
+  });
+
+  it('passes through sourceName and reviewResponses', () => {
+    const result = processReview(mockReview);
+    expect(result.sourceName).toBe('Booking.com');
+    expect(result.reviewResponses).toEqual(mockReview.reviewResponses);
   });
 
   it('computes color and formatted score from rating', () => {
