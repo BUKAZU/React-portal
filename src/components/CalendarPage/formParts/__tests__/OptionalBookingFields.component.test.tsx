@@ -9,8 +9,12 @@ import { loadCountries } from '../../../../_lib/countries';
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 jest.mock('../../FormItems', () => ({
-  DateField: ({ name }: { name: string }) => (
-    <div data-testid="date-field" data-name={name} />
+  DateField: ({ name, required }: { name: string; required?: boolean }) => (
+    <div
+      data-testid="date-field"
+      data-name={name}
+      data-required={required ? 'true' : 'false'}
+    />
   )
 }));
 
@@ -150,6 +154,18 @@ describe('OptionalBookingFields - default (text/email/textarea) fields', () => {
     expect(input).not.toBeNull();
   });
 
+  it('sets required on a required native input field', () => {
+    renderFields([{ id: 'first_name', type: 'text', required: true }]);
+    const input = container.querySelector('input');
+    expect(input?.hasAttribute('required')).toBe(true);
+  });
+
+  it('does not set required on an optional native input field', () => {
+    renderFields([{ id: 'first_name', type: 'text', required: false }]);
+    const input = container.querySelector('input');
+    expect(input?.hasAttribute('required')).toBe(false);
+  });
+
   it('renders a label using the PortalSite label property', () => {
     renderFields([{ id: 'first_name', type: 'text', required: false }]);
     const label = container.querySelector('label');
@@ -221,6 +237,12 @@ describe('OptionalBookingFields - country field', () => {
     expect(requiredIndicator).not.toBeUndefined();
   });
 
+  it('sets required on a required country select', () => {
+    renderFields([{ id: 'country', type: 'select', required: true }]);
+    const select = container.querySelector('select');
+    expect(select?.hasAttribute('required')).toBe(true);
+  });
+
   it('renders an error message for the country field when there is an error', () => {
     renderFields(
       [{ id: 'country', type: 'select', required: true }],
@@ -253,7 +275,7 @@ describe('OptionalBookingFields - country field', () => {
     await act(async () => {});
     const select = container.querySelector('select');
     expect(select?.disabled).toBe(false);
-    expect(container.querySelectorAll('option').length).toBe(0);
+    expect(container.querySelectorAll('option').length).toBe(1);
   });
 
   it('does not update state after unmount', async () => {
@@ -285,6 +307,12 @@ describe('OptionalBookingFields - date field', () => {
     const dateField = container.querySelector('[data-testid="date-field"]');
     expect(dateField?.getAttribute('data-name')).toBe('date_of_birth');
   });
+
+  it('passes required to date fields', () => {
+    renderFields([{ id: 'date_of_birth', type: 'date', required: true }]);
+    const dateField = container.querySelector('[data-testid="date-field"]');
+    expect(dateField?.getAttribute('data-required')).toBe('true');
+  });
 });
 
 describe('OptionalBookingFields - booking_field type (integer id)', () => {
@@ -299,6 +327,14 @@ describe('OptionalBookingFields - booking_field type (integer id)', () => {
     const spans = Array.from(container.querySelectorAll('span'));
     const requiredIndicator = spans.find((span) => span.textContent === '*');
     expect(requiredIndicator).not.toBeUndefined();
+  });
+
+  it('sets required on required booking fields', () => {
+    renderFields([{ id: '42', type: 'booking_field', required: true }]);
+    const input = container.querySelector(
+      'input[name="extra_fields.booking_field_42"]'
+    );
+    expect(input?.hasAttribute('required')).toBe(true);
   });
 
   it('renders an error message when the booking_field has an error and is touched (via extra_fields)', () => {
