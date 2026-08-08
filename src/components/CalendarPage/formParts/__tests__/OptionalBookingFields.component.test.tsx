@@ -275,7 +275,7 @@ describe('OptionalBookingFields - country field', () => {
     await act(async () => {});
     const select = container.querySelector('select');
     expect(select?.disabled).toBe(false);
-    expect(container.querySelectorAll('option').length).toBe(0);
+    expect(container.querySelectorAll('option').length).toBe(1);
   });
 
   it('does not update state after unmount', async () => {

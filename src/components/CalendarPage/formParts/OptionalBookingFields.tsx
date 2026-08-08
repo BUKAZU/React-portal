@@ -149,6 +149,7 @@ function CountryField({
       onChange={field.onChange}
       onBlur={field.onBlur}
     >
+      <option value="">—</option>
       {countries.map((country) => {
         return (
           <option value={country.alpha2} key={country.alpha2}>
