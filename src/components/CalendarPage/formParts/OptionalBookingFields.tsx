@@ -2,7 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { t } from '../../../intl';
 import { loadCountries, type CountryEntry } from '../../../_lib/countries';
 import { DateField } from '../FormItems';
-import { useBookingField, type BookingFormTouched } from '../BookingFormContext';
+import {
+  useBookingField,
+  type BookingFormTouched
+} from '../BookingFormContext';
 import RequiredBookingFields from './RequiredBookingFields';
 import { PossibleValues, SingleBookingFieldType } from './form_types';
 import { isInt } from '../../../_lib/utils';

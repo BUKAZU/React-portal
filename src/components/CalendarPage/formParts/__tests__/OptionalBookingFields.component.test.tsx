@@ -9,13 +9,7 @@ import { loadCountries } from '../../../../_lib/countries';
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 jest.mock('../../FormItems', () => ({
-  DateField: ({
-    name,
-    required
-  }: {
-    name: string;
-    required?: boolean;
-  }) => (
+  DateField: ({ name, required }: { name: string; required?: boolean }) => (
     <div
       data-testid="date-field"
       data-name={name}
