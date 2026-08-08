@@ -10,7 +10,13 @@ interface Props {
   required?: boolean;
 }
 
-function DateField({ label, description, name, inline }: Props) {
+function DateField({
+  label,
+  description,
+  name,
+  inline,
+  required = false
+}: Props) {
   const field = useBookingField(name);
   const dateValue =
     typeof field.value === 'string' && field.value !== '' ? field.value : '';
@@ -26,6 +32,7 @@ function DateField({ label, description, name, inline }: Props) {
         className="bukazu-date-picker"
         id={name}
         name={name}
+        required={required}
         value={dateValue}
         onChange={field.onChange}
         onBlur={field.onBlur}

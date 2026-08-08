@@ -38,10 +38,12 @@ interface RenderOptionalFieldParams {
 function NativeField({
   name,
   type = 'text',
+  required = false,
   onKeyPress
 }: {
   name: string;
   type?: string;
+  required?: boolean;
   onKeyPress?: (event: React.KeyboardEvent) => void;
 }) {
   const field = useBookingField(name);
@@ -52,6 +54,7 @@ function NativeField({
         id={name}
         name={name}
         value={String(field.value)}
+        required={required}
         onChange={field.onChange}
         onBlur={field.onBlur}
         onKeyPress={onKeyPress}
@@ -65,6 +68,7 @@ function NativeField({
       type={type}
       name={name}
       value={String(field.value)}
+      required={required}
       onChange={field.onChange}
       onBlur={field.onBlur}
       onKeyPress={onKeyPress}
@@ -73,9 +77,11 @@ function NativeField({
 }
 
 function BookingFieldInput({
-  bookingField
+  bookingField,
+  required = false
 }: {
   bookingField: BookingFieldDefinition;
+  required?: boolean;
 }) {
   const field = useBookingField(
     `extra_fields.booking_field_${bookingField.id}`
@@ -87,6 +93,7 @@ function BookingFieldInput({
         id={`extra_fields.booking_field_${bookingField.id}`}
         name={`extra_fields.booking_field_${bookingField.id}`}
         value={String(field.value)}
+        required={required}
         onChange={field.onChange}
         onBlur={field.onBlur}
         onKeyPress={(event) => {
@@ -106,6 +113,7 @@ function BookingFieldInput({
       }
       name={`extra_fields.booking_field_${bookingField.id}`}
       value={String(field.value)}
+      required={required}
       onChange={field.onChange}
       onBlur={field.onBlur}
       onKeyPress={(event) => {
@@ -119,10 +127,12 @@ function BookingFieldInput({
 
 function CountryField({
   countries,
-  disabled
+  disabled,
+  required = false
 }: {
   countries: CountryEntry[];
   disabled: boolean;
+  required?: boolean;
 }) {
   const field = useBookingField('country');
 
@@ -131,6 +141,7 @@ function CountryField({
       name="country"
       id="country"
       disabled={disabled}
+      required={required}
       value={String(field.value)}
       onChange={field.onChange}
       onBlur={field.onBlur}
@@ -170,7 +181,10 @@ function renderOptionalField({
         <label htmlFor={`extra_fields.booking_field_${bookingField.id}`}>
           {bookingField.label} {input.required && <span>*</span>}
         </label>
-        <BookingFieldInput bookingField={bookingField} />
+        <BookingFieldInput
+          bookingField={bookingField}
+          required={input.required}
+        />
         {errors[input.id] &&
           ((touched.extra_fields &&
             (touched.extra_fields as Record<string, boolean>)[
@@ -192,7 +206,11 @@ function renderOptionalField({
           {PortalSite[`${normalizedId}_label`] as React.ReactNode}{' '}
           {input.required && <span>*</span>}
         </label>
-        <CountryField countries={countries} disabled={countriesLoading} />
+        <CountryField
+          countries={countries}
+          disabled={countriesLoading}
+          required={input.required}
+        />
         {errors[normalizedId] && (
           <div className="error-message bu-error-message">
             {errors[normalizedId]}
@@ -205,7 +223,12 @@ function renderOptionalField({
   if (input.type === 'date') {
     return (
       <div className="form-row" key={normalizedId}>
-        <DateField name={normalizedId} label={normalizedId} inline={false} />
+        <DateField
+          name={normalizedId}
+          label={normalizedId}
+          inline={false}
+          required={input.required}
+        />
       </div>
     );
   }
@@ -223,6 +246,7 @@ function renderOptionalField({
       <NativeField
         type={input.type}
         name={normalizedId}
+        required={input.required}
         onKeyPress={(event) => {
           if (event.which === 13) {
             event.preventDefault();

@@ -196,6 +196,20 @@ describe('DateField – validation error display', () => {
   });
 });
 
+describe('DateField – required attribute', () => {
+  it('sets required on the date input when required is true', () => {
+    renderDateField({ required: true });
+    const input = container.querySelector('input[type="date"]');
+    expect(input?.hasAttribute('required')).toBe(true);
+  });
+
+  it('does not set required on the date input when required is false', () => {
+    renderDateField({ required: false });
+    const input = container.querySelector('input[type="date"]');
+    expect(input?.hasAttribute('required')).toBe(false);
+  });
+});
+
 describe('DateField – onChange', () => {
   it('updates the field value when the date input changes', async () => {
     let formValues: Record<string, any> = {};
