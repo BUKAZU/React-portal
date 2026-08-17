@@ -1,9 +1,10 @@
 import { t, formatNumber } from '../../intl';
 import { escapeHtml } from '../../_lib/utils';
-import { FiltersFormType, HouseType } from '../../types';
+import { FiltersFormType } from '../../types';
+import type { AccommodationResult } from '../../_lib/accommodations';
 
 interface Props {
-  result: HouseType;
+  result: AccommodationResult;
   options: FiltersFormType;
 }
 

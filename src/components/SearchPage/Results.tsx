@@ -1,17 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { t } from '../../intl';
-import { differenceInCalendarDays } from '../../_lib/date_helper';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';
 
-import { HOUSES_PRICE_QUERY, HOUSES_QUERY } from '../../_lib/gql';
 import { ApiError } from '../Error';
-import { useQuery } from '@apollo/client';
 import { FiltersType } from './filters/filter_types';
-import { Parse_EN_US } from '../../_lib/date_helper';
 import { AppContext } from '../AppContext';
-import { HouseType, PortalSiteType } from '../../types';
+import { PortalSiteType } from '../../types';
+import {
+  fetchAccommodations,
+  type AccommodationsResponse
+} from '../../_lib/accommodations';
+import { buildSearchParams } from '../../_lib/search_params';
 
 interface Props {
   filters: FiltersType;
@@ -22,6 +23,11 @@ interface Props {
   activePage: number;
 }
 
+type ResultsState =
+  | { status: 'loading' }
+  | { status: 'error'; error: Error }
+  | { status: 'ready'; response: AccommodationsResponse };
+
 function Results({
   filters,
   PortalSite,
@@ -30,91 +36,87 @@ function Results({
   onPageChange,
   activePage
 }: Props): JSX.Element {
-  const { portalCode } = useContext(AppContext);
+  const { portalCode, apiUrl, locale } = useContext(AppContext);
+  const [state, setState] = useState<ResultsState>({ status: 'loading' });
 
-  let min_nights = null;
-  let requestPrices = false;
-  if (filters.departure_date && filters.arrival_date) {
-    min_nights = differenceInCalendarDays(
-      Parse_EN_US(filters.departure_date),
-      Parse_EN_US(filters.arrival_date)
-    );
-    requestPrices = true;
-  } else if (filters.arrival_date) {
-    min_nights = 1;
-  }
-  const categoryIds = Object.entries(filters as Record<string, unknown>)
-    .filter(([key, val]) => /^category_\d+$/.test(key) && val)
-    .map(([, val]) => Number(val))
-    .filter((n) => !isNaN(n));
-
-  const filterProperties = [...(filters.properties || []), ...categoryIds].map(
-    (e) => JSON.stringify(e)
+  // Serialized so the effect re-runs on a changed filter value, not on every
+  // render of the parent (which rebuilds the filters object).
+  const paramsKey = JSON.stringify(buildSearchParams(filters, { limit, skip }));
+  const params = useMemo(
+    () => JSON.parse(paramsKey) as Record<string, string>,
+    [paramsKey]
   );
 
-  let properties = filterProperties.join(',');
+  useEffect(() => {
+    const controller = new AbortController();
+    setState({ status: 'loading' });
 
-  let variables = {
-    id: portalCode,
-    country_id: filters.countries || null,
-    region_id: filters.regions || null,
-    city_id: filters.cities,
-    persons_min: Number(filters.persons_min) || null,
-    persons_max: Number(filters.persons_max) || null,
-    bedrooms_min: Number(filters.bedrooms_min),
-    bathrooms_min: Number(filters.bathrooms_min),
-    arrival_date: filters.arrival_date,
-    starts_at: filters.arrival_date,
-    ends_at: filters.departure_date,
-    no_nights: Number(min_nights) || null,
-    extra_search: filters.extra_search,
-    properties,
-    weekprice_max: Number(filters.weekprice_max) || null,
-    limit,
-    skip
-  };
+    fetchAccommodations({
+      apiUrl,
+      locale,
+      portalCode,
+      params,
+      signal: controller.signal
+    })
+      .then((response) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        setState({ status: 'ready', response });
+      })
+      .catch((error: unknown) => {
+        // An aborted request was superseded by a newer one; its result is stale.
+        if (controller.signal.aborted) {
+          return;
+        }
+        setState({
+          status: 'error',
+          error:
+            error instanceof Error
+              ? error
+              : new Error('A search request failed')
+        });
+      });
 
-  const { loading, error, data } = useQuery(
-    requestPrices ? HOUSES_PRICE_QUERY : HOUSES_QUERY,
-    { variables }
-  );
+    return () => {
+      controller.abort();
+    };
+  }, [apiUrl, locale, portalCode, params]);
 
-  if (loading)
+  if (state.status === 'loading') {
     return (
       <div>
         <Loading />
       </div>
     );
-  if (error) {
+  }
+
+  if (state.status === 'error') {
     return (
       <div>
-        <ApiError errors={error}></ApiError>
+        <ApiError errors={state.error}></ApiError>
       </div>
     );
   }
 
+  const { items, meta } = state.response;
+
   const Pagination = (
     <Paginator
-      variables={variables}
+      totalCount={meta.total_count}
       activePage={activePage}
       limit={limit}
       onPageChange={onPageChange}
     />
   );
-  const Results: HouseType[] = data.PortalSite.houses;
 
   return (
-    <div
-      id="results"
-      className={
-        PortalSite.options.filtersForm.mode
-      }
-    >
+    <div id="results" className={PortalSite.options.filtersForm.mode}>
       {Pagination}
-      {Results.length === 0 ? (
+      {items.length === 0 ? (
         <div className="bu-noresults">{t('no_results')}</div>
       ) : null}
-      {Results.map((result) => (
+      {items.map((result) => (
         <div
           key={result.id}
           style={{ display: 'contents' }}
