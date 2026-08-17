@@ -17,6 +17,12 @@ jest.mock('../../../_lib/sentry', () => ({
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
+function renderError(props: React.ComponentProps<typeof IntegrationError>) {
+  act(() => {
+    root.render(<IntegrationError {...props} />);
+  });
+}
+
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -24,6 +30,8 @@ beforeEach(() => {
     root = createRoot(container);
   });
   jest.clearAllMocks();
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+  jest.spyOn(console, 'warn').mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -31,22 +39,45 @@ afterEach(() => {
     root.unmount();
   });
   container.remove();
+  jest.restoreAllMocks();
 });
 
 describe('IntegrationError', () => {
   it('renders nothing when all props are valid', () => {
-    act(() => {
-      root.render(<IntegrationError portalCode="VALID" locale="en" />);
-    });
+    renderError({ portalCode: 'VALID', locale: 'en' });
 
     expect(container.innerHTML).toBe('');
     expect(sentryLib.reportMessage).not.toHaveBeenCalled();
   });
 
+  it('does not show an error for BCP-47 locales', () => {
+    renderError({ portalCode: 'VALID', locale: 'nl-NL' });
+
+    expect(container.querySelector('h2')).toBeNull();
+    expect(sentryLib.reportMessage).not.toHaveBeenCalled();
+  });
+
+  it('warns and falls back gracefully for unsupported locales', () => {
+    renderError({ portalCode: 'VALID', locale: 'pt-BR' });
+
+    expect(container.querySelector('h2')).toBeNull();
+    expect(console.warn).toHaveBeenCalledWith(
+      "Locale 'pt-BR' is not supported, defaulting to English"
+    );
+    expect(sentryLib.reportMessage).not.toHaveBeenCalled();
+  });
+
+  it('warns for unsupported locales that start with "en"', () => {
+    renderError({ portalCode: 'VALID', locale: 'eng' });
+
+    expect(container.querySelector('h2')).toBeNull();
+    expect(console.warn).toHaveBeenCalledWith(
+      "Locale 'eng' is not supported, defaulting to English"
+    );
+  });
+
   it('renders an error and reports to Sentry when portalCode is missing', () => {
-    act(() => {
-      root.render(<IntegrationError portalCode="" locale="en" />);
-    });
+    renderError({ portalCode: '', locale: 'en' });
 
     expect(container.querySelector('h2')).not.toBeNull();
     expect(sentryLib.reportMessage).toHaveBeenCalledWith(
@@ -54,21 +85,8 @@ describe('IntegrationError', () => {
     );
   });
 
-  it('renders an error and reports to Sentry when locale is invalid', () => {
-    act(() => {
-      root.render(<IntegrationError portalCode="VALID" locale="xx" />);
-    });
-
-    expect(container.querySelector('h2')).not.toBeNull();
-    expect(sentryLib.reportMessage).toHaveBeenCalledWith('Invalid locale');
-  });
-
   it('renders an error and reports to Sentry when pageType is invalid', () => {
-    act(() => {
-      root.render(
-        <IntegrationError portalCode="VALID" locale="en" pageType="unknown" />
-      );
-    });
+    renderError({ portalCode: 'VALID', locale: 'en', pageType: 'unknown' });
 
     expect(container.querySelector('h2')).not.toBeNull();
     expect(sentryLib.reportMessage).toHaveBeenCalledWith(
@@ -76,24 +94,11 @@ describe('IntegrationError', () => {
     );
   });
 
-  it('reports each distinct error message to Sentry separately', () => {
-    act(() => {
-      root.render(<IntegrationError portalCode="" locale="xx" />);
-    });
-
-    expect(sentryLib.reportMessage).toHaveBeenCalledTimes(2);
-  });
-
   it('does not re-report to Sentry when the same errors are re-rendered', () => {
-    act(() => {
-      root.render(<IntegrationError portalCode="" locale="en" />);
-    });
+    renderError({ portalCode: '', locale: 'en' });
     expect(sentryLib.reportMessage).toHaveBeenCalledTimes(1);
 
-    // Re-render with identical invalid props — effect must not fire again
-    act(() => {
-      root.render(<IntegrationError portalCode="" locale="en" />);
-    });
+    renderError({ portalCode: '', locale: 'en' });
     expect(sentryLib.reportMessage).toHaveBeenCalledTimes(1);
   });
 });

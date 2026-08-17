@@ -11,13 +11,14 @@ import { AppContext } from './components/AppContext';
 import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
 import { loadLocale } from './_lib/date_helper';
+import { normalizeLocale } from './_lib/locale';
 import { initSentry, setSentryContext } from './_lib/sentry';
 
 interface Props {
   portalCode: string;
   objectCode: string;
   pageType?: string;
-  locale?: LocaleType;
+  locale?: string;
   filters?: FiltersType;
   api_url?: string;
   sentryDsn?: string;
@@ -32,7 +33,7 @@ function Portal({
   api_url = 'https://api.bukazu.com/graphql',
   sentryDsn
 }: Props): JSX.Element {
-  const resolvedLocale: LocaleType = locale ?? 'en';
+  const resolvedLocale: LocaleType = normalizeLocale(locale);
 
   // All hooks must be called unconditionally before any conditional return
   // (React Rules of Hooks). IntegrationError is called as a plain function
@@ -84,11 +85,7 @@ function Portal({
         }}
       >
         <div className="bu-portal">
-          <App
-            pageType={pageType}
-            locale={resolvedLocale}
-            filters={filters}
-          />
+          <App pageType={pageType} locale={resolvedLocale} filters={filters} />
         </div>
       </AppContext.Provider>
     </ApolloProvider>
