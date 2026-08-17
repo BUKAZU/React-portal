@@ -1,6 +1,11 @@
 import { LocaleType } from '../types';
 
-const SUPPORTED_LOCALES = ['en', 'nl', 'de', 'fr', 'es', 'it'] as const;
+export const SUPPORTED_LOCALES = ['en', 'nl', 'de', 'fr', 'es', 'it'] as const;
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
+
+export function isSupportedLocale(locale: string): locale is SupportedLocale {
+  return (SUPPORTED_LOCALES as readonly string[]).includes(locale);
+}
 
 /**
  * Normalizes a locale string to one of the supported locale codes.
@@ -11,9 +16,8 @@ const SUPPORTED_LOCALES = ['en', 'nl', 'de', 'fr', 'es', 'it'] as const;
 export function normalizeLocale(locale: string | null | undefined): LocaleType {
   if (!locale) return 'en';
   const lang = locale.split(/[-_]/)[0].toLowerCase();
-  if ((SUPPORTED_LOCALES as readonly string[]).includes(lang)) {
+  if (isSupportedLocale(lang)) {
     return lang as LocaleType;
   }
   return 'en';
 }
-

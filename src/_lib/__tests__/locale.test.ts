@@ -1,4 +1,4 @@
-import { normalizeLocale } from '../locale';
+import { isSupportedLocale, normalizeLocale } from '../locale';
 
 describe('normalizeLocale', () => {
   it('returns supported locale codes unchanged', () => {
@@ -8,6 +8,14 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('fr')).toBe('fr');
     expect(normalizeLocale('es')).toBe('es');
     expect(normalizeLocale('it')).toBe('it');
+  });
+
+  describe('isSupportedLocale', () => {
+    it('returns true only for supported locales', () => {
+      expect(isSupportedLocale('en')).toBe(true);
+      expect(isSupportedLocale('nl')).toBe(true);
+      expect(isSupportedLocale('pt')).toBe(false);
+    });
   });
 
   it('normalizes BCP-47 codes with a hyphen-separated region subtag', () => {
@@ -45,4 +53,3 @@ describe('normalizeLocale', () => {
     expect(normalizeLocale('')).toBe('en');
   });
 });
-

@@ -30,11 +30,14 @@ export default function IntegrationError({
   }
 
   if (!locale) {
-    console.warn('No locale is set default to English');
+    console.warn('No locale is set; defaulting to English.');
   } else {
     const normalized = normalizeLocale(locale);
-    if (normalized === 'en' && !locale.toLowerCase().startsWith('en')) {
-      console.warn(`Locale '${locale}' is not supported, defaulting to English`);
+    const originalLanguage = locale.toLowerCase().split(/[-_]/)[0];
+    if (normalized === 'en' && originalLanguage !== 'en') {
+      console.warn(
+        `Locale '${locale}' is not supported, defaulting to English`
+      );
     }
   }
 

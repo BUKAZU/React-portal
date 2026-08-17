@@ -1,14 +1,9 @@
+import { isSupportedLocale, type SupportedLocale } from './locale';
+
 export type CountryEntry = {
   name: string;
   alpha2: string;
 };
-
-const SUPPORTED_LOCALES = ['en', 'nl', 'de', 'fr', 'es', 'it'] as const;
-type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
-
-function isSupportedLocale(locale: string): locale is SupportedLocale {
-  return (SUPPORTED_LOCALES as readonly string[]).includes(locale);
-}
 
 const cache = new Map<SupportedLocale, CountryEntry[]>();
 

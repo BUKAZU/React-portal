@@ -52,12 +52,20 @@ describe('IntegrationError', () => {
   });
 
   it('shows an error for an invalid pageType', () => {
-    renderError({ portalCode: 'abc123', pageType: 'invalid-page', locale: 'en' });
+    renderError({
+      portalCode: 'abc123',
+      pageType: 'invalid-page',
+      locale: 'en'
+    });
     expect(container.querySelector('h2')).not.toBeNull();
   });
 
   it('does NOT show an error for pageType "reviews"', () => {
-    const result = renderError({ portalCode: 'abc123', pageType: 'reviews', locale: 'en' });
+    const result = renderError({
+      portalCode: 'abc123',
+      pageType: 'reviews',
+      locale: 'en'
+    });
     expect(result).toBe(false);
   });
 
@@ -101,5 +109,12 @@ describe('IntegrationError', () => {
     expect(console.warn).toHaveBeenCalled();
     expect(container.querySelector('h2')).toBeNull();
   });
-});
 
+  it('warns for unsupported locales that start with "en"', () => {
+    renderError({ portalCode: 'abc123', locale: 'eng' });
+    expect(console.warn).toHaveBeenCalledWith(
+      "Locale 'eng' is not supported, defaulting to English"
+    );
+    expect(container.querySelector('h2')).toBeNull();
+  });
+});
