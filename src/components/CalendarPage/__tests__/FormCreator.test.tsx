@@ -10,19 +10,42 @@ import { AppContext } from '../../AppContext';
 import { HouseType, PortalSiteType } from '../../../types';
 import { BuDate } from '../../../types';
 
-// Mock @apollo/client to avoid real GraphQL calls
-jest.mock('@apollo/client', () => ({
-  useMutation: jest.fn(() => [
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]),
-  gql: (query: any) => query
+// Mock the bookings REST client to avoid real HTTP calls
+jest.mock('../../../_lib/create_booking', () => ({
+  ...jest.requireActual('../../../_lib/create_booking'),
+  createBooking: jest.fn()
 }));
+import { createBooking } from '../../../_lib/create_booking';
 
-// Mock queries module so gql template literal is passable
-jest.mock('../../../_lib/gql', () => ({
-  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
-}));
+const mockCreateBooking = createBooking as jest.Mock;
+
+const bookingResponse = {
+  booking_nr: 'B2600123',
+  status: 'new',
+  is_option: false,
+  arrival_date: '2025-07-01',
+  departure_date: '2025-07-08',
+  adults: 2,
+  children: 0,
+  babies: 0,
+  language: 'en',
+  payment_url: null,
+  redirect_url: null,
+  success_message: 'Thanks',
+  portal_code: 'TEST',
+  house_code: 'HOUSE1',
+  first_name: null,
+  last_name: null,
+  email: null
+};
+
+function submitForm() {
+  return act(async () => {
+    (
+      container.querySelector('button[type="submit"]') as HTMLButtonElement
+    ).click();
+  });
+}
 
 // Mock Tracking to avoid cookie/fetch side-effects
 jest.mock('../../../_lib/Tracking', () => ({
@@ -39,13 +62,16 @@ jest.mock('../formParts/OptionalCosts', () => () => (
   <div data-testid="optional-costs" />
 ));
 
-let lastOptionalBookingFieldsProps: { bookingFields?: any[] } = {};
+let lastOptionalBookingFieldsProps: {
+  bookingFields?: any[];
+  errors?: Record<string, string | undefined>;
+} = {};
 jest.mock('../formParts/OptionalBookingFields', () => ({
   __esModule: true,
   default: (props: any) => {
     lastOptionalBookingFieldsProps = props;
     return <div data-testid="optional-booking-fields" />;
-  },
+  }
 }));
 jest.mock('../Summary', () => () => <div data-testid="summary" />);
 jest.mock('../formParts/SuccessMessage', () => () => (
@@ -188,7 +214,12 @@ function renderFormCreator(
   act(() => {
     root.render(
       <AppContext.Provider
-        value={{ locale: 'en', portalCode: 'TEST', objectCode: 'HOUSE1' }}
+        value={{
+          locale: 'en',
+          portalCode: 'TEST',
+          objectCode: 'HOUSE1',
+          apiUrl: 'https://api.bukazu.com/graphql'
+        }}
       >
         <CalendarContext.Provider value={calendarState as any}>
           <CalendarContextDispatch.Provider value={mockDispatch}>
@@ -288,56 +319,58 @@ describe('FormCreator', () => {
     ).not.toBeNull();
   });
 
-  it('should show "Creating booking..." when loading is true', () => {
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      jest.fn(),
-      { loading: true, error: null, data: null, reset: jest.fn() }
-    ]);
+  it('should show "Creating booking..." while the request is in flight', async () => {
+    mockCreateBooking.mockReturnValue(new Promise(() => undefined));
 
     renderFormCreator();
+    await submitForm();
 
     const loadingMsg = container.querySelector('.return-message');
     expect(loadingMsg).not.toBeNull();
     expect(loadingMsg?.textContent).toBe('Creating booking...');
   });
 
-  it('should render the error modal when a mutation error occurs', () => {
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      jest.fn(),
-      {
-        loading: false,
-        error: { message: 'Network error' },
-        data: null,
-        reset: jest.fn()
-      }
-    ]);
+  it('should render the error modal when the request fails', async () => {
+    mockCreateBooking.mockRejectedValue(new Error('Network error'));
 
     renderFormCreator();
+    await submitForm();
 
     expect(container.querySelector('[data-testid="modal"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
   });
 
-  it('should render the success modal when booking data is returned', () => {
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      jest.fn(),
-      {
-        loading: false,
-        error: null,
-        data: { createBooking: { id: 42 } },
-        reset: jest.fn()
-      }
-    ]);
+  it('should render the success modal when a booking is returned', async () => {
+    mockCreateBooking.mockResolvedValue(bookingResponse);
 
     renderFormCreator();
+    await submitForm();
 
     expect(container.querySelector('[data-testid="modal"]')).not.toBeNull();
     expect(
       container.querySelector('[data-testid="success-message"]')
     ).not.toBeNull();
+  });
+
+  it('should surface API validation errors on the matching form fields', async () => {
+    const { CreateBookingError } = jest.requireActual(
+      '../../../_lib/create_booking'
+    );
+    mockCreateBooking.mockRejectedValue(
+      new CreateBookingError(422, ['moet opgegeven zijn'], {
+        first_name: ['moet opgegeven zijn'],
+        'extra_fields.date_of_birth': ['moet opgegeven zijn']
+      })
+    );
+
+    renderFormCreator();
+    await submitForm();
+
+    expect(lastOptionalBookingFieldsProps.errors).toMatchObject({
+      first_name: 'moet opgegeven zijn',
+      'extra_fields.date_of_birth': 'moet opgegeven zijn'
+    });
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
   });
 
   it('should dispatch "return" action when the return-to-calendar link is clicked', () => {
@@ -367,25 +400,37 @@ describe('FormCreator', () => {
   });
 
   it('should not submit when validation fails', async () => {
-    const mockCreateBooking = jest.fn().mockResolvedValue({});
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      mockCreateBooking,
-      { loading: false, error: null, data: null, reset: jest.fn() }
-    ]);
+    mockCreateBooking.mockResolvedValue(bookingResponse);
 
     renderFormCreator(mockHouse, mockPortalSite, {
       ...mockCalendarState,
       persons: 0
     });
 
-    await act(async () => {
-      (
-        container.querySelector('button[type="submit"]') as HTMLButtonElement
-      ).click();
-    });
+    await submitForm();
 
     expect(mockCreateBooking).not.toHaveBeenCalled();
+  });
+
+  it('should post the REST payload built from the form values', async () => {
+    mockCreateBooking.mockResolvedValue(bookingResponse);
+
+    renderFormCreator();
+    await submitForm();
+
+    expect(mockCreateBooking).toHaveBeenCalledWith({
+      apiUrl: 'https://api.bukazu.com/graphql',
+      locale: 'en',
+      payload: expect.objectContaining({
+        object_code: 'HOUSE1',
+        portal_code: 'TEST',
+        starts_at: '2025-07-01',
+        ends_at: '2025-07-08',
+        language: 'en',
+        is_option: false,
+        session_identifier: 'test-session-id'
+      })
+    });
   });
 
   it('should render the form-content section', () => {

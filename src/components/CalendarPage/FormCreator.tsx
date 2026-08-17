@@ -1,7 +1,11 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react';
-import { useMutation } from '@apollo/client';
 import { t } from '../../intl';
-import { CREATE_BOOKING_MUTATION } from '../../_lib/gql';
+import {
+  createBooking,
+  CreateBookingError,
+  CreateBookingResponse
+} from '../../_lib/create_booking';
+import { buildBookingPayload } from '../../_lib/booking_payload';
 import { getSessionIdentifier } from '../../_lib/Tracking';
 import { ApiError } from '../Error';
 import Modal from '../Modal';
@@ -75,7 +79,7 @@ function createTouchedState(
 
 function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const { persons, arrivalDate, departureDate } = useContext(CalendarContext);
-  const { locale, portalCode, objectCode } = useContext(AppContext);
+  const { locale, portalCode, objectCode, apiUrl } = useContext(AppContext);
   const dispatch = useContext(CalendarContextDispatch);
   const { options, bookingFormConfiguration } = PortalSite;
   const bookingFields = (options.bookingFields as SingleBookingFieldType[]).map(
@@ -127,12 +131,25 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const [touched, setTouched] = useState<BookingFormTouched>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [createBooking, { loading, error, data, reset }] = useMutation(
-    CREATE_BOOKING_MUTATION
-  );
+  const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<CreateBookingResponse | null>(null);
+  // Validation errors returned by the API, keyed by booking field id.
+  const [serverErrors, setServerErrors] = useState<BookingFormErrors>({});
+
+  const reset = useCallback(() => {
+    setError(null);
+    setServerErrors({});
+  }, []);
 
   const setFieldValue = useCallback(
     (name: string, value: unknown) => {
+      // A server-side error for this field is stale as soon as it is edited.
+      setServerErrors((currentErrors) =>
+        currentErrors[name] === undefined
+          ? currentErrors
+          : { ...currentErrors, [name]: undefined }
+      );
+
       setValues((currentValues) => {
         let nextValues = setByString(currentValues, name, value);
 
@@ -157,8 +174,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
   const sessionIdentifier = getSessionIdentifier();
   const errors: BookingFormErrors = useMemo(
-    () => validateForm(values, house, bookingFields),
-    [bookingFields, house, values]
+    () => ({ ...serverErrors, ...validateForm(values, house, bookingFields) }),
+    [bookingFields, house, serverErrors, values]
   );
 
   const handleSubmit = useCallback(
@@ -174,34 +191,28 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
       }
 
       setIsSubmitting(true);
+      setError(null);
+      setServerErrors({});
 
       try {
-        const variables = {
-          ...values,
-          is_option: JSON.parse(values.is_option),
-          house_code: objectCode,
-          portal_code: portalCode,
-          comment: values.comment || '',
-          language: locale,
-          country: values.country.toUpperCase(),
-          adults: Number(values.adults),
-          children: Number(values.children) || 0,
-          babies: Number(values.babies) || 0,
-          discount: Number(values.discount) || 0,
-          cancel_insurance: Number(values.cancel_insurance) || 0,
-          arrival_date: values.arrivalDate.date,
-          departure_date: values.departureDate.date,
-          costs: JSON.stringify(values.costs),
-          extra_fields: JSON.stringify(values.extra_fields),
-          sessionIdentifier
-        };
+        const booking = await createBooking({
+          apiUrl,
+          locale,
+          payload: buildBookingPayload({
+            values,
+            objectCode,
+            portalCode,
+            locale,
+            sessionIdentifier
+          })
+        });
 
-        await createBooking({ variables });
+        setData(booking);
 
         const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
-        const localeRedirectUrl = redirect_urls[locale];
-        if (localeRedirectUrl && localeRedirectUrl !== '') {
-          window.location.href = localeRedirectUrl;
+        const redirectUrl = booking.redirect_url || redirect_urls[locale];
+        if (redirectUrl && redirectUrl !== '') {
+          window.location.href = redirectUrl;
         } else {
           setTimeout(() => {
             dispatch({
@@ -209,14 +220,33 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             });
           }, 15000);
         }
+      } catch (submitError) {
+        setError(
+          submitError instanceof Error
+            ? submitError
+            : new Error('The booking could not be created')
+        );
+
+        if (
+          submitError instanceof CreateBookingError &&
+          submitError.fieldErrors
+        ) {
+          const fieldErrors: BookingFormErrors = {};
+          for (const [field, messages] of Object.entries(
+            submitError.fieldErrors
+          )) {
+            fieldErrors[field] = messages.join(' ');
+          }
+          setServerErrors(fieldErrors);
+        }
       } finally {
         setIsSubmitting(false);
       }
     },
     [
+      apiUrl,
       bookingFields,
       bookingFormConfiguration,
-      createBooking,
       dispatch,
       house,
       locale,
@@ -239,7 +269,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
       }}
     >
       <form className="form" onSubmit={handleSubmit}>
-        {loading && <div className="return-message">Creating booking...</div>}
+        {isSubmitting && (
+          <div className="return-message">Creating booking...</div>
+        )}
         {error && (
           <Modal show={true} onClose={reset}>
             <ApiError errors={error} />
