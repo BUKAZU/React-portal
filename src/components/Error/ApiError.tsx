@@ -39,7 +39,14 @@ function getErrorMessages(source: ApiErrorSource): readonly string[] {
     return (source as readonly GraphQLError[]).map((err) => err.message);
   }
   if ('graphQLErrors' in source) {
-    return source.graphQLErrors.map((err) => err.message);
+    const graphQlMessages = source.graphQLErrors.map((err) => err.message);
+    if (graphQlMessages.length > 0) return graphQlMessages;
+
+    const message =
+      'message' in source && typeof source.message === 'string'
+        ? source.message
+        : '';
+    return message ? [message] : [];
   }
   if (hasMessages(source)) {
     return source.messages;
