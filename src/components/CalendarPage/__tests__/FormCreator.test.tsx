@@ -38,9 +38,15 @@ jest.mock('../formParts/insurances', () => ({
 jest.mock('../formParts/OptionalCosts', () => () => (
   <div data-testid="optional-costs" />
 ));
-jest.mock('../formParts/OptionalBookingFields', () => () => (
-  <div data-testid="optional-booking-fields" />
-));
+
+let lastOptionalBookingFieldsProps: { bookingFields?: any[] } = {};
+jest.mock('../formParts/OptionalBookingFields', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    lastOptionalBookingFieldsProps = props;
+    return <div data-testid="optional-booking-fields" />;
+  },
+}));
 jest.mock('../Summary', () => () => <div data-testid="summary" />);
 jest.mock('../formParts/SuccessMessage', () => () => (
   <div data-testid="success-message" />
@@ -51,7 +57,7 @@ jest.mock('../../Modal', () => ({ children, onClose, buttonText }: any) => (
 jest.mock('../../Error', () => ({
   ApiError: () => <div data-testid="api-error" />
 }));
-jest.mock('../formParts/DefaultBookingFields', () => []);
+jest.mock('../formParts/RequiredBookingFields', () => []);
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -113,60 +119,52 @@ const mockHouse: HouseType = {
 
 const mockPortalSite: PortalSiteType = {
   portal_code: 'TEST',
-  categories: [],
   options: {
     filtersForm: {
-      showCity: false,
-      showRegion: false,
-      showCountry: false,
-      showPersons: false,
-      showBathrooms: false,
-      showBedrooms: false,
-      showPrice: false,
-      showRating: false,
-      categories: [],
+      show_city: false,
+      show_region: false,
+      show_country: false,
+      show_persons: false,
+      show_bathrooms: false,
+      show_bedrooms: false,
+      show_price: false,
+      show_rating: false,
       no_results: 20,
       location: 'left',
       mode: 'grid',
       show: true,
-      fixedMobile: false
+      fixed_mobile: false
     },
     bookingFields: [],
     bookingForm: {
-      adults_from: 18,
-      children: false,
-      children_from: 0,
-      children_til: 12,
-      babies: false,
-      babies_til: 2,
+      adults_from_age: 18,
+      children_allowed: false,
+      children_from_age: 0,
+      children_till_age: 12,
+      babies_allowed: false,
+      babies_till_age: 2,
       showDiscountCode: false,
       redirectUrl: null,
-      redirectUrlEn: null,
-      redirectUrlNl: null,
-      redirectUrlDe: null,
-      redirectUrlFr: null,
-      redirectUrlEs: null,
-      redirectUrlIt: null
+      redirectUrl_en: null,
+      redirectUrl_nl: null,
+      redirectUrl_de: null,
+      redirectUrl_fr: null,
+      redirectUrl_es: null,
+      redirectUrl_it: null
     }
   },
   bookingFormConfiguration: {
-    adultsFromAge: 18,
-    babiesAllowed: false,
-    babiesTillAge: 2,
-    childrenAllowed: false,
-    childrenFromAge: 3,
-    childrenTillAge: 17,
-    languageSelectorVisible: false,
-    redirectUrl: '',
-    redirectUrlNl: '',
-    redirectUrlEn: '',
-    redirectUrlDe: '',
-    redirectUrlFr: '',
-    redirectUrlEs: '',
-    redirectUrlIt: '',
-    showDiscountCode: false,
-    showMonthsAmount: 2,
-    showMonthsInARowAmount: 2
+    adults_from_age: 18,
+    babies_allowed: false,
+    babies_till_age: 2,
+    children_allowed: false,
+    children_from_age: 3,
+    children_till_age: 17,
+    language_selector_visible: false,
+    redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
+    show_discount_code: false,
+    show_months_amount: 2,
+    show_months_in_a_row_amount: 2
   },
   max_persons: 10,
   name: 'Test Portal',
@@ -368,6 +366,28 @@ describe('FormCreator', () => {
     expect(button?.disabled).toBe(false);
   });
 
+  it('should not submit when validation fails', async () => {
+    const mockCreateBooking = jest.fn().mockResolvedValue({});
+    const { useMutation } = require('@apollo/client');
+    (useMutation as jest.Mock).mockReturnValue([
+      mockCreateBooking,
+      { loading: false, error: null, data: null, reset: jest.fn() }
+    ]);
+
+    renderFormCreator(mockHouse, mockPortalSite, {
+      ...mockCalendarState,
+      persons: 0
+    });
+
+    await act(async () => {
+      (
+        container.querySelector('button[type="submit"]') as HTMLButtonElement
+      ).click();
+    });
+
+    expect(mockCreateBooking).not.toHaveBeenCalled();
+  });
+
   it('should render the form-content section', () => {
     renderFormCreator();
 
@@ -408,5 +428,21 @@ describe('FormCreator', () => {
       s.textContent?.toLowerCase().includes('option')
     );
     expect(optionSpan).toBeUndefined();
+  });
+
+  it('should normalize a bookingField id of "telephone" to "phonenumber" before passing it to child components', () => {
+    const portalSiteWithTelephone: PortalSiteType = {
+      ...mockPortalSite,
+      options: {
+        ...mockPortalSite.options,
+        bookingFields: [{ id: 'telephone', required: false, type: 'text' }]
+      }
+    } as any;
+
+    renderFormCreator(mockHouse, portalSiteWithTelephone);
+
+    expect(lastOptionalBookingFieldsProps.bookingFields).toEqual([
+      { id: 'phonenumber', required: false, type: 'text' }
+    ]);
   });
 });

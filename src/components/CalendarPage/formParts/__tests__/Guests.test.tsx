@@ -1,7 +1,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import Guests from '../Guests';
 import { BookingFormConfigurationType, HouseType } from '../../../../types';
 
@@ -35,23 +34,17 @@ const baseHouse: HouseType = {
 } as any;
 
 const baseConfig: BookingFormConfigurationType = {
-  adultsFromAge: 18,
-  babiesAllowed: true,
-  babiesTillAge: 2,
-  childrenAllowed: true,
-  childrenFromAge: 3,
-  childrenTillAge: 17,
-  languageSelectorVisible: false,
-  redirectUrl: '',
-  redirectUrlNl: '',
-  redirectUrlEn: '',
-  redirectUrlDe: '',
-  redirectUrlFr: '',
-  redirectUrlEs: '',
-  redirectUrlIt: '',
-  showDiscountCode: false,
-  showMonthsAmount: 2,
-  showMonthsInARowAmount: 2
+  adults_from_age: 18,
+  babies_allowed: true,
+  babies_till_age: 2,
+  children_allowed: true,
+  children_from_age: 3,
+  children_till_age: 17,
+  language_selector_visible: false,
+  redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
+  show_discount_code: false,
+  show_months_amount: 2,
+  show_months_in_a_row_amount: 2
 };
 
 let container: HTMLDivElement;
@@ -77,37 +70,43 @@ afterEach(() => {
 function renderGuests(configPatch: Partial<BookingFormConfigurationType> = {}) {
   const config = { ...baseConfig, ...configPatch };
   act(() => {
-    root.render(
-      <Formik initialValues={{}} onSubmit={() => {}}>
-        <Guests bookingFormConfiguration={config} house={baseHouse} />
-      </Formik>
-    );
+    root.render(<Guests bookingFormConfiguration={config} house={baseHouse} />);
   });
 }
 
 describe('Guests', () => {
   it('always renders the adults NumberSelect', () => {
     renderGuests();
-    expect(container.querySelector('[data-testid="number-select-adults"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="number-select-adults"]')
+    ).not.toBeNull();
   });
 
   it('renders children NumberSelect when childrenAllowed is true', () => {
-    renderGuests({ childrenAllowed: true });
-    expect(container.querySelector('[data-testid="number-select-children"]')).not.toBeNull();
+    renderGuests({ children_allowed: true });
+    expect(
+      container.querySelector('[data-testid="number-select-children"]')
+    ).not.toBeNull();
   });
 
   it('does not render children NumberSelect when childrenAllowed is false', () => {
-    renderGuests({ childrenAllowed: false });
-    expect(container.querySelector('[data-testid="number-select-children"]')).toBeNull();
+    renderGuests({ children_allowed: false });
+    expect(
+      container.querySelector('[data-testid="number-select-children"]')
+    ).toBeNull();
   });
 
   it('renders babies NumberSelect when babiesAllowed is true', () => {
-    renderGuests({ babiesAllowed: true });
-    expect(container.querySelector('[data-testid="number-select-babies"]')).not.toBeNull();
+    renderGuests({ babies_allowed: true });
+    expect(
+      container.querySelector('[data-testid="number-select-babies"]')
+    ).not.toBeNull();
   });
 
   it('does not render babies NumberSelect when babiesAllowed is false', () => {
-    renderGuests({ babiesAllowed: false });
-    expect(container.querySelector('[data-testid="number-select-babies"]')).toBeNull();
+    renderGuests({ babies_allowed: false });
+    expect(
+      container.querySelector('[data-testid="number-select-babies"]')
+    ).toBeNull();
   });
 });

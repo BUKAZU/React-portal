@@ -26,9 +26,9 @@ export default function List({
     }
   };
 
-  const handleChange = ( value: string ) => {
-    onChange(field.id, value)
-  }
+  const handleChange = (value: string | null) => {
+    onChange(field.id, value);
+  };
 
   if (['cities', 'regions'].includes(field.id)) {
     return (
@@ -49,8 +49,8 @@ export default function List({
               value={opt.id}
               disabled={countries ? !countries.includes(opt.country_id) : false}
               checked={value === opt.id}
-              onBlur={handleChange}
-              onChange={handleChange}
+              onBlur={(e) => handleChange(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
             />
             <label htmlFor={opt.id}>{opt.name}</label>
           </li>
@@ -65,13 +65,13 @@ export default function List({
             <input
               name={field.id}
               type="checkbox"
-              id={opt.id}
+              id={String(opt.id)}
               value={opt.id}
-              checked={value === opt.id}
-              onBlur={handleChange}
+              checked={value === String(opt.id)}
+              onBlur={(e) => handleChange(e.target.value)}
               onChange={updateList}
             />
-            <label htmlFor={opt.id}>{opt.name}</label>
+            <label htmlFor={String(opt.id)}>{opt.name}</label>
           </li>
         ))}
       </ul>

@@ -1,5 +1,5 @@
 #bukazu-app {
-  @media screen and (min-width: 1400px) {
+  @container (min-width: 1400px) {
     div.calendar-container {
       display: flex;
       align-items: flex-start;
@@ -23,7 +23,7 @@
       }
     }
   }
-  @media screen and (max-width: 993px) {
+  @container (max-width: 993px) {
     .price-overview {
       .calendar--picker {
         flex-direction: column;
@@ -41,7 +41,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    @media screen and (max-width: 992px) {
+    @container (max-width: 992px) {
       /* flex-direction: column; */
       .col,
       .bu-calendar-col {
@@ -71,12 +71,14 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-  .bu-smaller .calendar {
-    width: 100%;
-  }
-  .bu-smaller .calendar .col,
-  .bu-smaller .calendar .bu-calendar-col {
-    padding: 16px 4px;
+  @container (max-width: 875px) {
+    .calendar {
+      width: 100%;
+    }
+    .calendar .col,
+    .calendar .bu-calendar-col {
+      padding: 16px 4px;
+    }
   }
   .bu-calendar,
   .calendar {
@@ -190,13 +192,13 @@
     display: flex;
     flex-wrap: wrap;
     padding: 8px 16px;
-    @media screen and (max-width: 992px) {
+    @container (max-width: 992px) {
       flex-direction: column;
     }
     & > div {
       display: flex;
       padding: 0 16px;
-      @media screen and (max-width: 992px) {
+      @container (max-width: 992px) {
         padding: 4px 8px;
       }
     }
@@ -239,7 +241,7 @@
         font-size: 18px;
         border-bottom: 1px solid #ccc;
         padding: 4px 0;
-        @media screen and (max-width: 1200px) {
+        @container (max-width: 1200px) {
           font-size: 16px;
         }
       }
@@ -250,7 +252,7 @@
         width: 100%;
         justify-content: center;
         align-items: center;
-        @media screen and (max-width: 1200px) {
+        @container (max-width: 1200px) {
           font-size: 14px;
         }
       }

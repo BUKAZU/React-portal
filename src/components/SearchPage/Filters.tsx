@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import Field from './Field';
 import Reload from '../icons/Reload.svg';
 import { t } from '../../intl';
-import { defaultFilter } from './filters/helper';
 import { FiltersType } from './filters/filter_types';
-import { PortalOptions, PortalSiteType } from '../../types';
+import { PortalOptions } from '../../types';
+import type { AppPortalSite } from '../loadPortalSite';
 
 interface Props {
   filters: FiltersType;
   onFilterChange: Function;
-  PortalSite: PortalSiteType;
+  PortalSite: AppPortalSite;
   options: PortalOptions;
 }
 
@@ -19,26 +19,22 @@ function Filters({
   PortalSite,
   options
 }: Props): JSX.Element {
-  function saveFilters(field, input) {
-    let newFilters: any = filters;
+  function saveFilters(field: string, input: unknown) {
+    const newFilters: Record<string, unknown> = { ...filters };
     newFilters[field] = input;
     onFilterChange(newFilters);
   }
 
   const [show, setShow] = useState(false);
 
-  const searchFields = options.searchFields || defaultFilter;
-  let fixed = options.filtersForm
-    ? options.filtersForm.fixedMobile
-      ? 'fixed-mobile'
-      : null
-    : null;
+  const searchFields = options.searchFields ?? [];
 
-  let filterClass = options.filtersForm
-    ? options.filtersForm.show
+  let fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : null;
+
+  let filterClass =
+    (options.filtersForm.show ?? true)
       ? `filters filters-${options.filtersForm.location}`
-      : 'filters-hidden'
-    : 'filters';
+      : 'filters-hidden';
 
   let showOn = show && 'showOnMobile';
 
@@ -53,11 +49,7 @@ function Filters({
       <div className={`${filterClass} ${fixed} ${showOn}`}>
         <button
           onClick={() => {
-            let filters = {};
-            for (var property in filters) {
-              filters[property] = '';
-            }
-            onFilterChange(filters);
+            onFilterChange({});
           }}
           className="filters-reload"
         >
@@ -72,13 +64,13 @@ function Filters({
               }}
               htmlFor={field.id}
             >
-              {PortalSite[`${field.id}_label`]}
+              {field.label}
             </label>
             <Field
               field={field}
               PortalSite={PortalSite}
               filters={filters}
-              value={filters[field.id]}
+              value={(filters as Record<string, string>)[field.id] ?? ''}
               onFilterChange={saveFilters}
             />
           </div>

@@ -173,5 +173,7 @@
   "can_only_take_insurance_in_de_be_nl": "Sie können sich nur versichern, wenn Sie in den Niederlanden, Deutschland oder Belgien wohnen.",
   "price_from": "Preis von",
   "reviews": "Bewertungen",
-  "reviews_note_link": "Das BUKAZU Buchungssystem unterhält unabhängige Bewertungen. Diese Bewertungen werden nach dem Aufenthalt der Gäste in der Unterkunft gesammelt. Es gibt eine Überprüfung der Kombination von Buchungsnummer und E-Mail-Adresse."
+  "reviews_note_link": "Das BUKAZU Buchungssystem unterhält unabhängige Bewertungen. Diese Bewertungen werden nach dem Aufenthalt der Gäste in der Unterkunft gesammelt. Es gibt eine Überprüfung der Kombination von Buchungsnummer und E-Mail-Adresse.",
+  "load_more_reviews": "Mehr Bewertungen laden",
+  "review_response_label": "Antwort des Gastgebers"
 }

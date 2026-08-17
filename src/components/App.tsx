@@ -1,18 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Loading from './icons/loading.svg';
-
-import { PORTAL_BASE_QUERY, PORTAL_SEARCH_QUERY } from '../_lib/gql';
 
 import SearchPage from './SearchPage/SearchPage';
 import CalendarPage from './CalendarPage/CalendarPage';
-import ReviewsPage from './ReviewsPage/ReviewsPage';
+import ReviewsPageMount from './ReviewsPage/ReviewsPageMount';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
-import { useQuery } from '@apollo/client';
+import { GraphQLError } from 'graphql';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
+import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
+import { loadTranslations } from '../intl';
 
 interface Props {
   pageType?: string;
@@ -20,50 +20,72 @@ interface Props {
   locale: string;
 }
 
+type AppState =
+  | { status: 'loading' }
+  | { status: 'error'; error: GraphQLError[] }
+  | { status: 'ready'; portalSite: AppPortalSite };
+
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
-  const { portalCode, objectCode } = useContext(AppContext);
+  const {
+    portalCode,
+    objectCode,
+    apiUrl,
+    locale: contextLocale
+  } = useContext(AppContext);
+  const [state, setState] = useState<AppState>({ status: 'loading' });
 
   const isSearchPage = !objectCode;
+  const isBookingPage = !!objectCode && pageType !== 'reviews';
 
-  const {
-    loading: baseLoading,
-    error: baseError,
-    data: baseData
-  } = useQuery(PORTAL_BASE_QUERY, {
-    variables: { id: portalCode },
-    skip: isSearchPage
-  });
+  useEffect(() => {
+    let isMounted = true;
+    setState({ status: 'loading' });
 
-  const {
-    loading: searchLoading,
-    error: searchError,
-    data: searchData
-  } = useQuery(PORTAL_SEARCH_QUERY, {
-    variables: { id: portalCode },
-    skip: !isSearchPage
-  });
+    const translationsPromise = loadTranslations(contextLocale);
 
-  const loading = isSearchPage ? searchLoading : baseLoading;
-  const error = isSearchPage ? searchError : baseError;
+    void loadPortalSite({
+      portalCode,
+      isSearchPage,
+      isBookingPage,
+      apiUrl,
+      locale: contextLocale
+    })
+      .then(async (portalSite) => {
+        await translationsPromise;
+        if (!isMounted) {
+          return;
+        }
+        setState({ status: 'ready', portalSite });
+      })
+      .catch(async (error: unknown) => {
+        await translationsPromise;
+        if (!isMounted) {
+          return;
+        }
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'A portal settings request failed';
+        setState({ status: 'error', error: [new GraphQLError(message)] });
+      });
 
-  if (loading) {
+    return () => {
+      isMounted = false;
+    };
+  }, [portalCode, isSearchPage, isBookingPage, apiUrl, contextLocale]);
+
+  if (state.status === 'loading') {
     return <Loading />;
   }
 
-  if (error) {
-    return <ApiError errors={{ ...error }} />;
+  if (state.status === 'error') {
+    return <ApiError errors={state.error} />;
   }
 
-  const PortalSite = isSearchPage
-    ? (searchData?.PortalSite ?? null)
-    : (baseData?.PortalSite ?? null);
+  const portalSite = state.portalSite;
 
-  if (!PortalSite) {
-    return <Loading />;
-  }
-
-  let options = PortalSite.options;
-  const colors: ColorsType = PortalSite.colorsConfiguration;
+  let options = portalSite.options;
+  const colors: ColorsType = portalSite.colorsConfiguration;
 
   const root = document.documentElement;
   root.style.setProperty('--bukazu-discount', colors.discount);
@@ -72,23 +94,29 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
   root.style.setProperty('--bukazu-booked', colors.booked);
   root.style.setProperty('--bukazu-departure', colors.departure);
   root.style.setProperty('--bukazu-button', colors.button);
-  root.style.setProperty('--bukazu-button_cta', colors.buttonCta);
+  root.style.setProperty('--bukazu-button_cta', colors.button_cta);
 
   let page;
 
   if (objectCode && objectCode !== null && pageType !== 'reviews') {
     page = (
       <ErrorBoundary>
-        <CalendarPage />
-        <SafeBooking />
+        <CalendarPage portalSite={portalSite} />
+        <div dangerouslySetInnerHTML={{ __html: SafeBooking(locale) }} />
       </ErrorBoundary>
     );
   } else if (objectCode && objectCode !== null && pageType === 'reviews') {
-    page = <ReviewsPage />;
+    page = (
+      <ReviewsPageMount
+        objectCode={objectCode}
+        portalCode={portalCode}
+        apiUrl={apiUrl}
+      />
+    );
   } else {
     page = (
       <SearchPage
-        PortalSite={PortalSite}
+        PortalSite={portalSite}
         locale={locale}
         options={options}
         filters={filters}

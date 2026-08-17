@@ -1,128 +1,108 @@
 import { graphqlMutation } from '../graphql';
+import { HTTPError } from 'ky';
 
-// Mock the global fetch
-const mockFetch = jest.fn();
-// @ts-ignore - We're mocking the global fetch
-global.fetch = mockFetch;
+// Mock the shared http client so tests do not hit the network.
+jest.mock('../http_client', () => ({
+  http: { get: jest.fn(), post: jest.fn() }
+}));
+import { http } from '../http_client';
+
+const mockHttp = http as jest.Mocked<typeof http>;
 
 describe('graphqlMutation', () => {
-    const mockUrl = 'https://test-api.com/graphql';
-    const mockQuery = 'mutation { test }';
-    const mockVariables = { id: 1 };
-    const mockHeaders = { 'Authorization': 'Bearer token' };
+  const mockUrl = 'https://test-api.com/graphql';
+  const mockQuery = 'mutation { test }';
+  const mockVariables = { id: 1 };
+  const mockHeaders = { Authorization: '******' };
 
-    beforeEach(() => {
-        // Clear all mocks before each test
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should make a successful GraphQL mutation request', async () => {
+    const mockData = { test: { id: 1, name: 'Test' } };
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      json: jest.fn().mockResolvedValue({ data: mockData })
     });
 
-    it('should make a successful GraphQL mutation request', async () => {
-        // Mock successful response
-        const mockData = { test: { id: 1, name: 'Test' } };
-        const mockResponse = {
-            ok: true,
-            status: 200,
-            json: jest.fn().mockResolvedValue({ data: mockData })
-        };
-        mockFetch.mockResolvedValueOnce(mockResponse as any);
-
-        // Call the function
-        const result = await graphqlMutation({
-            url: mockUrl,
-            query: mockQuery,
-            variables: mockVariables,
-            headers: mockHeaders
-        });
-
-        // Verify the fetch was called correctly
-        expect(mockFetch).toHaveBeenCalledWith(mockUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...mockHeaders
-            },
-            body: JSON.stringify({
-                query: mockQuery,
-                variables: mockVariables
-            })
-        });
-
-        // Verify the response
-        expect(result).toEqual(mockData);
+    const result = await graphqlMutation({
+      url: mockUrl,
+      query: mockQuery,
+      variables: mockVariables,
+      headers: mockHeaders
     });
 
-    it('should handle GraphQL errors', async () => {
-        // Mock GraphQL error response
-        const mockError = { message: 'Test error' };
-        const mockResponse = {
-            ok: true,
-            status: 200,
-            json: jest.fn().mockResolvedValue({
-                errors: [mockError],
-                data: null
-            })
-        };
-        mockFetch.mockResolvedValueOnce(mockResponse as any);
+    expect(result).toEqual(mockData);
 
-        // Verify the error is thrown
-        await expect(
-            graphqlMutation({
-                url: mockUrl,
-                query: mockQuery
-            })
-        ).rejects.toThrow('GraphQL Error: Test error');
+    const [calledUrl, calledOptions] = (mockHttp.post as jest.Mock).mock
+      .calls[0];
+    expect(calledUrl).toBe(mockUrl);
+    expect(calledOptions.json).toEqual({
+      query: mockQuery,
+      variables: mockVariables
+    });
+    expect(calledOptions.headers).toEqual(mockHeaders);
+  });
+
+  it('should handle GraphQL errors', async () => {
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      json: jest.fn().mockResolvedValue({
+        errors: [{ message: 'Test error' }],
+        data: null
+      })
     });
 
-    it('should handle HTTP errors', async () => {
-        // Mock HTTP error response
-        const mockResponse = {
-            ok: false,
-            status: 500,
-            statusText: 'Internal Server Error'
-        };
-        mockFetch.mockResolvedValueOnce(mockResponse as any);
+    await expect(
+      graphqlMutation({ url: mockUrl, query: mockQuery })
+    ).rejects.toThrow('GraphQL Error: Test error');
+  });
 
-        // Verify the error is thrown
-        await expect(
-            graphqlMutation({
-                url: mockUrl,
-                query: mockQuery
-            })
-        ).rejects.toThrow('HTTP error! status: 500');
+  it('should translate an HTTPError into a plain Error with the status code', async () => {
+    const fakeResponse = { status: 500 } as Response;
+    const fakeRequest = { method: 'POST', url: mockUrl } as Request;
+    const httpError = new HTTPError(fakeResponse, fakeRequest, {} as never);
+
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      json: jest.fn().mockRejectedValue(httpError)
     });
 
-    it('should use default URL when not provided', async () => {
-        // Mock successful response
-        const mockData = { test: true };
-        const mockResponse = {
-            ok: true,
-            status: 200,
-            json: jest.fn().mockResolvedValue({ data: mockData })
-        };
-        mockFetch.mockResolvedValueOnce(mockResponse as any);
+    await expect(
+      graphqlMutation({ url: mockUrl, query: mockQuery })
+    ).rejects.toThrow('HTTP error! status: 500');
+  });
 
-        // Call without URL
-        await graphqlMutation({
-            query: mockQuery
-        });
-
-        // Should use default URL
-        expect(mockFetch).toHaveBeenCalledWith(
-            'https://api.bukazu.com/graphql',
-            expect.anything()
-        );
+  it('should use default URL when not provided', async () => {
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      json: jest.fn().mockResolvedValue({ data: { ok: true } })
     });
 
-    it('should handle network errors', async () => {
-        // Mock network error
-        mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    await graphqlMutation({ query: mockQuery });
 
-        // Verify the error is thrown
-        await expect(
-            graphqlMutation({
-                url: mockUrl,
-                query: mockQuery
-            })
-        ).rejects.toThrow('GraphQL mutation failed: Network error');
+    expect((mockHttp.post as jest.Mock).mock.calls[0][0]).toBe(
+      'https://api.bukazu.com/graphql'
+    );
+  });
+
+  it('should wrap a generic network error as a GraphQL mutation failure', async () => {
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      json: jest.fn().mockRejectedValue(new Error('Network error'))
     });
+
+    await expect(
+      graphqlMutation({ url: mockUrl, query: mockQuery })
+    ).rejects.toThrow('GraphQL mutation failed: Network error');
+  });
+
+  it('should handle multiple GraphQL errors joined by newline', async () => {
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      json: jest.fn().mockResolvedValue({
+        errors: [{ message: 'Error one' }, { message: 'Error two' }],
+        data: null
+      })
+    });
+
+    await expect(
+      graphqlMutation({ url: mockUrl, query: mockQuery })
+    ).rejects.toThrow('GraphQL Error: Error one\nError two');
+  });
 });

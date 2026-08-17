@@ -1,10 +1,8 @@
-import { useQuery } from '@apollo/client';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
-import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
-import { PRICE_FIELD_BOOKING_PRICE_QUERY as BOOKING_PRICE_QUERY } from '../../../_lib/gql';
+import { fetchPrice, PriceResponse } from '../../../_lib/price';
 
 interface Props {
   persons: number;
@@ -15,10 +13,50 @@ interface Props {
 }
 
 function Price({ persons, variables }: Props) {
-  const { portalCode, objectCode } = useContext(AppContext);
-  const { loading, error, data } = useQuery(BOOKING_PRICE_QUERY, {
-    variables: { ...variables, persons, portalCode, objectCode }
-  });
+  const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
+  const [result, setResult] = useState<PriceResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    fetchPrice({
+      apiUrl,
+      locale,
+      portalCode,
+      objectCode,
+      startsAt: variables.starts_at,
+      endsAt: variables.ends_at,
+      persons
+    })
+      .then((price) => {
+        if (!cancelled) {
+          setResult(price);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    apiUrl,
+    locale,
+    portalCode,
+    objectCode,
+    variables.starts_at,
+    variables.ends_at,
+    persons
+  ]);
 
   if (loading)
     return (
@@ -26,22 +64,20 @@ function Price({ persons, variables }: Props) {
         <Loading />
       </div>
     );
-  if (error) {
+  if (error || !result) {
     return (
       <div className="price-overview--build bup-16">
-        <ApiError errors={error}></ApiError>
+        {t('something_went_wrong_please_try_again')}
       </div>
     );
   }
-  const result = data.PortalSite.houses[0].booking_price;
   return (
     <>
       <div className="price-overview--book">
         <div className="price">
-          €{' '}
           {formatNumber(Math.round(result.total_price), {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            style: 'currency',
+            currency: result.currency
           })}
         </div>
         <div>

@@ -58,20 +58,51 @@ describe('Booking summary cost sections', () => {
         required_costs: { not_on_site: [{ id: 2, amount: 20 }], on_site: [] }
       },
       required_house_costs: [
-        { id: 1, on_site: false, gl: '0101', method: 'none', amount: 0, name: 'cleaning' },
-        { id: 2, on_site: false, gl: '0102', method: 'per_unit', amount: 5, name: 'tax' },
-        { id: 3, on_site: false, gl: '0103', method: 'per_unit', amount: 0, name: 'skip' }
+        {
+          id: 1,
+          on_site: false,
+          gl: '0101',
+          method: 'none',
+          amount: 0,
+          name: 'cleaning'
+        },
+        {
+          id: 2,
+          on_site: false,
+          gl: '0102',
+          method: 'per_unit',
+          amount: 5,
+          name: 'tax'
+        },
+        {
+          id: 3,
+          on_site: false,
+          gl: '0103',
+          method: 'per_unit',
+          amount: 0,
+          name: 'skip'
+        }
       ]
     } as any;
 
-    const { root, container } = render(<InsurancesAndRequired prices={prices} />);
+    const { root, container } = render(
+      <InsurancesAndRequired prices={prices} />
+    );
 
     expect(mockCostRow).toHaveBeenCalledTimes(3);
     expect(mockCostRow).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'insurance_costs', amount: 8, formatName: true })
+      expect.objectContaining({
+        name: 'insurance_costs',
+        amount: 8,
+        formatName: true
+      })
     );
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 1, name: 'cleaning' }));
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 2, amount: 20 }));
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 1, name: 'cleaning' })
+    );
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 2, amount: 20 })
+    );
 
     act(() => {
       root.unmount();
@@ -91,21 +122,53 @@ describe('Booking summary cost sections', () => {
         }
       },
       optional_house_costs: [
-        { id: 10, on_site: false, gl: '0100', method: 'none', amount: 5, name: 'linen' },
-        { id: 11, on_site: false, gl: '0100', method: 'on_site', amount: 3, name: 'parking' },
-        { id: 12, on_site: false, gl: '0100', method: 'per_unit', amount: 2, name: 'extra' },
-        { id: 13, on_site: false, gl: '0100', method: 'on_site', amount: 1, name: 'ignored' }
+        {
+          id: 10,
+          on_site: false,
+          gl: '0100',
+          method: 'none',
+          amount: 5,
+          name: 'linen'
+        },
+        {
+          id: 11,
+          on_site: false,
+          gl: '0100',
+          method: 'on_site',
+          amount: 3,
+          name: 'parking'
+        },
+        {
+          id: 12,
+          on_site: false,
+          gl: '0100',
+          method: 'per_unit',
+          amount: 2,
+          name: 'extra'
+        },
+        {
+          id: 13,
+          on_site: false,
+          gl: '0100',
+          method: 'on_site',
+          amount: 1,
+          name: 'ignored'
+        }
       ]
     } as any;
 
     const { root, container } = render(<OptionalNotOnSite prices={prices} />);
 
     expect(mockCostRow).toHaveBeenCalledTimes(3);
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 10, name: 'linen' }));
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 10, name: 'linen' })
+    );
     expect(mockCostRow).toHaveBeenCalledWith(
       expect.objectContaining({ id: 11, forceMethod: true, amount: 3 })
     );
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 12, amount: 7 }));
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 12, amount: 7 })
+    );
 
     act(() => {
       root.unmount();
@@ -125,9 +188,30 @@ describe('Booking summary cost sections', () => {
         }
       },
       optional_house_costs: [
-        { id: 20, on_site: true, gl: '0100', method: 'none', amount: 5, name: 'bed' },
-        { id: 21, on_site: true, gl: '0100', method: 'on_site', amount: 4, name: 'bike' },
-        { id: 22, on_site: true, gl: '0100', method: 'per_unit', amount: 3, name: 'breakfast' }
+        {
+          id: 20,
+          on_site: true,
+          gl: '0100',
+          method: 'none',
+          amount: 5,
+          name: 'bed'
+        },
+        {
+          id: 21,
+          on_site: true,
+          gl: '0100',
+          method: 'on_site',
+          amount: 4,
+          name: 'bike'
+        },
+        {
+          id: 22,
+          on_site: true,
+          gl: '0100',
+          method: 'per_unit',
+          amount: 3,
+          name: 'breakfast'
+        }
       ]
     } as any;
 
@@ -161,8 +245,22 @@ describe('Booking summary cost sections', () => {
         optional_costs: { on_site: [], not_on_site: [] }
       },
       required_house_costs: [
-        { id: 1, on_site: true, gl: '0101', method: 'none', amount: 4, name: 'cleaning' },
-        { id: 2, on_site: true, gl: '0101', method: 'per_unit', amount: 3, name: 'tax' }
+        {
+          id: 1,
+          on_site: true,
+          gl: '0101',
+          method: 'none',
+          amount: 4,
+          name: 'cleaning'
+        },
+        {
+          id: 2,
+          on_site: true,
+          gl: '0101',
+          method: 'per_unit',
+          amount: 3,
+          name: 'tax'
+        }
       ],
       optional_house_costs: []
     } as any;
@@ -170,8 +268,12 @@ describe('Booking summary cost sections', () => {
     const { root, container } = render(<OnSite prices={prices} />);
 
     expect(mockCostRow).toHaveBeenCalledTimes(2);
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 1, name: 'cleaning' }));
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 2, amount: 9 }));
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 1, name: 'cleaning' })
+    );
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 2, amount: 9 })
+    );
 
     act(() => {
       root.unmount();
@@ -184,23 +286,54 @@ describe('Booking summary cost sections', () => {
       total_costs: {
         sub_total: 50,
         total_price: 60,
-        required_costs: { on_site: [{ id: 1, amount: 5 }, { id: 3, amount: 0 }], not_on_site: [] },
+        required_costs: {
+          on_site: [
+            { id: 1, amount: 5 },
+            { id: 3, amount: 0 }
+          ],
+          not_on_site: []
+        },
         optional_costs: { on_site: [{ id: 2, amount: 7 }], not_on_site: [] }
       },
       required_house_costs: [
-        { id: 1, gl: '0120', on_site: true, method: 'none', amount: 0, name: 'deposit_on' },
-        { id: 3, gl: '0120', on_site: true, method: 'none', amount: 0, name: 'deposit_zero' }
+        {
+          id: 1,
+          gl: '0120',
+          on_site: true,
+          method: 'none',
+          amount: 0,
+          name: 'deposit_on'
+        },
+        {
+          id: 3,
+          gl: '0120',
+          on_site: true,
+          method: 'none',
+          amount: 0,
+          name: 'deposit_zero'
+        }
       ],
       optional_house_costs: [
-        { id: 2, gl: '0120', on_site: true, method: 'none', amount: 0, name: 'optional_deposit' }
+        {
+          id: 2,
+          gl: '0120',
+          on_site: true,
+          method: 'none',
+          amount: 0,
+          name: 'optional_deposit'
+        }
       ]
     } as any;
 
     const { root, container } = render(<Totals prices={prices} />);
 
     expect(mockCostRow).toHaveBeenCalledTimes(2);
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 1, amount: 5 }));
-    expect(mockCostRow).toHaveBeenCalledWith(expect.objectContaining({ id: 2, amount: 7 }));
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 1, amount: 5 })
+    );
+    expect(mockCostRow).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 2, amount: 7 })
+    );
 
     act(() => {
       root.unmount();

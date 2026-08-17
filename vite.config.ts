@@ -19,6 +19,12 @@ export default defineConfig({
         ]
       : [])
   ],
+  resolve: {
+    mainFields: ['module', 'browser', 'main'],
+    alias: {
+      rehackt: 'react'
+    }
+  },
   server: {
     host: true
   },
@@ -38,19 +44,17 @@ export default defineConfig({
     },
     lib: {
       entry: resolve(__dirname, 'src/index.tsx'),
-      name: 'BukazuPortal',
-      formats: ['es', 'umd'],
-      fileName: (format) => `portal.${format}.js`,
+      formats: ['es'],
+      fileName: () => 'portal.es.js',
       cssFileName: 'index'
     },
-    rollupOptions: {
-      external: ['react', 'react-dom'],
-      output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM'
-        }
-      }
+    rolldownOptions: {
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime'
+      ]
     }
   }
 });

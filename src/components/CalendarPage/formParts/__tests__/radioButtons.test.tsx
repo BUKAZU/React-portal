@@ -7,15 +7,6 @@ import { RadioButton, RadioButtonGroup } from '../radioButtons';
 
 const noop = () => {};
 
-function makeField(name: string, value: string) {
-  return {
-    name,
-    value,
-    onChange: noop,
-    onBlur: noop
-  };
-}
-
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
@@ -38,7 +29,15 @@ describe('RadioButton', () => {
   it('renders an input of type radio', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -49,7 +48,15 @@ describe('RadioButton', () => {
   it('sets the input name from the field prop', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -59,7 +66,15 @@ describe('RadioButton', () => {
   it('sets the input id from the id prop', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -69,7 +84,15 @@ describe('RadioButton', () => {
   it('sets the input value to the id prop', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -79,7 +102,15 @@ describe('RadioButton', () => {
   it('is checked when the id matches the field value', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'true')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="true"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -89,7 +120,15 @@ describe('RadioButton', () => {
   it('is not checked when the id does not match the field value', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -99,7 +138,15 @@ describe('RadioButton', () => {
   it('applies the radio-button class to the input', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const input = container.querySelector('input');
@@ -109,7 +156,15 @@ describe('RadioButton', () => {
   it('renders a label associated with the input id', () => {
     act(() => {
       root.render(
-        <RadioButton field={makeField('is_option', 'false')} id="true" label="Option" />
+        <RadioButton
+          name="is_option"
+          value="true"
+          currentValue="false"
+          onChange={noop}
+          onBlur={noop}
+          id="true"
+          label="Option"
+        />
       );
     });
     const label = container.querySelector('label');

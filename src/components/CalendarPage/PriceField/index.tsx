@@ -5,7 +5,7 @@ import {
   Parse_EN_US
 } from '../../../_lib/date_helper';
 import { t } from '../../../intl';
-import { createPeronsArray } from '../formParts/BookingHelpers';
+import { createPersonsArray } from '../formParts/BookingHelpers';
 import Price from './Price';
 import { HouseType } from '../../../types';
 import {
@@ -26,15 +26,12 @@ function PriceField({ house }: Props) {
   const { arrivalDate, departureDate } = useContext(CalendarContext);
   const dispatch = useContext(CalendarContextDispatch);
 
-  let adults = createPeronsArray(house.persons);
-
+  let adults = createPersonsArray(house.persons);
 
   return (
     <div className="calendar--picker">
       <div className="calendar--picker--date">
-        <span className="name">
-          {t(`${house.house_type}.arrival`)}
-        </span>
+        <span className="name">{t(`${house.house_type}.arrival`)}</span>
         <span className="detail">
           {arrivalDate?.date ? (
             <span>
@@ -46,9 +43,7 @@ function PriceField({ house }: Props) {
         </span>
       </div>
       <div className="calendar--picker--date">
-        <span className="name">
-          {t(`${house.house_type}.departure`)}
-        </span>
+        <span className="name">{t(`${house.house_type}.departure`)}</span>
         <span className="detail">
           {departureDate?.date ? (
             <span>
@@ -59,9 +54,8 @@ function PriceField({ house }: Props) {
               <div>
                 {t(`${house.house_type}.pick_your_departure_in_the_calendar`)}
               </div>
-              {arrivalDate && (
-                t('minimum_nights', { minimum: arrivalDate?.min_nights })
-              )}
+              {arrivalDate &&
+                t('minimum_nights', { minimum: arrivalDate?.min_nights })}
             </div>
           )}
         </span>
@@ -72,7 +66,7 @@ function PriceField({ house }: Props) {
             className="calendar--picker--persons"
             value={persons}
             onChange={(e) => {
-              setPersons(e.target.value);
+              setPersons(Number(e.target.value));
             }}
           >
             {adults.map((person) => (
@@ -86,7 +80,7 @@ function PriceField({ house }: Props) {
       <div className="calendar--picker--date">
         {arrivalDate && departureDate && (
           <Price
-            persons={parseInt(persons)}
+            persons={persons}
             variables={{
               starts_at: arrivalDate?.date,
               ends_at: departureDate?.date
