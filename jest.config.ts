@@ -23,6 +23,17 @@ const config: Config = {
   coverageDirectory: './coverage',
   coverageProvider: 'v8',
   coverageReporters: ['text', 'lcov', 'json-summary'],
+  coverageThreshold: {
+    // These values reflect the current measured baseline. Any PR that causes
+    // overall coverage to drop below these floors will fail CI, ensuring that
+    // new code is always covered. Raise these values as coverage improves.
+    global: {
+      lines: 89,
+      statements: 89,
+      functions: 82,
+      branches: 87
+    }
+  },
   // Allow Babel to transform the ESM-only `ky` package so Jest (CommonJS)
   // can require it without a native ESM runner.
   transformIgnorePatterns: ['/node_modules/(?!(ky)/)']
