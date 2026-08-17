@@ -19,6 +19,31 @@ import { test, expect } from '@playwright/test';
  */
 
 const GQL_URL = 'https://api.bukazu.com/graphql';
+const BOOKINGS_URL =
+  'https://api.bukazu.com/portal_api/v1/accommodations/bookings**';
+
+/** Response of POST /portal_api/v1/accommodations/bookings. */
+function makeBookingResponse() {
+  return {
+    booking_nr: 'B2600099',
+    status: 'new',
+    is_option: false,
+    arrival_date: '2025-07-01',
+    departure_date: '2025-07-08',
+    adults: 2,
+    children: 0,
+    babies: 0,
+    language: 'nl',
+    payment_url: null,
+    redirect_url: null,
+    success_message: 'Bedankt voor je aanvraag',
+    portal_code: 'TEST',
+    house_code: 'HOUSE1',
+    first_name: 'Jane',
+    last_name: 'Doe',
+    email: 'jane@example.com'
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Shared fixtures
@@ -157,6 +182,14 @@ async function interceptGraphQL(
   page: import('@playwright/test').Page,
   house: object
 ) {
+  await page.route(BOOKINGS_URL, async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify(makeBookingResponse())
+    });
+  });
+
   await page.route(GQL_URL, async (route) => {
     const postData = route.request().postDataJSON();
     const query: string = postData?.query ?? '';
@@ -177,8 +210,6 @@ async function interceptGraphQL(
     } else if (query.includes('booking_price')) {
       // PriceField query
       body = makePriceFieldResponse(house);
-    } else if (query.includes('createBooking')) {
-      body = { data: { createBooking: { id: 99 } } };
     } else {
       // Fallback: return the booking-price fixture so the form can render
       body = makeBookingPriceResponse(house);
