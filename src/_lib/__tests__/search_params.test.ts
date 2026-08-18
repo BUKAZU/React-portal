@@ -75,6 +75,17 @@ describe('buildSearchParams', () => {
     expect(buildSearchParams(filters, pagination).properties).toBe('3,7,11');
   });
 
+  it('filters invalid property ids and canonicalizes the list', () => {
+    const filters = {
+      properties: [7, 'oops', 3, 7],
+      category_1: '11',
+      category_2: '3',
+      category_3: 'NaN'
+    } as FiltersType;
+
+    expect(buildSearchParams(filters, pagination).properties).toBe('3,7,11');
+  });
+
   it('omits properties when nothing is selected', () => {
     expect(
       buildSearchParams({ properties: [] }, pagination)

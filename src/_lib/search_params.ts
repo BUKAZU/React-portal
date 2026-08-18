@@ -14,10 +14,15 @@ interface Pagination {
 function propertyIds(filters: FiltersType): number[] {
   const categoryIds = Object.entries(filters as Record<string, unknown>)
     .filter(([key, value]) => /^category_\d+$/.test(key) && value)
-    .map(([, value]) => Number(value))
-    .filter((id) => !isNaN(id));
+    .map(([, value]) => Number(value));
 
-  return [...(filters.properties || []), ...categoryIds].map(Number);
+  return [
+    ...new Set(
+      [...(filters.properties || []), ...categoryIds]
+        .map(Number)
+        .filter(Number.isFinite)
+    )
+  ].sort((left, right) => left - right);
 }
 
 /** Adds a numeric filter, skipping the falsy values the filter panel uses for "unset". */
