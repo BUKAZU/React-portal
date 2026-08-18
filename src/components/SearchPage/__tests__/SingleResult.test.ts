@@ -1,26 +1,22 @@
 import SingleResult from '../SingleResult';
-import { HouseType, FiltersFormType } from '../../../types';
+import { FiltersFormType } from '../../../types';
+import type { AccommodationResult } from '../../../_lib/accommodations';
 
-const mockResult: HouseType = {
+const mockResult: AccommodationResult = {
   id: 1,
   code: 'HOUSE1',
   name: 'Test House',
   image_url: 'https://example.com/image.jpg',
   house_url: 'https://example.com/house',
-  house_type: 'house',
   persons: 6,
   bedrooms: 3,
   bathrooms: 2,
   minimum_week_price: 1000,
-  max_nights: 14,
   city: 'Amsterdam',
   province: 'Noord-Holland',
   country_name: 'Netherlands',
   description: '<p>A nice house</p>',
-  rating: 4.5,
-  babies_extra: 0,
-  allow_option: false,
-  cancel_insurance: false
+  rating: 4.5
 };
 
 const mockOptions: FiltersFormType = {
@@ -42,7 +38,7 @@ const mockOptions: FiltersFormType = {
 let container: HTMLDivElement;
 
 function renderSingleResult(
-  result: HouseType = mockResult,
+  result: AccommodationResult = mockResult,
   options: FiltersFormType = mockOptions
 ) {
   container.innerHTML = SingleResult({ result, options });

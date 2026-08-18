@@ -4,25 +4,8 @@ import {
   CostType,
   PricesType
 } from '../components/CalendarPage/Summary/cost_types';
+import type { AccommodationDetail } from './accommodation';
 
-/** Accommodation metadata returned when requested with includeAccommodation. */
-export interface PriceAccommodation {
-  id: number;
-  name: string;
-  code: string;
-  allow_option: boolean;
-  persons: number;
-  image_url: string | null;
-  discounts: string | null;
-  discounts_info: string | null;
-  house_type: string;
-  rental_terms: string | null;
-  cancel_insurance: boolean;
-  damage_insurance: boolean;
-  damage_insurance_required: boolean;
-  travel_insurance: boolean;
-  babies_extra: number;
-}
 /** Full response of GET /portal_api/v1/accommodations/price. */
 export type PriceResponse = PricesType & {
   arrival_date: string;
@@ -38,7 +21,7 @@ export type PriceResponse = PricesType & {
   person_percentages: unknown;
   night_percentages: unknown;
   /** Only present when requested with includeAccommodation. */
-  accommodation?: PriceAccommodation;
+  accommodation?: AccommodationDetail;
 };
 
 interface FetchPriceParams {

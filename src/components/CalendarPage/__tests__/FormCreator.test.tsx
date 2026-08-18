@@ -123,24 +123,22 @@ const mockHouse: HouseType = {
   name: 'Test House',
   house_type: 'house',
   persons: 6,
-  bedrooms: 3,
-  bathrooms: 2,
-  minimum_week_price: 1000,
   max_nights: 14,
   allow_option: false,
   cancel_insurance: false,
   discounts: '',
   discounts_info: '',
   babies_extra: 0,
-  city: 'Amsterdam',
-  province: 'Noord-Holland',
-  country_name: 'Netherlands',
-  description: 'A nice house',
   rental_terms: 'https://example.com/terms',
   booking_price: {
     total_price: 1500,
     optional_house_costs: []
-  } as any
+  } as any,
+  image_url: null,
+  damage_insurance: false,
+  damage_insurance_required: false,
+  travel_insurance: false,
+  last_minute_days: 0
 } as any;
 
 const mockPortalSite: PortalSiteType = {

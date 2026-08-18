@@ -6,7 +6,7 @@ import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
 import type { AppPortalSite } from '../loadPortalSite';
-import type { HouseType } from '../../types';
+import type { HouseType, OptionalHouseCostType } from '../../types';
 
 interface Props {
   portalSite: AppPortalSite;
@@ -39,14 +39,16 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           setPriceError(true);
           return;
         }
-        // The REST response's cost shape is a superset of OptionalHouseCostType.
         setHouse({
           ...price.accommodation,
           booking_price: {
             total_price: price.total_price,
-            optional_house_costs: price.optional_house_costs
+            // The endpoint returns optional costs carrying max_available,
+            // method_name and description, which CostType does not model yet.
+            optional_house_costs:
+              price.optional_house_costs as unknown as OptionalHouseCostType[]
           }
-        } as unknown as HouseType);
+        });
       })
       .catch(() => {
         if (!cancelled) {
