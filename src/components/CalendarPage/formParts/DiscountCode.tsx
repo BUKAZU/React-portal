@@ -85,14 +85,16 @@ function DiscountCode({ house }: { house: HouseType }): JSX.Element {
         <div className="bu_discount_code">
           <div>{result.name}</div>
           {result.use_price ? (
-            <div>
-              {formatNumber(result.price ?? 0, {
-                style: 'currency',
-                currency: result.currency
-              })}
-            </div>
+            result.price != null && (
+              <div>
+                {formatNumber(result.price, {
+                  style: 'currency',
+                  currency: result.currency
+                })}
+              </div>
+            )
           ) : (
-            <div>{result.percentage}%</div>
+            result.percentage != null && <div>{result.percentage}%</div>
           )}
         </div>
       )}
