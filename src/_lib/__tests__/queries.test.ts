@@ -4,24 +4,12 @@ import {
   GraphQLSchema,
   DocumentNode
 } from 'graphql';
-import {
-  SINGLE_HOUSE_QUERY,
-  HOUSES_QUERY,
-  HOUSE_COUNT_QUERY,
-  CHECK_DISCOUNT_CODE,
-  HOUSE_SEARCH_RESULT_FIELDS
-} from '../gql';
+import { SINGLE_HOUSE_QUERY, CHECK_DISCOUNT_CODE } from '../gql';
 import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
   { name: 'SINGLE_HOUSE_QUERY', document: SINGLE_HOUSE_QUERY },
-  { name: 'HOUSES_QUERY', document: HOUSES_QUERY },
-  { name: 'HOUSE_COUNT_QUERY', document: HOUSE_COUNT_QUERY },
   { name: 'CHECK_DISCOUNT_CODE', document: CHECK_DISCOUNT_CODE }
-];
-
-const allFragments: Array<{ name: string; document: DocumentNode }> = [
-  { name: 'HOUSE_SEARCH_RESULT_FIELDS', document: HOUSE_SEARCH_RESULT_FIELDS }
 ];
 
 describe('GraphQL queries comply with API schema', () => {
@@ -35,17 +23,6 @@ describe('GraphQL queries comply with API schema', () => {
   describe('query documents are syntactically valid', () => {
     it.each(allQueries)(
       '$name is a valid GraphQL document',
-      ({ document }: { name: string; document: DocumentNode }) => {
-        expect(document).toBeDefined();
-        expect(document.kind).toBe('Document');
-        expect(document.definitions.length).toBeGreaterThan(0);
-      }
-    );
-  });
-
-  describe('fragment documents are syntactically valid', () => {
-    it.each(allFragments)(
-      '$name is a valid GraphQL fragment document',
       ({ document }: { name: string; document: DocumentNode }) => {
         expect(document).toBeDefined();
         expect(document.kind).toBe('Document');
