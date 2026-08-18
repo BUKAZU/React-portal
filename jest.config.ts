@@ -25,8 +25,8 @@ const config: Config = {
   coverageReporters: ['text', 'lcov', 'json-summary'],
   coverageThreshold: {
     // These values reflect the current measured baseline. Any PR that causes
-    // overall coverage to drop below these floors will fail CI, ensuring that
-    // new code is always covered. Raise these values as coverage improves.
+    // overall coverage to drop below these floors will fail CI, enforcing a
+    // regression floor. Raise these values as coverage improves.
     global: {
       lines: 89,
       statements: 89,
