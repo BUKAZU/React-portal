@@ -16,7 +16,10 @@ const reportedErrors = new WeakSet<object>();
 function hasMessages(source: ApiErrorSource): source is ErrorWithMessages {
   return (
     'messages' in source &&
-    Array.isArray((source as ErrorWithMessages).messages)
+    Array.isArray((source as ErrorWithMessages).messages) &&
+    (source as ErrorWithMessages).messages.every(
+      (m) => typeof m === 'string'
+    )
   );
 }
 

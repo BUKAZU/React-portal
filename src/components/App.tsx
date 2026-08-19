@@ -61,11 +61,11 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
         if (!isMounted) {
           return;
         }
-        const message =
+        const wrappedError =
           error instanceof Error
-            ? error.message
-            : 'A portal settings request failed';
-        setState({ status: 'error', error: new Error(message) });
+            ? error
+            : new Error('A portal settings request failed');
+        setState({ status: 'error', error: wrappedError });
       });
 
     return () => {
