@@ -63,7 +63,7 @@ function GenerateCalendar({ portalSite }: Props): JSX.Element {
           error:
             error instanceof Error
               ? error
-              : new Error('The accommodation request failed')
+              : new Error(`The accommodation request failed: ${String(error)}`)
         });
       });
 
