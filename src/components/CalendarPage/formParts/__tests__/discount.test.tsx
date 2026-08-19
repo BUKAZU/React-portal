@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Formik } from 'formik';
 import Discount from '../discount';
+import { BookingFormContext } from '../../BookingFormContext';
+import { setByString } from '../BookingHelpers';
 import { BookingFormConfigurationType } from '../../../../types';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-// DiscountCode uses Apollo useMutation – mock the whole module so we can
-// verify it is rendered without needing a full Apollo provider.
-jest.mock('../DiscountCode', () => () => (
-  <div data-testid="discount-code" />
-));
+jest.mock('../DiscountCode', () => () => <div data-testid="discount-code" />);
 
 const baseHouse = {
   id: 1,
@@ -31,39 +28,73 @@ const baseHouse = {
 };
 
 const baseConfig: BookingFormConfigurationType = {
-  adultsFromAge: 18,
-  babiesAllowed: false,
-  babiesTillAge: 2,
-  childrenAllowed: false,
-  childrenFromAge: 3,
-  childrenTillAge: 17,
-  languageSelectorVisible: false,
-  redirectUrl: '',
-  redirectUrlNl: '',
-  redirectUrlEn: '',
-  redirectUrlDe: '',
-  redirectUrlFr: '',
-  redirectUrlEs: '',
-  redirectUrlIt: '',
-  showDiscountCode: false,
-  showMonthsAmount: 2,
-  showMonthsInARowAmount: 2
+  adults_from_age: 18,
+  babies_allowed: false,
+  babies_till_age: 2,
+  children_allowed: false,
+  children_from_age: 3,
+  children_till_age: 17,
+  language_selector_visible: false,
+  redirect_urls: { nl: '', en: '', de: '', fr: '', es: '', it: '' },
+  show_discount_code: false,
+  show_months_amount: 2,
+  show_months_in_a_row_amount: 2
 };
 
 const baseValues = {
   arrivalDate: {} as any,
   departureDate: {} as any,
   is_option: 'false' as const,
-  costs: null,
+  costs: {},
   adults: 2,
   children: 0,
   babies: 0,
   persons: 2,
   discount: 0,
-  country: 0,
+  country: 'nl',
   cancel_insurance: '0' as const,
-  discount_code: ''
+  discount_code: '',
+  extra_fields: {}
 };
+
+function DiscountHarness({
+  house,
+  bookingFormConfiguration,
+  errors
+}: {
+  house: typeof baseHouse;
+  bookingFormConfiguration: BookingFormConfigurationType;
+  errors: Record<string, string | undefined>;
+}) {
+  const [values, setValues] = useState(baseValues);
+  const [touched, setTouched] = useState({});
+
+  return (
+    <BookingFormContext.Provider
+      value={{
+        values,
+        errors,
+        touched,
+        isSubmitting: false,
+        setFieldValue: (name, value) => {
+          setValues((currentValues) => setByString(currentValues, name, value));
+        },
+        setFieldTouched: (name, value = true) => {
+          setTouched((currentTouched) =>
+            setByString(currentTouched, name, value)
+          );
+        }
+      }}
+    >
+      <Discount
+        errors={errors}
+        house={house as any}
+        bookingFormConfiguration={bookingFormConfiguration}
+        values={values as any}
+      />
+    </BookingFormContext.Provider>
+  );
+}
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -90,19 +121,16 @@ function renderDiscount(
   configPatch: Partial<BookingFormConfigurationType> = {},
   errors: Record<string, string | undefined> = {}
 ) {
-  const house = { ...baseHouse, ...housePatch } as any;
+  const house = { ...baseHouse, ...housePatch };
   const bookingFormConfiguration = { ...baseConfig, ...configPatch };
 
   act(() => {
     root.render(
-      <Formik initialValues={baseValues} onSubmit={() => {}}>
-        <Discount
-          errors={errors}
-          house={house}
-          bookingFormConfiguration={bookingFormConfiguration}
-          values={baseValues}
-        />
-      </Formik>
+      <DiscountHarness
+        house={house}
+        bookingFormConfiguration={bookingFormConfiguration}
+        errors={errors}
+      />
     );
   });
 }
@@ -144,9 +172,13 @@ describe('Discount – discount select branch', () => {
   });
 
   it('shows the discount_reason error message when an error is present', () => {
-    renderDiscount({ discounts: '10' }, {}, {
-      discount_reason: 'Reason is required.'
-    });
+    renderDiscount(
+      { discounts: '10' },
+      {},
+      {
+        discount_reason: 'Reason is required.'
+      }
+    );
     const errorDiv = container.querySelector('.error-message');
     expect(errorDiv).not.toBeNull();
     expect(errorDiv?.textContent).toBe('Reason is required.');
@@ -165,19 +197,17 @@ describe('Discount – discount select branch', () => {
 
 describe('Discount – DiscountCode branch', () => {
   it('renders the DiscountCode component when showDiscountCode is true', () => {
-    renderDiscount(
-      { discounts: undefined },
-      { showDiscountCode: true }
-    );
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
+    renderDiscount({ discounts: undefined }, { show_discount_code: true });
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
   });
 
   it('renders both discount select and DiscountCode when both conditions are met', () => {
-    renderDiscount(
-      { discounts: '10' },
-      { showDiscountCode: true }
-    );
+    renderDiscount({ discounts: '10' }, { show_discount_code: true });
     expect(container.querySelector('select')).not.toBeNull();
-    expect(container.querySelector('[data-testid="discount-code"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
   });
 });

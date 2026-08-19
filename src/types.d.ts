@@ -1,17 +1,20 @@
 import { PricesType } from './components/CalendarPage/Summary/cost_types';
+import type { AccommodationDetail } from './_lib/accommodation';
 
 export type FiltersFormType = {
-  showCity: boolean;
-  showRegion: boolean;
-  showCountry: boolean;
-  showPersons: boolean;
-  showBathrooms: boolean;
-  showBedrooms: boolean;
-  showPrice: boolean;
-  categories: number[];
+  show_city: boolean;
+  show_region: boolean;
+  show_country: boolean;
+  show_persons: boolean;
+  show_bathrooms: boolean;
+  show_bedrooms: boolean;
+  show_price: boolean;
+  show_rating?: boolean;
   no_results: number;
   location: string;
   mode: 'grid' | 'list';
+  show?: boolean;
+  fixed_mobile?: boolean;
 };
 
 /**
@@ -20,12 +23,12 @@ export type FiltersFormType = {
  * the bookingFormConfiguration returned directly by the API.
  */
 type BookingFormType = {
-  adults_from: number;
-  children: boolean;
-  children_from: number;
-  children_til: number;
-  babies: boolean;
-  babies_til: number;
+  adults_from_age: number;
+  children_allowed: boolean;
+  children_from_age: number;
+  children_till_age: number;
+  babies_allowed: boolean;
+  babies_till_age: number;
   showDiscountCode: boolean;
   redirectUrl: string | null;
   redirectUrl_en: string | null;
@@ -38,35 +41,25 @@ type BookingFormType = {
 
 /** Booking form configuration returned directly by the portal site API. */
 export type BookingFormConfigurationType = {
-  adultsFromAge: number;
-  babiesAllowed: boolean;
-  babiesTillAge: number;
-  childrenAllowed: boolean;
-  childrenFromAge: number;
-  childrenTillAge: number;
-  languageSelectorVisible: boolean;
-  redirectUrl: string;
-  redirectUrlNl: string;
-  redirectUrlEn: string;
-  redirectUrlDe: string;
-  redirectUrlFr: string;
-  redirectUrlEs: string;
-  redirectUrlIt: string;
-  showDiscountCode: boolean;
-  showMonthsAmount: number;
-  showMonthsInARowAmount: number;
-};
-
-type name_id_type = {
-  id: number;
-  name: string;
+  adults_from_age: number;
+  babies_allowed: boolean;
+  babies_till_age: number;
+  children_allowed: boolean;
+  children_from_age: number;
+  children_till_age: number;
+  language_selector_visible: boolean;
+  /** Per-locale redirect URLs after booking. Keys are locale codes ('nl', 'en', 'de', 'fr', 'es', 'it'); values may be null when not configured. */
+  redirect_urls: Record<string, string | null>;
+  show_discount_code: boolean;
+  show_months_amount: number;
+  show_months_in_a_row_amount: number;
 };
 
 export type ColorsType = {
   arrival: string;
   booked: string;
   button: string;
-  buttonCta: string;
+  button_cta: string;
   cell: string;
   departure: string;
   discount: string;
@@ -75,13 +68,20 @@ export type ColorsType = {
 export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
+  /** Search-filter fields to render, mapped from the filter-fields REST endpoint. */
+  searchFields?: {
+    id: string;
+    type: string;
+    label: string | null;
+    max?: number;
+    options?: { id: number; name: string }[];
+  }[];
   /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;
 };
 
 export type PortalSiteType = {
-  categories: { id: number; name: string; properties: name_id_type[] }[];
   options: PortalOptions;
   bookingFormConfiguration: BookingFormConfigurationType;
   max_persons: number;
@@ -89,42 +89,42 @@ export type PortalSiteType = {
   max_bedrooms: number;
   max_bathrooms: number;
   max_weekprice: number;
+  portal_code: string;
 };
 
 export type LocaleType = 'nl' | 'en' | 'de' | 'es' | 'fr' | 'it';
 
-export type BuDate = {
-  arrival: Boolean;
-  departure: Boolean;
-  min_nights: Number;
-  max_nights: Number;
-  date: string;
-  special_offer: Number;
+export type Discount = {
+  name?: string;
+  discount_starts_at: string;
+  discount_ends_at: string;
 };
 
-export type HouseType = {
-  id: number;
-  code: string;
-  name: string;
-  image_url?: string;
-  house_url?: string;
-  house_type: string;
-  persons: number;
-  bedrooms: number;
-  bathrooms: number;
-  minimum_week_price: number;
+export type BuDate = {
+  arrival: boolean;
+  departure: boolean;
+  min_nights: number;
   max_nights: number;
-  allow_option?: boolean;
-  cancel_insurance?: boolean;
-  discounts?: string;
-  discounts_info?: string;
-  babies_extra: number;
-  city: string;
-  province: string;
-  province: string;
-  country_name: string;
-  description: string;
+  date: string;
+  special_offer: number;
+  arrival_time_from?: string | null;
+  arrival_time_to?: string | null;
+  departure_time?: string | null;
+};
+
+export type OptionalHouseCostType = {
+  id: string;
+  name: string;
+  method: string;
+  max_available: number;
+  amount: number;
+  method_name: string;
+  description?: string;
+};
+
+export type HouseType = AccommodationDetail & {
   booking_price?: {
     total_price: number;
+    optional_house_costs: OptionalHouseCostType[];
   };
 };

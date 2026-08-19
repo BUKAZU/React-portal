@@ -1,0 +1,199 @@
+import SingleResult from '../SingleResult';
+import { FiltersFormType } from '../../../types';
+import type { AccommodationResult } from '../../../_lib/accommodations';
+
+const mockResult: AccommodationResult = {
+  id: 1,
+  code: 'HOUSE1',
+  name: 'Test House',
+  image_url: 'https://example.com/image.jpg',
+  house_url: 'https://example.com/house',
+  persons: 6,
+  bedrooms: 3,
+  bathrooms: 2,
+  minimum_week_price: 1000,
+  city: 'Amsterdam',
+  province: 'Noord-Holland',
+  country_name: 'Netherlands',
+  description: '<p>A nice house</p>',
+  rating: 4.5
+};
+
+const mockOptions: FiltersFormType = {
+  show_city: true,
+  show_region: true,
+  show_country: true,
+  show_persons: true,
+  show_bedrooms: true,
+  show_bathrooms: true,
+  show_price: true,
+  show_rating: true,
+  no_results: 20,
+  location: 'left',
+  mode: 'grid',
+  show: true,
+  fixed_mobile: false
+} as any;
+
+let container: HTMLDivElement;
+
+function renderSingleResult(
+  result: AccommodationResult = mockResult,
+  options: FiltersFormType = mockOptions
+) {
+  container.innerHTML = SingleResult({ result, options });
+}
+
+beforeEach(() => {
+  (window as any).__localeId__ = 'en';
+  container = document.createElement('div');
+  document.body.appendChild(container);
+});
+
+afterEach(() => {
+  container.remove();
+});
+
+describe('SingleResult', () => {
+  it('should render the result as an anchor tag with the house_url', () => {
+    renderSingleResult();
+
+    const link = container.querySelector('a.bukazu-result');
+    expect(link).not.toBeNull();
+    expect(link?.getAttribute('href')).toBe(mockResult.house_url);
+  });
+
+  it('should display the house name', () => {
+    renderSingleResult();
+
+    const title = container.querySelector('.result-title');
+    expect(title?.textContent).toBe(mockResult.name);
+  });
+
+  it('should display the house image', () => {
+    renderSingleResult();
+
+    const img = container.querySelector('.image-holder img');
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute('src')).toBe(mockResult.image_url);
+    expect(img?.getAttribute('alt')).toBe(mockResult.name);
+  });
+
+  it('should omit href and src attributes when urls are undefined', () => {
+    renderSingleResult({
+      ...mockResult,
+      house_url: undefined,
+      image_url: undefined
+    });
+
+    const link = container.querySelector('a.bukazu-result');
+    const img = container.querySelector('.image-holder img');
+
+    expect(link?.hasAttribute('href')).toBe(false);
+    expect(img?.hasAttribute('src')).toBe(false);
+  });
+
+  it('should display city when showCity is true', () => {
+    renderSingleResult();
+
+    const place = container.querySelector('.result-place');
+    expect(place?.textContent).toContain(mockResult.city);
+  });
+
+  it('should not display city when showCity is false', () => {
+    renderSingleResult(mockResult, { ...mockOptions, show_city: false });
+
+    const place = container.querySelector('.result-place');
+    expect(place?.textContent).not.toContain(mockResult.city);
+  });
+
+  it('should display region when showRegion is true', () => {
+    renderSingleResult();
+
+    const place = container.querySelector('.result-place');
+    expect(place?.textContent).toContain(mockResult.province);
+  });
+
+  it('should display country name when showCountry is true', () => {
+    renderSingleResult();
+
+    const place = container.querySelector('.result-place');
+    expect(place?.textContent).toContain(mockResult.country_name);
+  });
+
+  it('should display persons count when showPersons is true', () => {
+    renderSingleResult();
+
+    const details = container.querySelector('.result-details');
+    expect(details?.textContent).toContain(String(mockResult.persons));
+  });
+
+  it('should display bedrooms count when showBedrooms is true', () => {
+    renderSingleResult();
+
+    const details = container.querySelector('.result-details');
+    expect(details?.textContent).toContain(String(mockResult.bedrooms));
+  });
+
+  it('should display bathrooms count when showBathrooms is true', () => {
+    renderSingleResult();
+
+    const details = container.querySelector('.result-details');
+    expect(details?.textContent).toContain(String(mockResult.bathrooms));
+  });
+
+  it('should display rating when showRating is true and rating exists', () => {
+    renderSingleResult();
+
+    const rating = container.querySelector('.result-rating');
+    expect(rating).not.toBeNull();
+    expect(rating?.textContent).toBe(mockResult.rating!.toFixed(1));
+  });
+
+  it('should not display rating when rating is not present', () => {
+    const resultNoRating = { ...mockResult, rating: undefined };
+    renderSingleResult(resultNoRating);
+
+    const rating = container.querySelector('.result-rating');
+    expect(rating).toBeNull();
+  });
+
+  it('should display minimum_week_price when no booking_price', () => {
+    renderSingleResult();
+
+    const price = container.querySelector('.result-price');
+    expect(price).not.toBeNull();
+    expect(price?.textContent).toContain('1,000');
+  });
+
+  it('should display booking_price when available', () => {
+    const resultWithBookingPrice = {
+      ...mockResult,
+      booking_price: { total_price: 750 }
+    };
+    renderSingleResult(resultWithBookingPrice);
+
+    const price = container.querySelector('.result-price');
+    expect(price?.textContent).toContain('750');
+  });
+
+  it('should render view_details button text', () => {
+    renderSingleResult();
+
+    const button = container.querySelector('.result-button');
+    expect(button?.textContent).toBeTruthy();
+  });
+
+  it('should escape HTML in dynamic text fields to prevent XSS', () => {
+    const maliciousResult = {
+      ...mockResult,
+      name: '<img src=x onerror=alert(1)>'
+    };
+    renderSingleResult(maliciousResult);
+
+    expect(container.querySelector('.result-title img')).toBeNull();
+    expect(container.querySelector('.result-title')?.textContent).toBe(
+      maliciousResult.name
+    );
+  });
+});

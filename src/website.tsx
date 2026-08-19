@@ -30,24 +30,36 @@
  */
 
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 
 import Portal from './index';
 import { LocaleType } from './types';
+import { FiltersType } from './components/SearchPage/filters/filter_types';
 
 const CLASS_NAME = 'bukazu-app';
 
+/** Cache of already-created React roots, keyed by host element. */
+const roots = new WeakMap<HTMLElement, Root>();
+
 /**
  * Parse the `filters` HTML attribute.
- * Returns an empty object when the attribute is absent or contains invalid JSON
- * so that a malformed attribute never prevents the portal from mounting.
+ * Returns an empty object when the attribute is absent, contains invalid JSON,
+ * or the parsed value is not a plain object (e.g. arrays, null, numbers).
  */
-function parseFilters(raw: string | null): object {
+function parseFilters(raw: string | null): FiltersType {
   if (!raw) {
     return {};
   }
   try {
-    return JSON.parse(raw) as object;
+    const parsed: unknown = JSON.parse(raw);
+    if (
+      parsed !== null &&
+      typeof parsed === 'object' &&
+      !Array.isArray(parsed)
+    ) {
+      return parsed as FiltersType;
+    }
+    return {};
   } catch {
     return {};
   }
@@ -70,7 +82,11 @@ function mountPortal(element: HTMLElement): void {
     rawLocale && isLocaleType(rawLocale) ? rawLocale : 'en';
   const filters = parseFilters(element.getAttribute('filters'));
 
-  const root = createRoot(element);
+  let root = roots.get(element);
+  if (!root) {
+    root = createRoot(element);
+    roots.set(element, root);
+  }
   root.render(
     <Portal
       portalCode={portalCode}

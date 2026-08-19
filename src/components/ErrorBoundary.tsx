@@ -1,4 +1,5 @@
 import React, { ErrorInfo } from 'react';
+import { reportError } from '../_lib/sentry';
 
 interface Props {
   children: JSX.Element[];
@@ -19,8 +20,8 @@ class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true };
   }
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // You can also log the error to an error reporting service
     console.error(error, errorInfo);
+    reportError(error);
   }
   render() {
     if (this.state.hasError) {

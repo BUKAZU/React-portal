@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import ArrowRight from '../../icons/ArrowRight.svg';
 import Reload from '../../icons/Reload.svg';
 import { CalendarContextDispatch } from './CalendarContext';
-import { addMonths, subMonths } from 'date-fns';
+import { addMonths, subMonths } from '../../../_lib/date_helper';
 
 interface Props {
   changeMonth: Function;

@@ -7,17 +7,22 @@ import {
   startOfWeek,
   subDays,
   isBefore,
-  parse
-} from 'date-fns';
-import { FormatIntl } from '../../../_lib/date_helper';
+  Parse_EN_US,
+  formatDateKey,
+  FormatIntl
+} from '../../../_lib/date_helper';
 import DayClasses from './DayClasses';
 import { HouseType } from '../../../types';
+import {
+  AvailabilityDiscount,
+  AvailabilityEntry
+} from '../../../_lib/availability';
 import { CalendarContext, CalendarContextDispatch } from './CalendarContext';
 
 interface CellProps {
-  availabilities: [];
+  availabilities: AvailabilityEntry[];
   month: Date;
-  discounts: [];
+  discounts: AvailabilityDiscount[];
   house: HouseType;
 }
 
@@ -26,7 +31,7 @@ function RenderCells({
   month,
   discounts,
   house
-}: CellProps): Array<JSX.Element> {
+}: CellProps): JSX.Element {
   const dispatch = useContext(CalendarContextDispatch);
   const dates = useContext(CalendarContext);
 
@@ -34,7 +39,7 @@ function RenderCells({
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart);
   const endDate = endOfWeek(monthEnd);
-  const rows: JSX.Element[] = [];
+  const rows: React.ReactNode[] = [];
 
   let days: JSX.Element[] = [];
   let day: Date = startDate;
@@ -42,11 +47,23 @@ function RenderCells({
   while (day <= endDate) {
     // for (let daz of dayz) {
     for (let i = 0; i < 7; i++) {
-      let date = FormatIntl(day, 'yyyy-MM-dd');
-      let yesterday = FormatIntl(subDays(day, 1), 'yyyy-MM-dd');
-      let daz = availabilities.find((x) => x.date === date);
-
+      let date = formatDateKey(day);
+      let yesterday = formatDateKey(subDays(day, 1));
+      const daz = availabilities.find((x) => x.date === date);
       const prevBooked = availabilities.find((x) => x.date === yesterday);
+
+      // The fetched range always covers every rendered day, but guard against a
+      // gap so a missing entry renders a disabled cell instead of crashing.
+      if (!daz) {
+        days.push(
+          <div className="bu-grid bu-center disabled" key={date}>
+            <span>{FormatIntl(day, { day: 'numeric' })}</span>
+          </div>
+        );
+        day = addDays(day, 1);
+        continue;
+      }
+
       const cloneDay = daz;
 
       days.push(
@@ -64,12 +81,7 @@ function RenderCells({
           role="button"
           tabIndex={0}
           onClick={() => {
-            if (
-              isBefore(
-                parse(cloneDay.date, 'yyyy-MM-dd', new Date()),
-                new Date()
-              )
-            ) {
+            if (isBefore(Parse_EN_US(cloneDay.date), new Date())) {
               return;
             }
             dispatch({
@@ -79,7 +91,7 @@ function RenderCells({
             });
           }}
         >
-          <span>{FormatIntl(day, 'd')}</span>
+          <span>{FormatIntl(day, { day: 'numeric' })}</span>
         </div>
       );
       day = addDays(day, 1);

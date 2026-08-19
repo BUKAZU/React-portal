@@ -6,24 +6,25 @@ import {
   isSameDay,
   isSameMonth,
   subDays
-} from 'date-fns';
-import { BuDate } from '../../../types';
+} from '../../../_lib/date_helper';
+import { BuDate, Discount } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
 
 interface Props {
   day: Date;
   monthStart: Date;
-  prevBooked: BuDate;
+  prevBooked?: BuDate;
   buDate: BuDate;
   dates: {
-    selectedDate: Date;
-    departureDate: BuDate;
-    arrivalDate: BuDate;
+    selectedDate: Date | null;
+    departureDate: BuDate | null;
+    arrivalDate: BuDate | null;
   };
   house: {
-    max_nights: Number;
+    max_nights: number;
+    last_minute_days: number;
   };
-  discounts: [];
+  discounts: Discount[];
 }
 
 function DayClasses({
@@ -36,26 +37,41 @@ function DayClasses({
   discounts
 }: Props): string {
   const { selectedDate, departureDate, arrivalDate } = dates;
-  let classes = ['bu-grid', 'bu-center','bu-rounded-half', "bu-h-42", "bu-w-42"];
+  const today = new Date();
+  const classes = [
+    'bu-grid',
+    'bu-center',
+    'bu-rounded-half',
+    'bu-h-42',
+    'bu-w-42'
+  ];
 
   if (!isSameMonth(day, monthStart)) {
     classes.push('disabled');
     return classes.join(' ');
   }
   if (buDate) {
-    if (buDate.arrival && isAfter(day, subDays(new Date(), 1)) && buDate.max_nights !== 0) {
-      if (prevBooked.max_nights === 0) {
+    if (
+      buDate.arrival &&
+      isAfter(day, subDays(today, 1)) &&
+      buDate.max_nights !== 0
+    ) {
+      if (prevBooked?.max_nights === 0) {
         classes.push('departure-arrival', 'bu-hover-bright');
       } else {
         classes.push('arrival', 'bu-hover-bright');
       }
     } else if (buDate.max_nights === 0) {
-      if (prevBooked.max_nights !== 0) {
+      if (prevBooked !== undefined && prevBooked.max_nights !== 0) {
         classes.push('booked-departure', 'bu-hover-bright');
       } else {
         classes.push('booked');
       }
-    } else if (buDate.max_nights > 0 && prevBooked.max_nights === 0 && !buDate.arrival) {
+    } else if (
+      buDate.max_nights > 0 &&
+      (prevBooked === undefined || prevBooked.max_nights === 0) &&
+      !buDate.arrival
+    ) {
       classes.push('booked');
     }
   }
@@ -64,36 +80,34 @@ function DayClasses({
     if (isSameDay(day, selectedDate)) {
       classes.push('selected');
     }
-    const minimum =
-      differenceInCalendarDays(day, selectedDate) >= arrivalDate.min_nights;
+    const dayDiff = differenceInCalendarDays(day, selectedDate);
+    const minimum = dayDiff >= (arrivalDate?.min_nights ?? 0);
     const maximum =
-      differenceInCalendarDays(day, selectedDate) <= house.max_nights &&
-      differenceInCalendarDays(day, selectedDate) <= arrivalDate.max_nights;
+      dayDiff <= house.max_nights && dayDiff <= (arrivalDate?.max_nights ?? 0);
 
     if (
       buDate.departure &&
       isAfter(day, selectedDate) &&
       minimum &&
       maximum &&
+      prevBooked !== undefined &&
       prevBooked.max_nights !== 0
     ) {
       classes.push('departure');
     }
   }
 
-  if (departureDate) {
-    if (
-      isAfter(day, selectedDate) &&
-      isBefore(day, Parse_EN_US(departureDate.date))
-    ) {
+  if (departureDate && selectedDate) {
+    const departureDateParsed = Parse_EN_US(departureDate.date);
+    if (isAfter(day, selectedDate) && isBefore(day, departureDateParsed)) {
       classes.push('selected');
     }
-    if (isSameDay(day, Parse_EN_US(departureDate.date))) {
+    if (isSameDay(day, departureDateParsed)) {
       classes.push('selected');
     }
   }
 
-  const daysFromToday = differenceInCalendarDays(day, new Date());
+  const daysFromToday = differenceInCalendarDays(day, today);
   const last_minute =
     daysFromToday <= house.last_minute_days && daysFromToday > 0;
 

@@ -9,6 +9,11 @@
 @import 'filters.css';
 @import 'pagination.css';
 @import 'reviews.css';
+@import 'safe-booking.css';
+
+.bu-portal {
+  container-type: inline-size;
+}
 
 #bukazu-app {
   #search-page {
@@ -62,6 +67,10 @@
     border: none;
     background: rgba(0, 0, 0, 0);
     cursor: pointer;
+    padding: 0;
+    line-height: normal;
+    display: inline-flex;
+    align-items: center;
   }
 
   .bu_discount_code {
@@ -114,7 +123,7 @@
   }
   .bu-grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
-    @media (max-width: 992px) {
+    @container (max-width: 992px) {
       grid-template-columns: repeat(1, 1fr);
     }
   }

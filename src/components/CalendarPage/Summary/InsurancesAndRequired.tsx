@@ -14,14 +14,16 @@ interface Props {
       };
     };
     required_house_costs: CostType[];
+    currency: string;
   };
 }
 
 export default function InsurancesAndRequired({
   prices
-}: Props): React.ReactNode {
+}: Props): JSX.Element {
   const { insurances, required_costs } = prices.total_costs;
   const { not_on_site } = required_costs;
+  const { currency } = prices;
 
   return (
     <div className="costs-section">
@@ -30,13 +32,15 @@ export default function InsurancesAndRequired({
           {insurances && (
             <>
               {Object.keys(insurances).map((key: string) => {
-                if (insurances[key] > 0) {
+                const val = (insurances as Record<string, number>)[key];
+                if (val > 0) {
                   return (
                     <CostRow
                       name={key}
                       key={key}
                       formatName={true}
-                      amount={insurances[key]}
+                      amount={val}
+                      currency={currency}
                     />
                   );
                 }
@@ -46,7 +50,9 @@ export default function InsurancesAndRequired({
           {prices.required_house_costs.map((cost) => {
             if (!cost.on_site && cost.gl !== '0120') {
               if (cost.method === 'none') {
-                return <CostRow key={cost.id} {...cost} />;
+                return (
+                  <CostRow key={cost.id} {...cost} currency={currency} />
+                );
               } else {
                 if (cost.amount === 0) {
                   return null;
@@ -55,7 +61,8 @@ export default function InsurancesAndRequired({
                   <CostRow
                     key={cost.id}
                     {...cost}
-                    amount={not_on_site?.find((x) => x.id == cost.id).amount}
+                    amount={not_on_site?.find((x) => x.id == cost.id)?.amount ?? 0}
+                    currency={currency}
                   />
                 );
               }

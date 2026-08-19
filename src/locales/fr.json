@@ -168,5 +168,7 @@
   "can_only_take_insurance_in_de_be_nl": "Vous ne pouvez souscrire une assurance que si vous résidez aux Pays-Bas, en Allemagne ou en Belgique.",
   "price_from": "Le prix de",
   "reviews": "Critiques",
-  "reviews_note_link": "Le système de réservation BUKAZU conserve des avis indépendants. Ces avis sont recueillis après que les clients ont séjourné dans le logement. La combinaison du numéro de réservation et de l'adresse électronique est vérifiée."
+  "reviews_note_link": "Le système de réservation BUKAZU conserve des avis indépendants. Ces avis sont recueillis après que les clients ont séjourné dans le logement. La combinaison du numéro de réservation et de l'adresse électronique est vérifiée.",
+  "load_more_reviews": "Charger plus d'avis",
+  "review_response_label": "Réponse de l'hôte"
 }

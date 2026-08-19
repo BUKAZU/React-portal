@@ -1,49 +1,92 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
-import { BOOKING_PRICE_QUERY } from '../../_lib/gql';
-import { useQuery } from '@apollo/client';
+import { fetchPrice } from '../../_lib/price';
 import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
+import type { AppPortalSite } from '../loadPortalSite';
+import type { HouseType } from '../../types';
 
-function BookingForm(): JSX.Element {
-  const { portalCode, objectCode, locale } = useContext(AppContext);
+interface Props {
+  portalSite: AppPortalSite;
+}
+
+function BookingForm({ portalSite }: Props): JSX.Element {
+  const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const { arrivalDate, departureDate } = useContext(CalendarContext);
 
-  const { data, loading, error } = useQuery(BOOKING_PRICE_QUERY, {
-    variables: {
+  const [house, setHouse] = useState<HouseType | null>(null);
+  const [priceError, setPriceError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setHouse(null);
+    setPriceError(false);
+
+    fetchPrice({
+      apiUrl,
+      locale,
       portalCode,
       objectCode,
-      starts_at: arrivalDate.date,
-      ends_at: departureDate.date
-    }
-  });
+      startsAt: arrivalDate!.date,
+      endsAt: departureDate!.date,
+      includeAccommodation: true
+    })
+      .then((price) => {
+        if (cancelled) return;
+        if (!price.accommodation) {
+          setPriceError(true);
+          return;
+        }
+        setHouse({
+          ...price.accommodation,
+          booking_price: {
+            total_price: price.total_price,
+            optional_house_costs: price.optional_house_costs.map((cost) => ({
+              id: String(cost.id),
+              name: cost.name,
+              method: cost.method,
+              max_available: cost.max_available,
+              amount: cost.amount,
+              method_name: cost.method_name,
+              description: cost.description
+            }))
+          }
+        });
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPriceError(true);
+        }
+      });
 
-  if (loading)
+    return () => {
+      cancelled = true;
+    };
+  }, [apiUrl, locale, portalCode, objectCode, arrivalDate, departureDate]);
+
+  if (!house && !priceError)
     return (
       <div>
         <Loading />
       </div>
     );
-  if (error) {
+  if (priceError || !house) {
     return <div>Error</div>;
   }
-
-  const result = data.PortalSite.houses[0];
-
   TrackEvent({
     house_code: objectCode,
     portal_code: portalCode,
     locale: locale,
     interaction_type: 'booking_started',
     interaction_data: {
-      arrival_date: arrivalDate.date,
-      departure_date: departureDate.date
+      arrival_date: arrivalDate!.date,
+      departure_date: departureDate!.date
     }
   });
 
-  return <FormCreator house={result} PortalSite={data.PortalSite} />;
+  return <FormCreator house={house} PortalSite={portalSite} />;
 }
 
 export default BookingForm;

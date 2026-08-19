@@ -168,5 +168,7 @@
   "can_only_take_insurance_in_de_be_nl": "Solo puede contratar un seguro si vive en los Países Bajos, Alemania o Bélgica.",
   "price_from": "Precio de",
   "reviews": "Comentarios",
-  "reviews_note_link": "BUKAZU Booking System mantiene opiniones independientes. Estas opiniones se recogen después de la estancia de los huéspedes en el alojamiento. Se verifica la combinación del número de reserva y la dirección de correo electrónico."
+  "reviews_note_link": "BUKAZU Booking System mantiene opiniones independientes. Estas opiniones se recogen después de la estancia de los huéspedes en el alojamiento. Se verifica la combinación del número de reserva y la dirección de correo electrónico.",
+  "load_more_reviews": "Cargar más reseñas",
+  "review_response_label": "Respuesta del anfitrión"
 }

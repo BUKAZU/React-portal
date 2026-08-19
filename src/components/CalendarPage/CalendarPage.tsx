@@ -5,21 +5,26 @@ import {
   CalendarContext,
   CalendarProvider
 } from './CalendarParts/CalendarContext';
+import type { AppPortalSite } from '../loadPortalSite';
 
-function CalendarPage(): JSX.Element {
+interface Props {
+  portalSite: AppPortalSite;
+}
+
+function CalendarPage({ portalSite }: Props): JSX.Element {
   const { bookingStarted } = useContext(CalendarContext);
 
   if (bookingStarted) {
-    return <BookingForm />;
+    return <BookingForm portalSite={portalSite} />;
   } else {
-    return <GenerateCalendar />;
+    return <GenerateCalendar portalSite={portalSite} />;
   }
 }
 
-function CalendarWrapper(): JSX.Element {
+function CalendarWrapper({ portalSite }: Props): JSX.Element {
   return (
     <CalendarProvider>
-      <CalendarPage />
+      <CalendarPage portalSite={portalSite} />
     </CalendarProvider>
   );
 }

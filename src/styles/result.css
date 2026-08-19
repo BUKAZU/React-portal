@@ -119,7 +119,7 @@
   }
 }
 .list .bukazu-result {
-  @media screen and (min-width: 992px) {
+  @container (min-width: 992px) {
     width: 100%;
     .bukazu-result-inner {
       flex-direction: row;

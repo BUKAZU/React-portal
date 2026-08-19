@@ -1,4 +1,4 @@
-import { startOfWeek, addDays } from 'date-fns';
+import { startOfWeek, addDays } from '../../../_lib/date_helper';
 import React from 'react';
 import { FormatIntl } from '../../../_lib/date_helper';
 
@@ -7,7 +7,7 @@ interface Props {
 }
 
 function WeekDays({ month }: Props): JSX.Element {
-  const dateFormat = 'E';
+  const dateFormat: Intl.DateTimeFormatOptions = { weekday: 'short' };
   let days: JSX.Element[] = [];
 
   let startDate: Date = startOfWeek(month);

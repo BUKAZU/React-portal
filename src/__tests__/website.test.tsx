@@ -181,6 +181,33 @@ describe('mountPortal – filters parsing', () => {
 
     expect(lastPortalProps().filters).toEqual({});
   });
+
+  it('defaults to an empty object when the filters attribute is a JSON array', () => {
+    const el = makeElement({ 'portal-code': 'X', filters: '["a","b"]' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().filters).toEqual({});
+  });
+
+  it('defaults to an empty object when the filters attribute is a JSON null', () => {
+    const el = makeElement({ 'portal-code': 'X', filters: 'null' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().filters).toEqual({});
+  });
+
+  it('defaults to an empty object when the filters attribute is a JSON number', () => {
+    const el = makeElement({ 'portal-code': 'X', filters: '42' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().filters).toEqual({});
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -214,5 +241,22 @@ describe('init', () => {
     });
 
     expect(mockCreateRoot).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: double-mount prevention
+// ---------------------------------------------------------------------------
+
+describe('mountPortal – double-mount prevention', () => {
+  it('reuses the same root when called twice on the same element', () => {
+    const el = makeElement({ 'portal-code': 'X' });
+    act(() => {
+      mountPortal(el);
+      mountPortal(el);
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledTimes(1);
+    expect(mockRender).toHaveBeenCalledTimes(2);
   });
 });
