@@ -6,7 +6,7 @@ import { AppContext } from '../AppContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
 import type { AppPortalSite } from '../loadPortalSite';
-import type { HouseType, OptionalHouseCostType } from '../../types';
+import type { HouseType } from '../../types';
 
 interface Props {
   portalSite: AppPortalSite;
@@ -43,10 +43,15 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           ...price.accommodation,
           booking_price: {
             total_price: price.total_price,
-            // The endpoint returns optional costs carrying max_available,
-            // method_name and description, which CostType does not model yet.
-            optional_house_costs:
-              price.optional_house_costs as unknown as OptionalHouseCostType[]
+            optional_house_costs: price.optional_house_costs.map((cost) => ({
+              id: String(cost.id),
+              name: cost.name,
+              method: cost.method,
+              max_available: cost.max_available,
+              amount: cost.amount,
+              method_name: cost.method_name,
+              description: cost.description
+            }))
           }
         });
       })

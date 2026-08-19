@@ -6,8 +6,18 @@ import {
 } from '../components/CalendarPage/Summary/cost_types';
 import type { AccommodationDetail } from './accommodation';
 
+/**
+ * The REST price endpoint returns optional-cost objects with all CostType
+ * fields plus the extra fields consumed by the booking form.
+ */
+export type RestOptionalCostType = CostType & {
+  max_available: number;
+  method_name: string;
+  description?: string;
+};
+
 /** Full response of GET /portal_api/v1/accommodations/price. */
-export type PriceResponse = PricesType & {
+export type PriceResponse = Omit<PricesType, 'optional_house_costs'> & {
   arrival_date: string;
   departure_date: string;
   arrival_time: string | null;
@@ -20,6 +30,8 @@ export type PriceResponse = PricesType & {
   on_site_house_costs: CostType[];
   person_percentages: unknown;
   night_percentages: unknown;
+  /** Overrides PricesType: REST returns richer items with max_available, method_name, description. */
+  optional_house_costs: RestOptionalCostType[];
   /** Only present when requested with includeAccommodation. */
   accommodation?: AccommodationDetail;
 };
