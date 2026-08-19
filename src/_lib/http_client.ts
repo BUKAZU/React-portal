@@ -37,8 +37,8 @@ export const http: KyInstance = ky.create({
   retry: {
     limit: 3,
     // Retry only idempotent methods. POST is intentionally excluded so that
-    // booking POST requests are never re-sent automatically, preventing duplicate
-    // side-effects.
+    // POST requests are never retried automatically, preventing duplicate
+    // side-effects (e.g. duplicate booking submissions).
     methods: ['get', 'put', 'head', 'delete', 'options', 'trace'],
     statusCodes: [408, 429, 500, 502, 503, 504]
   },

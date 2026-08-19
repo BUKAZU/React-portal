@@ -19,7 +19,7 @@ interface Props {
   filters?: FiltersType;
   /**
    * Origin of the Bukazu API. Only the origin is used, so the GraphQL URL
-   * that older embedders pass ("https://api.bukazu.com/graphql") still keeps working.
+   * that older embedders pass ("https://api.bukazu.com/graphql") still works.
    */
   api_url?: string;
   sentryDsn?: string;
