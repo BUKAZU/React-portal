@@ -98,6 +98,63 @@ Render the reviews page for a specific property by passing `objectCode` together
 
 ---
 
+## Direct website usage (no bundler required)
+
+If you are not using a JavaScript bundler or a React application, you can use the self-contained **website build** instead. This single file includes React and all other dependencies — just drop two files into your page and add a `<div>` with the right attributes.
+
+### 1. Download or reference the files
+
+After installing the package, copy the files from the package (or reference them from a CDN/local path):
+
+- `node_modules/bukazu-portal-react/build/portal.website.js`
+- `node_modules/bukazu-portal-react/build/portal.website.css`
+
+### 2. Add a host element
+
+Place a `<div class="bukazu-app">` with the following HTML attributes wherever you want the portal to appear:
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `portal-code` | ✅ | Your Bukazu portal identifier |
+| `object-code` | — | Property code (omit for the Search module) |
+| `page` | — | Set to `"reviews"` for the Reviews module |
+| `language` | — | Locale: `en` \| `nl` \| `de` \| `fr` \| `es` \| `it` (default: `en`) |
+| `filters` | — | JSON-encoded filters object (see filter keys in the props table below) |
+
+### 3. Include the script and stylesheet
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My website</title>
+    <link rel="stylesheet" href="portal.website.css" />
+  </head>
+  <body>
+
+    <!-- Calendar for a specific property -->
+    <div class="bukazu-app"
+         portal-code="YOUR_PORTAL_CODE"
+         object-code="YOUR_OBJECT_CODE"
+         language="en">
+    </div>
+
+    <!-- Property search page -->
+    <div class="bukazu-app"
+         portal-code="YOUR_PORTAL_CODE"
+         language="en">
+    </div>
+
+    <script src="portal.website.js"></script>
+  </body>
+</html>
+```
+
+The script automatically initialises every `.bukazu-app` element it finds on the page when the DOM is ready. Multiple portals on the same page are supported.
+
+---
+
 ## Props
 
 | Prop | Type | Required | Default | Description |
