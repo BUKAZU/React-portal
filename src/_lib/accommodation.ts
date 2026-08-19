@@ -49,7 +49,7 @@ export class AccommodationDetailError extends Error {
 }
 
 interface FetchAccommodationDetailParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -59,7 +59,7 @@ interface FetchAccommodationDetailParams {
 const DETAIL_PATH = '/portal_api/v1/accommodations/detail';
 
 /**
- * Build the REST detail URL by reusing the origin of the configured GraphQL
+ * Build the REST detail URL by reusing the origin of the configured
  * api_url, so staging/local overrides keep working.
  */
 export function buildAccommodationDetailUrl({

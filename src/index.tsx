@@ -1,9 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import App from './components/App';
 // import registerServiceWorker from './registerServiceWorker';
-
-import { ApolloProvider } from '@apollo/client';
-import { createApolloClient } from './_lib/apollo_client';
 
 import './styles/main.css';
 import { IntegrationError } from './components/Error';
@@ -20,6 +17,10 @@ interface Props {
   pageType?: string;
   locale?: string;
   filters?: FiltersType;
+  /**
+   * Origin of the Bukazu API. Only the origin is used, so the GraphQL URL
+   * older embedders pass ("https://api.bukazu.com/graphql") keeps working.
+   */
   api_url?: string;
   sentryDsn?: string;
 }
@@ -30,7 +31,7 @@ function Portal({
   pageType,
   locale,
   filters,
-  api_url = 'https://api.bukazu.com/graphql',
+  api_url = 'https://api.bukazu.com',
   sentryDsn
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = normalizeLocale(locale);
@@ -63,32 +64,23 @@ function Portal({
     filters
   });
 
-  // Memoize the Apollo client so it is only recreated when api_url or locale
-  // changes, preventing cache loss and unnecessary refetches on re-renders.
-  const client = useMemo(
-    () => createApolloClient(api_url, resolvedLocale),
-    [api_url, resolvedLocale]
-  );
-
   if (errors) {
     return errors;
   }
 
   return (
-    <ApolloProvider client={client}>
-      <AppContext.Provider
-        value={{
-          portalCode,
-          objectCode,
-          locale: resolvedLocale,
-          apiUrl: api_url
-        }}
-      >
-        <div className="bu-portal">
-          <App pageType={pageType} locale={resolvedLocale} filters={filters} />
-        </div>
-      </AppContext.Provider>
-    </ApolloProvider>
+    <AppContext.Provider
+      value={{
+        portalCode,
+        objectCode,
+        locale: resolvedLocale,
+        apiUrl: api_url
+      }}
+    >
+      <div className="bu-portal">
+        <App pageType={pageType} locale={resolvedLocale} filters={filters} />
+      </div>
+    </AppContext.Provider>
   );
 }
 

@@ -5,7 +5,7 @@ export const AppContext = createContext<AppContextType>({
   locale: 'nl',
   portalCode: '',
   objectCode: '',
-  apiUrl: 'https://api.bukazu.com/graphql'
+  apiUrl: 'https://api.bukazu.com'
 });
 
 type AppContextType = {

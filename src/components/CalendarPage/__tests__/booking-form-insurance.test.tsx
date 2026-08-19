@@ -20,21 +20,6 @@ import { createRoot } from 'react-dom/client';
 import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
 
-// ---------------------------------------------------------------------------
-// Mock @apollo/client – only the discount-code mutation still uses it
-// ---------------------------------------------------------------------------
-jest.mock('@apollo/client', () => ({
-  useMutation: jest.fn(() => [
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]),
-  gql: (q: TemplateStringsArray) => q
-}));
-
-jest.mock('../../../_lib/gql', () => ({
-  CHECK_DISCOUNT_CODE: 'CHECK_DISCOUNT_CODE'
-}));
-
 // The calendar loads the accommodation through the REST detail endpoint.
 const mockFetchAccommodationDetail = jest.fn();
 jest.mock('../../../_lib/accommodation', () => ({
@@ -317,12 +302,6 @@ beforeEach(() => {
     root = createRoot(container);
   });
   jest.clearAllMocks();
-
-  const { useMutation } = require('@apollo/client');
-  (useMutation as jest.Mock).mockReturnValue([
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]);
 });
 
 afterEach(() => {

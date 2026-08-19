@@ -280,7 +280,7 @@ async function interceptPrice(
   await page.route(PRICE_URL, (route) => {
     const response = makeRestPriceResponse(house);
     // The booking form requests the accommodation metadata along with the
-    // price so it no longer needs a separate GraphQL call.
+    // price, so it needs no separate detail call.
     const url = new URL(route.request().url());
     if (url.searchParams.get('include_accommodation') === 'true') {
       const { booking_price: _ignoredBookingPrice, ...accommodation } =

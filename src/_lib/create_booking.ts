@@ -57,7 +57,7 @@ export class CreateBookingError extends Error {
 }
 
 interface CreateBookingParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   payload: CreateBookingPayload;
@@ -66,7 +66,7 @@ interface CreateBookingParams {
 const BOOKINGS_PATH = '/portal_api/v1/accommodations/bookings';
 
 /**
- * Build the REST bookings URL by reusing the origin of the configured GraphQL api_url, so
+ * Build the REST bookings URL by reusing the origin of the configured api_url, so
  * staging/local overrides keep working.
  */
 export function buildBookingsUrl({ apiUrl }: { apiUrl: string }): string {

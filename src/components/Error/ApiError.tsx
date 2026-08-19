@@ -1,24 +1,11 @@
 import React from 'react';
 import { t } from '../../intl';
-import type { GraphQLError } from 'graphql';
-import { ApolloError } from '@apollo/client';
 import { reportError } from '../../_lib/sentry';
-
-type ErrorWithMessage = { message: string };
-
-type GraphQLErrorSource = {
-  graphQLErrors: readonly ErrorWithMessage[];
-};
 
 /** An error carrying several messages to display, such as CreateBookingError. */
 type ErrorWithMessages = Error & { messages: readonly string[] };
 
-type ApiErrorSource =
-  | ApolloError
-  | readonly GraphQLError[]
-  | GraphQLErrorSource
-  | ErrorWithMessages
-  | Error;
+type ApiErrorSource = ErrorWithMessages | Error;
 
 type ApiErrorProps = {
   errors: ApiErrorSource;
@@ -33,28 +20,13 @@ function hasMessages(source: ApiErrorSource): source is ErrorWithMessages {
   );
 }
 
-/** Collect the messages to render, regardless of which API the error came from. */
+/** Collect the messages to render: the REST clients either carry a list of
+ * messages (CreateBookingError) or a single one. */
 function getErrorMessages(source: ApiErrorSource): readonly string[] {
-  if (Array.isArray(source)) {
-    return (source as readonly GraphQLError[]).map((err) => err.message);
-  }
-  if ('graphQLErrors' in source) {
-    const graphQlMessages = source.graphQLErrors.map((err) => err.message);
-    if (graphQlMessages.length > 0) return graphQlMessages;
-
-    const message =
-      'message' in source && typeof source.message === 'string'
-        ? source.message
-        : '';
-    return message ? [message] : [];
-  }
   if (hasMessages(source)) {
     return source.messages;
   }
-  if (source instanceof Error) {
-    return [source.message];
-  }
-  return [];
+  return [source.message];
 }
 
 function ApiError(errors: ApiErrorProps): JSX.Element {

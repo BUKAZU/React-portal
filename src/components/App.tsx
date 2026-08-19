@@ -7,7 +7,6 @@ import ReviewsPageMount from './ReviewsPage/ReviewsPageMount';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
-import { GraphQLError } from 'graphql';
 import { AppContext } from './AppContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
@@ -22,7 +21,7 @@ interface Props {
 
 type AppState =
   | { status: 'loading' }
-  | { status: 'error'; error: GraphQLError[] }
+  | { status: 'error'; error: Error }
   | { status: 'ready'; portalSite: AppPortalSite };
 
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
@@ -66,7 +65,7 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
           error instanceof Error
             ? error.message
             : 'A portal settings request failed';
-        setState({ status: 'error', error: [new GraphQLError(message)] });
+        setState({ status: 'error', error: new Error(message) });
       });
 
     return () => {

@@ -6,7 +6,7 @@ A React component library that embeds the [Bukazu](https://www.bukazu.com) booki
 
 ## What is Bukazu?
 
-[Bukazu](https://www.bukazu.com) is an online booking and property-management platform for holiday rentals. It provides a fully-managed back-end (availability calendars, pricing, booking forms, guest reviews) and exposes that data through a GraphQL API. This library is the official front-end component that lets you surface Bukazu data on your own website without building the UI from scratch.
+[Bukazu](https://www.bukazu.com) is an online booking and property-management platform for holiday rentals. It provides a fully-managed back-end (availability calendars, pricing, booking forms, guest reviews) and exposes that data through a REST API. This library is the official front-end component that lets you surface Bukazu data on your own website without building the UI from scratch.
 
 ### Modules included
 
@@ -107,7 +107,7 @@ Render the reviews page for a specific property by passing `objectCode` together
 | `pageType` | `string` | — | — | Set to `"reviews"` to render the Reviews module. |
 | `locale` | `string` | — | `"en"` | Display language. Supported values: `en`, `nl`, `de`, `fr`, `es`, `it`. |
 | `filters` | `FiltersType` | — | `{}` | Pre-set filter values for the Search module (see below). |
-| `api_url` | `string` | — | `https://api.bukazu.com/graphql` | Override the GraphQL endpoint (useful for staging environments). |
+| `api_url` | `string` | — | `https://api.bukazu.com` | Override the API origin (useful for staging environments). Only the origin is used, so an old `.../graphql` URL keeps working. |
 
 ### `filters` object
 
