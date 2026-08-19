@@ -5,7 +5,6 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { GraphQLError } from 'graphql';
 import * as sentryLib from '../../../_lib/sentry';
 import ApiError from '../ApiError';
 
@@ -38,41 +37,66 @@ afterEach(() => {
   container.remove();
 });
 
-function makeGraphQLErrors(messages: string[]): GraphQLError[] {
-  return messages.map((message) => new GraphQLError(message));
+/** An error carrying several messages, as CreateBookingError does. */
+function errorWithMessages(messages: string[]): Error & {
+  messages: readonly string[];
+} {
+  return Object.assign(new Error(messages[0]), { messages });
 }
 
 describe('ApiError', () => {
-  it('renders error messages from graphQLErrors', () => {
-    const error = makeGraphQLErrors(['Something failed']);
-
+  it('renders the message of a plain Error', () => {
     act(() => {
-      root.render(<>{ApiError({ errors: error })}</>);
+      root.render(<>{ApiError({ errors: new Error('Something failed') })}</>);
     });
 
     expect(container.querySelector('.bukazu-error-message')).not.toBeNull();
     expect(container.textContent).toContain('Something failed');
   });
 
+  it('renders every message of an error carrying a messages list', () => {
+    const error = errorWithMessages(['First problem', 'Second problem']);
+
+    act(() => {
+      root.render(<>{ApiError({ errors: error })}</>);
+    });
+
+    expect(container.textContent).toContain('First problem');
+    expect(container.textContent).toContain('Second problem');
+  });
+
   it('reports the error to Sentry when rendered', () => {
-    const error = makeGraphQLErrors(['GraphQL error']);
+    act(() => {
+      root.render(<>{ApiError({ errors: new Error('Request failed') })}</>);
+    });
+
+    expect(sentryLib.reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Request failed' })
+    );
+  });
+
+  it('joins the messages of a multi-message error for Sentry', () => {
+    const error = errorWithMessages(['First problem', 'Second problem']);
 
     act(() => {
       root.render(<>{ApiError({ errors: error })}</>);
     });
 
     expect(sentryLib.reportError).toHaveBeenCalledWith(
-      expect.objectContaining({ message: 'GraphQL error' })
+      expect.objectContaining({ message: 'First problem\nSecond problem' })
     );
   });
 
-  it('supports Apollo-style callers that pass graphQLErrors on an object', () => {
-    const error = { graphQLErrors: makeGraphQLErrors(['Object-shaped error']) };
+  it('reports the same error object only once', () => {
+    const error = new Error('Reported once');
 
     act(() => {
       root.render(<>{ApiError({ errors: error })}</>);
     });
+    act(() => {
+      root.render(<>{ApiError({ errors: error })}</>);
+    });
 
-    expect(container.textContent).toContain('Object-shaped error');
+    expect(sentryLib.reportError).toHaveBeenCalledTimes(1);
   });
 });

@@ -37,7 +37,7 @@ export type PriceResponse = Omit<PricesType, 'optional_house_costs'> & {
 };
 
 interface FetchPriceParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -60,7 +60,7 @@ interface FetchPriceParams {
 const PRICE_PATH = '/portal_api/v1/accommodations/price';
 
 /**
- * Build the REST price URL by reusing the origin of the configured GraphQL
+ * Build the REST price URL by reusing the origin of the configured
  * api_url, so staging/local overrides keep working.
  */
 export function buildPriceUrl({

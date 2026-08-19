@@ -3,7 +3,7 @@
  * (GET /portal_api/v1/config/*). Replaces the legacy GraphQL PortalSite settings
  * reads (PORTAL_BASE_QUERY / PORTAL_SEARCH_QUERY and the settings portions of the
  * booking queries). Mirrors the availability client in `availability.ts`: shared ky
- * http client, REST origin derived from the configured GraphQL api_url, locale header.
+ * http client, REST origin derived from the configured api_url, locale header.
  */
 
 import { HTTPError } from 'ky';
@@ -88,7 +88,7 @@ export type FilterFieldResponse = {
 };
 
 interface ConfigRequestParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -97,7 +97,7 @@ interface ConfigRequestParams {
 const CONFIG_BASE = '/portal_api/v1/config';
 
 /**
- * Build a config URL by reusing the origin of the configured GraphQL api_url, so
+ * Build a config URL by reusing the origin of the configured api_url, so
  * staging/local overrides keep working.
  */
 function buildConfigUrl(
@@ -136,7 +136,9 @@ async function fetchConfig<T>(url: string, locale: string): Promise<T> {
     return await http.get(url, { headers: { locale } }).json<T>();
   } catch (error) {
     if (error instanceof HTTPError) {
-      throw new Error(`Portal settings request failed (${error.response.status})`);
+      throw new Error(
+        `Portal settings request failed (${error.response.status})`
+      );
     }
     throw error;
   }

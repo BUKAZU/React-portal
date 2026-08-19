@@ -30,7 +30,7 @@ export class DiscountCodeError extends Error {
 }
 
 interface FetchDiscountCodeParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -43,7 +43,7 @@ const DISCOUNT_CODE_PATH = '/portal_api/v1/accommodations/discount-code';
 
 /**
  * Build the REST discount-code URL by reusing the origin of the configured
- * GraphQL api_url, so staging/local overrides keep working.
+ * api_url, so staging/local overrides keep working.
  */
 export function buildDiscountCodeUrl({
   apiUrl,

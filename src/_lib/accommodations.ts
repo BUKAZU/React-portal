@@ -39,7 +39,7 @@ export interface AccommodationsResponse {
 }
 
 interface FetchAccommodationsParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -52,7 +52,7 @@ interface FetchAccommodationsParams {
 const SEARCH_PATH = '/portal_api/v1/accommodations';
 
 /**
- * Build the REST search URL by reusing the origin of the configured GraphQL
+ * Build the REST search URL by reusing the origin of the configured
  * api_url, so staging/local overrides keep working.
  */
 export function buildSearchUrl({
