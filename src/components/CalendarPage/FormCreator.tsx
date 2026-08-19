@@ -341,7 +341,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
                 }}
               >
                 <iframe
-                  src={house.rental_terms}
+                  src={house.rental_terms ?? undefined}
                   width="100%"
                   height="100%"
                   title="Terms"

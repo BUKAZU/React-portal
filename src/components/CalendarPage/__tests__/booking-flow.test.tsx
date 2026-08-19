@@ -8,9 +8,8 @@
  * --------
  * • Real components: CalendarWrapper, CalendarPage, GenerateCalendar,
  *   BookingForm, FormCreator, PriceField, Modal, SuccessMessage, CalendarProvider.
- * • Mocked external dependencies: @apollo/client (useQuery),
- *   _lib/gql (returns string constants so useQuery mock can branch on them),
- *   _lib/create_booking, _lib/price, _lib/Tracking, loading SVG icon.
+ * • Mocked external dependencies: _lib/accommodation, _lib/create_booking,
+ *   _lib/price, _lib/Tracking, loading SVG icon.
  * • Mocked heavy sub-components that are already covered by their own unit
  *   tests: Calendar (replaced with simple arrival/departure buttons that drive
  *   the CalendarContext), Guests, Summary, Discount, Insurances, OptionalCosts,
@@ -22,20 +21,18 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
+import { AccommodationDetailError } from '../../../_lib/accommodation';
 
 // ---------------------------------------------------------------------------
-// Mock @apollo/client – provide a controllable useQuery stub
+// Mock the REST accommodation client (replaces the legacy SINGLE_HOUSE_QUERY).
+// requireActual keeps AccommodationDetailError real, so GenerateCalendar's
+// instanceof check still works.
 // ---------------------------------------------------------------------------
-jest.mock('@apollo/client', () => ({
-  useQuery: jest.fn(),
-  gql: (q: TemplateStringsArray) => q
-}));
-
-// ---------------------------------------------------------------------------
-// Mock gql module with opaque string constants so useQuery mock can branch
-// ---------------------------------------------------------------------------
-jest.mock('../../../_lib/gql', () => ({
-  SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY'
+const mockFetchAccommodationDetail = jest.fn();
+jest.mock('../../../_lib/accommodation', () => ({
+  ...jest.requireActual('../../../_lib/accommodation'),
+  fetchAccommodationDetail: (...args: unknown[]) =>
+    mockFetchAccommodationDetail(...args)
 }));
 
 // ---------------------------------------------------------------------------
@@ -196,6 +193,10 @@ const mockHouse = {
   discounts_info: '',
   babies_extra: 0,
   last_minute_days: 0,
+  image_url: null,
+  damage_insurance: false,
+  damage_insurance_required: false,
+  travel_insurance: false,
   rental_terms: 'https://example.com/terms',
   booking_price: {
     total_price: 1500,
@@ -247,15 +248,8 @@ const mockPortalSite = {
   form_submit_button_text: 'Book now'
 } as any;
 
-/** Data returned by SINGLE_HOUSE_QUERY (GenerateCalendar) — house data only. */
-const singleHouseData = {
-  PortalSite: {
-    id: 'TEST',
-    houses: [mockHouse]
-  }
-};
-
-/** Metadata under the `accommodation` key of the REST price response. */
+/** Accommodation metadata as returned by the detail endpoint and under the
+ * `accommodation` key of the price response. */
 const { booking_price: _ignoredBookingPrice, ...mockAccommodation } = mockHouse;
 
 /** Price returned by the REST price endpoint (fetchPrice), used by both
@@ -301,6 +295,8 @@ async function flush() {
 
 /** Simulate clicking on an arrival date then a departure date */
 async function selectDates() {
+  // The calendar only appears once the accommodation request resolved.
+  await flush();
   act(() => {
     (
       container.querySelector('[data-testid="select-arrival"]') as HTMLElement
@@ -347,18 +343,8 @@ beforeEach(() => {
   });
   jest.clearAllMocks();
 
-  const { useQuery } = require('@apollo/client');
-
   mockCreateBooking.mockResolvedValue(bookingResponse);
-
-  // Default useQuery behaviour: return appropriate fixture data per query
-  (useQuery as jest.Mock).mockImplementation((query: string) => {
-    if (query === 'SINGLE_HOUSE_QUERY') {
-      return { data: singleHouseData, loading: false, error: null };
-    }
-    return { data: null, loading: false, error: null };
-  });
-
+  mockFetchAccommodationDetail.mockResolvedValue(mockAccommodation);
   mockFetchPrice.mockResolvedValue(mockPriceResponse);
 });
 
@@ -374,8 +360,9 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('Booking flow – integration', () => {
-  it('renders the calendar view (GenerateCalendar) on initial load', () => {
+  it('renders the calendar view (GenerateCalendar) on initial load', async () => {
     renderApp();
+    await flush();
 
     expect(
       container.querySelector('[data-testid="mock-calendar"]')
@@ -384,20 +371,80 @@ describe('Booking flow – integration', () => {
     expect(container.querySelector('form.form')).toBeNull();
   });
 
-  it('displays the house name in the calendar view', () => {
+  it('displays the house name in the calendar view', async () => {
     renderApp();
+    await flush();
 
     expect(container.textContent).toContain('Test House');
   });
 
-  it('disables the Calculate button before any date is selected', () => {
+  it('disables the Calculate button before any date is selected', async () => {
     renderApp();
+    await flush();
 
     const calcButton = container.querySelector(
       'button.button'
     ) as HTMLButtonElement | null;
     expect(calcButton).not.toBeNull();
     expect(calcButton!.disabled).toBe(true);
+  });
+
+  it('fetches the accommodation through the REST detail endpoint', async () => {
+    renderApp();
+    await flush();
+
+    expect(mockFetchAccommodationDetail).toHaveBeenCalledWith({
+      apiUrl: 'https://api.bukazu.com/graphql',
+      locale: 'en',
+      portalCode: 'TEST',
+      objectCode: 'HOUSE1'
+    });
+  });
+
+  it('shows the loading indicator until the accommodation resolves', async () => {
+    renderApp();
+
+    expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
+    expect(container.textContent).not.toContain('Test House');
+
+    // Settle the request so the state update stays inside act().
+    await flush();
+  });
+
+  it('shows the api error when the request rejects with a non-Error', async () => {
+    mockFetchAccommodationDetail.mockRejectedValue('boom');
+
+    renderApp();
+    await flush();
+
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+  });
+
+  it('shows "no house found" when the accommodation is not on the portal site', async () => {
+    mockFetchAccommodationDetail.mockRejectedValue(
+      new AccommodationDetailError(404)
+    );
+
+    renderApp();
+    await flush();
+
+    expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
+    expect(container.querySelector('[data-testid="api-error"]')).toBeNull();
+    expect(container.textContent).toContain(
+      'No object found for this combination of PortalCode and ObjectCode'
+    );
+  });
+
+  it('shows the api error when the accommodation request fails', async () => {
+    mockFetchAccommodationDetail.mockRejectedValue(
+      new AccommodationDetailError(500)
+    );
+
+    renderApp();
+    await flush();
+
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
   });
 
   it('enables the Calculate button once arrival and departure dates are selected', async () => {
@@ -508,6 +555,8 @@ describe('Booking flow – integration', () => {
     act(() => {
       (container.querySelector('.return-link') as HTMLElement)?.click();
     });
+    // GenerateCalendar remounts and refetches the accommodation.
+    await flush();
 
     // Calendar should be restored, booking form gone
     expect(

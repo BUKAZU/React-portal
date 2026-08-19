@@ -39,14 +39,21 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           setPriceError(true);
           return;
         }
-        // The REST response's cost shape is a superset of OptionalHouseCostType.
         setHouse({
           ...price.accommodation,
           booking_price: {
             total_price: price.total_price,
-            optional_house_costs: price.optional_house_costs
+            optional_house_costs: price.optional_house_costs.map((cost) => ({
+              id: String(cost.id),
+              name: cost.name,
+              method: cost.method,
+              max_available: cost.max_available,
+              amount: cost.amount,
+              method_name: cost.method_name,
+              description: cost.description
+            }))
           }
-        } as unknown as HouseType);
+        });
       })
       .catch(() => {
         if (!cancelled) {

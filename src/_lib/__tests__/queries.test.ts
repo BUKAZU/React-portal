@@ -4,11 +4,11 @@ import {
   GraphQLSchema,
   DocumentNode
 } from 'graphql';
-import { SINGLE_HOUSE_QUERY } from '../gql';
+import { CHECK_DISCOUNT_CODE } from '../gql';
 import introspectionResult from './schema.json';
 
 const allQueries: Array<{ name: string; document: DocumentNode }> = [
-  { name: 'SINGLE_HOUSE_QUERY', document: SINGLE_HOUSE_QUERY }
+  { name: 'CHECK_DISCOUNT_CODE', document: CHECK_DISCOUNT_CODE }
 ];
 
 describe('GraphQL queries comply with API schema', () => {

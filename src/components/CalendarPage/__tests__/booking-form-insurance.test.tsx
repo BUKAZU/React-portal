@@ -21,10 +21,9 @@ import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
 
 // ---------------------------------------------------------------------------
-// Mock @apollo/client
+// Mock @apollo/client – only the discount-code mutation still uses it
 // ---------------------------------------------------------------------------
 jest.mock('@apollo/client', () => ({
-  useQuery: jest.fn(),
   useMutation: jest.fn(() => [
     jest.fn().mockResolvedValue({}),
     { loading: false, error: null, data: null, reset: jest.fn() }
@@ -33,8 +32,15 @@ jest.mock('@apollo/client', () => ({
 }));
 
 jest.mock('../../../_lib/gql', () => ({
-  SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
+  CHECK_DISCOUNT_CODE: 'CHECK_DISCOUNT_CODE'
+}));
+
+// The calendar loads the accommodation through the REST detail endpoint.
+const mockFetchAccommodationDetail = jest.fn();
+jest.mock('../../../_lib/accommodation', () => ({
+  ...jest.requireActual('../../../_lib/accommodation'),
+  fetchAccommodationDetail: (...args: unknown[]) =>
+    mockFetchAccommodationDetail(...args)
 }));
 
 const mockFetchPrice = jest.fn();
@@ -196,21 +202,14 @@ function makeHouseWithInsurance(cancelInsurance: boolean) {
     discounts_info: '',
     babies_extra: 0,
     last_minute_days: 0,
+    image_url: null,
+    damage_insurance: false,
+    damage_insurance_required: false,
+    travel_insurance: false,
     rental_terms: 'https://example.com/terms',
     booking_price: {
       total_price: 1500,
       optional_house_costs: []
-    }
-  };
-}
-
-function makeSingleHouseData(house: ReturnType<typeof makeHouseWithInsurance>) {
-  return {
-    PortalSite: {
-      id: 'TEST',
-      options: { bookingFields: [], bookingForm: {} },
-      bookingFormConfiguration: mockBookingFormConfiguration,
-      houses: [house]
     }
   };
 }
@@ -244,21 +243,11 @@ let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 let consoleSpy: jest.SpyInstance;
 
-function setupUseQuery(house: ReturnType<typeof makeHouseWithInsurance>) {
-  const { useQuery } = require('@apollo/client');
-  (useQuery as jest.Mock).mockImplementation((query: string) => {
-    if (query === 'SINGLE_HOUSE_QUERY') {
-      return {
-        data: makeSingleHouseData(house),
-        loading: false,
-        error: null
-      };
-    }
-    return { data: null, loading: false, error: null };
-  });
-  // The booking form now receives the accommodation metadata via the REST
-  // price response (include_accommodation) instead of a separate GraphQL query.
+function setupHouse(house: ReturnType<typeof makeHouseWithInsurance>) {
+  // The calendar reads the accommodation from the detail endpoint; the booking
+  // form gets the same payload under the price response's accommodation key.
   const { booking_price: _ignoredBookingPrice, ...accommodation } = house;
+  mockFetchAccommodationDetail.mockResolvedValue(accommodation);
   mockFetchPrice.mockResolvedValue({
     total_price: 1500,
     currency: 'EUR',
@@ -292,6 +281,8 @@ async function flush() {
 }
 
 async function selectDates() {
+  // The calendar only appears once the accommodation request resolved.
+  await flush();
   act(() => {
     (
       container.querySelector('[data-testid="select-arrival"]') as HTMLElement
@@ -348,7 +339,7 @@ afterEach(() => {
 
 describe('Booking form – cancel_insurance disabled on house', () => {
   it('does not render the insurances section when house.cancel_insurance is false', async () => {
-    setupUseQuery(makeHouseWithInsurance(false));
+    setupHouse(makeHouseWithInsurance(false));
     renderApp();
     await navigateToBookingForm();
 
@@ -356,7 +347,7 @@ describe('Booking form – cancel_insurance disabled on house', () => {
   });
 
   it('renders the booking form without any insurance select', async () => {
-    setupUseQuery(makeHouseWithInsurance(false));
+    setupHouse(makeHouseWithInsurance(false));
     renderApp();
     await navigateToBookingForm();
 
@@ -369,7 +360,7 @@ describe('Booking form – cancel_insurance disabled on house', () => {
 
 describe('Booking form – cancel_insurance enabled on house', () => {
   it('renders the insurances section when house.cancel_insurance is true', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -377,7 +368,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   });
 
   it('renders the "Insurances" heading', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -386,7 +377,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   });
 
   it('renders the cancel_insurance select dropdown', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -395,7 +386,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   });
 
   it('does NOT show the date-of-birth field before any insurance is selected', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -404,7 +395,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   });
 
   it('shows the date-of-birth field after selecting insurance option "1"', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -430,7 +421,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   });
 
   it('hides the date-of-birth field after switching back to "None" (value "0")', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 

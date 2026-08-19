@@ -4,27 +4,20 @@ import {
   CostType,
   PricesType
 } from '../components/CalendarPage/Summary/cost_types';
+import type { AccommodationDetail } from './accommodation';
 
-/** Accommodation metadata returned when requested with includeAccommodation. */
-export interface PriceAccommodation {
-  id: number;
-  name: string;
-  code: string;
-  allow_option: boolean;
-  persons: number;
-  image_url: string | null;
-  discounts: string | null;
-  discounts_info: string | null;
-  house_type: string;
-  rental_terms: string | null;
-  cancel_insurance: boolean;
-  damage_insurance: boolean;
-  damage_insurance_required: boolean;
-  travel_insurance: boolean;
-  babies_extra: number;
-}
+/**
+ * The REST price endpoint returns optional-cost objects with all CostType
+ * fields plus the extra fields consumed by the booking form.
+ */
+export type RestOptionalCostType = CostType & {
+  max_available: number;
+  method_name: string;
+  description?: string;
+};
+
 /** Full response of GET /portal_api/v1/accommodations/price. */
-export type PriceResponse = PricesType & {
+export type PriceResponse = Omit<PricesType, 'optional_house_costs'> & {
   arrival_date: string;
   departure_date: string;
   arrival_time: string | null;
@@ -37,8 +30,10 @@ export type PriceResponse = PricesType & {
   on_site_house_costs: CostType[];
   person_percentages: unknown;
   night_percentages: unknown;
+  /** Overrides PricesType: REST returns richer items with max_available, method_name, description. */
+  optional_house_costs: RestOptionalCostType[];
   /** Only present when requested with includeAccommodation. */
-  accommodation?: PriceAccommodation;
+  accommodation?: AccommodationDetail;
 };
 
 interface FetchPriceParams {
