@@ -29,17 +29,6 @@ jest.mock('../index', () => (props: object) => (
   <div data-testid="portal" data-props={JSON.stringify(props)} />
 ));
 
-// Mock Apollo and GQL to satisfy transitive imports from index.tsx.
-jest.mock('@apollo/client', () => ({
-  ApolloClient: jest.fn(),
-  InMemoryCache: jest.fn(),
-  ApolloProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  )
-}));
-
-jest.mock('../_lib/gql', () => ({}));
-
 // ---------------------------------------------------------------------------
 // Import the module under test AFTER mocks are set up.
 // ---------------------------------------------------------------------------
