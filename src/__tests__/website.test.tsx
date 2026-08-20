@@ -33,7 +33,7 @@ jest.mock('../index', () => (props: object) => (
 // Import the module under test AFTER mocks are set up.
 // ---------------------------------------------------------------------------
 
-import { mountPortal, init } from '../website';
+import { mountPortal, init, version } from '../website';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -62,6 +62,7 @@ function lastPortalProps(): Record<string, unknown> {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  document.body.innerHTML = '';
 });
 
 describe('mountPortal – attribute parsing', () => {
@@ -105,9 +106,30 @@ describe('mountPortal – attribute parsing', () => {
 
     expect(lastPortalProps().pageType).toBeUndefined();
   });
+
+  // The WordPress plugin renders page="" and object-code="" for the calendar
+  // module, so a present-but-empty attribute must stay an empty string rather
+  // than becoming undefined.
+  it('keeps present-but-empty page and object-code attributes as empty strings', () => {
+    const el = makeElement({
+      'portal-code': 'X',
+      'object-code': '',
+      page: ''
+    });
+    act(() => {
+      mountPortal(el);
+    });
+
+    const props = lastPortalProps();
+    expect(props.objectCode).toBe('');
+    expect(props.pageType).toBe('');
+  });
 });
 
-describe('mountPortal – locale validation', () => {
+describe('mountPortal – locale handling', () => {
+  // The language attribute is handed to Portal verbatim; normalisation (BCP-47
+  // tags, casing, the fallback to English) is Portal's job and is covered by
+  // src/_lib/__tests__/locale.test.ts.
   it.each(['en', 'nl', 'de', 'fr', 'es', 'it'])(
     'passes supported locale "%s" through unchanged',
     (locale) => {
@@ -120,22 +142,105 @@ describe('mountPortal – locale validation', () => {
     }
   );
 
-  it('falls back to "en" when the language attribute is absent', () => {
+  it.each(['nl-NL', 'de_DE', 'EN'])(
+    'passes the full locale tag "%s" through for Portal to normalise',
+    (locale) => {
+      const el = makeElement({ 'portal-code': 'X', language: locale });
+      act(() => {
+        mountPortal(el);
+      });
+
+      expect(lastPortalProps().locale).toBe(locale);
+    }
+  );
+
+  it('passes undefined when the language attribute is absent', () => {
     const el = makeElement({ 'portal-code': 'X' });
     act(() => {
       mountPortal(el);
     });
 
-    expect(lastPortalProps().locale).toBe('en');
+    expect(lastPortalProps().locale).toBeUndefined();
   });
 
-  it('falls back to "en" for an unrecognised language value', () => {
+  it('passes an unrecognised language value through for Portal to reject', () => {
     const el = makeElement({ 'portal-code': 'X', language: 'xx' });
     act(() => {
       mountPortal(el);
     });
 
-    expect(lastPortalProps().locale).toBe('en');
+    expect(lastPortalProps().locale).toBe('xx');
+  });
+});
+
+describe('mountPortal – Sentry DSN', () => {
+  const BAKED_DSN = 'https://baked@o0.ingest.sentry.io/1';
+  const originalDsn = __SENTRY_DSN__;
+
+  function setBakedDsn(dsn: string): void {
+    (globalThis as unknown as { __SENTRY_DSN__: string }).__SENTRY_DSN__ = dsn;
+  }
+
+  afterEach(() => {
+    setBakedDsn(originalDsn);
+  });
+
+  it('prefers the sentry-dsn attribute over the baked-in DSN', () => {
+    setBakedDsn(BAKED_DSN);
+    const el = makeElement({
+      'portal-code': 'X',
+      'sentry-dsn': 'https://attr@o0.ingest.sentry.io/2'
+    });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().sentryDsn).toBe(
+      'https://attr@o0.ingest.sentry.io/2'
+    );
+  });
+
+  it('uses the baked-in DSN when the attribute is absent', () => {
+    setBakedDsn(BAKED_DSN);
+    const el = makeElement({ 'portal-code': 'X' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().sentryDsn).toBe(BAKED_DSN);
+  });
+
+  it('uses the baked-in DSN when the attribute is present but empty', () => {
+    setBakedDsn(BAKED_DSN);
+    const el = makeElement({ 'portal-code': 'X', 'sentry-dsn': '' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().sentryDsn).toBe(BAKED_DSN);
+  });
+
+  it.each(['off', 'none'])(
+    'disables reporting when sentry-dsn is "%s"',
+    (value) => {
+      setBakedDsn(BAKED_DSN);
+      const el = makeElement({ 'portal-code': 'X', 'sentry-dsn': value });
+      act(() => {
+        mountPortal(el);
+      });
+
+      expect(lastPortalProps().sentryDsn).toBeUndefined();
+    }
+  );
+
+  it('passes undefined when neither the attribute nor the baked DSN is set', () => {
+    setBakedDsn('');
+    const el = makeElement({ 'portal-code': 'X' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    expect(lastPortalProps().sentryDsn).toBeUndefined();
   });
 });
 
@@ -224,12 +329,55 @@ describe('init', () => {
     el2.remove();
   });
 
-  it('does nothing when there are no .bukazu-app elements', () => {
+  it('does nothing when the document has no host element at all', () => {
     act(() => {
       init();
     });
 
     expect(mockCreateRoot).not.toHaveBeenCalled();
+  });
+
+  it('falls back to #bukazu-app when no element carries the class', () => {
+    const el = makeElement({ 'portal-code': 'BY_ID' });
+    el.id = 'bukazu-app';
+    document.body.appendChild(el);
+
+    act(() => {
+      init();
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledWith(el);
+    expect(mockCreateRoot).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores #bukazu-app when class-based hosts exist', () => {
+    const byClass = makeElement({ 'portal-code': 'BY_CLASS' });
+    byClass.className = 'bukazu-app';
+    const byId = makeElement({ 'portal-code': 'BY_ID' });
+    byId.id = 'bukazu-app';
+    document.body.appendChild(byClass);
+    document.body.appendChild(byId);
+
+    act(() => {
+      init();
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledWith(byClass);
+    expect(mockCreateRoot).not.toHaveBeenCalledWith(byId);
+    expect(mockCreateRoot).toHaveBeenCalledTimes(1);
+  });
+
+  it('mounts an element that carries both the class and the id only once', () => {
+    const el = makeElement({ 'portal-code': 'BOTH' });
+    el.className = 'bukazu-app';
+    el.id = 'bukazu-app';
+    document.body.appendChild(el);
+
+    act(() => {
+      init();
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -247,5 +395,104 @@ describe('mountPortal – double-mount prevention', () => {
 
     expect(mockCreateRoot).toHaveBeenCalledTimes(1);
     expect(mockRender).toHaveBeenCalledTimes(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: version export and the cross-instance root registry
+// ---------------------------------------------------------------------------
+
+describe('version', () => {
+  it('exposes the version baked in at build time', () => {
+    expect(version).toBe(__PORTAL_VERSION__);
+  });
+});
+
+describe('root registry', () => {
+  it('is shared across module instances so a double-loaded bundle mounts once', () => {
+    const el = makeElement({ 'portal-code': 'X' });
+    act(() => {
+      mountPortal(el);
+    });
+
+    jest.resetModules();
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const reloaded = require('../website') as {
+      mountPortal: typeof mountPortal;
+    };
+    act(() => {
+      reloaded.mountPortal(el);
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledTimes(1);
+    expect(mockRender).toHaveBeenCalledTimes(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: auto-initialisation on import
+// ---------------------------------------------------------------------------
+
+describe('auto-initialisation', () => {
+  /** Overrides the read-only `document.readyState` getter for one test. */
+  function withReadyState(state: DocumentReadyState, run: () => void): void {
+    const descriptor = Object.getOwnPropertyDescriptor(
+      Document.prototype,
+      'readyState'
+    );
+    Object.defineProperty(document, 'readyState', {
+      configurable: true,
+      get: () => state
+    });
+    try {
+      run();
+    } finally {
+      delete (document as unknown as Record<string, unknown>).readyState;
+      if (descriptor) {
+        Object.defineProperty(Document.prototype, 'readyState', descriptor);
+      }
+    }
+  }
+
+  it('waits for DOMContentLoaded when the document is still loading', () => {
+    const addEventListener = jest.spyOn(document, 'addEventListener');
+
+    withReadyState('loading', () => {
+      jest.resetModules();
+      require('../website');
+    });
+
+    expect(addEventListener).toHaveBeenCalledWith(
+      'DOMContentLoaded',
+      expect.any(Function)
+    );
+    expect(mockCreateRoot).not.toHaveBeenCalled();
+
+    // The registered listener is the real `init`, so firing it mounts.
+    const listener = addEventListener.mock.calls.find(
+      ([type]) => type === 'DOMContentLoaded'
+    )?.[1] as () => void;
+    const el = makeElement({ 'portal-code': 'DEFERRED' });
+    el.className = 'bukazu-app';
+    document.body.appendChild(el);
+    act(() => {
+      listener();
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledWith(el);
+    addEventListener.mockRestore();
+  });
+
+  it('mounts immediately when the document is already parsed', () => {
+    const el = makeElement({ 'portal-code': 'IMMEDIATE' });
+    el.className = 'bukazu-app';
+    document.body.appendChild(el);
+
+    withReadyState('complete', () => {
+      jest.resetModules();
+      require('../website');
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledWith(el);
   });
 });

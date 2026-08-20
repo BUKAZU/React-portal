@@ -5,6 +5,12 @@ import type { Config } from 'jest';
 const config: Config = {
   verbose: true,
   testEnvironment: 'jsdom',
+  // Constants that `vite.website.config.ts` supplies through `define`; Jest has
+  // no equivalent, so they are declared as globals here.
+  globals: {
+    __SENTRY_DSN__: '',
+    __PORTAL_VERSION__: '0.0.0-test'
+  },
   setupFiles: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '\\.css$': '<rootDir>/src/__mocks__/fileMock.ts',

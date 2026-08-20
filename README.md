@@ -100,14 +100,15 @@ Render the reviews page for a specific property by passing `objectCode` together
 
 ## Direct website usage (no bundler required)
 
-If you are not using a JavaScript bundler or a React application, you can use the self-contained **website build** instead. This single file includes React and all other dependencies — just drop two files into your page and add a `<div>` with the right attributes.
+If you are not using a JavaScript bundler or a React application, you can use the self-contained **website build** instead. This single file includes React, every other dependency, and the stylesheet — drop it into your page and add a `<div>` with the right attributes.
 
-### 1. Download or reference the files
+### 1. Download or reference the file
 
-After installing the package, copy the files from the package (or reference them from a CDN/local path):
+After installing the package, copy the file from the package (or reference it from a CDN/local path):
 
 - `node_modules/bukazu-portal-react/build/portal.website.js`
-- `node_modules/bukazu-portal-react/build/portal.website.css`
+
+The bundle injects its own `<style>` element, so no stylesheet link is required. A companion `node_modules/bukazu-portal-react/build/portal.website.css` is published as well, for pages whose Content-Security-Policy forbids inline styles (`style-src` without `'unsafe-inline'`).
 
 ### 2. Add a host element
 
@@ -118,8 +119,13 @@ Place a `<div class="bukazu-app">` with the following HTML attributes wherever y
 | `portal-code` | ✅ | Your Bukazu portal identifier |
 | `object-code` | — | Property code (omit for the Search module) |
 | `page` | — | Set to `"reviews"` for the Reviews module |
-| `language` | — | Locale: `en` \| `nl` \| `de` \| `fr` \| `es` \| `it` (default: `en`) |
+| `language` | — | Locale: `en` \| `nl` \| `de` \| `fr` \| `es` \| `it`, or a full BCP-47 tag such as `nl-NL` (default: `en`) |
 | `filters` | — | JSON-encoded filters object (see filter keys in the props table below) |
+| `sentry-dsn` | — | Sentry DSN for error reporting. Defaults to the DSN baked into the bundle; pass `off` to disable reporting |
+
+The host element is found by the `bukazu-app` class. Pages that carry no such
+element fall back to a single element with `id="bukazu-app"`, which is what older
+embed snippets use.
 
 ### 3. Include the script and stylesheet
 
@@ -129,7 +135,6 @@ Place a `<div class="bukazu-app">` with the following HTML attributes wherever y
   <head>
     <meta charset="UTF-8" />
     <title>My website</title>
-    <link rel="stylesheet" href="portal.website.css" />
   </head>
   <body>
 
@@ -151,7 +156,9 @@ Place a `<div class="bukazu-app">` with the following HTML attributes wherever y
 </html>
 ```
 
-The script automatically initialises every `.bukazu-app` element it finds on the page when the DOM is ready. Multiple portals on the same page are supported.
+The script automatically initialises every `.bukazu-app` element it finds on the page when the DOM is ready. Multiple portals on the same page are supported, and loading the bundle twice is harmless — it re-renders the existing portals rather than mounting duplicates.
+
+For advanced use the bundle exposes `BukazuPortal.init()`, `BukazuPortal.mountPortal(element)` and `BukazuPortal.version` as globals, so you can mount a portal into an element you inserted after page load.
 
 ---
 

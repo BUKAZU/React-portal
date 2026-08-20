@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Website build fixture – loaded twice</title>
+  </head>
+  <body>
+    <!--
+      Some pages end up with a cached inline copy of the bundle alongside the
+      CDN copy. Loading it twice must still produce one <style> element and one
+      mounted portal.
+    -->
+    <div class="bukazu-app" portal-code="2fb81a2d" language="nl"></div>
+
+    <script src="/build/portal.website.js"></script>
+    <script src="/build/portal.website.js"></script>
+  </body>
+</html>
