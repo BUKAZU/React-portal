@@ -12,9 +12,11 @@
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "build": "npm run countries:pack && vite build && vite build --config vite.website.config.ts",
+    "build": "npm run countries:pack && vite build && npm run build:website",
     "build:analyze": "npm run countries:pack && cross-env ANALYZE=true vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "build:website": "vite build --config vite.website.config.ts",
+    "verify:website": "node ./scripts/verify-website-bundle.mjs"
   },
   "author": "Bob van Oorschot",
   "license": "MIT",
@@ -72,7 +74,10 @@
     "./index.css": "./build/index.css",
     "./build/index.css": "./build/index.css",
     "./portal.website.js": "./build/portal.website.js",
-    "./portal.website.css": "./build/portal.website.css"
+    "./portal.website.css": "./build/portal.website.css",
+    "./build/portal.website.js": "./build/portal.website.js",
+    "./build/portal.website.css": "./build/portal.website.css",
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "*.css"

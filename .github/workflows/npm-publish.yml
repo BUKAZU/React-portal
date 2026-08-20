@@ -63,7 +63,14 @@ jobs:
       - name: Get version
         run: |
           echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
-      - run: npm run build
+      - name: Build (bakes the Sentry DSN into the website bundle)
+        run: npm run build
+        env:
+          BUKAZU_SENTRY_DSN: ${{ vars.BUKAZU_SENTRY_DSN }}
+      - name: Verify the website bundle
+        run: npm run verify:website
+        env:
+          BUKAZU_SENTRY_DSN: ${{ vars.BUKAZU_SENTRY_DSN }}
       - name: Publish to npm
         run: |
           if [[ "$VERSION" == *-* ]]; then
