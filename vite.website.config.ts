@@ -111,7 +111,6 @@ export default defineConfig({
     // to do the substitution. Without this, React's own `process.env.NODE_ENV`
     // reads throw "process is not defined" and nothing renders.
     'process.env.NODE_ENV': JSON.stringify('production'),
-    __SENTRY_DSN__: JSON.stringify(process.env.BUKAZU_SENTRY_DSN ?? ''),
     __PORTAL_VERSION__: JSON.stringify(version)
   },
   build: {

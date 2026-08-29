@@ -127,23 +127,4 @@ test.describe('portal.website.js', () => {
       consoleErrors.filter((error) => error.includes('createRoot'))
     ).toHaveLength(0);
   });
-
-  test('reports errors to the Sentry DSN from the attribute', async ({
-    page
-  }) => {
-    await stubApi(page);
-    let envelopeSent = false;
-    await page.route('**/*.ingest.sentry.io/**', (route) => {
-      envelopeSent = true;
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: '{}'
-      });
-    });
-
-    await page.goto(`${STATIC_BASE}/e2e/fixtures/website-sentry.html`);
-
-    await expect.poll(() => envelopeSent, { timeout: 15000 }).toBe(true);
-  });
 });

@@ -121,7 +121,6 @@ Place a `<div class="bukazu-app">` with the following HTML attributes wherever y
 | `page` | — | Set to `"reviews"` for the Reviews module |
 | `language` | — | Locale: `en` \| `nl` \| `de` \| `fr` \| `es` \| `it`, or a full BCP-47 tag such as `nl-NL` (default: `en`) |
 | `filters` | — | JSON-encoded filters object (see filter keys in the props table below) |
-| `sentry-dsn` | — | Sentry DSN for error reporting. Defaults to the DSN baked into the bundle; pass `off` to disable reporting |
 
 The host element is found by the `bukazu-app` class. Pages that carry no such
 element fall back to a single element with `id="bukazu-app"`, which is what older

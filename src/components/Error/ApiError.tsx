@@ -1,6 +1,5 @@
 import React from 'react';
 import { t } from '../../intl';
-import { reportError } from '../../_lib/sentry';
 
 /** An error carrying several messages to display, such as CreateBookingError. */
 type ErrorWithMessages = Error & { messages: readonly string[] };
@@ -10,8 +9,6 @@ type ApiErrorSource = ErrorWithMessages | Error;
 type ApiErrorProps = {
   errors: ApiErrorSource;
 };
-
-const reportedErrors = new WeakSet<object>();
 
 function hasMessages(source: ApiErrorSource): source is ErrorWithMessages {
   return (
@@ -34,15 +31,6 @@ function getErrorMessages(source: ApiErrorSource): readonly string[] {
 
 function ApiError(errors: ApiErrorProps): JSX.Element {
   const messages = getErrorMessages(errors.errors);
-
-  if (
-    typeof errors.errors === 'object' &&
-    errors.errors !== null &&
-    !reportedErrors.has(errors.errors)
-  ) {
-    reportedErrors.add(errors.errors);
-    reportError(new Error(messages.join('\n')));
-  }
 
   return (
     <div className="bukazu-error-message">

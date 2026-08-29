@@ -5,14 +5,9 @@
 import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as sentryLib from '../../../_lib/sentry';
 import IntegrationError from '../IntegrationError';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
-
-jest.mock('../../../_lib/sentry', () => ({
-  reportMessage: jest.fn()
-}));
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -47,14 +42,12 @@ describe('IntegrationError', () => {
     renderError({ portalCode: 'VALID', locale: 'en' });
 
     expect(container.innerHTML).toBe('');
-    expect(sentryLib.reportMessage).not.toHaveBeenCalled();
   });
 
   it('does not show an error for BCP-47 locales', () => {
     renderError({ portalCode: 'VALID', locale: 'nl-NL' });
 
     expect(container.querySelector('h2')).toBeNull();
-    expect(sentryLib.reportMessage).not.toHaveBeenCalled();
   });
 
   it('warns and falls back gracefully for unsupported locales', () => {
@@ -64,7 +57,6 @@ describe('IntegrationError', () => {
     expect(console.warn).toHaveBeenCalledWith(
       "Locale 'pt-BR' is not supported, defaulting to English"
     );
-    expect(sentryLib.reportMessage).not.toHaveBeenCalled();
   });
 
   it('warns for unsupported locales that start with "en"', () => {
@@ -76,29 +68,15 @@ describe('IntegrationError', () => {
     );
   });
 
-  it('renders an error and reports to Sentry when portalCode is missing', () => {
+  it('renders an error when portalCode is missing', () => {
     renderError({ portalCode: '', locale: 'en' });
 
     expect(container.querySelector('h2')).not.toBeNull();
-    expect(sentryLib.reportMessage).toHaveBeenCalledWith(
-      'No portal code is specified, so portal is not working'
-    );
   });
 
-  it('renders an error and reports to Sentry when pageType is invalid', () => {
+  it('renders an error when pageType is invalid', () => {
     renderError({ portalCode: 'VALID', locale: 'en', pageType: 'unknown' });
 
     expect(container.querySelector('h2')).not.toBeNull();
-    expect(sentryLib.reportMessage).toHaveBeenCalledWith(
-      "'unknown' is not a valid page"
-    );
-  });
-
-  it('does not re-report to Sentry when the same errors are re-rendered', () => {
-    renderError({ portalCode: '', locale: 'en' });
-    expect(sentryLib.reportMessage).toHaveBeenCalledTimes(1);
-
-    renderError({ portalCode: '', locale: 'en' });
-    expect(sentryLib.reportMessage).toHaveBeenCalledTimes(1);
   });
 });

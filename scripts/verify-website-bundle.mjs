@@ -2,9 +2,9 @@
  * Gate that stops a broken website bundle from being published.
  *
  * `portal.website.js` is consumed as a bare `<script>` tag by embedders who
- * have no build step, so a bundle that lost its inlined stylesheet — or its
- * Sentry DSN — is a silent production regression rather than a build failure.
- * This script asserts the properties that no unit test can see, because they
+ * have no build step, so a bundle that lost its inlined stylesheet is a
+ * silent production regression rather than a build failure. This script
+ * asserts the properties that no unit test can see, because they
  * only exist after Vite has run.
  *
  * Usage: node ./scripts/verify-website-bundle.mjs
@@ -68,26 +68,11 @@ if (jsSize > 0) {
       js.includes(`data-bukazu-version",'${version}'`),
     `the injected style element is not stamped with version ${version}`
   );
-
-  // The DSN is only baked in when the environment supplies one, so this is a
-  // conditional check: locally an empty DSN is expected, in the publish
-  // workflow an empty DSN means production lost its error reporting.
-  if (process.env.BUKAZU_SENTRY_DSN) {
-    check(
-      js.includes(process.env.BUKAZU_SENTRY_DSN),
-      'BUKAZU_SENTRY_DSN is set but the bundle does not contain it'
-    );
-  }
 }
 
 const kb = (bytes) => `${(bytes / 1024).toFixed(1)} KB`;
 console.log(`portal.website.js  ${kb(jsSize)}`);
 console.log(`portal.website.css ${kb(cssSize)}`);
-console.log(
-  process.env.BUKAZU_SENTRY_DSN
-    ? 'Sentry DSN: baked in'
-    : 'Sentry DSN: not set (BUKAZU_SENTRY_DSN unset)'
-);
 
 if (failures.length > 0) {
   console.error('\nwebsite bundle verification failed:');

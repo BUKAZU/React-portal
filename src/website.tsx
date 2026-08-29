@@ -16,9 +16,6 @@
  *                              English
  *   filters      – optional  – JSON-encoded filters object; invalid JSON is silently
  *                              ignored and an empty object is used instead
- *   sentry-dsn   – optional  – Sentry DSN for error reporting; defaults to the DSN
- *                              baked into the bundle at build time. Pass `off` (or
- *                              `none`) to disable reporting entirely.
  *
  * Example:
  *   <div class="bukazu-app"
@@ -46,9 +43,6 @@ import { FiltersType } from './components/SearchPage/filters/filter_types';
 
 const CLASS_NAME = 'bukazu-app';
 const ELEMENT_ID = 'bukazu-app';
-
-/** Attribute values that turn Sentry reporting off for a host element. */
-const SENTRY_OFF_VALUES = ['off', 'none'];
 
 /**
  * Cache of already-created React roots, keyed by host element.
@@ -91,22 +85,6 @@ function parseFilters(raw: string | null): FiltersType {
 }
 
 /**
- * Resolves the Sentry DSN for a host element.
- *
- * The `sentry-dsn` attribute wins when set to a non-empty value other than the
- * opt-out keywords; otherwise the DSN baked into the bundle at build time is
- * used. `undefined` leaves Sentry uninitialised, which the Portal component
- * treats as "report nothing".
- */
-function resolveSentryDsn(element: HTMLElement): string | undefined {
-  const raw = element.getAttribute('sentry-dsn');
-  if (raw !== null && SENTRY_OFF_VALUES.includes(raw)) {
-    return undefined;
-  }
-  return raw || __SENTRY_DSN__ || undefined;
-}
-
-/**
  * Mount a Portal onto a single host element.
  *
  * - `portal-code`: passed through as-is; when absent, the Portal component
@@ -114,7 +92,6 @@ function resolveSentryDsn(element: HTMLElement): string | undefined {
  * - `language`: passed through as-is; the Portal component normalises BCP-47
  *   tags and falls back to `'en'` for anything unsupported.
  * - `filters`:  falls back to `{}` when absent or invalid JSON.
- * - `sentry-dsn`: see `resolveSentryDsn`.
  */
 function mountPortal(element: HTMLElement): void {
   const portalCode = element.getAttribute('portal-code') ?? '';
@@ -122,7 +99,6 @@ function mountPortal(element: HTMLElement): void {
   const pageType = element.getAttribute('page') ?? undefined;
   const locale = element.getAttribute('language') ?? undefined;
   const filters = parseFilters(element.getAttribute('filters'));
-  const sentryDsn = resolveSentryDsn(element);
 
   let root = roots.get(element);
   if (!root) {
@@ -136,7 +112,6 @@ function mountPortal(element: HTMLElement): void {
       pageType={pageType}
       locale={locale}
       filters={filters}
-      sentryDsn={sentryDsn}
     />
   );
 }

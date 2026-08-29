@@ -9,7 +9,6 @@ import { LocaleType } from './types';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
 import { loadLocale } from './_lib/date_helper';
 import { normalizeLocale } from './_lib/locale';
-import { initSentry, setSentryContext } from './_lib/sentry';
 
 interface Props {
   portalCode: string;
@@ -22,7 +21,6 @@ interface Props {
    * that older embedders pass ("https://api.bukazu.com/graphql") still works.
    */
   api_url?: string;
-  sentryDsn?: string;
 }
 
 function Portal({
@@ -31,23 +29,9 @@ function Portal({
   pageType,
   locale,
   filters,
-  api_url = 'https://api.bukazu.com',
-  sentryDsn
+  api_url = 'https://api.bukazu.com'
 }: Props): JSX.Element {
   const resolvedLocale: LocaleType = normalizeLocale(locale);
-
-  // All hooks must be called unconditionally before any conditional return
-  // (React Rules of Hooks). IntegrationError is called as a plain function
-  // below, which registers its internal useEffect into Portal's hook list.
-  // Placing the Sentry effect here (before that call) ensures Sentry context
-  // is always set before IntegrationError's reportMessage effect fires, since
-  // React runs effects in registration order within a single component.
-  useEffect(() => {
-    if (sentryDsn) {
-      initSentry(sentryDsn);
-    }
-    setSentryContext({ portalCode, objectCode, locale: resolvedLocale });
-  }, [sentryDsn, portalCode, objectCode, resolvedLocale]);
 
   useEffect(() => {
     window.__localeId__ = resolvedLocale;
