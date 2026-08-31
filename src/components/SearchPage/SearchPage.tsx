@@ -3,6 +3,7 @@ import Filters from './Filters';
 import Results from './Results';
 import { PortalOptions } from '../../types';
 import { FiltersType } from './filters/filter_types';
+import { parseFiltersFromUrl } from '../../_lib/url_filters';
 import { TrackEvent } from '../../_lib/Tracking';
 import type { AppPortalSite } from '../loadPortalSite';
 
@@ -21,11 +22,19 @@ type MyState = {
 };
 
 class SearchPage extends Component<MyProps, MyState> {
+  hasUrlFilters: boolean;
+
   constructor(props: MyProps) {
     super(props);
     let limit = Number(this.props.options.filtersForm.no_results);
+    const prefillFromUrl =
+      this.props.options.filtersForm.prefill_filters_from_url ?? true;
+    const urlFilters = prefillFromUrl
+      ? parseFiltersFromUrl(window.location.search)
+      : {};
+    this.hasUrlFilters = Object.keys(urlFilters).length > 0;
     this.state = {
-      filters: this.props.filters || {},
+      filters: { ...(this.props.filters || {}), ...urlFilters },
       activePage: 1,
       limit,
       skip: 0
@@ -35,6 +44,12 @@ class SearchPage extends Component<MyProps, MyState> {
   }
 
   componentDidMount() {
+    // Filters on the URL are an explicit deep link and beat any state
+    // remembered from a previous visit.
+    if (this.hasUrlFilters) {
+      return;
+    }
+
     let filters = localStorage.getItem('bukazuFilters');
     let activePage = localStorage.getItem('bukazuActivePage');
 

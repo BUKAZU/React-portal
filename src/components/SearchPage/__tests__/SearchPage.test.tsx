@@ -5,7 +5,9 @@ import SearchPage from '../SearchPage';
 import { PortalOptions, PortalSiteType } from '../../../types';
 
 // Mock child components so we don't need Apollo and other heavy deps
-jest.mock('../Filters', () => () => <div data-testid="filters" />);
+jest.mock('../Filters', () => (props: { filters: object }) => (
+  <div data-testid="filters">{JSON.stringify(props.filters)}</div>
+));
 jest.mock('../Results', () => () => <div data-testid="results" />);
 jest.mock('../../../_lib/Tracking', () => ({
   TrackEvent: jest.fn()
@@ -88,7 +90,14 @@ afterEach(() => {
   });
   container.remove();
   localStorage.clear();
+  window.history.replaceState({}, '', '/');
 });
+
+function renderedFilters(): object {
+  return JSON.parse(
+    container.querySelector('[data-testid="filters"]')?.textContent || '{}'
+  );
+}
 
 describe('SearchPage', () => {
   it('should render the search page container', () => {
@@ -175,8 +184,96 @@ describe('SearchPage', () => {
       );
     });
 
-    // Component mounted — if filters were restored the component still renders
     expect(container.querySelector('#search-page')).not.toBeNull();
+    expect(renderedFilters()).toEqual(savedFilters);
+  });
+
+  it('should prefill filters from URL query params by default', () => {
+    window.history.replaceState(
+      {},
+      '',
+      '/?arrival_date=2026-07-01&persons_min=4&utm_source=newsletter'
+    );
+
+    act(() => {
+      root.render(
+        <SearchPage
+          options={mockOptions}
+          PortalSite={mockPortalSite}
+          locale="en"
+        />
+      );
+    });
+
+    expect(renderedFilters()).toEqual({
+      arrival_date: '2026-07-01',
+      persons_min: '4'
+    });
+  });
+
+  it('should let URL query params beat saved localStorage filters', () => {
+    localStorage.setItem(
+      'bukazuFilters',
+      JSON.stringify({ countries: 'NL', persons_min: '2' })
+    );
+    window.history.replaceState({}, '', '/?persons_min=6');
+
+    act(() => {
+      root.render(
+        <SearchPage
+          options={mockOptions}
+          PortalSite={mockPortalSite}
+          locale="en"
+        />
+      );
+    });
+
+    expect(renderedFilters()).toEqual({ persons_min: '6' });
+  });
+
+  it('should ignore URL query params when prefill_filters_from_url is false', () => {
+    localStorage.setItem(
+      'bukazuFilters',
+      JSON.stringify({ countries: 'NL' })
+    );
+    window.history.replaceState({}, '', '/?persons_min=6');
+
+    const optionsWithoutPrefill: PortalOptions = {
+      ...mockOptions,
+      filtersForm: {
+        ...mockOptions.filtersForm,
+        prefill_filters_from_url: false
+      }
+    } as any;
+
+    act(() => {
+      root.render(
+        <SearchPage
+          options={optionsWithoutPrefill}
+          PortalSite={mockPortalSite}
+          locale="en"
+        />
+      );
+    });
+
+    expect(renderedFilters()).toEqual({ countries: 'NL' });
+  });
+
+  it('should merge URL filters over the filters prop', () => {
+    window.history.replaceState({}, '', '/?persons_min=6');
+
+    act(() => {
+      root.render(
+        <SearchPage
+          options={mockOptions}
+          PortalSite={mockPortalSite}
+          filters={{ countries: '12', persons_min: '2' }}
+          locale="en"
+        />
+      );
+    });
+
+    expect(renderedFilters()).toEqual({ countries: '12', persons_min: '6' });
   });
 
   it('should use no_results from options as limit', () => {

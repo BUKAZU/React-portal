@@ -133,7 +133,8 @@ describe('portalSiteAdapter', () => {
         show_bathrooms: true,
         show_country: true,
         show_region: true,
-        show_city: true
+        show_city: true,
+        prefill_filters_from_url: false
       },
       labels: { countries_label_nl: 'Land', form_submit_text_nl: 'Akkoord' }
     } as unknown as SettingsResponse;
@@ -149,6 +150,7 @@ describe('portalSiteAdapter', () => {
 
     expect(result.portal_code).toBe('P1');
     expect(result.options.filtersForm.show_city).toBe(true);
+    expect(result.options.filtersForm.prefill_filters_from_url).toBe(false);
     expect(result.options.searchFields).toEqual([{ id: 'countries', type: 'select', label: 'Land' }]);
     expect(result.options.bookingFields).toEqual([]);
     expect(result.colorsConfiguration.button_cta).toBe('#2');
