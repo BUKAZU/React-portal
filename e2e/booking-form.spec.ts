@@ -36,6 +36,7 @@ function makeBookingResponse() {
     babies: 0,
     language: 'nl',
     payment_url: null,
+    redirect_to_payment: false,
     redirect_url: null,
     success_message: 'Bedankt voor je aanvraag',
     portal_code: 'TEST',

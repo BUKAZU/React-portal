@@ -6,6 +6,7 @@ import {
   CreateBookingResponse
 } from '../../_lib/create_booking';
 import { buildBookingPayload } from '../../_lib/booking_payload';
+import { redirectTo } from '../../_lib/navigation';
 import { getSessionIdentifier } from '../../_lib/Tracking';
 import { ApiError } from '../Error';
 import Modal from '../Modal';
@@ -210,9 +211,13 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         setData(booking);
 
         const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
-        const redirectUrl = booking.redirect_url || redirect_urls[locale];
+        // The payment page wins over a configured thank-you page.
+        const redirectUrl =
+          (booking.redirect_to_payment && booking.payment_url) ||
+          booking.redirect_url ||
+          redirect_urls[locale];
         if (redirectUrl && redirectUrl !== '') {
-          window.location.href = redirectUrl;
+          redirectTo(redirectUrl);
         } else {
           setTimeout(() => {
             dispatch({

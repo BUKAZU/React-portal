@@ -15,6 +15,8 @@ export interface CreateBookingResponse {
   /** The language the booking was stored with; the API may replace an unsupported one. */
   language: string;
   payment_url: string | null;
+  /** Whether the guest should be sent to payment_url; absent on older backends. */
+  redirect_to_payment?: boolean;
   redirect_url: string | null;
   /** Omitted entirely (not null) when a redirect_url is configured. */
   success_message?: string;
