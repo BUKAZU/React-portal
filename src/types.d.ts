@@ -15,6 +15,8 @@ export type FiltersFormType = {
   mode: 'grid' | 'list';
   show?: boolean;
   fixed_mobile?: boolean;
+  /** Prefill filters from URL query params; absent on older backends (treat as true). */
+  prefill_filters_from_url?: boolean;
 };
 
 /**

@@ -50,6 +50,8 @@ export type SettingsFiltersForm = {
   show_country: boolean;
   show_region: boolean;
   show_city: boolean;
+  /** Prefill filters from URL query params; absent on older backends (treat as true). */
+  prefill_filters_from_url?: boolean;
 };
 
 /** Full response of GET /portal_api/v1/config/settings. */
