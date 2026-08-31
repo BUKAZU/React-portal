@@ -3,6 +3,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import Results from '../Results';
 import { AppContext } from '../../AppContext';
+import { CurrencyProvider } from '../../CurrencyContext';
+import type { SettingsCurrencies } from '../../../_lib/currencies';
 import { PortalSiteType } from '../../../types';
 import { FiltersType } from '../filters/filter_types';
 import type {
@@ -269,6 +271,73 @@ describe('Results', () => {
 
     const paginators = container.querySelectorAll('[data-testid="paginator"]');
     expect(paginators).toHaveLength(2);
+  });
+
+  describe('with a multi-currency portal', () => {
+    const currencies: SettingsCurrencies = {
+      multi_currency: true,
+      default: 'EUR',
+      allowed: ['EUR', 'USD']
+    };
+
+    async function renderWithCurrencies(props = defaultProps) {
+      act(() => {
+        root.render(
+          <AppContext.Provider
+            value={{
+              locale: 'en',
+              portalCode: 'TEST',
+              objectCode: '',
+              apiUrl: 'https://api.bukazu.com/graphql'
+            }}
+          >
+            <CurrencyProvider currencies={currencies}>
+              <Results {...props} />
+            </CurrencyProvider>
+          </AppContext.Provider>
+        );
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+    }
+
+    afterEach(() => {
+      window.localStorage.clear();
+    });
+
+    it('renders the currency selector', async () => {
+      await renderWithCurrencies();
+
+      expect(container.querySelector('.bu-currency-selector')).not.toBeNull();
+    });
+
+    it('requests the search with the selected currency and refetches on change', async () => {
+      await renderWithCurrencies();
+
+      expect(mockFetch.mock.calls[0][0].params).toMatchObject({
+        currency: 'EUR'
+      });
+
+      await act(async () => {
+        const select = container.querySelector('select')!;
+        select.value = 'USD';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        await Promise.resolve();
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch.mock.calls[1][0].params).toMatchObject({
+        currency: 'USD'
+      });
+    });
+  });
+
+  it('should not send a currency on a single-currency portal', async () => {
+    await renderResultsAndSettle();
+
+    expect(mockFetch.mock.calls[0][0].params).not.toHaveProperty('currency');
+    expect(container.querySelector('.bu-currency-selector')).toBeNull();
   });
 
   it('should apply the mode from PortalSite options as a CSS class on #results', async () => {

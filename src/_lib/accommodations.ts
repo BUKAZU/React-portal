@@ -35,6 +35,8 @@ export interface AccommodationsResponse {
     total_count: number;
     limit: number;
     skip: number;
+    /** ISO 4217 currency code the prices are expressed in; absent on older backends. */
+    currency?: string;
   };
 }
 

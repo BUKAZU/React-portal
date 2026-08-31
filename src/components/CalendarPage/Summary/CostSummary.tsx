@@ -7,6 +7,7 @@ import OptionalNotOnSite from './OptionalNotOnSite';
 import OnSite from './OnSite';
 import Totals from './Totals';
 import { AppContext } from '../../AppContext';
+import { useCurrency } from '../../CurrencyContext';
 import { HouseType } from '../../../types';
 import { PossibleValues } from '../formParts/form_types';
 
@@ -22,6 +23,7 @@ function CostSummary({ values, house }: Props): JSX.Element {
   }
   const persons = Number(values.children) + Number(values.adults) + babies;
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
+  const { currency } = useCurrency();
 
   const [prices, setPrices] = useState<PricesType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,6 +42,7 @@ function CostSummary({ values, house }: Props): JSX.Element {
       startsAt: values.arrivalDate.date,
       endsAt: values.departureDate.date,
       persons,
+      currency,
       costs: values.costs,
       discount: Number(values.discount),
       discountCode: values.discount_code,
@@ -69,6 +72,7 @@ function CostSummary({ values, house }: Props): JSX.Element {
     values.arrivalDate.date,
     values.departureDate.date,
     persons,
+    currency,
     values.costs,
     values.discount,
     values.discount_code,

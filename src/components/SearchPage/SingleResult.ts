@@ -6,9 +6,11 @@ import type { AccommodationResult } from '../../_lib/accommodations';
 interface Props {
   result: AccommodationResult;
   options: FiltersFormType;
+  /** ISO 4217 currency code the list prices are expressed in (EUR when unknown). */
+  currency?: string;
 }
 
-function SingleResult({ result, options }: Props): string {
+function SingleResult({ result, options, currency }: Props): string {
   const place = [
     options.show_city && `<span>${escapeHtml(result.city)}, </span>`,
     options.show_region && `<span>${escapeHtml(result.province)}, </span>`,
@@ -39,16 +41,20 @@ function SingleResult({ result, options }: Props): string {
     ? result.booking_price
       ? `<div class="result-price">${escapeHtml(
           t('price_from')
-        )}<span class="price">€ ${escapeHtml(
+        )}<span class="price">${escapeHtml(
           formatNumber(result.booking_price.total_price, {
+            style: 'currency',
+            currency: result.booking_price.currency,
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
           })
         )}</span></div>`
       : `<div class="result-price">${escapeHtml(
           t('minimum_week_price')
-        )}<span class="price">€ ${escapeHtml(
+        )}<span class="price">${escapeHtml(
           formatNumber(result.minimum_week_price, {
+            style: 'currency',
+            currency: currency ?? 'EUR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
           })

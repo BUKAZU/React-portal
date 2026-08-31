@@ -11,6 +11,16 @@ describe('buildSearchParams', () => {
     });
   });
 
+  it('sends the selected currency', () => {
+    expect(
+      buildSearchParams({}, { ...pagination, currency: 'USD' })
+    ).toMatchObject({ currency: 'USD' });
+  });
+
+  it('omits the currency when none is selected', () => {
+    expect(buildSearchParams({}, pagination)).not.toHaveProperty('currency');
+  });
+
   it('maps the location filters onto their API names', () => {
     const params = buildSearchParams(
       { countries: '1', regions: '1|Zeeland', cities: '1|Zeeland|Domburg' },

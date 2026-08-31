@@ -52,7 +52,14 @@ function CostSelect({ cost }: { cost: CostType }) {
   );
 }
 
-function OptionalCosts({ costs }: { costs: CostType[] }) {
+function OptionalCosts({
+  costs,
+  currency
+}: {
+  costs: CostType[];
+  /** ISO 4217 currency code the amounts are expressed in (EUR when unknown). */
+  currency?: string;
+}) {
   if (costs.length === 0) {
     return null;
   }
@@ -72,10 +79,9 @@ function OptionalCosts({ costs }: { costs: CostType[] }) {
                 <CostSelect cost={cost} />
 
                 <div className="price_per">
-                  €{' '}
                   {formatNumber(cost.amount, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    style: 'currency',
+                    currency: currency ?? 'EUR'
                   })}{' '}
                   {cost.method_name}
                 </div>

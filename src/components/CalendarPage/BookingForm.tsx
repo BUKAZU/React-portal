@@ -3,6 +3,7 @@ import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
 import { fetchPrice } from '../../_lib/price';
 import { AppContext } from '../AppContext';
+import { useCurrency } from '../CurrencyContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
 import type { AppPortalSite } from '../loadPortalSite';
@@ -14,6 +15,7 @@ interface Props {
 
 function BookingForm({ portalSite }: Props): JSX.Element {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
+  const { currency } = useCurrency();
   const { arrivalDate, departureDate } = useContext(CalendarContext);
 
   const [house, setHouse] = useState<HouseType | null>(null);
@@ -31,6 +33,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       objectCode,
       startsAt: arrivalDate!.date,
       endsAt: departureDate!.date,
+      currency,
       includeAccommodation: true
     })
       .then((price) => {
@@ -43,6 +46,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           ...price.accommodation,
           booking_price: {
             total_price: price.total_price,
+            currency: price.currency,
             optional_house_costs: price.optional_house_costs.map((cost) => ({
               id: String(cost.id),
               name: cost.name,
@@ -64,7 +68,15 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     return () => {
       cancelled = true;
     };
-  }, [apiUrl, locale, portalCode, objectCode, arrivalDate, departureDate]);
+  }, [
+    apiUrl,
+    locale,
+    portalCode,
+    objectCode,
+    arrivalDate,
+    departureDate,
+    currency
+  ]);
 
   if (!house && !priceError)
     return (

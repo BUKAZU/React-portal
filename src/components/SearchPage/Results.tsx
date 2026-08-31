@@ -7,6 +7,8 @@ import Paginator from './Paginator';
 import { ApiError } from '../Error';
 import { FiltersType } from './filters/filter_types';
 import { AppContext } from '../AppContext';
+import { useCurrency } from '../CurrencyContext';
+import CurrencySelector from '../CurrencySelector';
 import { PortalSiteType } from '../../types';
 import {
   fetchAccommodations,
@@ -37,11 +39,14 @@ function Results({
   activePage
 }: Props): JSX.Element {
   const { portalCode, apiUrl, locale } = useContext(AppContext);
+  const { currency } = useCurrency();
   const [state, setState] = useState<ResultsState>({ status: 'loading' });
 
   // Serialized so the effect re-runs on a changed filter value, not on every
   // render of the parent (which rebuilds the filters object).
-  const paramsKey = JSON.stringify(buildSearchParams(filters, { limit, skip }));
+  const paramsKey = JSON.stringify(
+    buildSearchParams(filters, { limit, skip, currency })
+  );
   const params = useMemo(
     () => JSON.parse(paramsKey) as Record<string, string>,
     [paramsKey]
@@ -112,6 +117,7 @@ function Results({
 
   return (
     <div id="results" className={PortalSite.options.filtersForm.mode}>
+      <CurrencySelector />
       {Pagination}
       {items.length === 0 ? (
         <div className="bu-noresults">{t('no_results')}</div>
@@ -123,7 +129,8 @@ function Results({
           dangerouslySetInnerHTML={{
             __html: SingleResult({
               result,
-              options: PortalSite.options.filtersForm
+              options: PortalSite.options.filtersForm,
+              currency: meta.currency ?? currency
             })
           }}
         />

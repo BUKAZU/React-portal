@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
+import { useCurrency } from '../../CurrencyContext';
 import Loading from '../../icons/loading.svg';
 import { fetchPrice, PriceResponse } from '../../../_lib/price';
 
@@ -14,6 +15,7 @@ interface Props {
 
 function Price({ persons, variables }: Props) {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
+  const { currency } = useCurrency();
   const [result, setResult] = useState<PriceResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -30,7 +32,8 @@ function Price({ persons, variables }: Props) {
       objectCode,
       startsAt: variables.starts_at,
       endsAt: variables.ends_at,
-      persons
+      persons,
+      currency
     })
       .then((price) => {
         if (!cancelled) {
@@ -55,7 +58,8 @@ function Price({ persons, variables }: Props) {
     objectCode,
     variables.starts_at,
     variables.ends_at,
-    persons
+    persons,
+    currency
   ]);
 
   if (loading)

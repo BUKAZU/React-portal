@@ -39,9 +39,10 @@ let container: HTMLDivElement;
 
 function renderSingleResult(
   result: AccommodationResult = mockResult,
-  options: FiltersFormType = mockOptions
+  options: FiltersFormType = mockOptions,
+  currency?: string
 ) {
-  container.innerHTML = SingleResult({ result, options });
+  container.innerHTML = SingleResult({ result, options, currency });
 }
 
 beforeEach(() => {
@@ -158,23 +159,30 @@ describe('SingleResult', () => {
     expect(rating).toBeNull();
   });
 
-  it('should display minimum_week_price when no booking_price', () => {
+  it('should display minimum_week_price in euros when no currency is known', () => {
     renderSingleResult();
 
     const price = container.querySelector('.result-price');
     expect(price).not.toBeNull();
-    expect(price?.textContent).toContain('1,000');
+    expect(price?.textContent).toContain('€1,000');
   });
 
-  it('should display booking_price when available', () => {
+  it('should display minimum_week_price in the given currency', () => {
+    renderSingleResult(mockResult, mockOptions, 'USD');
+
+    const price = container.querySelector('.result-price');
+    expect(price?.textContent).toContain('$1,000');
+  });
+
+  it('should display booking_price in the currency of the price', () => {
     const resultWithBookingPrice = {
       ...mockResult,
-      booking_price: { total_price: 750 }
+      booking_price: { total_price: 750, currency: 'USD' }
     };
     renderSingleResult(resultWithBookingPrice);
 
     const price = container.querySelector('.result-price');
-    expect(price?.textContent).toContain('750');
+    expect(price?.textContent).toContain('$750');
   });
 
   it('should render view_details button text', () => {

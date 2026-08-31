@@ -10,6 +10,7 @@ import { getSessionIdentifier } from '../../_lib/Tracking';
 import { ApiError } from '../Error';
 import Modal from '../Modal';
 import { AppContext } from '../AppContext';
+import { useCurrency } from '../CurrencyContext';
 import {
   BookingFormContext,
   BookingFormErrors,
@@ -80,6 +81,7 @@ function createTouchedState(
 function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const { persons, arrivalDate, departureDate } = useContext(CalendarContext);
   const { locale, portalCode, objectCode, apiUrl } = useContext(AppContext);
+  const { currency: selectedCurrency } = useCurrency();
   const dispatch = useContext(CalendarContextDispatch);
   const { options, bookingFormConfiguration } = PortalSite;
   const bookingFields = (options.bookingFields as SingleBookingFieldType[]).map(
@@ -109,6 +111,9 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
       country: 'nl',
       cancel_insurance: '0' as const,
       discount_code: '',
+      // Fixed at booking start; the selector is hidden once the form is open.
+      // An empty string is dropped from the payload on single-currency portals.
+      currency: selectedCurrency ?? '',
       extra_fields: {}
     };
 
@@ -122,7 +127,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     bookingPrice.optional_house_costs,
     departureDate,
     house,
-    persons
+    persons,
+    selectedCurrency
   ]);
 
   const [values, setValues] = useState<PossibleValues>(() =>
@@ -318,7 +324,10 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
 
           <Insurances house={house} values={values} />
 
-          <OptionalCosts costs={bookingPrice.optional_house_costs} />
+          <OptionalCosts
+            costs={bookingPrice.optional_house_costs}
+            currency={bookingPrice.currency}
+          />
 
           <OptionalBookingFields
             bookingFields={bookingFields}
