@@ -22,16 +22,17 @@ type MyState = {
 };
 
 class SearchPage extends Component<MyProps, MyState> {
-  hasUrlFilters: boolean;
+  private readonly hasUrlFilters: boolean;
 
   constructor(props: MyProps) {
     super(props);
     let limit = Number(this.props.options.filtersForm.no_results);
     const prefillFromUrl =
       this.props.options.filtersForm.prefill_filters_from_url ?? true;
-    const urlFilters = prefillFromUrl
-      ? parseFiltersFromUrl(window.location.search)
-      : {};
+    const urlFilters =
+      prefillFromUrl && typeof window !== 'undefined'
+        ? parseFiltersFromUrl(window.location.search)
+        : {};
     this.hasUrlFilters = Object.keys(urlFilters).length > 0;
     this.state = {
       filters: { ...(this.props.filters || {}), ...urlFilters },
