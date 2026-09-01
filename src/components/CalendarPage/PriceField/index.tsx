@@ -6,6 +6,7 @@ import {
 } from '../../../_lib/date_helper';
 import { t } from '../../../intl';
 import { createPersonsArray } from '../formParts/BookingHelpers';
+import CurrencySelector from '../../CurrencySelector';
 import Price from './Price';
 import { HouseType } from '../../../types';
 import {
@@ -76,6 +77,9 @@ function PriceField({ house }: Props) {
             ))}
           </select>
         </span>
+      </div>
+      <div className="calendar--picker--date">
+        <CurrencySelector />
       </div>
       <div className="calendar--picker--date">
         {arrivalDate && departureDate && (

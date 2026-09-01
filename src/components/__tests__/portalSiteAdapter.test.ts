@@ -158,5 +158,44 @@ describe('portalSiteAdapter', () => {
     expect(result.countries_label).toBe('Land');
     expect(result.form_submit_text).toBe('Akkoord');
   });
+
+  it('buildAppPortalSite defaults to single-currency EUR when the settings carry no currencies (older backends)', () => {
+    const settings = {
+      name: 'Portal',
+      portal_code: 'P1',
+      colors: {},
+      booking_form: {},
+      filters_form: {},
+      labels: {}
+    } as unknown as SettingsResponse;
+
+    const result = buildAppPortalSite({ settings, locale: 'nl' });
+
+    expect(result.currencies).toEqual({
+      multi_currency: false,
+      default: 'EUR',
+      allowed: ['EUR']
+    });
+  });
+
+  it('buildAppPortalSite normalizes the currency configuration', () => {
+    const settings = {
+      name: 'Portal',
+      portal_code: 'P1',
+      colors: {},
+      booking_form: {},
+      filters_form: {},
+      labels: {},
+      currencies: { multi_currency: true, default: 'EUR', allowed: ['USD'] }
+    } as unknown as SettingsResponse;
+
+    const result = buildAppPortalSite({ settings, locale: 'nl' });
+
+    expect(result.currencies).toEqual({
+      multi_currency: true,
+      default: 'EUR',
+      allowed: ['USD', 'EUR']
+    });
+  });
 });
 

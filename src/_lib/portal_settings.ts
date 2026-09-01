@@ -9,6 +9,7 @@
 import { HTTPError } from 'ky';
 
 import { http } from './http_client';
+import type { SettingsCurrencies } from './currencies';
 
 /** Colour configuration as returned by the settings endpoint. */
 export type SettingsColors = {
@@ -64,6 +65,8 @@ export type SettingsResponse = {
   colors: SettingsColors;
   booking_form: SettingsBookingForm;
   filters_form: SettingsFiltersForm;
+  /** Currency configuration; absent on older backends (treat as single-currency). */
+  currencies?: SettingsCurrencies;
   /** Flat map of "<attribute>_<locale>" => localized value, for every locale. */
   labels: Record<string, string>;
 };

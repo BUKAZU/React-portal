@@ -8,12 +8,17 @@ import type {
   FilterFieldResponse,
   SettingsResponse
 } from '../_lib/portal_settings';
+import {
+  normalizeCurrencies,
+  type SettingsCurrencies
+} from '../_lib/currencies';
 import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
 
 /** The portal-site object assembled for the app, mirroring the legacy GraphQL shape. */
 export interface AppPortalSite extends PortalSiteType {
   options: PortalOptions;
   colorsConfiguration: ColorsType;
+  currencies: SettingsCurrencies;
   booking_fields: MappedBookingField[];
   form_submit_text?: string;
   form_submit_button_text?: string;
@@ -68,9 +73,13 @@ export function mapBookingFields(
 }
 
 /** Map the filter-fields endpoint into the `options.searchFields` list the search UI renders. */
-export function mapFilterFields(
-  fields: FilterFieldResponse[]
-): { id: string; type: string; label: string | null; max?: number; options?: { id: number; name: string }[] }[] {
+export function mapFilterFields(fields: FilterFieldResponse[]): {
+  id: string;
+  type: string;
+  label: string | null;
+  max?: number;
+  options?: { id: number; name: string }[];
+}[] {
   return (fields ?? []).map((f) => ({
     id: f.id,
     type: f.field_type,
@@ -111,6 +120,7 @@ export function buildAppPortalSite({
     portal_code: settings.portal_code,
     options,
     colorsConfiguration,
+    currencies: normalizeCurrencies(settings.currencies),
     bookingFormConfiguration: settings.booking_form,
     booking_fields: mappedBookingFields,
     max_persons: 0,
