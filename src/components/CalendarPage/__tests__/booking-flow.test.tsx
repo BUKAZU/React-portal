@@ -44,6 +44,14 @@ jest.mock('../../../_lib/create_booking', () => ({
   createBooking: (...args: unknown[]) => mockCreateBooking(...args)
 }));
 
+// ---------------------------------------------------------------------------
+// Mock navigation — jsdom's window.location cannot navigate
+// ---------------------------------------------------------------------------
+const mockRedirectTo = jest.fn();
+jest.mock('../../../_lib/navigation', () => ({
+  redirectTo: (...args: unknown[]) => mockRedirectTo(...args)
+}));
+
 const bookingResponse = {
   booking_nr: 'B2600123',
   status: 'new',
@@ -517,6 +525,77 @@ describe('Booking flow – integration', () => {
     const modalContainer = container.querySelector('.bukazu-modal');
     expect(modalContainer).not.toBeNull();
     expect(modalContainer!.querySelector('.success-message')).not.toBeNull();
+  });
+
+  describe('post-booking redirects', () => {
+    it('redirects to the payment page when the backend asks for it', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        payment_url: 'https://payments.bukazu.com/psp/token',
+        redirect_to_payment: true
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith(
+        'https://payments.bukazu.com/psp/token'
+      );
+    });
+
+    it('prefers the payment page over a configured thank-you page', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        payment_url: 'https://payments.bukazu.com/psp/token',
+        redirect_to_payment: true,
+        redirect_url: 'https://example.com/thanks'
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith(
+        'https://payments.bukazu.com/psp/token'
+      );
+    });
+
+    it('falls back to the thank-you page when the payment url is missing', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        payment_url: null,
+        redirect_to_payment: true,
+        redirect_url: 'https://example.com/thanks'
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith('https://example.com/thanks');
+    });
+
+    it('redirects to the response redirect_url when no payment redirect is requested', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        redirect_url: 'https://example.com/thanks'
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith('https://example.com/thanks');
+    });
+
+    it('does not navigate when neither a payment nor a thank-you redirect applies', async () => {
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).not.toHaveBeenCalled();
+    });
   });
 
   it('shows "Creating booking..." loading text while the request is in flight', async () => {

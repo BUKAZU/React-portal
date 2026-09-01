@@ -58,6 +58,7 @@ describe('bookings REST client', () => {
     babies: 0,
     language: 'nl',
     payment_url: 'https://payments.bukazu.com/1/token?locale=nl',
+    redirect_to_payment: false,
     redirect_url: null,
     success_message: 'Boeking aangemaakt',
     portal_code: 'TEST',
