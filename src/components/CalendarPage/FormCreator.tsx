@@ -211,7 +211,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         setData(booking);
 
         const redirect_urls = bookingFormConfiguration.redirect_urls ?? {};
-        // The payment page wins over a configured thank-you page.
+        // The payment page wins over booking.redirect_url and a configured thank-you page.
         const redirectUrl =
           (booking.redirect_to_payment && booking.payment_url) ||
           booking.redirect_url ||
