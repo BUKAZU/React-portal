@@ -64,14 +64,17 @@ export function CurrencyProvider({ currencies, children }: Props): JSX.Element {
     [normalized]
   );
 
+  const effectiveMultiCurrency =
+    normalized.multi_currency && normalized.allowed.length > 1;
+
   const value = useMemo<CurrencyContextValue>(
     () => ({
-      currency: normalized.multi_currency ? selected : undefined,
+      currency: effectiveMultiCurrency ? selected : undefined,
       setCurrency,
       allowed: normalized.allowed,
-      multiCurrency: normalized.multi_currency
+      multiCurrency: effectiveMultiCurrency
     }),
-    [normalized, selected, setCurrency]
+    [effectiveMultiCurrency, normalized.allowed, selected, setCurrency]
   );
 
   return (
