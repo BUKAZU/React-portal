@@ -114,17 +114,28 @@ test.describe('portal.website.js', () => {
   }) => {
     await stubApi(page);
     const consoleErrors: string[] = [];
+    const pageErrors: string[] = [];
     page.on('console', (message) => {
       if (message.type() === 'error') {
         consoleErrors.push(message.text());
       }
     });
+    page.on('pageerror', (error) => {
+      pageErrors.push(error.message);
+    });
 
     await page.goto(`${STATIC_BASE}/e2e/fixtures/website-double.html`);
 
     await expect(page.locator(`style#${STYLE_ID}`)).toHaveCount(1);
+    // The second copy carries its own React; rendering with it into the first
+    // copy's root throws "Cannot read properties of null (reading 'useEffect')"
+    // as an uncaught error, so both channels are asserted clean.
+    await expect(page.locator('.bukazu-app > *')).not.toHaveCount(0);
+    expect(pageErrors).toEqual([]);
     expect(
-      consoleErrors.filter((error) => error.includes('createRoot'))
+      consoleErrors.filter(
+        (error) => error.includes('createRoot') || error.includes('useEffect')
+      )
     ).toHaveLength(0);
   });
 

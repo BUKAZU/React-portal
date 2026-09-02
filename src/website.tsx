@@ -51,20 +51,35 @@ const ELEMENT_ID = 'bukazu-app';
 const SENTRY_OFF_VALUES = ['off', 'none'];
 
 /**
- * Cache of already-created React roots, keyed by host element.
- *
- * The cache is kept on `globalThis` rather than in module scope so that a page
- * which loads the bundle more than once (a cached inline copy alongside the CDN
- * copy, say) re-renders into the existing root instead of calling `createRoot`
- * twice on the same element.
+ * The public surface a loaded copy of this bundle offers to later copies.
+ */
+interface PortalRuntime {
+  version: string;
+  init(): void;
+  mountPortal(element: HTMLElement): void;
+}
+
+/**
+ * The first copy of the bundle to run on a page registers itself here and
+ * becomes the owner of every portal on that page. A page can end up with the
+ * bundle loaded more than once — a hand-placed `<script>` next to the one a CMS
+ * plugin enqueues, or a cached inline copy alongside the CDN copy — and each
+ * copy carries its own React. React roots are bound to the react-dom instance
+ * that created them, so a second copy rendering into the first copy's root
+ * mixes two Reacts and crashes with "Cannot read properties of null (reading
+ * 'useEffect')". Later copies therefore never mount anything themselves: their
+ * `init`/`mountPortal` forward to the owner, and they skip the boot sequence.
  */
 const globalScope = globalThis as typeof globalThis & {
-  __bukazuPortalRoots__?: WeakMap<HTMLElement, Root>;
+  __bukazuPortal__?: PortalRuntime;
 };
-const roots = (globalScope.__bukazuPortalRoots__ ??= new WeakMap<
-  HTMLElement,
-  Root
->());
+
+/**
+ * React roots created by this copy of the bundle, keyed by host element, so
+ * mounting the same element twice re-renders instead of calling `createRoot`
+ * again. Module-local on purpose: see `PortalRuntime`.
+ */
+const roots = new WeakMap<HTMLElement, Root>();
 
 /**
  * Parse the `filters` HTML attribute.
@@ -116,7 +131,7 @@ function resolveSentryDsn(element: HTMLElement): string | undefined {
  * - `filters`:  falls back to `{}` when absent or invalid JSON.
  * - `sentry-dsn`: see `resolveSentryDsn`.
  */
-function mountPortal(element: HTMLElement): void {
+function mountPortalHere(element: HTMLElement): void {
   const portalCode = element.getAttribute('portal-code') ?? '';
   const objectCode = element.getAttribute('object-code') ?? '';
   const pageType = element.getAttribute('page') ?? undefined;
@@ -148,7 +163,7 @@ function mountPortal(element: HTMLElement): void {
  * embed snippets identify their host by id only. The fallback deliberately does
  * not run when class-based hosts exist, so a page cannot gain an extra mount.
  */
-function init(): void {
+function initHere(): void {
   const elements = Array.from(
     document.getElementsByClassName(CLASS_NAME)
   ) as HTMLElement[];
@@ -161,19 +176,46 @@ function init(): void {
   }
 
   for (const element of elements) {
-    mountPortal(element);
-  }
-}
-
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+    mountPortalHere(element);
   }
 }
 
 /** Version of the package this bundle was built from. */
 const version = __PORTAL_VERSION__;
+
+const owner: PortalRuntime | undefined = globalScope.__bukazuPortal__;
+const runtime: PortalRuntime = owner ?? {
+  version,
+  init: initHere,
+  mountPortal: mountPortalHere
+};
+
+/**
+ * Mount Portals on every `.bukazu-app` element present in the document.
+ * Forwards to the copy of the bundle that owns the page's portals.
+ */
+function init(): void {
+  runtime.init();
+}
+
+/**
+ * Mount a Portal onto a single host element.
+ * Forwards to the copy of the bundle that owns the page's portals.
+ */
+function mountPortal(element: HTMLElement): void {
+  runtime.mountPortal(element);
+}
+
+if (!owner) {
+  globalScope.__bukazuPortal__ = runtime;
+
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  }
+}
 
 export { init, mountPortal, version };
