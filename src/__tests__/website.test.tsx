@@ -49,6 +49,21 @@ function makeElement(attrs: Record<string, string | null> = {}): HTMLElement {
   return el;
 }
 
+/**
+ * Forgets the copy of the bundle that currently owns the page, so a module
+ * reload behaves like the first copy to run on a fresh page.
+ */
+function forgetOwner(): void {
+  delete (globalThis as { __bukazuPortal__?: unknown }).__bukazuPortal__;
+}
+
+/** Reloads the module under test as if a second copy of the bundle ran. */
+function loadAnotherCopy(): typeof import('../website') {
+  jest.resetModules();
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require('../website') as typeof import('../website');
+}
+
 /** Extract the props passed to the Portal stub from the last mockRender call. */
 function lastPortalProps(): Record<string, unknown> {
   const lastCall = mockRender.mock.calls[mockRender.mock.calls.length - 1];
@@ -408,24 +423,56 @@ describe('version', () => {
   });
 });
 
-describe('root registry', () => {
-  it('is shared across module instances so a double-loaded bundle mounts once', () => {
+describe('page ownership across bundle copies', () => {
+  // A page can load the bundle twice (a hand-placed <script> next to the one a
+  // CMS plugin enqueues). Each copy carries its own React, and a root created
+  // by one react-dom cannot be rendered into by another, so the second copy
+  // must hand everything to the first instead of touching the DOM itself.
+  it('lets a later copy mount through the first copy without a second root', () => {
     const el = makeElement({ 'portal-code': 'X' });
     act(() => {
       mountPortal(el);
     });
 
-    jest.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const reloaded = require('../website') as {
-      mountPortal: typeof mountPortal;
-    };
+    const reloaded = loadAnotherCopy();
     act(() => {
       reloaded.mountPortal(el);
     });
 
     expect(mockCreateRoot).toHaveBeenCalledTimes(1);
     expect(mockRender).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not boot a later copy on import even when the document is parsed', () => {
+    const el = makeElement({ 'portal-code': 'X' });
+    el.className = 'bukazu-app';
+    document.body.appendChild(el);
+
+    loadAnotherCopy();
+
+    expect(mockCreateRoot).not.toHaveBeenCalled();
+    expect(mockRender).not.toHaveBeenCalled();
+  });
+
+  it('forwards init from a later copy to the owning copy', () => {
+    const el = makeElement({ 'portal-code': 'X' });
+    el.className = 'bukazu-app';
+    document.body.appendChild(el);
+
+    const reloaded = loadAnotherCopy();
+    act(() => {
+      reloaded.init();
+    });
+
+    expect(mockCreateRoot).toHaveBeenCalledTimes(1);
+    expect(mockCreateRoot).toHaveBeenCalledWith(el);
+  });
+
+  it('registers the first copy as the owner of the page', () => {
+    const owner = (globalThis as { __bukazuPortal__?: { version: string } })
+      .__bukazuPortal__;
+
+    expect(owner?.version).toBe(version);
   });
 });
 
@@ -458,8 +505,8 @@ describe('auto-initialisation', () => {
     const addEventListener = jest.spyOn(document, 'addEventListener');
 
     withReadyState('loading', () => {
-      jest.resetModules();
-      require('../website');
+      forgetOwner();
+      loadAnotherCopy();
     });
 
     expect(addEventListener).toHaveBeenCalledWith(
@@ -489,8 +536,8 @@ describe('auto-initialisation', () => {
     document.body.appendChild(el);
 
     withReadyState('complete', () => {
-      jest.resetModules();
-      require('../website');
+      forgetOwner();
+      loadAnotherCopy();
     });
 
     expect(mockCreateRoot).toHaveBeenCalledWith(el);
