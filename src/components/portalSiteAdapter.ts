@@ -1,18 +1,25 @@
 /**
  * Assembles the portal-site configuration REST responses (see `_lib/portal_settings.ts`)
  * into the `AppPortalSite` shape the components consume. The REST API already uses
- * snake_case, matching the types directly — no field renaming needed.
+ * snake_case, matching the types directly — the only rename is `results_amount`
+ * → `no_results` (see `mapFiltersForm`).
  */
 import type {
   BookingFieldResponse,
   FilterFieldResponse,
+  SettingsFiltersForm,
   SettingsResponse
 } from '../_lib/portal_settings';
 import {
   normalizeCurrencies,
   type SettingsCurrencies
 } from '../_lib/currencies';
-import type { ColorsType, PortalOptions, PortalSiteType } from '../types';
+import type {
+  ColorsType,
+  FiltersFormType,
+  PortalOptions,
+  PortalSiteType
+} from '../types';
 
 /** The portal-site object assembled for the app, mirroring the legacy GraphQL shape. */
 export interface AppPortalSite extends PortalSiteType {
@@ -96,6 +103,27 @@ interface BuildAppPortalSiteParams {
   locale: string;
 }
 
+/** Results per page when the settings endpoint sends nothing usable. */
+const DEFAULT_RESULTS_AMOUNT = 20;
+
+/**
+ * Map the settings `filters_form` onto the internal `FiltersFormType`.
+ *
+ * The API exposes the page size as `results_amount` (older backends sent
+ * `no_results`); internally it stays `no_results`. Anything non-numeric would
+ * otherwise become `NaN` and make the search request fail with a 400.
+ */
+export function mapFiltersForm(
+  filtersForm: SettingsFiltersForm
+): FiltersFormType {
+  const { results_amount, no_results, ...rest } = filtersForm;
+  const raw = Number(results_amount ?? no_results);
+  return {
+    ...rest,
+    no_results: Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_RESULTS_AMOUNT
+  };
+}
+
 /** Assemble the full `AppPortalSite` from the config REST responses. */
 export function buildAppPortalSite({
   settings,
@@ -108,7 +136,7 @@ export function buildAppPortalSite({
   const colorsConfiguration: ColorsType = settings.colors;
 
   const options: PortalOptions = {
-    filtersForm: settings.filters_form,
+    filtersForm: mapFiltersForm(settings.filters_form),
     bookingFields: mappedBookingFields,
     searchFields: filterFields !== undefined ? mappedSearchFields : undefined,
     bookingForm: {} as PortalOptions['bookingForm'],

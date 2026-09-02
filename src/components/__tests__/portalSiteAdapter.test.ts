@@ -64,7 +64,7 @@ describe('portalSiteAdapter', () => {
       name: 'Portal', domain: 'example.com', portal_code: 'P1', commission: 0, use_custom_commission: false,
       colors: { button: '#1', button_cta: '#2', discount: '#3', cell: '#4', booked: '#5', arrival: '#6', departure: '#7' },
       booking_form: { show_months_amount: 2, show_months_in_a_row_amount: 1, children_allowed: false, babies_allowed: false, babies_till_age: 0, children_from_age: 0, children_till_age: 0, adults_from_age: 18, show_discount_code: false, language_selector_visible: false, redirect_urls: {} },
-      filters_form: { show: true, location: 'top', mode: 'grid', no_results: 9, fixed_mobile: false, show_price: true, show_persons: true, show_bedrooms: true, show_bathrooms: true, show_country: true, show_region: true, show_city: true },
+      filters_form: { show: true, location: 'top', mode: 'grid', results_amount: 9, fixed_mobile: false, show_price: true, show_persons: true, show_bedrooms: true, show_bathrooms: true, show_country: true, show_region: true, show_city: true },
       labels: {}
     } as unknown as SettingsResponse;
 
@@ -83,7 +83,7 @@ describe('portalSiteAdapter', () => {
       name: 'Portal', domain: 'example.com', portal_code: 'P1', commission: 0, use_custom_commission: false,
       colors: { button: '#1', button_cta: '#2', discount: '#3', cell: '#4', booked: '#5', arrival: '#6', departure: '#7' },
       booking_form: { show_months_amount: 2, show_months_in_a_row_amount: 1, children_allowed: false, babies_allowed: false, babies_till_age: 0, children_from_age: 0, children_till_age: 0, adults_from_age: 18, show_discount_code: false, language_selector_visible: false, redirect_urls: {} },
-      filters_form: { show: true, location: 'top', mode: 'grid', no_results: 9, fixed_mobile: false, show_price: true, show_persons: true, show_bedrooms: true, show_bathrooms: true, show_country: true, show_region: true, show_city: true },
+      filters_form: { show: true, location: 'top', mode: 'grid', results_amount: 9, fixed_mobile: false, show_price: true, show_persons: true, show_bedrooms: true, show_bathrooms: true, show_country: true, show_region: true, show_city: true },
       labels: {}
     } as unknown as SettingsResponse;
 
@@ -125,7 +125,7 @@ describe('portalSiteAdapter', () => {
         show: true,
         location: 'top',
         mode: 'grid',
-        no_results: 9,
+        results_amount: 9,
         fixed_mobile: false,
         show_price: true,
         show_persons: true,
@@ -197,5 +197,53 @@ describe('portalSiteAdapter', () => {
       allowed: ['USD', 'EUR']
     });
   });
-});
 
+  it('buildAppPortalSite maps results_amount onto no_results', () => {
+    const settings = {
+      name: 'Portal',
+      portal_code: 'P1',
+      colors: {},
+      booking_form: {},
+      filters_form: { show: true, location: 'top', mode: 'grid', results_amount: 9 },
+      labels: {}
+    } as unknown as SettingsResponse;
+
+    const result = buildAppPortalSite({ settings, locale: 'nl' });
+
+    expect(result.options.filtersForm.no_results).toBe(9);
+    expect(result.options.filtersForm).not.toHaveProperty('results_amount');
+    expect(result.options.filtersForm.location).toBe('top');
+  });
+
+  it('buildAppPortalSite falls back to the legacy no_results key (older backends)', () => {
+    const settings = {
+      name: 'Portal',
+      portal_code: 'P1',
+      colors: {},
+      booking_form: {},
+      filters_form: { no_results: 12 },
+      labels: {}
+    } as unknown as SettingsResponse;
+
+    const result = buildAppPortalSite({ settings, locale: 'nl' });
+
+    expect(result.options.filtersForm.no_results).toBe(12);
+  });
+
+  it('buildAppPortalSite defaults no_results to 20 when the page size is missing or invalid', () => {
+    for (const filters_form of [{}, { results_amount: null }, { results_amount: 'abc' }, { results_amount: 0 }]) {
+      const settings = {
+        name: 'Portal',
+        portal_code: 'P1',
+        colors: {},
+        booking_form: {},
+        filters_form,
+        labels: {}
+      } as unknown as SettingsResponse;
+
+      const result = buildAppPortalSite({ settings, locale: 'nl' });
+
+      expect(result.options.filtersForm.no_results).toBe(20);
+    }
+  });
+});

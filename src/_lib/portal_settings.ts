@@ -42,7 +42,10 @@ export type SettingsFiltersForm = {
   show: boolean;
   location: string;
   mode: 'grid' | 'list';
-  no_results: number;
+  /** Results shown per page. */
+  results_amount?: number;
+  /** @deprecated Pre-June-2026 name of `results_amount`; kept for older backends. */
+  no_results?: number;
   fixed_mobile: boolean;
   show_price: boolean;
   show_persons: boolean;
