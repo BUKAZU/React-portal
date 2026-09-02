@@ -23,6 +23,11 @@ on:
         type: string
         required: false
         default: ''
+      version:
+        description: npm version to deploy instead of building (unused when artifact is set)
+        type: string
+        required: false
+        default: ''
   workflow_dispatch:
     inputs:
       environment:
@@ -54,6 +59,9 @@ jobs:
           cache: 'npm'
           registry-url: https://registry.npmjs.org/
 
+      # The artifact was uploaded from build/portal.website.{js,css}; upload-artifact
+      # roots the archive at the least common ancestor of its paths (build/), so the
+      # files sit at the archive root and restore to build/portal.website.*.
       - name: Use bundle from workflow artifact
         if: inputs.artifact != ''
         uses: actions/download-artifact@v6

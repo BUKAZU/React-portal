@@ -111,6 +111,8 @@ jobs:
   deploy-production:
     needs: publish-npm
     if: ${{ !contains(needs.publish-npm.outputs.version, '-') }}
+    permissions:
+      contents: read
     uses: ./.github/workflows/deploy-s3.yml
     with:
       environment: production
