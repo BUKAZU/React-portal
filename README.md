@@ -162,6 +162,27 @@ For advanced use the bundle exposes `BukazuPortal.init()`, `BukazuPortal.mountPo
 
 ---
 
+## Deploying the website bundle
+
+The hosted copy of the website bundle that embedder sites load as `/static/main.js` is deployed to S3 from this repository by the **Deploy to S3** workflow (`.github/workflows/deploy-s3.yml`). The bucket layout is fixed and unhashed:
+
+| Bucket key | Source |
+|------------|--------|
+| `static/main.js` | `build/portal.website.js` |
+| `static/main.css` | `build/portal.website.css` |
+| `index.html` | `deploy/index.html` (a small test page) |
+
+`npm run deploy:assemble` builds that tree locally into `dist-deploy/` from an existing `build/` (pass `--source <dir>` to use another bundle directory).
+
+There are two ways a deploy happens:
+
+- **Production, automatic.** When a version-bump PR is merged, the *Release npm package* workflow publishes to npm and then calls *Deploy to S3* with the exact bundle it just published. Prereleases (`x.y.z-beta.n`) are never deployed automatically. Production deploys also purge the Cloudflare cache.
+- **Manual.** In the Actions tab run *Deploy to S3*, pick `staging` or `production`, and either leave *version* empty to build the selected branch (the usual way to put `master` on staging) or fill in a published npm version to redeploy or roll back.
+
+Credentials and bucket names are not in the repository. They live in the GitHub Environments `production` and `staging` as secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET`, and for production additionally `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_AUTH_KEY`. The Sentry DSN comes from the repository variable `BUKAZU_SENTRY_DSN`. This replaces the former `portaldeploy` GitLab project.
+
+---
+
 ## Props
 
 | Prop | Type | Required | Default | Description |

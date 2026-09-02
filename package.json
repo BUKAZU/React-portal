@@ -16,7 +16,8 @@
     "build:analyze": "npm run countries:pack && cross-env ANALYZE=true vite build",
     "dev": "vite",
     "build:website": "vite build --config vite.website.config.ts",
-    "verify:website": "node ./scripts/verify-website-bundle.mjs"
+    "verify:website": "node ./scripts/verify-website-bundle.mjs",
+    "deploy:assemble": "node ./scripts/assemble-deploy.mjs"
   },
   "author": "Bob van Oorschot",
   "license": "MIT",
