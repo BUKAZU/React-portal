@@ -1,0 +1,120 @@
+# Deploys the website bundle (build/portal.website.{js,css}) to an S3 bucket.
+#
+# Called automatically by npm-publish.yml after a stable release, and runnable
+# by hand from the Actions tab. Bucket names, region and credentials live in
+# the GitHub Environments `production` and `staging`, never in this file.
+#
+# Bundle source, exactly one of:
+#   artifact  a workflow artifact holding build/ (release chain)
+#   version   an already published npm version (redeploy / rollback)
+#   neither   build the checked-out ref (default for manual staging deploys)
+
+name: Deploy to S3
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: GitHub Environment to deploy to (production or staging)
+        type: string
+        required: true
+      artifact:
+        description: Name of a workflow artifact holding build/portal.website.{js,css}
+        type: string
+        required: false
+        default: ''
+      version:
+        description: npm version to deploy instead of building (unused when artifact is set)
+        type: string
+        required: false
+        default: ''
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        options: [staging, production]
+        default: staging
+      version:
+        description: 'npm version to deploy (e.g. 4.0.2). Leave empty to build the selected branch.'
+        type: string
+        required: false
+        default: ''
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: 'npm'
+          registry-url: https://registry.npmjs.org/
+
+      # The artifact was uploaded from build/portal.website.{js,css}; upload-artifact
+      # roots the archive at the least common ancestor of its paths (build/), so the
+      # files sit at the archive root and restore to build/portal.website.*.
+      - name: Use bundle from workflow artifact
+        if: inputs.artifact != ''
+        uses: actions/download-artifact@v6
+        with:
+          name: ${{ inputs.artifact }}
+          path: build
+      - name: Select artifact as source
+        if: inputs.artifact != ''
+        run: echo "SOURCE=build" >> "$GITHUB_ENV"
+
+      - name: Use bundle from npm
+        if: inputs.artifact == '' && inputs.version != ''
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          tarball="$(npm pack "bukazu-portal-react@${VERSION}" --silent)"
+          tar -xzf "$tarball"
+          echo "SOURCE=$RUNNER_TEMP/package/build" >> "$GITHUB_ENV"
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Build bundle from this ref
+        if: inputs.artifact == '' && inputs.version == ''
+        run: |
+          npm ci
+          npm run build
+          npm run verify:website
+          echo "SOURCE=build" >> "$GITHUB_ENV"
+        env:
+          BUKAZU_SENTRY_DSN: ${{ vars.BUKAZU_SENTRY_DSN }}
+
+      - name: Assemble deploy tree
+        run: node ./scripts/assemble-deploy.mjs --source "$SOURCE" --out dist-deploy
+
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: aws s3 cp dist-deploy "s3://${S3_BUCKET}" --recursive
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+
+      - name: Purge Cloudflare cache
+        if: inputs.environment == 'production'
+        run: |
+          curl -fsS -X DELETE \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_AUTH_KEY}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_AUTH_KEY: ${{ secrets.CLOUDFLARE_AUTH_KEY }}
