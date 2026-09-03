@@ -96,6 +96,7 @@
   "thank_you_for_your_request": "Thank you very much for your request.",
   "we_sent_confirmation_check_email": "A copy of your request has been sent to your e-mail address. If you have not received any mail from us, it may be that it is in your spam box.",
   "something_went_wrong_please_try_again": "Oops, something went wrong, please try again later.",
+  "no_prices_available_for_period": "No prices are available for the selected period.",
   "persons": "persons",
   "bedrooms": "bedrooms",
   "minimum_week_price": "min. weekly price",

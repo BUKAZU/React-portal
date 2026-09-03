@@ -97,6 +97,7 @@
   "thank_you_for_your_request": "Vielen Dank für Ihre Buchungs/Options-Anfrage.",
   "we_sent_confirmation_check_email": "Eine Kopie Ihrer Anfrage wurde an Ihre E-Mail-Adresse gesendet. Wenn Sie keine E-Mail von uns erhalten haben, befindet sich diese möglicherweise in Ihrer Spam-Box.",
   "something_went_wrong_please_try_again": "Ups, es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+  "no_prices_available_for_period": "Für den ausgewählten Zeitraum sind keine Preise verfügbar.",
   "persons": "Personen",
   "bedrooms": "Schlafzimmer",
   "minimum_week_price": "min. Wochenpreis",

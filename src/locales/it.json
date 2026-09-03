@@ -92,6 +92,7 @@
   "thank_you_for_your_request": "Grazie mille per la tua richiesta.",
   "we_sent_confirmation_check_email": "Una copia della tua richiesta è stata inviata al tuo indirizzo e-mail. Se non hai ricevuto alcuna posta da noi, potrebbe essere che sia nella tua casella di spam.",
   "something_went_wrong_please_try_again": "Oops, qualcosa è andato storto, ti preghiamo di riprovare più tardi.",
+  "no_prices_available_for_period": "Non sono disponibili prezzi per il periodo selezionato.",
   "persons": "persone",
   "bedrooms": "camere da letto",
   "minimum_week_price": "prezzo settimanale minimo",
