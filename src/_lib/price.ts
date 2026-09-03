@@ -60,6 +60,21 @@ interface FetchPriceParams {
 const PRICE_PATH = '/portal_api/v1/accommodations/price';
 
 /**
+ * Thrown when the API answers 200 but has no price for the requested period.
+ * The backend then returns a stub without `currency` and with `nights: 0`
+ * (e.g. the night prices do not cover the whole stay).
+ */
+export class PriceUnavailableError extends Error {
+  constructor(startsAt: string, endsAt: string) {
+    super(`No prices available for ${startsAt} - ${endsAt}`);
+    this.name = 'PriceUnavailableError';
+  }
+}
+
+/** The backend answers 422 when the night prices do not cover the period. */
+const NO_PRICES_STATUS = 422;
+
+/**
  * Build the REST price URL by reusing the origin of the configured
  * api_url, so staging/local overrides keep working.
  */
@@ -111,14 +126,27 @@ export async function fetchPrice(
 ): Promise<PriceResponse> {
   const url = buildPriceUrl(params);
 
+  let price: PriceResponse;
   try {
-    return await http
+    price = await http
       .get(url, { headers: { locale: params.locale } })
       .json<PriceResponse>();
   } catch (error) {
     if (error instanceof HTTPError) {
+      if (error.response.status === NO_PRICES_STATUS) {
+        throw new PriceUnavailableError(params.startsAt, params.endsAt);
+      }
       throw new Error(`Price request failed (${error.response.status})`);
     }
     throw error;
   }
+
+  // Older backends answer 200 with an empty stub instead of 422. Guard against
+  // it so callers never feed an undefined currency into Intl.NumberFormat
+  // ("Currency code is required with currency style").
+  if (!price.currency) {
+    throw new PriceUnavailableError(params.startsAt, params.endsAt);
+  }
+
+  return price;
 }

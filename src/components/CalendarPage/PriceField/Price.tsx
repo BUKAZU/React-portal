@@ -3,7 +3,11 @@ import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
 import { useCurrency } from '../../CurrencyContext';
 import Loading from '../../icons/loading.svg';
-import { fetchPrice, PriceResponse } from '../../../_lib/price';
+import {
+  fetchPrice,
+  PriceResponse,
+  PriceUnavailableError
+} from '../../../_lib/price';
 
 interface Props {
   persons: number;
@@ -71,7 +75,9 @@ function Price({ persons, variables }: Props) {
   if (error || !result) {
     return (
       <div className="price-overview--build bup-16">
-        {t('something_went_wrong_please_try_again')}
+        {error instanceof PriceUnavailableError
+          ? t('no_prices_available_for_period')
+          : t('something_went_wrong_please_try_again')}
       </div>
     );
   }

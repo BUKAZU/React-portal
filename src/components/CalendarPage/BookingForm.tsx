@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
-import { fetchPrice } from '../../_lib/price';
+import { fetchPrice, PriceUnavailableError } from '../../_lib/price';
+import { t } from '../../intl';
 import { AppContext } from '../AppContext';
 import { useCurrency } from '../CurrencyContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
@@ -19,12 +20,12 @@ function BookingForm({ portalSite }: Props): JSX.Element {
   const { arrivalDate, departureDate } = useContext(CalendarContext);
 
   const [house, setHouse] = useState<HouseType | null>(null);
-  const [priceError, setPriceError] = useState(false);
+  const [priceError, setPriceError] = useState<Error | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setHouse(null);
-    setPriceError(false);
+    setPriceError(null);
 
     fetchPrice({
       apiUrl,
@@ -39,7 +40,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       .then((price) => {
         if (cancelled) return;
         if (!price.accommodation) {
-          setPriceError(true);
+          setPriceError(new Error('Price response lacks the accommodation'));
           return;
         }
         setHouse({
@@ -59,9 +60,9 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           }
         });
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         if (!cancelled) {
-          setPriceError(true);
+          setPriceError(err instanceof Error ? err : new Error(String(err)));
         }
       });
 
@@ -85,7 +86,13 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       </div>
     );
   if (priceError || !house) {
-    return <div>Error</div>;
+    return (
+      <div>
+        {priceError instanceof PriceUnavailableError
+          ? t('no_prices_available_for_period')
+          : t('something_went_wrong_please_try_again')}
+      </div>
+    );
   }
   TrackEvent({
     house_code: objectCode,

@@ -96,6 +96,7 @@
   "thank_you_for_your_request": "Muchas gracias por su solicitud.",
   "we_sent_confirmation_check_email": "Se ha enviado una copia de su solicitud a su dirección de correo electrónico. Si no ha recibido ningún correo de nuestra parte, es posible que esté en su buzón de correo no deseado.",
   "something_went_wrong_please_try_again": "Vaya, algo salió mal, inténtalo de nuevo más tarde.",
+  "no_prices_available_for_period": "No hay precios disponibles para el periodo seleccionado.",
   "persons": "personas",
   "bedrooms": "dormitorios",
   "minimum_week_price": "min. precio semanal",

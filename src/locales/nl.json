@@ -94,6 +94,7 @@
   "thank_you_for_your_request": "Hartelijk dank voor uw boekings/optie-aanvraag.",
   "we_sent_confirmation_check_email": "Een kopie van uw aanvraag is naar uw e-mailadres verstuurd. Als u geen mail van ons ontvangen hebt, kan het zijn dat deze in uw spambox zit. ",
   "something_went_wrong_please_try_again": "Oeps, er is iets mis gegaan, probeert u het later nogmaals.",
+  "no_prices_available_for_period": "Er zijn geen prijzen beschikbaar voor de geselecteerde periode.",
   "persons": "personen",
   "bedrooms": "slaapkamers",
   "minimum_week_price": "min. weekprijs",

@@ -22,6 +22,7 @@ import { createRoot } from 'react-dom/client';
 import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
 import { AccommodationDetailError } from '../../../_lib/accommodation';
+import { PriceUnavailableError } from '../../../_lib/price';
 
 // ---------------------------------------------------------------------------
 // Mock the REST accommodation client (replaces the legacy SINGLE_HOUSE_QUERY).
@@ -77,6 +78,7 @@ const bookingResponse = {
 // ---------------------------------------------------------------------------
 const mockFetchPrice = jest.fn();
 jest.mock('../../../_lib/price', () => ({
+  ...jest.requireActual('../../../_lib/price'),
   fetchPrice: (...args: unknown[]) => mockFetchPrice(...args)
 }));
 
@@ -453,6 +455,46 @@ describe('Booking flow – integration', () => {
 
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
     expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
+  });
+
+  it('shows "no prices available" in the price preview when the period has no prices', async () => {
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    renderApp();
+    await selectDates();
+
+    expect(container.textContent).toContain(
+      'No prices are available for the selected period.'
+    );
+    expect(container.textContent).not.toContain('Oops, something went wrong');
+  });
+
+  it('shows the generic error in the price preview when the price request fails', async () => {
+    mockFetchPrice.mockRejectedValue(new Error('Price request failed (500)'));
+
+    renderApp();
+    await selectDates();
+
+    expect(container.textContent).toContain(
+      'Oops, something went wrong, please try again later.'
+    );
+  });
+
+  it('shows "no prices available" instead of the booking form when the period has no prices', async () => {
+    renderApp();
+    await selectDates();
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    await clickCalculate();
+
+    expect(container.querySelector('form.form')).toBeNull();
+    expect(container.textContent).toContain(
+      'No prices are available for the selected period.'
+    );
   });
 
   it('enables the Calculate button once arrival and departure dates are selected', async () => {
