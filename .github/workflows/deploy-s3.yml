@@ -64,7 +64,7 @@ jobs:
       # files sit at the archive root and restore to build/portal.website.*.
       - name: Use bundle from workflow artifact
         if: inputs.artifact != ''
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.artifact }}
           path: build
