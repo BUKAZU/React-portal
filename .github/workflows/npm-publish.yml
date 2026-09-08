@@ -77,7 +77,7 @@ jobs:
         env:
           BUKAZU_SENTRY_DSN: ${{ vars.BUKAZU_SENTRY_DSN }}
       - name: Keep the website bundle for the S3 deploy
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: website-bundle-${{ github.run_id }}
           path: |
