@@ -179,6 +179,95 @@ describe('Field', () => {
     expect(input?.value).toBe('test');
   });
 
+  it('should commit the plain input on blur', () => {
+    const onFilterChange = jest.fn();
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'extra_search', type: 'text' }}
+          filters={{}}
+          value=""
+          onFilterChange={onFilterChange}
+        />
+      );
+    });
+
+    const input = container.querySelector('input') as HTMLInputElement;
+    act(() => {
+      input.value = 'pool';
+      // React listens for the bubbling focusout event to fire onBlur.
+      input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    });
+
+    expect(onFilterChange).toHaveBeenCalledWith('extra_search', 'pool');
+  });
+
+  it('should use pre-resolved options when given', () => {
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'countries', type: 'select' }}
+          filters={{}}
+          value=""
+          onFilterChange={jest.fn()}
+          options={[
+            { id: 1, name: 'A' },
+            { id: 2, name: 'B' },
+            { id: 3, name: 'C' }
+          ]}
+        />
+      );
+    });
+
+    expect(
+      container
+        .querySelector('[data-testid="select"]')
+        ?.getAttribute('data-options')
+    ).toBe('3');
+  });
+
+  it('should resolve options from the portal site when none are given', () => {
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'countries', type: 'select' }}
+          filters={{}}
+          value=""
+          onFilterChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(
+      container
+        .querySelector('[data-testid="select"]')
+        ?.getAttribute('data-options')
+    ).toBe('1');
+  });
+
+  it('should coerce an unknown type to select for numeric fields', () => {
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'bedrooms_min', type: 'integer', max: 3 }}
+          filters={{}}
+          value=""
+          onFilterChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(
+      container
+        .querySelector('[data-testid="select"]')
+        ?.getAttribute('data-options')
+    ).toBe('4');
+  });
+
   it('should pass portal site array options for persons_min field', () => {
     act(() => {
       root.render(

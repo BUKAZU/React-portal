@@ -5,10 +5,35 @@ import SearchPage from '../SearchPage';
 import { PortalOptions, PortalSiteType } from '../../../types';
 
 // Mock child components so we don't need Apollo and other heavy deps
-jest.mock('../Filters', () => (props: { filters: object }) => (
-  <div data-testid="filters">{JSON.stringify(props.filters)}</div>
-));
-jest.mock('../Results', () => () => <div data-testid="results" />);
+jest.mock(
+  '../Filters',
+  () => (props: { filters: object; onFilterChange: (f: object) => void }) => (
+    <div data-testid="filters">
+      {JSON.stringify(props.filters)}
+      <button
+        type="button"
+        data-testid="set-country"
+        onClick={() => props.onFilterChange({ countries: '12' })}
+      />
+    </div>
+  )
+);
+jest.mock(
+  '../Results',
+  () =>
+    (props: {
+      viewMode: string;
+      onViewModeChange: (mode: 'grid' | 'list') => void;
+    }) => (
+      <div data-testid="results" data-view-mode={props.viewMode}>
+        <button
+          type="button"
+          data-testid="to-list"
+          onClick={() => props.onViewModeChange('list')}
+        />
+      </div>
+    )
+);
 jest.mock('../../../_lib/Tracking', () => ({
   TrackEvent: jest.fn()
 }));
@@ -58,7 +83,14 @@ const mockPortalSite: PortalSiteType = {
     children_from_age: 0,
     children_till_age: 12,
     language_selector_visible: false,
-    redirect_urls: { nl: null, en: null, de: null, fr: null, es: null, it: null },
+    redirect_urls: {
+      nl: null,
+      en: null,
+      de: null,
+      fr: null,
+      es: null,
+      it: null
+    },
     show_discount_code: false,
     show_months_amount: 2,
     show_months_in_a_row_amount: 2
@@ -232,10 +264,7 @@ describe('SearchPage', () => {
   });
 
   it('should ignore URL query params when prefill_filters_from_url is false', () => {
-    localStorage.setItem(
-      'bukazuFilters',
-      JSON.stringify({ countries: 'NL' })
-    );
+    localStorage.setItem('bukazuFilters', JSON.stringify({ countries: 'NL' }));
     window.history.replaceState({}, '', '/?persons_min=6');
 
     const optionsWithoutPrefill: PortalOptions = {
@@ -274,6 +303,127 @@ describe('SearchPage', () => {
     });
 
     expect(renderedFilters()).toEqual({ countries: '12', persons_min: '6' });
+  });
+
+  it('should restore the active page from localStorage on mount', () => {
+    localStorage.setItem('bukazuActivePage', '2');
+
+    act(() => {
+      root.render(
+        <SearchPage
+          options={mockOptions}
+          PortalSite={mockPortalSite}
+          locale="en"
+        />
+      );
+    });
+
+    expect(localStorage.getItem('bukazuActivePage')).toBe('2');
+    expect(container.querySelector('#search-page')).not.toBeNull();
+  });
+
+  it('should store changed filters and reset to the first page', () => {
+    localStorage.setItem('bukazuActivePage', '3');
+
+    act(() => {
+      root.render(
+        <SearchPage
+          options={mockOptions}
+          PortalSite={mockPortalSite}
+          locale="en"
+        />
+      );
+    });
+
+    act(() => {
+      (
+        container.querySelector('[data-testid="set-country"]') as HTMLElement
+      ).click();
+    });
+
+    expect(renderedFilters()).toEqual({ countries: '12' });
+    expect(localStorage.getItem('bukazuFilters')).toBe(
+      JSON.stringify({ countries: '12' })
+    );
+    expect(localStorage.getItem('bukazuActivePage')).toBe('0');
+  });
+
+  describe('view mode', () => {
+    function renderedViewMode(): string | null | undefined {
+      return container
+        .querySelector('[data-testid="results"]')
+        ?.getAttribute('data-view-mode');
+    }
+
+    it('should start from the portal default', () => {
+      act(() => {
+        root.render(
+          <SearchPage
+            options={mockOptions}
+            PortalSite={mockPortalSite}
+            locale="en"
+          />
+        );
+      });
+
+      expect(renderedViewMode()).toBe('grid');
+    });
+
+    it('should let the remembered choice beat the portal default', () => {
+      localStorage.setItem('bukazuViewMode', 'list');
+
+      act(() => {
+        root.render(
+          <SearchPage
+            options={mockOptions}
+            PortalSite={mockPortalSite}
+            locale="en"
+          />
+        );
+      });
+
+      expect(renderedViewMode()).toBe('list');
+    });
+
+    it('should fall back to grid when the portal sends no mode', () => {
+      const optionsWithoutMode: PortalOptions = {
+        ...mockOptions,
+        filtersForm: { ...mockOptions.filtersForm, mode: undefined }
+      } as any;
+
+      act(() => {
+        root.render(
+          <SearchPage
+            options={optionsWithoutMode}
+            PortalSite={mockPortalSite}
+            locale="en"
+          />
+        );
+      });
+
+      expect(renderedViewMode()).toBe('grid');
+    });
+
+    it('should switch and remember the mode', () => {
+      act(() => {
+        root.render(
+          <SearchPage
+            options={mockOptions}
+            PortalSite={mockPortalSite}
+            locale="en"
+          />
+        );
+      });
+
+      act(() => {
+        (
+          container.querySelector('[data-testid="to-list"]') as HTMLElement
+        ).click();
+      });
+
+      expect(renderedViewMode()).toBe('list');
+      expect(localStorage.getItem('bukazuViewMode')).toBe('list');
+    });
   });
 
   it('should use no_results from options as limit', () => {

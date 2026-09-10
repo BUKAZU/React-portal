@@ -5,6 +5,11 @@ import { PortalOptions } from '../../types';
 import { FiltersType } from './filters/filter_types';
 import { parseFiltersFromUrl } from '../../_lib/url_filters';
 import { TrackEvent } from '../../_lib/Tracking';
+import {
+  readStoredViewMode,
+  storeViewMode,
+  type ViewMode
+} from '../../_lib/view_mode';
 import type { AppPortalSite } from '../loadPortalSite';
 
 type MyProps = {
@@ -19,6 +24,7 @@ type MyState = {
   activePage: number;
   limit: number;
   skip: number;
+  viewMode: ViewMode;
 };
 
 class SearchPage extends Component<MyProps, MyState> {
@@ -38,9 +44,13 @@ class SearchPage extends Component<MyProps, MyState> {
       filters: { ...(this.props.filters || {}), ...urlFilters },
       activePage: 1,
       limit,
-      skip: 0
+      skip: 0,
+      // The visitor's remembered layout beats the portal's configured default.
+      viewMode:
+        readStoredViewMode() ?? this.props.options.filtersForm.mode ?? 'grid'
     };
     this.onFilterChange = this.onFilterChange.bind(this);
+    this.onViewModeChange = this.onViewModeChange.bind(this);
     this.pageChange = this.pageChange.bind(this);
   }
 
@@ -74,6 +84,11 @@ class SearchPage extends Component<MyProps, MyState> {
     this.pageChange(0);
   }
 
+  onViewModeChange(viewMode: ViewMode) {
+    this.setState({ viewMode });
+    storeViewMode(viewMode);
+  }
+
   pageChange(pageNumber: number) {
     const { limit } = this.state;
     let newSkip = pageNumber * limit;
@@ -86,7 +101,7 @@ class SearchPage extends Component<MyProps, MyState> {
   }
 
   render() {
-    const { filters, activePage, limit, skip } = this.state;
+    const { filters, activePage, limit, skip, viewMode } = this.state;
     const { options, PortalSite, locale } = this.props;
 
     TrackEvent({
@@ -102,8 +117,8 @@ class SearchPage extends Component<MyProps, MyState> {
           options.filtersForm.location === 'right'
             ? 'bu-reverse'
             : options.filtersForm.location === 'top'
-            ? 'bu-column'
-            : ''
+              ? 'bu-column'
+              : ''
         }
       >
         <Filters
@@ -119,6 +134,8 @@ class SearchPage extends Component<MyProps, MyState> {
           onPageChange={this.pageChange}
           skip={skip}
           limit={limit}
+          viewMode={viewMode}
+          onViewModeChange={this.onViewModeChange}
         />
       </div>
     );

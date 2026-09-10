@@ -21,6 +21,10 @@ jest.mock(
   () => () => '<div data-testid="single-result"></div>'
 );
 jest.mock('../Paginator', () => () => <div data-testid="paginator" />);
+jest.mock('../../icons/Grid.svg', () => () => <svg data-testid="grid-icon" />);
+jest.mock('../../icons/ViewList.svg', () => () => (
+  <svg data-testid="list-icon" />
+));
 jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 jest.mock('../../Error', () => ({
   ApiError: () => <div data-testid="api-error" />
@@ -121,7 +125,7 @@ function responseWith(items: AccommodationResult[]): AccommodationsResponse {
   };
 }
 
-const defaultProps = {
+const defaultProps: React.ComponentProps<typeof Results> = {
   filters: baseFilters,
   PortalSite: mockPortalSite,
   limit: 10,
@@ -189,6 +193,54 @@ describe('Results', () => {
     await renderResultsAndSettle();
 
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+  });
+
+  it('should wrap a non-Error rejection in an Error', async () => {
+    mockFetch.mockRejectedValue('boom');
+
+    await renderResultsAndSettle();
+
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+  });
+
+  it('should ignore a response or failure that lands after unmount', async () => {
+    let resolveFirst: (value: AccommodationsResponse) => void = () => {};
+    let rejectSecond: (reason: Error) => void = () => {};
+    mockFetch
+      .mockImplementationOnce(
+        () => new Promise((resolve) => (resolveFirst = resolve))
+      )
+      .mockImplementationOnce(
+        () => new Promise((_, reject) => (rejectSecond = reject))
+      );
+
+    renderResults();
+    act(() => {
+      root.unmount();
+    });
+    await act(async () => {
+      resolveFirst(responseWith([mockHouse]));
+      await Promise.resolve();
+    });
+
+    act(() => {
+      root = createRoot(container);
+    });
+    renderResults();
+    act(() => {
+      root.unmount();
+    });
+    await act(async () => {
+      rejectSecond(new Error('late'));
+      await Promise.resolve();
+    });
+
+    // Nothing rendered into an unmounted root; recreate for afterEach.
+    expect(container.querySelector('[data-testid="single-result"]')).toBeNull();
+    expect(container.querySelector('[data-testid="api-error"]')).toBeNull();
+    act(() => {
+      root = createRoot(container);
+    });
   });
 
   it('should show no-results message when no accommodation matches', async () => {
@@ -338,6 +390,34 @@ describe('Results', () => {
 
     expect(mockFetch.mock.calls[0][0].params).not.toHaveProperty('currency');
     expect(container.querySelector('.bu-currency-selector')).toBeNull();
+  });
+
+  it('should prefer the viewMode prop and render the toggle when it can change', async () => {
+    const onViewModeChange = jest.fn();
+    await renderResultsAndSettle({
+      ...defaultProps,
+      viewMode: 'list',
+      onViewModeChange
+    });
+
+    expect(container.querySelector('#results')?.className).toBe('list');
+
+    const gridButton = container.querySelector(
+      '.bu-view-toggle button[aria-label="Grid view"]'
+    ) as HTMLButtonElement;
+    expect(gridButton.getAttribute('aria-pressed')).toBe('false');
+
+    act(() => {
+      gridButton.click();
+    });
+
+    expect(onViewModeChange).toHaveBeenCalledWith('grid');
+  });
+
+  it('should render no toggle when the mode cannot change', async () => {
+    await renderResultsAndSettle();
+
+    expect(container.querySelector('.bu-view-toggle')).toBeNull();
   });
 
   it('should apply the mode from PortalSite options as a CSS class on #results', async () => {

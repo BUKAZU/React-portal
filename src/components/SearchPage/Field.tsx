@@ -1,12 +1,17 @@
 import React from 'react';
 import List from './filters/List';
-import { createNumberArray, createPriceArray } from './filters/helper';
 import Select from './filters/Select';
 import Radio from './filters/Radio';
 import DateFilter from './filters/DateFilter';
 import NumberFilter from './filters/NumberFilter';
 import type { AppPortalSite } from '../loadPortalSite';
-import { Field as FieldType, FiltersType, OptionsType } from './filters/filter_types';
+import type { ResolvedOption } from '../../_lib/active_filters';
+import { resolveFieldOptions } from './filters/helper';
+import {
+  Field as FieldType,
+  FiltersType,
+  OptionsType
+} from './filters/filter_types';
 
 interface Props {
   PortalSite: AppPortalSite;
@@ -14,6 +19,8 @@ interface Props {
   filters: FiltersType;
   value: string;
   onFilterChange: Function;
+  /** Pre-resolved options; resolved from the field and portal site when absent. */
+  options?: ResolvedOption[];
 }
 
 const NUMERIC_SELECT_FIELDS = [
@@ -30,18 +37,10 @@ function Field({
   field,
   filters,
   value,
-  onFilterChange
+  onFilterChange,
+  options
 }: Props): JSX.Element {
-  let options: unknown[] = [];
-  if (field.options) {
-    options = field.options;
-  } else if (field.max !== undefined) {
-    options = field.id === 'weekprice_max'
-      ? createPriceArray(field.max)
-      : createNumberArray(field.max);
-  } else if (['countries', 'cities', 'regions'].includes(field.id)) {
-    options = (PortalSite[field.id] as unknown[]) || [];
-  }
+  const resolved = options ?? resolveFieldOptions(field, PortalSite);
 
   const effectiveType =
     !VALID_TYPES.includes(field.type) &&
@@ -50,11 +49,34 @@ function Field({
       : field.type;
 
   if (effectiveType === 'select') {
-    return <Select options={options as OptionsType[]} field={field} filters={filters} value={value} onChange={onFilterChange} />;
+    return (
+      <Select
+        options={resolved as OptionsType[]}
+        field={field}
+        filters={filters}
+        value={value}
+        onChange={onFilterChange}
+      />
+    );
   } else if (effectiveType === 'list') {
-    return <List options={options as OptionsType[]} field={field} filters={filters} value={value} onChange={onFilterChange} />;
+    return (
+      <List
+        options={resolved as OptionsType[]}
+        field={field}
+        filters={filters}
+        value={value}
+        onChange={onFilterChange}
+      />
+    );
   } else if (effectiveType === 'radio') {
-    return <Radio options={options as (OptionsType | string)[]} field={field} filters={filters} onChange={onFilterChange} />;
+    return (
+      <Radio
+        options={resolved as (OptionsType | string)[]}
+        field={field}
+        filters={filters}
+        onChange={onFilterChange}
+      />
+    );
   } else if (effectiveType === 'number') {
     return (
       <NumberFilter
@@ -69,7 +91,10 @@ function Field({
   } else {
     return (
       <input
-        value={value}
+        id={field.id}
+        name={field.id}
+        type="text"
+        defaultValue={value}
         onBlur={(event) => {
           onFilterChange(field.id, event.target.value);
         }}

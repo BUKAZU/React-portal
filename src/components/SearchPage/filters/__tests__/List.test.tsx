@@ -18,6 +18,12 @@ const cityOptions = [
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
+function chip(value: string): HTMLButtonElement {
+  return container.querySelector(
+    `.bu-chip[data-value="${value}"]`
+  ) as HTMLButtonElement;
+}
+
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
@@ -34,11 +40,11 @@ afterEach(() => {
 });
 
 describe('List (filter)', () => {
-  it('should render a list of options for a countries field', () => {
+  it('should render a chip per option for a countries field', () => {
     act(() => {
       root.render(
         <List
-          field={{ id: 'countries', type: 'list' }}
+          field={{ id: 'countries', type: 'list', label: null }}
           options={countryOptions}
           filters={{}}
           value=""
@@ -47,15 +53,16 @@ describe('List (filter)', () => {
       );
     });
 
-    const items = container.querySelectorAll('.bu-list-item');
-    expect(items.length).toBe(countryOptions.length);
+    const chips = container.querySelectorAll('.bu-chips .bu-chip');
+    expect(chips.length).toBe(countryOptions.length);
+    expect(chips[0].textContent).toBe('Netherlands');
   });
 
-  it('should mark an option as checked when value matches', () => {
+  it('should mark the chip whose value matches as pressed', () => {
     act(() => {
       root.render(
         <List
-          field={{ id: 'countries', type: 'list' }}
+          field={{ id: 'countries', type: 'list', label: null }}
           options={countryOptions}
           filters={{}}
           value="NL"
@@ -64,18 +71,16 @@ describe('List (filter)', () => {
       );
     });
 
-    const checkedInput = container.querySelector(
-      'input[value="NL"]'
-    ) as HTMLInputElement;
-    expect(checkedInput?.checked).toBe(true);
+    expect(chip('NL').getAttribute('aria-pressed')).toBe('true');
+    expect(chip('DE').getAttribute('aria-pressed')).toBe('false');
   });
 
-  it('should call onChange when a checkbox is clicked', () => {
+  it('should pick a chip on click', () => {
     const onChange = jest.fn();
     act(() => {
       root.render(
         <List
-          field={{ id: 'countries', type: 'list' }}
+          field={{ id: 'countries', type: 'list', label: null }}
           options={countryOptions}
           filters={{}}
           value=""
@@ -84,63 +89,59 @@ describe('List (filter)', () => {
       );
     });
 
-    const input = container.querySelector(
-      'input[value="NL"]'
-    ) as HTMLInputElement;
     act(() => {
-      input.click();
+      chip('NL').click();
     });
 
-    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledWith('countries', 'NL');
   });
 
-  it('should disable cities from other countries when countries filter is set', () => {
+  it('should clear the filter when the picked chip is clicked again', () => {
+    const onChange = jest.fn();
     act(() => {
       root.render(
         <List
-          field={{ id: 'cities', type: 'list' }}
-          options={cityOptions}
-          filters={{ countries: ['NL'] }}
-          value=""
-          onChange={jest.fn()}
-        />
-      );
-    });
-
-    const berlinInput = container.querySelector(
-      'input[value="BER"]'
-    ) as HTMLInputElement;
-    expect(berlinInput?.disabled).toBe(true);
-
-    const amsterdamInput = container.querySelector(
-      'input[value="AMS"]'
-    ) as HTMLInputElement;
-    expect(amsterdamInput?.disabled).toBe(false);
-  });
-
-  it('should apply bu-disabled class to items from non-selected countries', () => {
-    act(() => {
-      root.render(
-        <List
-          field={{ id: 'cities', type: 'list' }}
-          options={cityOptions}
-          filters={{ countries: ['NL'] }}
-          value=""
-          onChange={jest.fn()}
-        />
-      );
-    });
-
-    const berlinItem = container.querySelector('.bu-disabled');
-    expect(berlinItem).not.toBeNull();
-  });
-
-  it('should render a radioList container', () => {
-    act(() => {
-      root.render(
-        <List
-          field={{ id: 'countries', type: 'list' }}
+          field={{ id: 'countries', type: 'list', label: null }}
           options={countryOptions}
+          filters={{}}
+          value="NL"
+          onChange={onChange}
+        />
+      );
+    });
+
+    act(() => {
+      chip('NL').click();
+    });
+
+    expect(onChange).toHaveBeenCalledWith('countries', null);
+  });
+
+  it('should disable and hide cities from other countries when countries filter is set', () => {
+    act(() => {
+      root.render(
+        <List
+          field={{ id: 'cities', type: 'list', label: null }}
+          options={cityOptions}
+          filters={{ countries: ['NL'] }}
+          value=""
+          onChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(chip('BER').disabled).toBe(true);
+    expect(chip('BER').classList.contains('bu-disabled')).toBe(true);
+    expect(chip('AMS').disabled).toBe(false);
+    expect(chip('AMS').classList.contains('bu-disabled')).toBe(false);
+  });
+
+  it('should show every city when no country is chosen', () => {
+    act(() => {
+      root.render(
+        <List
+          field={{ id: 'cities', type: 'list', label: null }}
+          options={cityOptions}
           filters={{}}
           value=""
           onChange={jest.fn()}
@@ -148,6 +149,6 @@ describe('List (filter)', () => {
       );
     });
 
-    expect(container.querySelector('.radioList')).not.toBeNull();
+    expect(container.querySelectorAll('.bu-disabled')).toHaveLength(0);
   });
 });

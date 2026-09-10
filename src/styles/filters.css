@@ -3,10 +3,16 @@
     flex-direction: row;
     .filters-button {
         display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         background: var(--bukazu-button);
-        padding: 8px;
+        color: #fff;
+        padding: 12px 16px;
         border: 0;
+        font: inherit;
         font-weight: bold;
+        cursor: pointer;
         &.fixed-mobile {
             position: fixed;
             width: 100%;
@@ -14,33 +20,68 @@
             left: 0;
             z-index: 9999;
         }
+        .bu-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--bukazu-button, #0055a5);
+            font-size: 12px;
+            font-weight: 700;
+        }
     }
+}
+
+#bukazu-app #search-page .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 280px;
+    min-width: 280px;
+    padding: 24px;
+    border-right: 1px solid rgba(69, 74, 83, 0.2);
+    background: #fafbfc;
+    color: rgba(26, 25, 25, 1);
+}
+#bukazu-app #search-page.bu-reverse .filters {
+    border-right: 0;
+    border-left: 1px solid rgba(69, 74, 83, 0.2);
+}
+#bukazu-app #search-page.bu-column .filters {
+    width: 100%;
+    min-width: 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(69, 74, 83, 0.2);
 }
 
 @container (max-width: 875px) {
   #bukazu-app #search-page .filters {
-    width: 175px;
-    min-width: 175px;
+    width: 240px;
+    min-width: 240px;
+    padding: 16px;
   }
 }
 
-#bukazu-app #search-page .filters {
-    padding: 8px;
-    width: 250px;
-}
 @container (max-width: 825px) {
     #bukazu-app #search-page {
         flex-direction: column;
         .filters-button {
-            display: block;
+            display: flex;
         }
     }
     #bukazu-app #search-page .filters {
         width: 100%;
+        min-width: 0;
         display: none;
+        border-right: 0;
+        border-bottom: 1px solid rgba(69, 74, 83, 0.2);
         transition: all 0.3s ease;
         &.showOnMobile {
-            display: block
+            display: flex;
         }
         &.fixed-mobile {
             position: fixed;
@@ -51,26 +92,138 @@
             background: #fff;
             max-height: 75%;
             overflow-y: auto;
+            border-radius: 16px 16px 0 0;
             box-shadow: 0 -5px 8px rgba(0, 0, 0, .25);
         }
+        .filters-close {
+            display: inline-flex;
+        }
     }
-
 }
 
 #bukazu-app {
     .filters-hidden {
         display: none;
     }
-    .filters {
-        min-width: 250px;
-        &-reload {
-            background: var(--bukazu-button);
+
+    .filters-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 32px;
+        .filters-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .filters-close {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            margin: -6px -12px -6px 0;
+            padding: 0;
             border: 0;
-            border-radius: 5px;
-            padding: 4px 8px;
-            float: right;
+            border-radius: 999px;
+            background: transparent;
+            color: rgba(26, 25, 25, 1);
+            cursor: pointer;
         }
     }
+
+    .bu-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+
+    /* Active filters block: header, "clear all" and one removable pill per filter */
+    .bu-active-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid color-mix(in srgb, var(--bukazu-button, #0055a5) 30%, transparent);
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--bukazu-button, #0055a5) 4%, #fff);
+        &-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--bukazu-button, #0055a5);
+        }
+    }
+
+    .bu-link-button {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--bukazu-button, #0055a5);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .bu-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .bu-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        max-width: 100%;
+        height: 32px;
+        padding: 0 6px 0 12px;
+        border: 1px solid color-mix(in srgb, var(--bukazu-button, #0055a5) 30%, transparent);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--bukazu-button, #0055a5) 8%, #fff);
+        color: var(--bukazu-button, #0055a5);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        > span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .bu-pill-remove {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            flex-shrink: 0;
+        }
+        &:hover {
+            background: color-mix(in srgb, var(--bukazu-button, #0055a5) 14%, #fff);
+            .bu-pill-remove {
+                background: color-mix(in srgb, var(--bukazu-button, #0055a5) 18%, transparent);
+            }
+        }
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--bukazu-button, #0055a5) 25%, transparent);
+        }
+    }
+
     .bu-properties {
         padding: 8px;
         ul {
@@ -82,13 +235,8 @@
              label {
                  display: flex;
                  align-items: center;
-             }   
+             }
             }
         }
-    }
-    .SingleDatePicker, .SingleDatePickerInput, .DateInput {
-        width: 100%;
-        display: block;
-        background: rgba(0, 0, 0, 0);
     }
 }
