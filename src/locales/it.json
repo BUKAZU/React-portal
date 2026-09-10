@@ -168,5 +168,11 @@
   "reviews": "Recensioni",
   "reviews_note_link": "Il sistema di prenotazione BUKAZU mantiene recensioni indipendenti. Queste recensioni vengono raccolte dopo il soggiorno degli ospiti nella struttura. Viene verificata la combinazione di numero di prenotazione e indirizzo e-mail.",
   "load_more_reviews": "Carica altre recensioni",
-  "review_response_label": "Risposta dell'host"
+  "review_response_label": "Risposta dell'host",
+  "active_filters": "Filtri attivi ({count})",
+  "clear_all": "Cancella tutto",
+  "remove_filter": "Rimuovi {filter}",
+  "view_mode": "Visualizzazione",
+  "grid_view": "Vista a griglia",
+  "list_view": "Vista elenco"
 }

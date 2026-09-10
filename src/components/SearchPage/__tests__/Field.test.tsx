@@ -5,8 +5,13 @@ import Field from '../Field';
 import { PortalSiteType } from '../../../types';
 
 // Mock filter components so we only test Field routing logic
-jest.mock('../filters/List', () => ({ field, options }: any) => (
-  <div data-testid="list" data-field={field.id} data-options={options.length} />
+jest.mock('../filters/List', () => ({ field, options, labelledBy }: any) => (
+  <div
+    data-testid="list"
+    data-field={field.id}
+    data-options={options.length}
+    data-labelled-by={labelledBy}
+  />
 ));
 jest.mock('../filters/Select', () => ({ field, options }: any) => (
   <div
@@ -93,7 +98,7 @@ describe('Field', () => {
     expect(container.querySelector('[data-testid="select"]')).not.toBeNull();
   });
 
-  it('should render List for a list-type field', () => {
+  it('should render List for a list-type field and hand it the label id', () => {
     act(() => {
       root.render(
         <Field
@@ -102,11 +107,14 @@ describe('Field', () => {
           filters={{}}
           value=""
           onFilterChange={jest.fn()}
+          labelId="cities-label"
         />
       );
     });
 
-    expect(container.querySelector('[data-testid="list"]')).not.toBeNull();
+    const list = container.querySelector('[data-testid="list"]');
+    expect(list).not.toBeNull();
+    expect(list?.getAttribute('data-labelled-by')).toBe('cities-label');
   });
 
   it('should render Radio for a radio-type field', () => {
@@ -177,6 +185,95 @@ describe('Field', () => {
     const input = container.querySelector('input');
     expect(input).not.toBeNull();
     expect(input?.value).toBe('test');
+  });
+
+  it('should commit the plain input on blur', () => {
+    const onFilterChange = jest.fn();
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'extra_search', type: 'text' }}
+          filters={{}}
+          value=""
+          onFilterChange={onFilterChange}
+        />
+      );
+    });
+
+    const input = container.querySelector('input') as HTMLInputElement;
+    act(() => {
+      input.value = 'pool';
+      // React listens for the bubbling focusout event to fire onBlur.
+      input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    });
+
+    expect(onFilterChange).toHaveBeenCalledWith('extra_search', 'pool');
+  });
+
+  it('should use pre-resolved options when given', () => {
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'countries', type: 'select' }}
+          filters={{}}
+          value=""
+          onFilterChange={jest.fn()}
+          options={[
+            { id: 1, name: 'A' },
+            { id: 2, name: 'B' },
+            { id: 3, name: 'C' }
+          ]}
+        />
+      );
+    });
+
+    expect(
+      container
+        .querySelector('[data-testid="select"]')
+        ?.getAttribute('data-options')
+    ).toBe('3');
+  });
+
+  it('should resolve options from the portal site when none are given', () => {
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'countries', type: 'select' }}
+          filters={{}}
+          value=""
+          onFilterChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(
+      container
+        .querySelector('[data-testid="select"]')
+        ?.getAttribute('data-options')
+    ).toBe('1');
+  });
+
+  it('should coerce an unknown type to select for numeric fields', () => {
+    act(() => {
+      root.render(
+        <Field
+          PortalSite={mockPortalSite}
+          field={{ id: 'bedrooms_min', type: 'integer', max: 3 }}
+          filters={{}}
+          value=""
+          onFilterChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(
+      container
+        .querySelector('[data-testid="select"]')
+        ?.getAttribute('data-options')
+    ).toBe('4');
   });
 
   it('should pass portal site array options for persons_min field', () => {

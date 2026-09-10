@@ -3,6 +3,7 @@ import { t } from '../../intl';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';
+import ViewToggle from './ViewToggle';
 
 import { ApiError } from '../Error';
 import { FiltersType } from './filters/filter_types';
@@ -15,6 +16,7 @@ import {
   type AccommodationsResponse
 } from '../../_lib/accommodations';
 import { buildSearchParams } from '../../_lib/search_params';
+import type { ViewMode } from '../../_lib/view_mode';
 
 interface Props {
   filters: FiltersType;
@@ -23,6 +25,9 @@ interface Props {
   skip: number;
   onPageChange: Function;
   activePage: number;
+  /** Results layout; falls back to the portal's configured mode. */
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
 type ResultsState =
@@ -36,7 +41,9 @@ function Results({
   limit,
   skip,
   onPageChange,
-  activePage
+  activePage,
+  viewMode,
+  onViewModeChange
 }: Props): JSX.Element {
   const { portalCode, apiUrl, locale } = useContext(AppContext);
   const { currency } = useCurrency();
@@ -105,6 +112,7 @@ function Results({
   }
 
   const { items, meta } = state.response;
+  const mode = viewMode ?? PortalSite.options.filtersForm.mode;
 
   const Pagination = (
     <Paginator
@@ -116,8 +124,13 @@ function Results({
   );
 
   return (
-    <div id="results" className={PortalSite.options.filtersForm.mode}>
-      <CurrencySelector />
+    <div id="results" className={mode}>
+      <div className="bu-results-toolbar">
+        <CurrencySelector />
+        {onViewModeChange && (
+          <ViewToggle mode={mode} onChange={onViewModeChange} />
+        )}
+      </div>
       {Pagination}
       {items.length === 0 ? (
         <div className="bu-noresults">{t('no_results')}</div>

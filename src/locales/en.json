@@ -177,5 +177,11 @@
   "reviews": "Reviews",
   "load_more_reviews": "Load more reviews",
   "review_response_label": "Response from host",
-  "reviews_note_link": "BUKAZU Booking System maintains independent reviews. These reviews are collected after guests stay in the accommodation. There is verification of the combination of booking number and email address."
+  "reviews_note_link": "BUKAZU Booking System maintains independent reviews. These reviews are collected after guests stay in the accommodation. There is verification of the combination of booking number and email address.",
+  "active_filters": "Active filters ({count})",
+  "clear_all": "Clear all",
+  "remove_filter": "Remove {filter}",
+  "view_mode": "View",
+  "grid_view": "Grid view",
+  "list_view": "List view"
 }

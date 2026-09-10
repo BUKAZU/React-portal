@@ -178,5 +178,11 @@
   "price_from": "Prijs vanaf",
   "reviews": "Reviews",
   "load_more_reviews": "Meer reviews laden",
-  "review_response_label": "Reactie van de verhuurder"
+  "review_response_label": "Reactie van de verhuurder",
+  "active_filters": "Actieve filters ({count})",
+  "clear_all": "Alles wissen",
+  "remove_filter": "{filter} verwijderen",
+  "view_mode": "Weergave",
+  "grid_view": "Rasterweergave",
+  "list_view": "Lijstweergave"
 }

@@ -1,34 +1,43 @@
 #bukazu-app {
     input,
-    select,
-    .react-date-picker__wrapper {
+    select {
+        appearance: none;
+        width: 100%;
+        height: 40px;
+        margin: 0;
+        padding: 0 16px;
+        box-sizing: border-box;
         border: 1px solid rgba(69, 74, 83, 0.2);
         border-radius: 8px;
-        padding: 8px 16px;
-        margin: 4px 0 8px;
-    }
-    input, select {
-        appearance: none;
-        font-size: 16px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .react-date-picker__inputGroup {
-        box-sizing: content-box;
-        input {
-            padding: 0;
+        background: #fff;
+        color: rgba(26, 25, 25, 1);
+        font-size: 15px;
+        font-family: inherit;
+        line-height: 1.2;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        &:hover {
+            border-color: rgba(69, 74, 83, 0.45);
         }
-        input.react-date-picker__inputGroup__input {
-            padding: 0 1px;
-            border: 0;
-            box-sizing: content-box;
-            appearance: textfield;
+        &:focus-visible {
+            outline: none;
+            border-color: var(--bukazu-button, #0055a5);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--bukazu-button, #0055a5) 25%, transparent);
+        }
+        &:disabled {
+            background: #f5f6f7;
+            color: rgba(26, 25, 25, 0.62);
         }
     }
-}
-
-#bukazu-app input, #bukazu-app select {
-    min-height: inherit;
+    select {
+        padding-right: 40px;
+        cursor: pointer;
+    }
+    input[type=date] {
+        cursor: pointer;
+    }
+    input::placeholder {
+        color: rgba(26, 25, 25, 0.62);
+    }
 }
 
 #bukazu-app input[type=radio],
@@ -41,7 +50,7 @@
     border-radius: 16px;
 }
 
-#bukazu-app input[type=checkbox] {    
+#bukazu-app input[type=checkbox] {
     border-radius: 0;
 }
 
@@ -63,41 +72,80 @@
     border-radius: 16px;
     background: var(--bukazu-button);
 }
-#bukazu-app input[type=checkbox]:checked::after {   
+#bukazu-app input[type=checkbox]:checked::after {
     /*Add another block-level blank space*/
     content: '';
     display: block;
     position: absolute;
     left: 6px;
     top: 2px;
- 
+
     /*Make it a small rectangle so the border will create an L-shape*/
     width: 4px;
     height: 8px;
- 
+
     /*Add a white border on the bottom and left, creating that 'L' */
     border: solid var(--bukazu-button);
     border-width: 0 2px 2px 0;
- 
+
     /*Rotate the L 45 degrees to turn it into a checkmark*/
-    transform: rotate(45deg);  
+    transform: rotate(45deg);
 }
 
 #bukazu-app .radioList {
     padding: 0;
+    margin: 0;
     list-style: none;
     .bu-list-item {
         display: flex;
         align-items: center;
         cursor: pointer;
-        
+
         label {
             padding: 4px 0;
             cursor: pointer;
         }
-    }    
-    
+    }
+
     .bu-disabled {
         display: none;
+    }
+}
+
+/* Single-select chips (list-type filter fields, e.g. amenities) */
+#bukazu-app .bu-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    .bu-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid rgba(69, 74, 83, 0.2);
+        border-radius: 999px;
+        background: #fff;
+        color: rgba(26, 25, 25, 1);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+        &:hover {
+            border-color: rgba(69, 74, 83, 0.45);
+        }
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--bukazu-button, #0055a5) 25%, transparent);
+        }
+        &[aria-pressed=true] {
+            border-color: var(--bukazu-button, #0055a5);
+            background: var(--bukazu-button, #0055a5);
+            color: #fff;
+        }
+        &.bu-disabled {
+            display: none;
+        }
     }
 }

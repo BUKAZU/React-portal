@@ -44,6 +44,64 @@ describe('Radio (filter)', () => {
     expect(container.querySelector('.radioList')).not.toBeNull();
   });
 
+  it('should expose the list as a named radiogroup', () => {
+    act(() => {
+      root.render(
+        <Radio
+          field={{ id: 'countries', type: 'radio', label: 'Country' }}
+          options={countryOptions}
+          filters={{}}
+          onChange={jest.fn()}
+          labelledBy="countries-label"
+        />
+      );
+    });
+
+    const group = container.querySelector('.radioList') as HTMLElement;
+    expect(group.getAttribute('role')).toBe('radiogroup');
+    expect(group.getAttribute('aria-labelledby')).toBe('countries-label');
+    expect(group.getAttribute('aria-label')).toBeNull();
+  });
+
+  it('should fall back to the field label as the group name', () => {
+    act(() => {
+      root.render(
+        <Radio
+          field={{ id: 'countries', type: 'radio', label: 'Country' }}
+          options={countryOptions}
+          filters={{}}
+          onChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(
+      container.querySelector('.radioList')?.getAttribute('aria-label')
+    ).toBe('Country');
+  });
+
+  it('should accept plain string options', () => {
+    act(() => {
+      root.render(
+        <Radio
+          field={{ id: 'persons_min', type: 'radio', label: null }}
+          options={['2', '4']}
+          filters={{ countries: ['NL'] }}
+          onChange={jest.fn()}
+        />
+      );
+    });
+
+    const radios = Array.from(
+      container.querySelectorAll('input[type="radio"]')
+    ) as HTMLInputElement[];
+    expect(radios.map((r) => r.value)).toEqual(['2', '4']);
+    expect(radios.every((r) => !r.disabled)).toBe(true);
+    expect(
+      container.querySelector('.radioList')?.getAttribute('aria-label')
+    ).toBe('persons_min');
+  });
+
   it('should render a radio input for each option', () => {
     act(() => {
       root.render(

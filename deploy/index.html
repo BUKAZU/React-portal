@@ -2,14 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Bukazu Portal</title>
-    <link rel="stylesheet" href="/static/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bukazu Portal previews</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; color: #222; }
+      li { margin: 0.5rem 0; }
+      code { background: #f3f3f3; padding: 0.1rem 0.3rem; border-radius: 3px; }
+    </style>
   </head>
   <body>
-    <h1>Bukazu Test Portal</h1>
-
-    <div class="bukazu-app" id="bukazu-app" portal-code="3cbe4f75" object-code="AT0047" language='nl'></div>
-
-    <script src="/static/main.js"></script>
+    <h1>Bukazu Portal previews</h1>
+    <p>Each page embeds the deployed bundle (<code>/static/main.js</code>) in one of the portal's page types.</p>
+    <ul>
+      <li><a href="/search.html">Search page</a> — portal without <code>object-code</code></li>
+      <li><a href="/calendar.html">Calendar page</a> — portal with <code>object-code</code></li>
+      <li><a href="/reviews.html">Reviews page</a> — <code>object-code</code> with <code>page="reviews"</code></li>
+    </ul>
   </body>
 </html>
