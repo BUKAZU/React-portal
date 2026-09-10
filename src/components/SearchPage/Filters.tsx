@@ -9,9 +9,9 @@ import type { AppPortalSite } from '../loadPortalSite';
 import {
   activeFilters,
   hasFilterValue,
-  removeFilter,
   type ResolvedField
 } from '../../_lib/active_filters';
+import { applyFilterChange } from '../../_lib/location_filters';
 import { isLabelableField, resolveFieldOptions } from './filters/helper';
 
 interface Props {
@@ -42,12 +42,9 @@ function Filters({
     (field) => !hasFilterValue(values[field.id])
   );
 
+  // Setting or clearing a filter also keeps country > region > city consistent.
   function saveFilters(key: string, input: unknown) {
-    if (hasFilterValue(input)) {
-      onFilterChange({ ...filters, [key]: input });
-    } else {
-      onFilterChange(removeFilter(filters, key));
-    }
+    onFilterChange(applyFilterChange(filters, key, input, optionsById));
   }
 
   const fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : '';
@@ -84,7 +81,7 @@ function Filters({
         </div>
         <ActiveFilters
           items={active}
-          onRemove={(key) => onFilterChange(removeFilter(filters, key))}
+          onRemove={(key) => saveFilters(key, null)}
           onClear={() => onFilterChange({})}
         />
         {openFields.map((field) => (

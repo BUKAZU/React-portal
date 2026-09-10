@@ -57,6 +57,8 @@ const mockPortalSite: PortalSiteType = {
     }
   },
   countries: [{ id: '12', name: 'Spain', country_id: '12' }],
+  regions: [{ id: '5', name: 'Andalucía', country_id: '12' }],
+  cities: [{ id: 'NER', name: 'Nerja', country_id: '12', region: '5' }],
   max_persons: 10,
   name: 'Test Portal',
   max_bedrooms: 5,
@@ -70,6 +72,12 @@ const defaultSearchFields = [
   { id: 'countries', type: 'select', label: 'Country' },
   { id: 'cities', type: 'list', label: 'City' },
   { id: 'persons_min', type: 'select', label: 'Persons', max: 6 }
+];
+
+const locationSearchFields = [
+  { id: 'countries', type: 'select', label: 'Country' },
+  { id: 'regions', type: 'select', label: 'Region' },
+  { id: 'cities', type: 'list', label: 'City' }
 ];
 
 let container: HTMLDivElement;
@@ -280,6 +288,85 @@ describe('Filters', () => {
 
       act(() => {
         lastFieldHandler?.('cities', null);
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({ countries: '12' });
+    });
+  });
+
+  describe('country > region > city chain', () => {
+    function renderLocationFilters(
+      filters: Record<string, string>,
+      onFilterChange: jest.Mock
+    ) {
+      renderFilters({
+        filters,
+        onFilterChange,
+        options: { ...mockOptions, searchFields: locationSearchFields } as any
+      });
+    }
+
+    it('should pick the country along with a city', () => {
+      const onFilterChange = jest.fn();
+      renderLocationFilters({}, onFilterChange);
+
+      act(() => {
+        lastFieldHandler?.('cities', 'NER');
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({
+        cities: 'NER',
+        regions: '5',
+        countries: '12'
+      });
+    });
+
+    it('should show pills for the inferred parents and hide their fields', () => {
+      renderLocationFilters(
+        { cities: 'NER', regions: '5', countries: '12' },
+        jest.fn()
+      );
+
+      const pills = Array.from(container.querySelectorAll('.bu-pill')).map(
+        (pill) => pill.textContent
+      );
+      expect(pills).toEqual([
+        'Country: Spain',
+        'Region: Andalucía',
+        'City: Nerja'
+      ]);
+      expect(renderedFieldIds()).toEqual([]);
+    });
+
+    it('should clear region and city when the country pill is removed', () => {
+      const onFilterChange = jest.fn();
+      renderLocationFilters(
+        { cities: 'NER', regions: '5', countries: '12' },
+        onFilterChange
+      );
+
+      act(() => {
+        (
+          container.querySelector(
+            '[data-filter-key="countries"]'
+          ) as HTMLElement
+        ).click();
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({});
+    });
+
+    it('should clear only the city when the region pill is removed', () => {
+      const onFilterChange = jest.fn();
+      renderLocationFilters(
+        { cities: 'NER', regions: '5', countries: '12' },
+        onFilterChange
+      );
+
+      act(() => {
+        (
+          container.querySelector('[data-filter-key="regions"]') as HTMLElement
+        ).click();
       });
 
       expect(onFilterChange).toHaveBeenCalledWith({ countries: '12' });
