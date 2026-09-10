@@ -5,8 +5,13 @@ import Field from '../Field';
 import { PortalSiteType } from '../../../types';
 
 // Mock filter components so we only test Field routing logic
-jest.mock('../filters/List', () => ({ field, options }: any) => (
-  <div data-testid="list" data-field={field.id} data-options={options.length} />
+jest.mock('../filters/List', () => ({ field, options, labelledBy }: any) => (
+  <div
+    data-testid="list"
+    data-field={field.id}
+    data-options={options.length}
+    data-labelled-by={labelledBy}
+  />
 ));
 jest.mock('../filters/Select', () => ({ field, options }: any) => (
   <div
@@ -93,7 +98,7 @@ describe('Field', () => {
     expect(container.querySelector('[data-testid="select"]')).not.toBeNull();
   });
 
-  it('should render List for a list-type field', () => {
+  it('should render List for a list-type field and hand it the label id', () => {
     act(() => {
       root.render(
         <Field
@@ -102,11 +107,14 @@ describe('Field', () => {
           filters={{}}
           value=""
           onFilterChange={jest.fn()}
+          labelId="cities-label"
         />
       );
     });
 
-    expect(container.querySelector('[data-testid="list"]')).not.toBeNull();
+    const list = container.querySelector('[data-testid="list"]');
+    expect(list).not.toBeNull();
+    expect(list?.getAttribute('data-labelled-by')).toBe('cities-label');
   });
 
   it('should render Radio for a radio-type field', () => {

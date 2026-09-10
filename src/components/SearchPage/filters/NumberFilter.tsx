@@ -21,13 +21,15 @@ function NumberFilter({
 
   return (
     <input
+      id={field.id}
+      name={field.id}
       value={value}
       type="number"
       min="0"
       max={
         field.id === 'persons_min'
           ? PortalSite.max_persons
-          : PortalSite[field.id] as number | undefined
+          : (PortalSite[field.id] as number | undefined)
       }
       onBlur={handleChange}
     />

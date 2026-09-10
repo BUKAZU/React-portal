@@ -12,7 +12,7 @@ import {
   removeFilter,
   type ResolvedField
 } from '../../_lib/active_filters';
-import { resolveFieldOptions } from './filters/helper';
+import { isLabelableField, resolveFieldOptions } from './filters/helper';
 
 interface Props {
   filters: FiltersType;
@@ -89,9 +89,17 @@ function Filters({
         />
         {openFields.map((field) => (
           <div key={field.id} className="bu-field" id={`field-${field.id}`}>
-            <label htmlFor={field.id}>{field.label}</label>
+            {/* Chips and radios have no single control to point `for` at; they
+                name their group with aria-labelledby instead. */}
+            <label
+              id={`${field.id}-label`}
+              htmlFor={isLabelableField(field) ? field.id : undefined}
+            >
+              {field.label}
+            </label>
             <Field
               field={field}
+              labelId={`${field.id}-label`}
               options={optionsById.get(field.id)}
               PortalSite={PortalSite}
               filters={filters}

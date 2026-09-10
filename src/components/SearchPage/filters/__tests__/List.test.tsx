@@ -136,6 +136,44 @@ describe('List (filter)', () => {
     expect(chip('AMS').classList.contains('bu-disabled')).toBe(false);
   });
 
+  it('should name the group after the visible label when given', () => {
+    act(() => {
+      root.render(
+        <List
+          field={{ id: 'countries', type: 'list', label: 'Country' }}
+          options={countryOptions}
+          filters={{}}
+          value=""
+          onChange={jest.fn()}
+          labelledBy="countries-label"
+        />
+      );
+    });
+
+    const group = container.querySelector('.bu-chips') as HTMLElement;
+    expect(group.getAttribute('role')).toBe('group');
+    expect(group.getAttribute('aria-labelledby')).toBe('countries-label');
+    expect(group.getAttribute('aria-label')).toBeNull();
+  });
+
+  it('should fall back to the field label as the group name', () => {
+    act(() => {
+      root.render(
+        <List
+          field={{ id: 'countries', type: 'list', label: 'Country' }}
+          options={countryOptions}
+          filters={{}}
+          value=""
+          onChange={jest.fn()}
+        />
+      );
+    });
+
+    expect(
+      container.querySelector('.bu-chips')?.getAttribute('aria-label')
+    ).toBe('Country');
+  });
+
   it('should show every city when no country is chosen', () => {
     act(() => {
       root.render(

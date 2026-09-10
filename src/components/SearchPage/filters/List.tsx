@@ -7,6 +7,8 @@ interface Props {
   filters: FiltersType;
   value: string;
   onChange: Function;
+  /** Id of the element naming this group of chips (the field's visible label). */
+  labelledBy?: string;
 }
 
 /**
@@ -19,7 +21,8 @@ export default function List({
   field,
   options,
   onChange,
-  value
+  value,
+  labelledBy
 }: Props): JSX.Element {
   const countries = filters.countries;
   const dependsOnCountry = ['cities', 'regions'].includes(field.id);
@@ -29,7 +32,12 @@ export default function List({
   };
 
   return (
-    <div className="bu-chips" role="group" id={field.id}>
+    <div
+      className="bu-chips"
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : (field.label ?? field.id)}
+    >
       {options.map((opt) => {
         const id = String(opt.id);
         const hidden =

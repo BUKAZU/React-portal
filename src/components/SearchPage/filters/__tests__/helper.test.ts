@@ -1,8 +1,44 @@
 import {
   createNumberArray,
   createPriceArray,
-  resolveFieldOptions
+  isLabelableField,
+  resolveFieldOptions,
+  resolveFieldType
 } from '../helper';
+
+describe('resolveFieldType', () => {
+  test.each(['select', 'list', 'radio', 'number', 'date'])(
+    'keeps the known type %s',
+    (type) => {
+      expect(resolveFieldType({ id: 'x', type, label: null })).toBe(type);
+    }
+  );
+
+  test('coerces numeric fields with an unknown type to select', () => {
+    expect(
+      resolveFieldType({ id: 'persons_min', type: 'integer', label: null })
+    ).toBe('select');
+  });
+
+  test('treats any other unknown type as text', () => {
+    expect(
+      resolveFieldType({ id: 'extra_search', type: 'string', label: null })
+    ).toBe('text');
+  });
+});
+
+describe('isLabelableField', () => {
+  test.each(['select', 'number', 'date', 'string'])(
+    '%s renders one control a label can target',
+    (type) => {
+      expect(isLabelableField({ id: 'x', type, label: null })).toBe(true);
+    }
+  );
+
+  test.each(['list', 'radio'])('%s is a group, not labelable', (type) => {
+    expect(isLabelableField({ id: 'x', type, label: null })).toBe(false);
+  });
+});
 
 describe('createNumberArray', () => {
   test('returns array from 0 to max_number inclusive', () => {

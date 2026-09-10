@@ -6,7 +6,7 @@ import DateFilter from './filters/DateFilter';
 import NumberFilter from './filters/NumberFilter';
 import type { AppPortalSite } from '../loadPortalSite';
 import type { ResolvedOption } from '../../_lib/active_filters';
-import { resolveFieldOptions } from './filters/helper';
+import { resolveFieldOptions, resolveFieldType } from './filters/helper';
 import {
   Field as FieldType,
   FiltersType,
@@ -21,16 +21,9 @@ interface Props {
   onFilterChange: Function;
   /** Pre-resolved options; resolved from the field and portal site when absent. */
   options?: ResolvedOption[];
+  /** Id of the visible label; names controls a `<label for>` cannot target (chips, radios). */
+  labelId?: string;
 }
-
-const NUMERIC_SELECT_FIELDS = [
-  'persons_min',
-  'persons_max',
-  'bedrooms_min',
-  'bathrooms_min',
-  'weekprice_max'
-];
-const VALID_TYPES = ['select', 'list', 'radio', 'number', 'date'];
 
 function Field({
   PortalSite,
@@ -38,15 +31,11 @@ function Field({
   filters,
   value,
   onFilterChange,
-  options
+  options,
+  labelId
 }: Props): JSX.Element {
   const resolved = options ?? resolveFieldOptions(field, PortalSite);
-
-  const effectiveType =
-    !VALID_TYPES.includes(field.type) &&
-    NUMERIC_SELECT_FIELDS.includes(field.id)
-      ? 'select'
-      : field.type;
+  const effectiveType = resolveFieldType(field);
 
   if (effectiveType === 'select') {
     return (
@@ -66,6 +55,7 @@ function Field({
         filters={filters}
         value={value}
         onChange={onFilterChange}
+        labelledBy={labelId}
       />
     );
   } else if (effectiveType === 'radio') {
@@ -75,6 +65,7 @@ function Field({
         field={field}
         filters={filters}
         onChange={onFilterChange}
+        labelledBy={labelId}
       />
     );
   } else if (effectiveType === 'number') {

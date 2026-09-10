@@ -142,6 +142,24 @@ describe('Filters', () => {
     expect(renderedFieldIds()).toEqual(['countries', 'cities', 'persons_min']);
   });
 
+  it('should point the label at the control only when one exists', () => {
+    renderFilters();
+
+    const labels = Array.from(container.querySelectorAll('.bu-field label'));
+    expect(labels.map((l) => l.id)).toEqual([
+      'countries-label',
+      'cities-label',
+      'persons_min-label'
+    ]);
+    // select and select: labelable; list (chips): named via aria-labelledby
+    expect(labels.map((l) => l.getAttribute('for'))).toEqual([
+      'countries',
+      null,
+      'persons_min'
+    ]);
+    expect(FieldMock.mock.calls[1][0].labelId).toBe('cities-label');
+  });
+
   it('should render no fields when searchFields is missing', () => {
     renderFilters({ options: mockOptions });
 
