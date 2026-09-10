@@ -170,7 +170,7 @@ The hosted copy of the website bundle that embedder sites load as `/static/main.
 |------------|--------|
 | `static/main.js` | `build/portal.website.js` |
 | `static/main.css` | `build/portal.website.css` |
-| `index.html` | `deploy/index.html` (a small test page) |
+| `index.html`, `search.html`, `calendar.html`, `reviews.html` | `deploy/*.html` (preview pages: an index linking to one page per portal type) |
 
 `npm run deploy:assemble` builds that tree locally into `dist-deploy/` from an existing `build/` (pass `--source <dir>` to use another bundle directory).
 
