@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Field from './Field';
 import ActiveFilters from './ActiveFilters';
 import Close from '../icons/Close.svg';
+import Sliders from '../icons/Sliders.svg';
 import { t } from '../../intl';
 import { FiltersType } from './filters/filter_types';
 import { PortalOptions } from '../../types';
@@ -20,6 +21,8 @@ interface Props {
   PortalSite: AppPortalSite;
   options: PortalOptions;
 }
+
+const PANEL_ID = 'bu-filters-panel';
 
 function Filters({
   filters,
@@ -47,27 +50,56 @@ function Filters({
     onFilterChange(applyFilterChange(filters, key, input, optionsById));
   }
 
-  const fixed = options.filtersForm.fixed_mobile ? 'fixed-mobile' : '';
+  // On narrow containers the panel is either a block that folds open under an
+  // inline button (default) or, with `fixed_mobile`, a bottom sheet opened from
+  // a floating pill button that sits over the results.
+  const fixedMobile = Boolean(options.filtersForm.fixed_mobile);
 
   const filterClass =
     (options.filtersForm.show ?? true)
       ? `filters filters-${options.filtersForm.location}`
       : 'filters-hidden';
 
-  const showOn = show ? 'showOnMobile' : '';
+  const panelClass = [
+    filterClass,
+    fixedMobile ? 'bu-filters-sheet' : '',
+    show ? 'showOnMobile' : ''
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const badge =
+    active.length > 0 ? (
+      <span className="bu-badge">{active.length}</span>
+    ) : null;
 
   return (
     <>
       <button
         type="button"
-        className={`filters-button ${fixed}`}
+        className={fixedMobile ? 'bu-filters-fab' : 'filters-button'}
         aria-expanded={show}
+        aria-controls={PANEL_ID}
         onClick={() => setShow(!show)}
       >
+        {fixedMobile && <Sliders />}
         {t('filters')}
-        {active.length > 0 && <span className="bu-badge">{active.length}</span>}
+        {badge}
       </button>
-      <div className={`${filterClass} ${fixed} ${showOn}`}>
+      {fixedMobile && show && (
+        <div
+          className="bu-filters-backdrop"
+          data-testid="filters-backdrop"
+          onClick={() => setShow(false)}
+        />
+      )}
+      <div
+        id={PANEL_ID}
+        className={panelClass}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') setShow(false);
+        }}
+      >
         <div className="filters-header">
           <span className="filters-title">{t('filters')}</span>
           <button
@@ -105,6 +137,15 @@ function Filters({
             />
           </div>
         ))}
+        {fixedMobile && (
+          <button
+            type="button"
+            className="bu-filters-apply"
+            onClick={() => setShow(false)}
+          >
+            {t('show_results')}
+          </button>
+        )}
       </div>
     </>
   );

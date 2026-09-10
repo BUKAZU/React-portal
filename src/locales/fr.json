@@ -178,5 +178,6 @@
   "remove_filter": "Supprimer {filter}",
   "view_mode": "Affichage",
   "grid_view": "Vue en grille",
-  "list_view": "Vue en liste"
+  "list_view": "Vue en liste",
+  "show_results": "Afficher les résultats"
 }

@@ -407,17 +407,122 @@ describe('Filters', () => {
     expect(fields.length).toBe(defaultSearchFields.length);
   });
 
-  it('should apply fixed-mobile class when fixedMobile is true', () => {
-    const fixedOptions: PortalOptions = {
+  it('should render no sheet chrome when fixed_mobile is off', () => {
+    renderFilters({ filters: { countries: '12' } });
+
+    expect(container.querySelector('.bu-filters-fab')).toBeNull();
+    expect(container.querySelector('.bu-filters-sheet')).toBeNull();
+    expect(container.querySelector('.bu-filters-apply')).toBeNull();
+    expect(container.querySelector('.filters-button .bu-badge')).not.toBeNull();
+  });
+
+  describe('with fixed_mobile', () => {
+    const fixedOptions = {
       ...mockOptions,
-      filtersForm: { ...mockOptions.filtersForm, fixed_mobile: true }
+      filtersForm: { ...mockOptions.filtersForm, fixed_mobile: true },
+      searchFields: defaultSearchFields
     } as any;
 
-    renderFilters({
-      options: { ...fixedOptions, searchFields: defaultSearchFields } as any
+    function renderFixed(filters: Record<string, string> = {}) {
+      renderFilters({ options: fixedOptions, filters });
+    }
+
+    function panel(): HTMLElement {
+      return container.querySelector('#bu-filters-panel') as HTMLElement;
+    }
+
+    it('should render a floating pill button with the active count', () => {
+      renderFixed({ countries: '12', persons_min: '4' });
+
+      const fab = container.querySelector('.bu-filters-fab') as HTMLElement;
+      expect(fab).not.toBeNull();
+      expect(container.querySelector('.filters-button')).toBeNull();
+      expect(fab.textContent).toContain('Filters');
+      expect(fab.querySelector('.bu-badge')?.textContent).toBe('2');
+      expect(fab.getAttribute('aria-controls')).toBe('bu-filters-panel');
+      expect(fab.getAttribute('aria-expanded')).toBe('false');
     });
 
-    const fixedEl = container.querySelector('.fixed-mobile');
-    expect(fixedEl).not.toBeNull();
+    it('should keep the sheet closed until the pill is pressed', () => {
+      renderFixed();
+
+      expect(panel().className).toContain('bu-filters-sheet');
+      expect(panel().className).not.toContain('showOnMobile');
+      expect(
+        container.querySelector('[data-testid="filters-backdrop"]')
+      ).toBeNull();
+
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      expect(panel().className).toContain('showOnMobile');
+      expect(
+        container.querySelector('[data-testid="filters-backdrop"]')
+      ).not.toBeNull();
+      expect(
+        container
+          .querySelector('.bu-filters-fab')
+          ?.getAttribute('aria-expanded')
+      ).toBe('true');
+    });
+
+    it.each([
+      ['the backdrop', '[data-testid="filters-backdrop"]'],
+      ['the close button', '.filters-close'],
+      ['the show-results button', '.bu-filters-apply']
+    ])('should close the sheet from %s', (_what, selector) => {
+      renderFixed();
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      act(() => {
+        (container.querySelector(selector) as HTMLElement).click();
+      });
+
+      expect(panel().className).not.toContain('showOnMobile');
+      expect(
+        container.querySelector('[data-testid="filters-backdrop"]')
+      ).toBeNull();
+    });
+
+    it('should close the sheet on Escape', () => {
+      renderFixed();
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      act(() => {
+        panel().dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })
+        );
+      });
+
+      expect(panel().className).not.toContain('showOnMobile');
+    });
+
+    it('should ignore other keys', () => {
+      renderFixed();
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      act(() => {
+        panel().dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })
+        );
+      });
+
+      expect(panel().className).toContain('showOnMobile');
+    });
+
+    it('should label the footer button', () => {
+      renderFixed();
+
+      expect(container.querySelector('.bu-filters-apply')?.textContent).toBe(
+        'Show results'
+      );
+    });
   });
 });

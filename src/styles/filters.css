@@ -13,26 +13,28 @@
         font: inherit;
         font-weight: bold;
         cursor: pointer;
-        &.fixed-mobile {
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            z-index: 9999;
-        }
-        .bu-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 22px;
-            height: 22px;
-            padding: 0 6px;
-            border-radius: 999px;
-            background: #fff;
-            color: var(--bukazu-button, #0055a5);
-            font-size: 12px;
-            font-weight: 700;
-        }
+    }
+    .filters-button .bu-badge,
+    .bu-filters-fab .bu-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: #fff;
+        color: var(--bukazu-button, #0055a5);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+    }
+    /* fixed_mobile: floating pill over the results, bottom sheet, backdrop and
+       "show results" footer. All hidden until the container is phone-sized. */
+    .bu-filters-fab,
+    .bu-filters-backdrop,
+    .bu-filters-apply {
+        display: none;
     }
 }
 
@@ -72,31 +74,97 @@
         .filters-button {
             display: flex;
         }
+        .bu-filters-fab {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 48px;
+            padding: 0 12px 0 18px;
+            border: 0;
+            border-radius: 999px;
+            background: var(--bukazu-button, #0055a5);
+            color: #fff;
+            font: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+            cursor: pointer;
+            &:focus-visible {
+                outline: none;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28), 0 0 0 3px color-mix(in srgb, var(--bukazu-button, #0055a5) 35%, #fff);
+            }
+        }
+        .bu-filters-backdrop {
+            display: block;
+            position: fixed;
+            inset: 0;
+            z-index: 9997;
+            background: rgba(0, 0, 0, 0.35);
+        }
     }
+    /* Folding block under the inline button (default). Hidden until opened. */
     #bukazu-app #search-page .filters {
         width: 100%;
         min-width: 0;
         display: none;
         border-right: 0;
         border-bottom: 1px solid rgba(69, 74, 83, 0.2);
-        transition: all 0.3s ease;
         &.showOnMobile {
             display: flex;
         }
-        &.fixed-mobile {
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-            left: 0;
-            z-index: 9998;
-            background: #fff;
-            max-height: 75%;
-            overflow-y: auto;
-            border-radius: 16px 16px 0 0;
-            box-shadow: 0 -5px 8px rgba(0, 0, 0, .25);
-        }
         .filters-close {
             display: inline-flex;
+        }
+    }
+    /* Bottom sheet (fixed_mobile). Same open/closed switch, different chrome. */
+    #bukazu-app #search-page .filters.bu-filters-sheet {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9998;
+        height: 90%;
+        max-height: 90%;
+        padding: 10px 16px 16px;
+        overflow-y: auto;
+        border: 0;
+        border-radius: 20px 20px 0 0;
+        background: #fff;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.2);
+        &::before {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 4px;
+            margin: 0 auto -6px;
+            border-radius: 999px;
+            background: rgba(69, 74, 83, 0.35);
+            flex-shrink: 0;
+        }
+        .bu-filters-apply {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            bottom: 0;
+            margin-top: auto;
+            height: 48px;
+            flex-shrink: 0;
+            border: 0;
+            border-radius: 999px;
+            background: var(--bukazu-button, #0055a5);
+            color: #fff;
+            font: inherit;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 -12px 12px #fff;
+            cursor: pointer;
         }
     }
 }

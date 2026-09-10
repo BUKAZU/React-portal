@@ -174,5 +174,6 @@
   "remove_filter": "Rimuovi {filter}",
   "view_mode": "Visualizzazione",
   "grid_view": "Vista a griglia",
-  "list_view": "Vista elenco"
+  "list_view": "Vista elenco",
+  "show_results": "Mostra risultati"
 }

@@ -178,5 +178,6 @@
   "remove_filter": "Quitar {filter}",
   "view_mode": "Vista",
   "grid_view": "Vista de cuadrícula",
-  "list_view": "Vista de lista"
+  "list_view": "Vista de lista",
+  "show_results": "Mostrar resultados"
 }

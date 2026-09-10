@@ -184,5 +184,6 @@
   "remove_filter": "{filter} verwijderen",
   "view_mode": "Weergave",
   "grid_view": "Rasterweergave",
-  "list_view": "Lijstweergave"
+  "list_view": "Lijstweergave",
+  "show_results": "Resultaten tonen"
 }

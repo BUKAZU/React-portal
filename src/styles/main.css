@@ -22,17 +22,21 @@
     }
     &.bu-column {
       flex-direction: column;
-      .filters {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        .filters-header,
-        .bu-active-filters {
-          width: 100%;
-        }
-        .bu-field {
-          width: 200px;
+      /* Only above the phone breakpoint: on phones filters.css owns the
+         panel's display so it can fold closed. */
+      @container (min-width: 826px) {
+        .filters {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          .filters-header,
+          .bu-active-filters {
+            width: 100%;
+          }
+          .bu-field {
+            width: 200px;
+          }
         }
       }
     }

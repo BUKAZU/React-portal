@@ -183,5 +183,6 @@
   "remove_filter": "Remove {filter}",
   "view_mode": "View",
   "grid_view": "Grid view",
-  "list_view": "List view"
+  "list_view": "List view",
+  "show_results": "Show results"
 }
