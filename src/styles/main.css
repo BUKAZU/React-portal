@@ -171,20 +171,18 @@
 #bukazu-app .bu-currency-selector {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 8px;
   margin-bottom: 8px;
-  font-size: 0.875rem;
+  font-size: 14px;
+  color: rgba(26, 25, 25, 0.62);
 
+  /* Sizing, border, radius and chevron come from the shared select rules in
+     field.css so it matches the other redesigned controls. */
   select {
     width: auto;
-    height: 32px;
-    padding: 0 32px 0 8px;
-    border: 1px solid var(--bukazu-cell, #ccc);
-    border-radius: 4px;
-    background-color: transparent;
-    background-position: right 8px center;
-    font-size: 0.875rem;
-    cursor: pointer;
+    flex-shrink: 0;
+    padding-left: 14px;
+    font-weight: 500;
+    color: rgba(26, 25, 25, 1);
   }
 }

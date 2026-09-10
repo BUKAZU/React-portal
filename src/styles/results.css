@@ -14,16 +14,29 @@
     justify-content: space-around;
   }
 
-  /* Currency selector on the left, grid/list switch on the right */
+  /* Currency select and grid/list switch share the right edge of the toolbar */
   .bu-results-toolbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    justify-content: flex-end;
+    gap: 12px;
     width: 100%;
     padding: 0 8px 8px;
     .bu-currency-selector {
       margin-bottom: 0;
+      /* The select shows the code itself; keep the label for screen readers only */
+      label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+      }
     }
     &:empty {
       display: none;
@@ -32,7 +45,7 @@
 
   .bu-view-toggle {
     display: inline-flex;
-    margin-left: auto;
+    flex-shrink: 0;
     border: 1px solid rgba(69, 74, 83, 0.2);
     border-radius: 8px;
     overflow: hidden;
