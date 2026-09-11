@@ -3,7 +3,11 @@ import { http } from '../../_lib/http_client';
 import type { Review } from './SingleReview';
 
 type RestReviewCriterium = { score: number; name: string };
-type RestReviewResponse = { created_at: string; sender: string; message: string };
+type RestReviewResponse = {
+  created_at: string;
+  sender: string;
+  message: string;
+};
 type RestReview = {
   created_at: string;
   review_at: string;
@@ -54,7 +58,10 @@ export async function loadReviewsHouse({
   apiUrl = '',
   after
 }: LoadReviewsHouseParams): Promise<LoadReviewsResult> {
-  const params = new URLSearchParams({ portal_code: portalCode, object_code: objectCode });
+  const params = new URLSearchParams({
+    portal_code: portalCode,
+    object_code: objectCode
+  });
   if (after) params.set('after', after);
   const origin = apiUrl ? new URL(apiUrl).origin : '';
   const url = `${origin}/portal_api/v1/accommodations/reviews?${params.toString()}`;

@@ -191,5 +191,12 @@
   "your_booking": "Votre réservation",
   "view_breakdown": "Voir le détail des coûts",
   "returning_to_calendar": "Vous allez revenir au calendrier dans un instant.",
-  "done": "Terminé"
+  "done": "Terminé",
+  "score_excellent": "Excellent",
+  "score_very_good": "Très bien",
+  "score_good": "Bien",
+  "score_fair": "Passable",
+  "via_source": "via {source}",
+  "based_on_last_reviews": "Basé sur les {count} derniers avis",
+  "score_only": "Note seule"
 }

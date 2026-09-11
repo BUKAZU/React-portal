@@ -197,5 +197,12 @@
   "your_booking": "Je boeking",
   "view_breakdown": "Bekijk de kostenopbouw",
   "returning_to_calendar": "Je gaat zo terug naar de kalender.",
-  "done": "Klaar"
+  "done": "Klaar",
+  "score_excellent": "Uitstekend",
+  "score_very_good": "Zeer goed",
+  "score_good": "Goed",
+  "score_fair": "Matig",
+  "via_source": "via {source}",
+  "based_on_last_reviews": "Op basis van de laatste {count} beoordelingen",
+  "score_only": "Alleen een score"
 }

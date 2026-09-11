@@ -14,7 +14,12 @@ interface Props {
 type ReviewsPageState =
   | { status: 'loading' }
   | { status: 'error'; error: Error }
-  | { status: 'ready'; house: ReviewsHouse; endCursor: string | null; hasNextPage: boolean }
+  | {
+      status: 'ready';
+      house: ReviewsHouse;
+      endCursor: string | null;
+      hasNextPage: boolean;
+    }
   | { status: 'loading_more'; house: ReviewsHouse; endCursor: string | null };
 
 function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
@@ -33,7 +38,11 @@ function ReviewsPageDom({ house }: { house: ReviewsHouse }): JSX.Element {
   return <div ref={containerRef} />;
 }
 
-function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Element {
+function ReviewsPageMount({
+  objectCode,
+  portalCode,
+  apiUrl
+}: Props): JSX.Element {
   const [state, setState] = useState<ReviewsPageState>({ status: 'loading' });
   const mountedRef = useRef(true);
   useEffect(() => {
@@ -74,14 +83,26 @@ function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Elemen
     if (state.status !== 'ready' || !state.hasNextPage) return;
     const currentHouse = state.house;
     const cursor = state.endCursor;
-    setState({ status: 'loading_more', house: currentHouse, endCursor: cursor });
+    setState({
+      status: 'loading_more',
+      house: currentHouse,
+      endCursor: cursor
+    });
 
-    void loadReviewsHouse({ portalCode, objectCode, apiUrl, after: cursor ?? undefined })
+    void loadReviewsHouse({
+      portalCode,
+      objectCode,
+      apiUrl,
+      after: cursor ?? undefined
+    })
       .then(({ house: nextPage, pageInfo }) => {
         if (!mountedRef.current) return;
         setState({
           status: 'ready',
-          house: { ...currentHouse, reviews: [...currentHouse.reviews, ...nextPage.reviews] },
+          house: {
+            ...currentHouse,
+            reviews: [...currentHouse.reviews, ...nextPage.reviews]
+          },
           endCursor: pageInfo.end_cursor,
           hasNextPage: pageInfo.has_next_page
         });
@@ -124,12 +145,22 @@ function ReviewsPageMount({ objectCode, portalCode, apiUrl }: Props): JSX.Elemen
         </div>
       )}
       {!isLoadingMore && hasNextPage && (
-        <button type="button" className="bu_load_more" onClick={handleLoadMore}>
-          {t('load_more_reviews')}
-        </button>
+        <div className="bu-reviews-more">
+          <button
+            type="button"
+            className="bu_load_more bu-button-ghost"
+            onClick={handleLoadMore}
+          >
+            {t('load_more_reviews')}
+          </button>
+        </div>
       )}
       <div className="bu_reviews__note">
-        <a href="https://www.bukazu.com" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://www.bukazu.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {t('reviews_note_link')}
         </a>
       </div>

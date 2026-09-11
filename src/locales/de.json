@@ -196,5 +196,12 @@
   "your_booking": "Ihre Buchung",
   "view_breakdown": "Kostenaufstellung ansehen",
   "returning_to_calendar": "Sie kehren gleich zum Kalender zurück.",
-  "done": "Fertig"
+  "done": "Fertig",
+  "score_excellent": "Hervorragend",
+  "score_very_good": "Sehr gut",
+  "score_good": "Gut",
+  "score_fair": "Mäßig",
+  "via_source": "über {source}",
+  "based_on_last_reviews": "Basierend auf den letzten {count} Bewertungen",
+  "score_only": "Nur eine Bewertung"
 }

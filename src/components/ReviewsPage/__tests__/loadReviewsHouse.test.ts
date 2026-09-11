@@ -27,7 +27,9 @@ const restResponse = {
       review: 'Great place!',
       score: 9,
       review_criteria: [{ name: 'Cleanliness', score: 9 }],
-      review_responses: [{ created_at: '2024-01-16', sender: 'landlord', message: 'Thank you!' }]
+      review_responses: [
+        { created_at: '2024-01-16', sender: 'landlord', message: 'Thank you!' }
+      ]
     }
   ],
   page_info: {
@@ -73,9 +75,14 @@ describe('loadReviewsHouse', () => {
     });
 
     it('uses only the origin of apiUrl, not its path', async () => {
-      await loadReviewsHouse({ ...baseParams, apiUrl: 'https://api.example.com/graphql' });
+      await loadReviewsHouse({
+        ...baseParams,
+        apiUrl: 'https://api.example.com/graphql'
+      });
       const url = (mockHttp.get as jest.Mock).mock.calls[0][0] as string;
-      expect(url).toMatch(/^https:\/\/api\.example\.com\/portal_api\/v1\/accommodations\/reviews/);
+      expect(url).toMatch(
+        /^https:\/\/api\.example\.com\/portal_api\/v1\/accommodations\/reviews/
+      );
       expect(url).not.toContain('/graphql');
     });
   });
@@ -125,7 +132,12 @@ describe('loadReviewsHouse', () => {
         json: jest.fn().mockResolvedValue({
           ...restResponse,
           items: [],
-          page_info: { start_cursor: null, end_cursor: null, has_next_page: false, has_previous_page: false }
+          page_info: {
+            start_cursor: null,
+            end_cursor: null,
+            has_next_page: false,
+            has_previous_page: false
+          }
         })
       });
       const { house, pageInfo } = await loadReviewsHouse(baseParams);
@@ -138,7 +150,13 @@ describe('loadReviewsHouse', () => {
       (mockHttp.get as jest.Mock).mockReturnValue({
         json: jest.fn().mockResolvedValue({
           ...restResponse,
-          items: [{ ...restResponse.items[0], review_criteria: [], review_responses: [] }]
+          items: [
+            {
+              ...restResponse.items[0],
+              review_criteria: [],
+              review_responses: []
+            }
+          ]
         })
       });
       const { house } = await loadReviewsHouse(baseParams);

@@ -98,7 +98,7 @@ describe('createReviewsPageView', () => {
 
     const node = createReviewsPageView(house);
     expect(node.querySelector('.bu_review_summary__source')?.textContent).toBe(
-      'Booking.com'
+      'via_source'
     );
   });
 
@@ -170,5 +170,126 @@ describe('createReviewsPageView', () => {
 
     const node = createReviewsPageView(house);
     expect(node.querySelector('.bu_review_responses')).toBeNull();
+  });
+
+  it('shows the band label, the count with the house name and the criteria averages', () => {
+    const node = createReviewsPageView({
+      id: 'h1',
+      name: 'Chalet',
+      rating: 8.5,
+      scoreAmount: 42,
+      reviews: [
+        {
+          id: '1',
+          name: 'Alice',
+          createdAt: '2024-01-15',
+          review: 'Great',
+          score: 9,
+          sourceName: '',
+          reviewResponses: [],
+          reviewCriteria: [
+            { id: 1, name: 'Cleanliness', score: 9 },
+            { id: 2, name: 'Value', score: 7 }
+          ]
+        },
+        {
+          id: '2',
+          name: 'Bob',
+          createdAt: '2024-01-10',
+          review: 'Fine',
+          score: 8,
+          sourceName: '',
+          reviewResponses: [],
+          reviewCriteria: [{ id: 1, name: 'Cleanliness', score: 8 }]
+        }
+      ]
+    });
+    const header = node.querySelector('.bu-reviews-header') as HTMLElement;
+    expect(header.querySelector('.bu-score-lg')?.textContent).toBe('8.5');
+    expect(header.querySelector('.bu-reviews-header-label')?.textContent).toBe(
+      'score_excellent'
+    );
+    expect(
+      header.querySelector('.bu_reviews__overview__number')?.textContent
+    ).toBe('42 reviews · Chalet');
+    const rows = header.querySelectorAll('.bu-criteria-average');
+    expect(rows).toHaveLength(2);
+    expect(rows[0].textContent).toBe('Cleanliness8.5');
+    expect(
+      (rows[0].querySelector('.bu-criteria-bar span') as HTMLElement).style
+        .width
+    ).toBe('85%');
+    expect(rows[1].textContent).toBe('Value8.5');
+    expect(
+      header.querySelector('.bu-criteria-averages-hint')?.textContent
+    ).toBe('based_on_last_reviews');
+  });
+
+  it('skips the score and averages when the house has neither', () => {
+    const node = createReviewsPageView({
+      id: 'h1',
+      name: '',
+      rating: 0,
+      scoreAmount: 0,
+      reviews: [
+        {
+          id: '1',
+          name: 'Alice',
+          createdAt: '2024-01-15',
+          review: 'Great',
+          score: 0,
+          sourceName: '',
+          reviewResponses: [],
+          reviewCriteria: []
+        }
+      ]
+    });
+    expect(node.querySelector('.bu-score-lg')).toBeNull();
+    expect(node.querySelector('.bu-reviews-header-label')).toBeNull();
+    expect(
+      node.querySelector('.bu_reviews__overview__number')?.textContent
+    ).toBe('0 reviews');
+    expect(node.querySelector('.bu-criteria-averages')).toBeNull();
+    expect(
+      node.querySelector('.bu_single_review .bu_score__rating')
+    ).toBeNull();
+  });
+
+  it('renders a review without text as a slim card', () => {
+    const node = createReviewsPageView({
+      id: 'h1',
+      name: 'House',
+      rating: 8.5,
+      scoreAmount: 1,
+      reviews: [
+        {
+          id: '1',
+          name: 'Lisa',
+          createdAt: '2024-01-15',
+          review: '   ',
+          score: 8,
+          sourceName: 'Booking.com',
+          reviewResponses: [],
+          reviewCriteria: [
+            { id: 1, name: 'Cleanliness', score: 8 },
+            { id: 2, name: 'Comment', score: 0 }
+          ]
+        }
+      ]
+    });
+    const card = node.querySelector('.bu_single_review') as HTMLElement;
+    expect(card.classList.contains('bu-review-card-slim')).toBe(true);
+    expect(card.querySelector('.bu_review')).toBeNull();
+    expect(card.querySelector('.bu_review_summary__date')?.textContent).toBe(
+      `${formatReviewDate('2024-01-15')} · score_only`
+    );
+    const pills = card.querySelectorAll('.bu-criterion');
+    expect(pills).toHaveLength(2);
+    expect(pills[0].querySelector('.bu-criterion-dot')).not.toBeNull();
+    expect(pills[0].querySelector('.bu-criterion-score')?.textContent).toBe(
+      '8.0'
+    );
+    expect(pills[1].querySelector('.bu-criterion-dot')).toBeNull();
+    expect(pills[1].querySelector('.bu-criterion-score')).toBeNull();
   });
 });
