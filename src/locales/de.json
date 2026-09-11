@@ -203,5 +203,6 @@
   "score_fair": "Mäßig",
   "via_source": "über {source}",
   "based_on_last_reviews": "Basierend auf den letzten {count} Bewertungen",
-  "score_only": "Nur eine Bewertung"
+  "score_only": "Nur eine Bewertung",
+  "based_on_reviews": "Basierend auf {count} Bewertungen"
 }

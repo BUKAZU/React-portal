@@ -192,4 +192,31 @@ describe('loadReviewsHouse', () => {
       await expect(loadReviewsHouse(baseParams)).rejects.toBe(networkError);
     });
   });
+
+  describe('criteria averages', () => {
+    it('maps the per-house averages when the backend sends them', async () => {
+      (mockHttp.get as jest.Mock).mockReturnValueOnce({
+        json: jest.fn().mockResolvedValue({
+          ...restResponse,
+          house: {
+            ...restResponse.house,
+            criteria_averages: [
+              { id: 3, name: 'Cleanliness', score: '9.1', count: 121 },
+              { id: 5, name: 'Location', score: 8.8, count: 120 }
+            ]
+          }
+        })
+      });
+      const { house } = await loadReviewsHouse(baseParams);
+      expect(house.criteriaAverages).toEqual([
+        { name: 'Cleanliness', score: 9.1, count: 121 },
+        { name: 'Location', score: 8.8, count: 120 }
+      ]);
+    });
+
+    it('leaves the averages undefined on an older backend', async () => {
+      const { house } = await loadReviewsHouse(baseParams);
+      expect(house.criteriaAverages).toBeUndefined();
+    });
+  });
 });

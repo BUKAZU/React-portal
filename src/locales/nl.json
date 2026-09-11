@@ -204,5 +204,6 @@
   "score_fair": "Matig",
   "via_source": "via {source}",
   "based_on_last_reviews": "Op basis van de laatste {count} beoordelingen",
-  "score_only": "Alleen een score"
+  "score_only": "Alleen een score",
+  "based_on_reviews": "Op basis van {count} beoordelingen"
 }

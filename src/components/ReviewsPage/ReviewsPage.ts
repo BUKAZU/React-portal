@@ -1,5 +1,6 @@
 import { HTTPError } from 'ky';
 import { http } from '../../_lib/http_client';
+import type { CriterionAverage } from './review_stats';
 import type { Review } from './SingleReview';
 
 type RestReviewCriterium = { score: number; name: string };
@@ -26,8 +27,20 @@ export type RestPageInfo = {
   has_previous_page: boolean;
 };
 
+type RestCriteriumAverage = {
+  id: number;
+  name: string;
+  score: number;
+  count: number;
+};
 type RestReviewsResponse = {
-  house: { name: string; rating: number; score_amount: number };
+  house: {
+    name: string;
+    rating: number;
+    score_amount: number;
+    /** Per-criterium averages over every published review; absent on older backends. */
+    criteria_averages?: RestCriteriumAverage[];
+  };
   items: RestReview[];
   page_info: RestPageInfo;
 };
@@ -38,6 +51,12 @@ export interface ReviewsHouse {
   rating: number;
   scoreAmount: number;
   reviews: Review[];
+  /**
+   * Criteria averages over every published review, from the API. Undefined
+   * when the backend does not send them yet; the page then averages the
+   * reviews it has loaded.
+   */
+  criteriaAverages?: CriterionAverage[];
 }
 
 export interface LoadReviewsResult {
@@ -74,6 +93,11 @@ export async function loadReviewsHouse({
         name: data.house.name,
         rating: Number(data.house.rating),
         scoreAmount: Number(data.house.score_amount),
+        criteriaAverages: data.house.criteria_averages?.map((average) => ({
+          name: average.name,
+          score: Number(average.score),
+          count: Number(average.count)
+        })),
         reviews: data.items.map((r) => ({
           id: '',
           name: r.name,

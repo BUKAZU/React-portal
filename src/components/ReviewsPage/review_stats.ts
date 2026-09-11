@@ -3,6 +3,39 @@ import type { Review } from './SingleReview';
 export interface CriterionAverage {
   name: string;
   score: number;
+  /** Reviews that scored this criterium; set when the API supplied the average. */
+  count?: number;
+}
+
+interface HouseAverages {
+  averages: CriterionAverage[];
+  /** How many reviews the averages rest on. */
+  count: number;
+  /** `api` = every published review (backend), `loaded` = the reviews on the page. */
+  source: 'api' | 'loaded';
+}
+
+/**
+ * The criteria averages to show for a house: the API's per-house averages
+ * when the backend sends them, otherwise the averages of the reviews loaded
+ * so far.
+ */
+export function houseCriteriaAverages(house: {
+  reviews: Review[];
+  criteriaAverages?: CriterionAverage[];
+}): HouseAverages {
+  if (house.criteriaAverages && house.criteriaAverages.length > 0) {
+    return {
+      averages: house.criteriaAverages,
+      count: Math.max(...house.criteriaAverages.map((a) => a.count ?? 0)),
+      source: 'api'
+    };
+  }
+  return {
+    averages: criteriaAverages(house.reviews),
+    count: reviewsWithCriteria(house.reviews),
+    source: 'loaded'
+  };
 }
 
 /**

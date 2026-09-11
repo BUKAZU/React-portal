@@ -1,4 +1,8 @@
-import { criteriaAverages, reviewsWithCriteria } from '../review_stats';
+import {
+  criteriaAverages,
+  houseCriteriaAverages,
+  reviewsWithCriteria
+} from '../review_stats';
 import type { Review } from '../SingleReview';
 
 const review = (criteria: Array<[string, number]>): Review => ({
@@ -61,5 +65,53 @@ describe('reviewsWithCriteria', () => {
     expect(
       reviewsWithCriteria([review([['A', 9]]), review([['A', 0]]), review([])])
     ).toBe(1);
+  });
+});
+
+describe('houseCriteriaAverages', () => {
+  const reviews = [
+    review([['A', 9]]),
+    review([
+      ['A', 7],
+      ['B', 6]
+    ])
+  ];
+
+  it('prefers the averages the API sent and reports the largest review count', () => {
+    const fromApi = [
+      { name: 'A', score: 8.4, count: 121 },
+      { name: 'B', score: 7.9, count: 118 }
+    ];
+    expect(
+      houseCriteriaAverages({ reviews, criteriaAverages: fromApi })
+    ).toEqual({
+      averages: fromApi,
+      count: 121,
+      source: 'api'
+    });
+  });
+
+  it('falls back to the loaded reviews when the API sent nothing or an empty list', () => {
+    const expected = {
+      averages: [
+        { name: 'A', score: 8 },
+        { name: 'B', score: 6 }
+      ],
+      count: 2,
+      source: 'loaded'
+    };
+    expect(houseCriteriaAverages({ reviews })).toEqual(expected);
+    expect(houseCriteriaAverages({ reviews, criteriaAverages: [] })).toEqual(
+      expected
+    );
+  });
+
+  it('treats an API average without a count as resting on zero reviews', () => {
+    expect(
+      houseCriteriaAverages({
+        reviews: [],
+        criteriaAverages: [{ name: 'A', score: 8 }]
+      }).count
+    ).toBe(0);
   });
 });

@@ -194,5 +194,6 @@
   "score_fair": "Discreto",
   "via_source": "tramite {source}",
   "based_on_last_reviews": "In base alle ultime {count} recensioni",
-  "score_only": "Solo punteggio"
+  "score_only": "Solo punteggio",
+  "based_on_reviews": "In base a {count} recensioni"
 }

@@ -198,5 +198,6 @@
   "score_fair": "Regular",
   "via_source": "vía {source}",
   "based_on_last_reviews": "Basado en las últimas {count} opiniones",
-  "score_only": "Solo puntuación"
+  "score_only": "Solo puntuación",
+  "based_on_reviews": "Basado en {count} opiniones"
 }

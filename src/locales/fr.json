@@ -198,5 +198,6 @@
   "score_fair": "Passable",
   "via_source": "via {source}",
   "based_on_last_reviews": "Basé sur les {count} derniers avis",
-  "score_only": "Note seule"
+  "score_only": "Note seule",
+  "based_on_reviews": "Basé sur {count} avis"
 }

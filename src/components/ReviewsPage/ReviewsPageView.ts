@@ -3,7 +3,7 @@ import { t } from '../../intl';
 import { getScore } from './Score';
 import { getScoreColor, getScoreLabelKey } from './getScoreColor';
 import type { ReviewsHouse } from './ReviewsPage';
-import { criteriaAverages, reviewsWithCriteria } from './review_stats';
+import { houseCriteriaAverages } from './review_stats';
 import { processReview } from './SingleReview';
 
 function createDiv(className?: string, text?: string): HTMLDivElement {
@@ -58,7 +58,7 @@ function createHeader(house: ReviewsHouse): HTMLDivElement {
   scoreBlock.appendChild(text);
   header.appendChild(scoreBlock);
 
-  const averages = criteriaAverages(house.reviews);
+  const { averages, count, source } = houseCriteriaAverages(house);
   if (averages.length > 0) {
     const list = createDiv('bu-criteria-averages');
     averages.forEach((average) => {
@@ -81,8 +81,8 @@ function createHeader(house: ReviewsHouse): HTMLDivElement {
     list.appendChild(
       createDiv(
         'bu-criteria-averages-hint',
-        t('based_on_last_reviews', {
-          count: reviewsWithCriteria(house.reviews)
+        t(source === 'api' ? 'based_on_reviews' : 'based_on_last_reviews', {
+          count
         })
       )
     );

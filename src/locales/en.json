@@ -203,5 +203,6 @@
   "score_fair": "Fair",
   "via_source": "via {source}",
   "based_on_last_reviews": "Based on the last {count} reviews",
-  "score_only": "Score only"
+  "score_only": "Score only",
+  "based_on_reviews": "Based on {count} reviews"
 }

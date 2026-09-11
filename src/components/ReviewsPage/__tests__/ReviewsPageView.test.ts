@@ -292,4 +292,45 @@ describe('createReviewsPageView', () => {
     expect(pills[1].querySelector('.bu-criterion-dot')).toBeNull();
     expect(pills[1].querySelector('.bu-criterion-score')).toBeNull();
   });
+
+  it('uses the per-house averages from the API when present', () => {
+    const node = createReviewsPageView({
+      id: 'h1',
+      name: 'Chalet',
+      rating: 8.7,
+      scoreAmount: 128,
+      criteriaAverages: [
+        { name: 'Cleanliness', score: 9.1, count: 121 },
+        { name: 'Value', score: 7.9, count: 118 }
+      ],
+      reviews: [
+        {
+          id: '1',
+          name: 'Alice',
+          createdAt: '2024-01-15',
+          review: 'Great',
+          score: 9,
+          sourceName: '',
+          reviewResponses: [],
+          reviewCriteria: [{ id: 1, name: 'Cleanliness', score: 5 }]
+        }
+      ]
+    });
+    const rows = node.querySelectorAll('.bu-criteria-average');
+    expect(rows).toHaveLength(2);
+    // the mocked getScore formats every value as 8.5, so check the bar width
+    expect(
+      rows[0].querySelector('.bu-criteria-average-name')?.textContent
+    ).toBe('Cleanliness');
+    expect(
+      (rows[0].querySelector('.bu-criteria-bar span') as HTMLElement).style
+        .width
+    ).toBe('91%');
+    expect(
+      rows[1].querySelector('.bu-criteria-average-name')?.textContent
+    ).toBe('Value');
+    expect(node.querySelector('.bu-criteria-averages-hint')?.textContent).toBe(
+      'based_on_reviews'
+    );
+  });
 });
