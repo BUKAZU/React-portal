@@ -17,6 +17,7 @@ interface Props {
   };
 }
 
+/** Total price for the chosen stay, shown in the stay bar. */
 function Price({ persons, variables }: Props) {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const { currency } = useCurrency();
@@ -68,13 +69,13 @@ function Price({ persons, variables }: Props) {
 
   if (loading)
     return (
-      <div className="price-overview--build bup-16">
+      <div className="price-overview--build bu-stay-price bu-stay-price-loading">
         <Loading />
       </div>
     );
   if (error || !result) {
     return (
-      <div className="price-overview--build bup-16">
+      <div className="price-overview--build bu-stay-price bu-stay-price-error">
         {error instanceof PriceUnavailableError
           ? t('no_prices_available_for_period')
           : t('something_went_wrong_please_try_again')}
@@ -82,19 +83,17 @@ function Price({ persons, variables }: Props) {
     );
   }
   return (
-    <>
-      <div className="price-overview--book">
-        <div className="price">
-          {formatNumber(Math.round(result.total_price), {
-            style: 'currency',
-            currency: result.currency
-          })}
-        </div>
-        <div>
-          <i>{t('based_on_one_person', { persons })}</i>
-        </div>
+    <div className="price-overview--book bu-stay-price">
+      <div className="price bu-stay-price-value">
+        {formatNumber(Math.round(result.total_price), {
+          style: 'currency',
+          currency: result.currency
+        })}
       </div>
-    </>
+      <div className="bu-stay-price-hint">
+        {t('based_on_one_person', { persons })}
+      </div>
+    </div>
   );
 }
 

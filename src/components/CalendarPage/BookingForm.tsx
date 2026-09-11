@@ -22,9 +22,10 @@ function BookingForm({ portalSite }: Props): JSX.Element {
   const [house, setHouse] = useState<HouseType | null>(null);
   const [priceError, setPriceError] = useState<Error | null>(null);
 
+  // The previous house stays mounted while the dates change from the form, so
+  // what the visitor typed survives the refetch.
   useEffect(() => {
     let cancelled = false;
-    setHouse(null);
     setPriceError(null);
 
     fetchPrice({

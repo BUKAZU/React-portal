@@ -14,9 +14,11 @@ import { PossibleValues } from '../formParts/form_types';
 interface Props {
   values: PossibleValues;
   house: HouseType;
+  /** Reports the latest price calculation (null while loading or failed). */
+  onPrices?: (prices: PricesType | null) => void;
 }
 
-function CostSummary({ values, house }: Props): JSX.Element {
+function CostSummary({ values, house, onPrices }: Props): JSX.Element {
   let babies = Number(values.babies) - Number(house.babies_extra);
   if (babies < 0) {
     babies = 0;
@@ -52,18 +54,23 @@ function CostSummary({ values, house }: Props): JSX.Element {
         if (!cancelled) {
           setPrices(result);
           setLoading(false);
+          onPrices?.(result);
         }
       })
       .catch((err) => {
         if (!cancelled) {
           setError(err);
           setLoading(false);
+          onPrices?.(null);
         }
       });
 
     return () => {
       cancelled = true;
     };
+    // onPrices is a callback prop; re-running on its identity would refetch
+    // every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     apiUrl,
     locale,

@@ -11,7 +11,9 @@ const initialBooking: BookingType = {
   arrivalDate: null,
   departureDate: null,
   bookingStarted: false,
-  persons: 0
+  persons: 0,
+  hoverDate: null,
+  hoverValid: false
 };
 
 const mockHouse = {
@@ -194,5 +196,107 @@ describe('calendarReducer', () => {
         persons: 0
       });
     }).toThrow('Unknown action: unknown_action');
+  });
+
+  describe('hover preview', () => {
+    const choosing: BookingType = {
+      ...initialBooking,
+      selectedDate: today,
+      arrivalDate: mockArrivalDay as any,
+      persons: 2
+    };
+
+    it('records the hovered day and whether it is a valid departure', () => {
+      const hovered = addDays(today, 5);
+      const result = calendarReducer(choosing, {
+        type: 'hover',
+        date: hovered,
+        valid: true
+      });
+      expect(result.hoverDate).toEqual(hovered);
+      expect(result.hoverValid).toBe(true);
+    });
+
+    it('clears the hover on unhover', () => {
+      const hovering = {
+        ...choosing,
+        hoverDate: addDays(today, 5),
+        hoverValid: true
+      };
+      const result = calendarReducer(hovering, { type: 'unhover' });
+      expect(result.hoverDate).toBeNull();
+      expect(result.hoverValid).toBe(false);
+    });
+
+    it('returns the same state when nothing was hovered', () => {
+      expect(calendarReducer(choosing, { type: 'unhover' })).toBe(choosing);
+    });
+
+    it('drops the hover once a departure is chosen', () => {
+      const hovering = {
+        ...choosing,
+        hoverDate: addDays(today, 5),
+        hoverValid: true
+      };
+      const result = calendarReducer(hovering, {
+        type: 'clicked',
+        house: mockHouse as any,
+        day: {
+          ...mockArrivalDay,
+          date: formatDateKey(addDays(today, 5)),
+          arrival: false,
+          departure: true
+        } as any
+      });
+      expect(result.departureDate?.date).toBe(formatDateKey(addDays(today, 5)));
+      expect(result.hoverDate).toBeNull();
+    });
+  });
+
+  describe('changing dates from the form', () => {
+    it('keeps the form open and the persons when a new arrival is clicked', () => {
+      const inForm: BookingType = {
+        ...initialBooking,
+        selectedDate: today,
+        arrivalDate: mockArrivalDay as any,
+        departureDate: mockArrivalDay as any,
+        bookingStarted: true,
+        persons: 5
+      };
+      const result = calendarReducer(inForm, {
+        type: 'clicked',
+        house: mockHouse as any,
+        day: {
+          ...mockArrivalDay,
+          date: formatDateKey(addDays(today, 1))
+        } as any
+      });
+      expect(result.bookingStarted).toBe(true);
+      expect(result.persons).toBe(5);
+      expect(result.departureDate).toBeNull();
+      expect(result.selectedDate).toEqual(addDays(today, 1));
+    });
+
+    it('replaces both dates with set_dates', () => {
+      const departureDay = {
+        ...mockArrivalDay,
+        date: formatDateKey(addDays(today, 7)),
+        arrival: false,
+        departure: true
+      };
+      const result = calendarReducer(
+        { ...initialBooking, bookingStarted: true, persons: 3 },
+        {
+          type: 'set_dates',
+          arrivalDate: mockArrivalDay as any,
+          departureDate: departureDay as any
+        }
+      );
+      expect(result.selectedDate).toEqual(today);
+      expect(result.arrivalDate).toEqual(mockArrivalDay);
+      expect(result.departureDate).toEqual(departureDay);
+      expect(result.bookingStarted).toBe(true);
+      expect(result.persons).toBe(3);
+    });
   });
 });

@@ -184,5 +184,17 @@
   "view_mode": "View",
   "grid_view": "Grid view",
   "list_view": "List view",
-  "show_results": "Show results"
+  "show_results": "Show results",
+  "nights": "{count} nights",
+  "clear_dates": "Clear dates",
+  "change_dates": "Change dates",
+  "price_follows_dates": "The price follows your dates",
+  "previous_month": "Previous month",
+  "next_month": "Next month",
+  "have_discount_code": "Have a discount code?",
+  "hide": "Hide",
+  "your_booking": "Your booking",
+  "view_breakdown": "View breakdown",
+  "returning_to_calendar": "You will return to the calendar in a moment.",
+  "done": "Done"
 }
