@@ -6,6 +6,7 @@ interface Props {
   month: Date;
 }
 
+/** Short weekday names, Monday first. */
 function WeekDays({ month }: Props): JSX.Element {
   const dateFormat: Intl.DateTimeFormatOptions = { weekday: 'short' };
   let days: JSX.Element[] = [];
@@ -20,7 +21,7 @@ function WeekDays({ month }: Props): JSX.Element {
     );
   }
 
-  return <div className="bu-grid bu-grid-cols-7">{days}</div>;
+  return <div className="bu-weekdays bu-grid bu-grid-cols-7">{days}</div>;
 }
 
 export default WeekDays;

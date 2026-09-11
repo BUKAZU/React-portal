@@ -179,5 +179,17 @@
   "view_mode": "Affichage",
   "grid_view": "Vue en grille",
   "list_view": "Vue en liste",
-  "show_results": "Afficher les résultats"
+  "show_results": "Afficher les résultats",
+  "nights": "{count} nuits",
+  "clear_dates": "Effacer les dates",
+  "change_dates": "Modifier les dates",
+  "price_follows_dates": "Le prix s'affiche dès que vos dates sont choisies",
+  "previous_month": "Mois précédent",
+  "next_month": "Mois suivant",
+  "have_discount_code": "Vous avez un code de réduction ?",
+  "hide": "Masquer",
+  "your_booking": "Votre réservation",
+  "view_breakdown": "Voir le détail des coûts",
+  "returning_to_calendar": "Vous allez revenir au calendrier dans un instant.",
+  "done": "Terminé"
 }

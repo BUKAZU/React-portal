@@ -185,5 +185,17 @@
   "view_mode": "Weergave",
   "grid_view": "Rasterweergave",
   "list_view": "Lijstweergave",
-  "show_results": "Resultaten tonen"
+  "show_results": "Resultaten tonen",
+  "nights": "{count} nachten",
+  "clear_dates": "Data wissen",
+  "change_dates": "Data wijzigen",
+  "price_follows_dates": "De prijs volgt zodra je data hebt gekozen",
+  "previous_month": "Vorige maand",
+  "next_month": "Volgende maand",
+  "have_discount_code": "Heb je een kortingscode?",
+  "hide": "Verbergen",
+  "your_booking": "Je boeking",
+  "view_breakdown": "Bekijk de kostenopbouw",
+  "returning_to_calendar": "Je gaat zo terug naar de kalender.",
+  "done": "Klaar"
 }

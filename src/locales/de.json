@@ -4,7 +4,7 @@
   "view_details": "Details anzeigen",
   "reviews_note": "",
   "price": "Preis",
-  "calculate": "Nächst",
+  "calculate": "Weiter",
   "currency": "Währung",
   "book": "Buchen",
   "booked": "Gebucht",
@@ -184,5 +184,17 @@
   "view_mode": "Ansicht",
   "grid_view": "Rasteransicht",
   "list_view": "Listenansicht",
-  "show_results": "Ergebnisse anzeigen"
+  "show_results": "Ergebnisse anzeigen",
+  "nights": "{count} Nächte",
+  "clear_dates": "Daten löschen",
+  "change_dates": "Daten ändern",
+  "price_follows_dates": "Der Preis folgt, sobald Sie Ihre Daten gewählt haben",
+  "previous_month": "Vorheriger Monat",
+  "next_month": "Nächster Monat",
+  "have_discount_code": "Haben Sie einen Rabattcode?",
+  "hide": "Ausblenden",
+  "your_booking": "Ihre Buchung",
+  "view_breakdown": "Kostenaufstellung ansehen",
+  "returning_to_calendar": "Sie kehren gleich zum Kalender zurück.",
+  "done": "Fertig"
 }

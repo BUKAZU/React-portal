@@ -111,21 +111,26 @@ describe('AssistanceMessage – only arrival date selected', () => {
     expect(container.textContent).toContain('At least 7 nights');
   });
 
-  it('renders in the bup-16 bu-bold div', () => {
+  it('renders the title and hint in the assistance line', () => {
     renderAssistanceMessage(arrivalDay, null);
-    expect(container.querySelector('.bup-16.bu-bold')).not.toBeNull();
+    expect(container.querySelector('.bu-assistance')).not.toBeNull();
+    expect(container.querySelector('.bu-assistance-title')).not.toBeNull();
+    expect(container.querySelector('.bu-assistance-hint')).not.toBeNull();
   });
 });
 
 describe('AssistanceMessage – both dates selected', () => {
-  it('shows the arrival date message when both dates are set', () => {
+  it('shows both dates as the title when both dates are set', () => {
     renderAssistanceMessage(arrivalDay, departureDay);
-    expect(container.textContent).toContain('Your arrival date is');
+    const title = container.querySelector('.bu-assistance-title');
+    expect(title?.textContent).toContain('→');
+    expect(container.textContent).not.toContain('Your arrival date is');
   });
 
-  it('shows the departure date message when both dates are set', () => {
+  it('shows the number of nights as the hint when both dates are set', () => {
     renderAssistanceMessage(arrivalDay, departureDay);
-    expect(container.textContent).toContain('Your departure date is');
+    const hint = container.querySelector('.bu-assistance-hint');
+    expect(hint?.textContent).toMatch(/\d+ nights/);
   });
 
   it('does not show the departure selection prompt when departure is already chosen', () => {
