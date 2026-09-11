@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import OptionalCosts from '../OptionalCosts';
+import { BookingFormContext } from '../../BookingFormContext';
+import { setByString } from '../BookingHelpers';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -81,18 +83,58 @@ describe('OptionalCosts – section heading', () => {
 });
 
 describe('OptionalCosts – costs with max_available = 1', () => {
-  it('renders a yes/no select for a cost with max_available = 1', () => {
+  it('renders a No / Yes toggle for a cost with max_available = 1', () => {
     renderOptionalCosts([{ ...baseCost, max_available: 1 }]);
-    const selects = container.querySelectorAll('select');
-    expect(selects).toHaveLength(1);
+    expect(container.querySelectorAll('select')).toHaveLength(0);
+    const buttons = container.querySelectorAll('.bu-segmented button');
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0].textContent).toBe('No');
+    expect(buttons[1].textContent).toBe('Yes');
+    expect(
+      container.querySelector('.bu-segmented')?.getAttribute('aria-labelledby')
+    ).toBe('bu_cost_towels');
+    expect(container.querySelector('label')?.id).toBe('bu_cost_towels');
   });
 
-  it('renders "No" and "Yes" options for max_available = 1', () => {
-    renderOptionalCosts([{ ...baseCost, max_available: 1 }]);
-    const options = container.querySelectorAll('select option');
-    expect(options).toHaveLength(2);
-    expect(options[0].textContent).toBe('No');
-    expect(options[1].textContent).toBe('Yes');
+  it('keeps the chosen answer in a hidden costs field', () => {
+    function Harness() {
+      const [values, setValues] = useState<Record<string, unknown>>({
+        costs: { towels: '0' }
+      });
+      return (
+        <BookingFormContext.Provider
+          value={{
+            values: values as any,
+            errors: {},
+            touched: {},
+            isSubmitting: false,
+            setFieldValue: (name, value) =>
+              setValues((current) => setByString(current, name, value)),
+            setFieldTouched: () => undefined
+          }}
+        >
+          <OptionalCosts costs={[{ ...baseCost, max_available: 1 }]} />
+        </BookingFormContext.Provider>
+      );
+    }
+    act(() => {
+      root.render(<Harness />);
+    });
+    const buttons = container.querySelectorAll<HTMLButtonElement>(
+      '.bu-segmented button'
+    );
+    const hidden = () =>
+      container.querySelector(
+        'input[type="hidden"][name="costs[towels]"]'
+      ) as HTMLInputElement;
+    expect(buttons[0].getAttribute('aria-pressed')).toBe('true');
+    expect(hidden().value).toBe('0');
+    act(() => {
+      buttons[1].click();
+    });
+    expect(buttons[1].getAttribute('aria-pressed')).toBe('true');
+    expect(buttons[0].getAttribute('aria-pressed')).toBe('false');
+    expect(hidden().value).toBe('1');
   });
 
   it('renders the cost label', () => {
@@ -134,7 +176,9 @@ describe('OptionalCosts – description modal', () => {
     renderOptionalCosts([
       { ...baseCost, max_available: 1, description: 'Includes 2 towels' }
     ]);
-    expect(container.querySelector('[data-testid="modal-button"]')).not.toBeNull();
+    expect(
+      container.querySelector('[data-testid="modal-button"]')
+    ).not.toBeNull();
   });
 
   it('does not render a modal button when description is empty', () => {

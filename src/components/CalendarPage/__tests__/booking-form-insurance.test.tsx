@@ -355,43 +355,38 @@ describe('Booking form – cancel_insurance enabled on house', () => {
     expect(heading?.textContent).toBe('Insurances');
   });
 
-  it('renders the cancel_insurance select dropdown', async () => {
+  it('renders None and Standard as chips, None pressed', async () => {
     setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    const select = container.querySelector('select[name="cancel_insurance"]');
-    expect(select).not.toBeNull();
+    const chips = container.querySelectorAll('#insurances .bu-chip');
+    expect(chips).toHaveLength(2);
+    expect(chips[0].getAttribute('aria-pressed')).toBe('true');
+    expect(chips[1].getAttribute('aria-pressed')).toBe('false');
   });
 
-  it('does NOT show the date-of-birth field before any insurance is selected', async () => {
+  it('does NOT show the date-of-birth field before insurance is chosen', async () => {
     setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    // The default value is '' (the choose option), so DOB must be hidden
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
   });
 
-  it('shows the date-of-birth field after selecting insurance option "1"', async () => {
+  it('shows the date-of-birth field after pressing Standard', async () => {
     setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    const select = container.querySelector(
-      'select[name="cancel_insurance"]'
-    ) as HTMLSelectElement;
-    expect(select).not.toBeNull();
-
+    const standard = container.querySelectorAll(
+      '#insurances .bu-chip'
+    )[1] as HTMLButtonElement;
     await act(async () => {
-      const nativeSelectValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )!.set!;
-      nativeSelectValueSetter.call(select, '1');
-      select.dispatchEvent(new Event('change', { bubbles: true }));
+      standard.click();
     });
 
+    expect(standard.getAttribute('aria-pressed')).toBe('true');
     const dobField = container.querySelector('[data-testid="date-field"]');
     expect(dobField).not.toBeNull();
     expect(dobField?.getAttribute('data-name')).toBe(
@@ -399,39 +394,24 @@ describe('Booking form – cancel_insurance enabled on house', () => {
     );
   });
 
-  it('hides the date-of-birth field after switching back to "None" (value "0")', async () => {
+  it('hides the date-of-birth field after switching back to None', async () => {
     setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    const select = container.querySelector(
-      'select[name="cancel_insurance"]'
-    ) as HTMLSelectElement;
-
-    // Select insurance
+    const chips = container.querySelectorAll<HTMLButtonElement>(
+      '#insurances .bu-chip'
+    );
     await act(async () => {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )!.set!;
-      setter.call(select, '1');
-      select.dispatchEvent(new Event('change', { bubbles: true }));
+      chips[1].click();
     });
-
     expect(
       container.querySelector('[data-testid="date-field"]')
     ).not.toBeNull();
 
-    // Switch back to None
     await act(async () => {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )!.set!;
-      setter.call(select, '0');
-      select.dispatchEvent(new Event('change', { bubbles: true }));
+      chips[0].click();
     });
-
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
   });
 });

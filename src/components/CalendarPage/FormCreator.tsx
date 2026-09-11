@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { t } from '../../intl';
 import {
   createBooking,
@@ -22,6 +28,11 @@ import {
   CalendarContextDispatch
 } from './CalendarParts/CalendarContext';
 import Summary from './Summary';
+import { PricesType } from './Summary/cost_types';
+import DateStrip from './DateStrip';
+import DatePopover from './DatePopover';
+import Close from '../icons/Close.svg';
+import { formatNumber } from '../../intl';
 import { BookingType } from './calender_types';
 import { Insurances } from './formParts/insurances';
 import Discount from './formParts/discount';
@@ -142,6 +153,25 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
   const [data, setData] = useState<CreateBookingResponse | null>(null);
   // Validation errors returned by the API, keyed by booking field id.
   const [serverErrors, setServerErrors] = useState<BookingFormErrors>({});
+  // The calendar popover under the date strip and, on phones, the summary
+  // sheet behind the pinned total.
+  const [datesOpen, setDatesOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [prices, setPrices] = useState<PricesType | null>(null);
+  const openDates = useCallback(() => setDatesOpen(true), []);
+  const closeDates = useCallback(() => setDatesOpen(false), []);
+
+  // Dates changed from the popover flow into the values the summary and the
+  // payload are built from.
+  useEffect(() => {
+    if (!arrivalDate || !departureDate) return;
+    setValues((currentValues) =>
+      currentValues.arrivalDate === arrivalDate &&
+      currentValues.departureDate === departureDate
+        ? currentValues
+        : { ...currentValues, arrivalDate, departureDate }
+    );
+  }, [arrivalDate, departureDate]);
 
   const reset = useCallback(() => {
     setError(null);
@@ -268,6 +298,62 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     ]
   );
 
+  const popoverMonths = Math.min(
+    2,
+    Math.max(1, bookingFormConfiguration.show_months_amount || 2)
+  );
+  const total = prices
+    ? formatNumber(prices.total_costs.sub_total, {
+        style: 'currency',
+        currency: prices.currency
+      })
+    : null;
+
+  const summary = (
+    <>
+      <Summary
+        house={house}
+        values={values}
+        onChangeDates={openDates}
+        onPrices={setPrices}
+      />
+      <div className="terms">
+        {PortalSite.form_submit_text}{' '}
+        <Modal buttonText={t('terms')}>
+          <div
+            style={{
+              width: '90vh',
+              height: '90vh'
+            }}
+          >
+            <iframe
+              src={house.rental_terms ?? undefined}
+              width="100%"
+              height="100%"
+              title="Terms"
+            />
+          </div>
+        </Modal>
+        {house.allow_option && (
+          <span>
+            {', '}
+            {t('option_is_free')}
+          </span>
+        )}
+      </div>
+      {[1, 2].includes(Number(values.cancel_insurance)) ? (
+        <div className="terms">{t('comply_insurance_card')}</div>
+      ) : null}
+      <button
+        className="bu-calendar-button"
+        type="submit"
+        disabled={isSubmitting}
+      >
+        {PortalSite.form_submit_button_text}
+      </button>
+    </>
+  );
+
   return (
     <BookingFormContext.Provider
       value={{
@@ -279,7 +365,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         setFieldTouched
       }}
     >
-      <form className="form" onSubmit={handleSubmit}>
+      <form className="form bu-booking" onSubmit={handleSubmit}>
         {isSubmitting && (
           <div className="return-message">Creating booking...</div>
         )}
@@ -294,86 +380,107 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           </Modal>
         )}
 
-        <div className="form-content">
-          <div className="form-section bup-16">
-            <a
-              className="return-link"
-              role="link"
-              tabIndex={0}
-              onClick={() => {
-                dispatch({
-                  type: 'return'
-                });
-              }}
-            >
-              {t('return_to_calendar')}
-            </a>
-            <h2>{t('stay_details')}</h2>
-            <Guests
-              bookingFormConfiguration={bookingFormConfiguration}
-              house={house}
-            />
-
-            {errors.max_persons && (
-              <div className="error-message bu-error-message persons">
-                {errors.max_persons}
-              </div>
-            )}
-          </div>
-          <Discount
-            errors={errors}
+        <div className="bu-booking-head">
+          <a
+            className="return-link bu-link-button"
+            role="link"
+            tabIndex={0}
+            onClick={() => {
+              dispatch({
+                type: 'return'
+              });
+            }}
+          >
+            {t('return_to_calendar')}
+          </a>
+          <DateStrip
             house={house}
-            bookingFormConfiguration={bookingFormConfiguration}
-            values={values}
+            persons={values.persons}
+            onChange={openDates}
           />
-
-          <Insurances house={house} values={values} />
-
-          <OptionalCosts
-            costs={bookingPrice.optional_house_costs}
-            currency={bookingPrice.currency}
-          />
-
-          <OptionalBookingFields
-            bookingFields={bookingFields}
-            errors={errors}
-            touched={touched}
-            PortalSite={PortalSite}
-            values={values}
-          />
+          {datesOpen && (
+            <DatePopover
+              house={house}
+              numberOfMonths={popoverMonths}
+              numberOfMonthsInARow={popoverMonths}
+              onClose={closeDates}
+            />
+          )}
         </div>
 
-        <div className="form-sum bup-16">
-          <Summary house={house} values={values} />
-          <div className="terms">
-            {PortalSite.form_submit_text}{' '}
-            <Modal buttonText={t('terms')}>
-              <div
-                style={{
-                  width: '90vh',
-                  height: '90vh'
-                }}
-              >
-                <iframe
-                  src={house.rental_terms ?? undefined}
-                  width="100%"
-                  height="100%"
-                  title="Terms"
-                />
-              </div>
-            </Modal>
-            {house.allow_option && (
-              <span>
-                {', '}
-                {t('option_is_free')}
-              </span>
-            )}
+        <div className="bu-booking-body">
+          <div className="form-content">
+            <div className="form-section bup-16">
+              <h2>{t('stay_details')}</h2>
+              <Guests
+                bookingFormConfiguration={bookingFormConfiguration}
+                house={house}
+              />
+
+              {errors.max_persons && (
+                <div className="error-message bu-error-message persons">
+                  {errors.max_persons}
+                </div>
+              )}
+            </div>
+            <Discount
+              errors={errors}
+              house={house}
+              bookingFormConfiguration={bookingFormConfiguration}
+              values={values}
+            />
+
+            <Insurances house={house} values={values} />
+
+            <OptionalCosts
+              costs={bookingPrice.optional_house_costs}
+              currency={bookingPrice.currency}
+            />
+
+            <OptionalBookingFields
+              bookingFields={bookingFields}
+              errors={errors}
+              touched={touched}
+              PortalSite={PortalSite}
+              values={values}
+            />
           </div>
-          {[1, 2].includes(Number(values.cancel_insurance)) ? (
-            <div className="terms">{t('comply_insurance_card')}</div>
-          ) : null}
+
+          <div className={`form-sum bup-16${summaryOpen ? ' bu-open' : ''}`}>
+            <div className="bu-sheet-head">
+              <span className="bu-sheet-title">{t('your_booking')}</span>
+              <button
+                type="button"
+                className="bu-sheet-close"
+                aria-label={t('close')}
+                onClick={() => setSummaryOpen(false)}
+              >
+                <Close size={18} />
+              </button>
+            </div>
+            {summary}
+          </div>
+          {summaryOpen && (
+            <div
+              className="bu-form-backdrop"
+              onClick={() => setSummaryOpen(false)}
+            />
+          )}
+        </div>
+
+        {/* phones: the total pinned at the bottom opens the summary sheet */}
+        <div className="bu-form-bar">
           <button
-            className="bu-calendar-button"
+            type="button"
+            className="bu-form-bar-total"
+            aria-expanded={summaryOpen}
+            onClick={() => setSummaryOpen(true)}
+          >
+            <span className="bu-form-bar-amount">{total ?? '—'}</span>
+            <span className="bu-form-bar-hint">{t('view_breakdown')}</span>
+          </button>
+          <button
+            className="bu-form-bar-submit"
             type="submit"
             disabled={isSubmitting}
           >
