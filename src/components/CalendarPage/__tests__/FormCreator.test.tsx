@@ -616,4 +616,17 @@ describe('FormCreator', () => {
       expect(sum.classList.contains('bu-open')).toBe(false);
     });
   });
+
+  it('falls back to a generic label when the portal has no submit text', () => {
+    renderFormCreator(mockHouse, {
+      ...mockPortalSite,
+      form_submit_button_text: undefined
+    } as any);
+    expect(container.querySelector('button[type="submit"]')?.textContent).toBe(
+      'Book'
+    );
+    expect(container.querySelector('.bu-form-bar-submit')?.textContent).toBe(
+      'Book'
+    );
+  });
 });

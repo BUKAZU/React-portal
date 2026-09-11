@@ -302,6 +302,8 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     2,
     Math.max(1, bookingFormConfiguration.show_months_amount || 2)
   );
+  // A portal without its own button text still gets a readable CTA.
+  const submitLabel = PortalSite.form_submit_button_text || t('book');
   const total = prices
     ? formatNumber(prices.total_costs.sub_total, {
         style: 'currency',
@@ -349,7 +351,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
         type="submit"
         disabled={isSubmitting}
       >
-        {PortalSite.form_submit_button_text}
+        {submitLabel}
       </button>
     </>
   );
@@ -484,7 +486,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             type="submit"
             disabled={isSubmitting}
           >
-            {PortalSite.form_submit_button_text}
+            {submitLabel}
           </button>
         </div>
       </form>
