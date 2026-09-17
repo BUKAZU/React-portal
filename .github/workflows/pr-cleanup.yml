@@ -1,0 +1,49 @@
+name: PR Cleanup from S3
+
+on:
+  pull_request:
+    branches: ['master']
+    types: [closed]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check preview cleanup configuration
+        id: cleanup-config
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          missing=()
+
+          [[ -n "$AWS_ACCESS_KEY_ID" ]] || missing+=("AWS_ACCESS_KEY_ID")
+          [[ -n "$AWS_SECRET_ACCESS_KEY" ]] || missing+=("AWS_SECRET_ACCESS_KEY")
+          [[ -n "$AWS_REGION" ]] || missing+=("AWS_REGION")
+          [[ -n "$AWS_S3_BUCKET" ]] || missing+=("AWS_S3_BUCKET")
+
+          if [ ${#missing[@]} -eq 0 ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Skipping S3 preview cleanup because the following secrets are not configured: $(IFS=,; echo "${missing[*]}")"
+          fi
+
+      - name: Configure AWS credentials
+        if: steps.cleanup-config.outputs.ready == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Remove S3 deployment
+        if: steps.cleanup-config.outputs.ready == 'true'
+        run: |
+          aws s3 rm s3://${{ secrets.AWS_S3_BUCKET }}/pr-${{ github.event.pull_request.number }}/ --recursive
