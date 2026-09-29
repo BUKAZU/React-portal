@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '../../intl';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
@@ -15,6 +15,10 @@ import {
   type AccommodationsResponse
 } from '../../_lib/accommodations';
 import { buildSearchParams } from '../../_lib/search_params';
+import { searchInfo } from '../../_lib/search_tracking';
+import { TrackEvent } from '../../_lib/Tracking';
+
+const SEARCH_TRACKING_DELAY = 1000;
 
 interface Props {
   filters: FiltersType;
@@ -51,9 +55,13 @@ function Results({
     () => JSON.parse(paramsKey) as Record<string, string>,
     [paramsKey]
   );
+  const latestFilters = useRef(filters);
+  latestFilters.current = filters;
+  const trackedFilters = useRef<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
+    let trackTimer: ReturnType<typeof setTimeout> | undefined;
     setState({ status: 'loading' });
 
     fetchAccommodations({
@@ -68,6 +76,21 @@ function Results({
           return;
         }
         setState({ status: 'ready', response });
+
+        // Paging or switching currency is the same search; only a changed
+        // filter that settles for a second counts as a new one.
+        const searched = latestFilters.current;
+        const searchedKey = JSON.stringify(searched);
+        if (trackedFilters.current === searchedKey) return;
+        trackTimer = setTimeout(() => {
+          trackedFilters.current = searchedKey;
+          TrackEvent({
+            portal_code: portalCode,
+            locale,
+            interaction_type: 'search',
+            interaction_info: searchInfo(searched, response.meta.total_count)
+          });
+        }, SEARCH_TRACKING_DELAY);
       })
       .catch((error: unknown) => {
         // An aborted request was superseded by a newer one; its result is stale.
@@ -85,6 +108,7 @@ function Results({
 
     return () => {
       controller.abort();
+      clearTimeout(trackTimer);
     };
   }, [apiUrl, locale, portalCode, params]);
 

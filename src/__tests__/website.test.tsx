@@ -29,6 +29,11 @@ jest.mock('../index', () => (props: object) => (
   <div data-testid="portal" data-props={JSON.stringify(props)} />
 ));
 
+const mockSetTrackingConsent = jest.fn();
+jest.mock('../_lib/Tracking', () => ({
+  setTrackingConsent: (consented: boolean) => mockSetTrackingConsent(consented)
+}));
+
 // ---------------------------------------------------------------------------
 // Import the module under test AFTER mocks are set up.
 // ---------------------------------------------------------------------------
@@ -410,6 +415,37 @@ describe('mountPortal – double-mount prevention', () => {
 
     expect(mockCreateRoot).toHaveBeenCalledTimes(1);
     expect(mockRender).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('mountPortal – tracking consent', () => {
+  afterEach(() => {
+    delete window.bukazuConsent;
+  });
+
+  it('grants consent for a host with data-consent="true"', () => {
+    act(() => {
+      mountPortal(makeElement({ 'portal-code': 'X', 'data-consent': 'true' }));
+    });
+
+    expect(mockSetTrackingConsent).toHaveBeenCalledWith(true);
+  });
+
+  it('grants consent when the page set window.bukazuConsent', () => {
+    window.bukazuConsent = true;
+    act(() => {
+      mountPortal(makeElement({ 'portal-code': 'X' }));
+    });
+
+    expect(mockSetTrackingConsent).toHaveBeenCalledWith(true);
+  });
+
+  it('stays cookieless without consent', () => {
+    act(() => {
+      mountPortal(makeElement({ 'portal-code': 'X' }));
+    });
+
+    expect(mockSetTrackingConsent).not.toHaveBeenCalled();
   });
 });
 

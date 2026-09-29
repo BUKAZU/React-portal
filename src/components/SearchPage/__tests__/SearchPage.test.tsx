@@ -320,7 +320,8 @@ describe('SearchPage', () => {
     expect(TrackEvent).toHaveBeenCalledWith({
       portal_code: mockPortalSite.portal_code,
       interaction_type: 'search_view',
-      locale: 'en'
+      locale: 'en',
+      interaction_info: {}
     });
   });
 });

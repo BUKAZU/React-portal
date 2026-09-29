@@ -9,7 +9,6 @@ import { AppContext } from '../../AppContext';
 import { ApiError } from '../../Error';
 import Loading from '../../icons/loading.svg';
 import Calendar from '../Calendar';
-import { TrackEvent } from '../../../_lib/Tracking';
 import type { AppPortalSite } from '../../loadPortalSite';
 
 interface Props {
@@ -30,16 +29,6 @@ type CalendarState =
 function GenerateCalendar({ portalSite }: Props): JSX.Element {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const [state, setState] = useState<CalendarState>({ status: 'loading' });
-
-  // Sent once per calendar view, not on every render.
-  useEffect(() => {
-    TrackEvent({
-      house_code: objectCode,
-      portal_code: portalCode,
-      interaction_type: 'calendar_view',
-      locale: locale
-    });
-  }, [objectCode, portalCode, locale]);
 
   useEffect(() => {
     let cancelled = false;

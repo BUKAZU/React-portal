@@ -16,6 +16,11 @@ jest.mock('../../../_lib/accommodations', () => ({
   fetchAccommodations: jest.fn()
 }));
 
+jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
+  TrackEvent: jest.fn()
+}));
+
 jest.mock(
   '../SingleResult',
   () => () => '<div data-testid="single-result"></div>'
@@ -29,8 +34,10 @@ jest.mock('../../Error', () => ({
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 import { fetchAccommodations } from '../../../_lib/accommodations';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 const mockFetch = fetchAccommodations as jest.Mock;
+const mockTrackEvent = TrackEvent as jest.Mock;
 
 const mockPortalSite: PortalSiteType = {
   options: {
@@ -359,5 +366,90 @@ describe('Results', () => {
 
     const resultsDiv = container.querySelector('#results');
     expect(resultsDiv?.className).toBe('list');
+  });
+
+  describe('search tracking', () => {
+    const searched: FiltersType = {
+      arrival_date: '2026-07-01',
+      departure_date: '2026-07-08',
+      persons_min: '4',
+      bedrooms_min: '2',
+      extra_search: 'sea view'
+    };
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      mockFetch.mockResolvedValue({
+        items: [mockHouse],
+        meta: { total_count: 42, limit: 10, skip: 0 }
+      });
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    function waitForDebounce() {
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+    }
+
+    it('tracks a search once its filters have settled for a second', async () => {
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+
+      waitForDebounce();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent).toHaveBeenCalledWith({
+        portal_code: 'TEST',
+        locale: 'en',
+        interaction_type: 'search',
+        interaction_info: {
+          arrival: '2026-07-01',
+          departure: '2026-07-08',
+          persons: 4,
+          filters: { bedrooms_min: '2' },
+          result_count: 42
+        }
+      });
+    });
+
+    it('only tracks the last of quickly changing filters', async () => {
+      await renderResultsAndSettle({
+        ...defaultProps,
+        filters: { persons_min: '2' }
+      });
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent.mock.calls[0][0].interaction_info.persons).toBe(4);
+    });
+
+    it('does not track paging through the same search again', async () => {
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+      await renderResultsAndSettle({
+        ...defaultProps,
+        filters: searched,
+        skip: 10,
+        activePage: 2
+      });
+      waitForDebounce();
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not track a failed search', async () => {
+      mockFetch.mockRejectedValue(new Error('Search request failed (500)'));
+
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+    });
   });
 });

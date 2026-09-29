@@ -8,6 +8,10 @@ import {
   PriceResponse,
   PriceUnavailableError
 } from '../../../_lib/price';
+import { TrackEvent } from '../../../_lib/Tracking';
+
+// Module-wide so going back to the calendar does not count the same quote again.
+const trackedQuotes = new Set<string>();
 
 interface Props {
   persons: number;
@@ -29,6 +33,14 @@ function Price({ persons, variables }: Props) {
     setLoading(true);
     setError(null);
 
+    const stay = { arrival: variables.starts_at, departure: variables.ends_at };
+    const firstTime = (kind: string) => {
+      const key = `${kind}:${objectCode}:${stay.arrival}:${stay.departure}:${persons}`;
+      if (trackedQuotes.has(key)) return false;
+      trackedQuotes.add(key);
+      return true;
+    };
+
     fetchPrice({
       apiUrl,
       locale,
@@ -40,15 +52,36 @@ function Price({ persons, variables }: Props) {
       currency
     })
       .then((price) => {
-        if (!cancelled) {
-          setResult(price);
-          setLoading(false);
+        if (cancelled) return;
+        setResult(price);
+        setLoading(false);
+        if (firstTime('quote')) {
+          TrackEvent({
+            house_code: objectCode,
+            portal_code: portalCode,
+            locale,
+            interaction_type: 'quote_shown',
+            interaction_info: {
+              ...stay,
+              persons,
+              total_cents: Math.round(price.total_price * 100),
+              currency: price.currency.toUpperCase()
+            }
+          });
         }
       })
       .catch((err) => {
-        if (!cancelled) {
-          setError(err);
-          setLoading(false);
+        if (cancelled) return;
+        setError(err);
+        setLoading(false);
+        if (err instanceof PriceUnavailableError && firstTime('unavailable')) {
+          TrackEvent({
+            house_code: objectCode,
+            portal_code: portalCode,
+            locale,
+            interaction_type: 'price_unavailable',
+            interaction_info: stay
+          });
         }
       });
 

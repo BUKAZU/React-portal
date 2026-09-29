@@ -15,6 +15,7 @@ jest.mock('../../../_lib/price', () => ({
 }));
 
 jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
   getSessionIdentifier: jest.fn(() => 'test-session'),
   TrackEvent: jest.fn()
 }));
@@ -117,8 +118,9 @@ describe('BookingForm tracking', () => {
       locale: 'en',
       interaction_type: 'booking_started',
       interaction_info: {
-        arrival_date: '2025-07-01',
-        departure_date: '2025-07-08'
+        arrival: '2025-07-01',
+        departure: '2025-07-08',
+        persons: 2
       }
     });
   });
@@ -150,8 +152,9 @@ describe('BookingForm tracking', () => {
     expect(mockTrackEvent).toHaveBeenLastCalledWith(
       expect.objectContaining({
         interaction_info: {
-          arrival_date: '2025-07-08',
-          departure_date: '2025-07-15'
+          arrival: '2025-07-08',
+          departure: '2025-07-15',
+          persons: 2
         }
       })
     );
@@ -186,5 +189,28 @@ describe('BookingForm tracking', () => {
     await flush();
 
     expect(mockTrackEvent).toHaveBeenCalledTimes(2);
+  });
+
+  it('tracks price_unavailable once when the stay has no price', async () => {
+    const { PriceUnavailableError } = jest.requireActual('../../../_lib/price');
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+    renderForm('2025-07-08', '2025-07-15');
+    await flush();
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+
+    expect(mockTrackEvent).toHaveBeenCalledTimes(2);
+    expect(mockTrackEvent).toHaveBeenNthCalledWith(1, {
+      house_code: 'HOUSE1',
+      portal_code: 'TEST',
+      locale: 'en',
+      interaction_type: 'price_unavailable',
+      interaction_info: { arrival: '2025-07-01', departure: '2025-07-08' }
+    });
   });
 });
