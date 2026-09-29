@@ -8,7 +8,7 @@ const TOKEN = /^[A-Za-z0-9_.-]{1,64}$/;
 
 type Stay = { arrival: string; departure: string };
 
-export type FilterValue = string | number | boolean | (string | number)[];
+export type FilterValue = string | number | (string | number)[];
 export type HouseViewEntry = 'search' | 'direct' | 'external';
 
 export type TrackingEvent = {
