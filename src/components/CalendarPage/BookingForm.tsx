@@ -7,6 +7,7 @@ import { AppContext } from '../AppContext';
 import { useCurrency } from '../CurrencyContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
+import { firstPriceUnavailable } from '../../_lib/track_once';
 import type { AppPortalSite } from '../loadPortalSite';
 import type { HouseType } from '../../types';
 
@@ -17,35 +18,27 @@ interface Props {
 function BookingForm({ portalSite }: Props): JSX.Element {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const { currency } = useCurrency();
-  const { arrivalDate, departureDate } = useContext(CalendarContext);
+  const { arrivalDate, departureDate, persons } = useContext(CalendarContext);
 
   const [house, setHouse] = useState<HouseType | null>(null);
   const [priceError, setPriceError] = useState<Error | null>(null);
-  const trackedStays = useRef(new Set<string>());
+  const trackedStarts = useRef(new Set<string>());
 
   useEffect(() => {
     let cancelled = false;
     setHouse(null);
     setPriceError(null);
 
+    const stay = { arrival: arrivalDate!.date, departure: departureDate!.date };
     // Tracked from the price response: a re-fetch for another currency, or a
     // return to earlier dates, is the same stay and counts once.
-    const trackBookingStarted = () => {
-      const stay = `${objectCode}:${arrivalDate!.date}:${departureDate!.date}`;
-      if (trackedStays.current.has(stay)) return;
-      trackedStays.current.add(stay);
-
-      TrackEvent({
-        house_code: objectCode,
-        portal_code: portalCode,
-        locale: locale,
-        interaction_type: 'booking_started',
-        interaction_info: {
-          arrival_date: arrivalDate!.date,
-          departure_date: departureDate!.date
-        }
-      });
+    const firstStart = () => {
+      const key = `${objectCode}:${stay.arrival}:${stay.departure}`;
+      if (trackedStarts.current.has(key)) return false;
+      trackedStarts.current.add(key);
+      return true;
     };
+    const where = { house_code: objectCode, portal_code: portalCode, locale };
 
     fetchPrice({
       apiUrl,
@@ -63,7 +56,13 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           setPriceError(new Error('Price response lacks the accommodation'));
           return;
         }
-        trackBookingStarted();
+        if (firstStart()) {
+          TrackEvent({
+            ...where,
+            interaction_type: 'booking_started',
+            interaction_info: { ...stay, persons }
+          });
+        }
         setHouse({
           ...price.accommodation,
           booking_price: {
@@ -82,8 +81,17 @@ function BookingForm({ portalSite }: Props): JSX.Element {
         });
       })
       .catch((err: unknown) => {
-        if (!cancelled) {
-          setPriceError(err instanceof Error ? err : new Error(String(err)));
+        if (cancelled) return;
+        setPriceError(err instanceof Error ? err : new Error(String(err)));
+        if (
+          err instanceof PriceUnavailableError &&
+          firstPriceUnavailable(objectCode, stay)
+        ) {
+          TrackEvent({
+            ...where,
+            interaction_type: 'price_unavailable',
+            interaction_info: stay
+          });
         }
       });
 
@@ -97,6 +105,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     objectCode,
     arrivalDate,
     departureDate,
+    persons,
     currency
   ]);
 

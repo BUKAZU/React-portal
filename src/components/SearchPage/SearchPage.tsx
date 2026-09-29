@@ -48,7 +48,8 @@ class SearchPage extends Component<MyProps, MyState> {
     TrackEvent({
       portal_code: this.props.PortalSite.portal_code,
       interaction_type: 'search_view',
-      locale: this.props.locale
+      locale: this.props.locale,
+      interaction_info: {}
     });
 
     // Filters on the URL are an explicit deep link and beat any state

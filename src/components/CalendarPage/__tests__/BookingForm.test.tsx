@@ -2,9 +2,12 @@ import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import BookingForm from '../BookingForm';
+import Price from '../PriceField/Price';
 import { AppContext } from '../../AppContext';
 import { CalendarContext } from '../CalendarParts/CalendarContext';
 import { TrackEvent } from '../../../_lib/Tracking';
+import { PriceUnavailableError } from '../../../_lib/price';
+import { resetTrackOnce } from '../../../_lib/track_once';
 import type { AppPortalSite } from '../../loadPortalSite';
 import type { BuDate } from '../../../types';
 
@@ -15,6 +18,7 @@ jest.mock('../../../_lib/price', () => ({
 }));
 
 jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
   getSessionIdentifier: jest.fn(() => 'test-session'),
   TrackEvent: jest.fn()
 }));
@@ -85,6 +89,7 @@ async function flush() {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTrackOnce();
   mockFetchPrice.mockResolvedValue({
     total_price: 1500,
     currency: 'EUR',
@@ -117,8 +122,9 @@ describe('BookingForm tracking', () => {
       locale: 'en',
       interaction_type: 'booking_started',
       interaction_info: {
-        arrival_date: '2025-07-01',
-        departure_date: '2025-07-08'
+        arrival: '2025-07-01',
+        departure: '2025-07-08',
+        persons: 2
       }
     });
   });
@@ -150,8 +156,9 @@ describe('BookingForm tracking', () => {
     expect(mockTrackEvent).toHaveBeenLastCalledWith(
       expect.objectContaining({
         interaction_info: {
-          arrival_date: '2025-07-08',
-          departure_date: '2025-07-15'
+          arrival: '2025-07-08',
+          departure: '2025-07-15',
+          persons: 2
         }
       })
     );
@@ -186,5 +193,57 @@ describe('BookingForm tracking', () => {
     await flush();
 
     expect(mockTrackEvent).toHaveBeenCalledTimes(2);
+  });
+
+  it('tracks price_unavailable once when the stay has no price', async () => {
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+    renderForm('2025-07-08', '2025-07-15');
+    await flush();
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+
+    expect(mockTrackEvent).toHaveBeenCalledTimes(2);
+    expect(mockTrackEvent).toHaveBeenNthCalledWith(1, {
+      house_code: 'HOUSE1',
+      portal_code: 'TEST',
+      locale: 'en',
+      interaction_type: 'price_unavailable',
+      interaction_info: { arrival: '2025-07-01', departure: '2025-07-08' }
+    });
+  });
+
+  it('shares the price_unavailable dedupe with the price preview', async () => {
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    act(() => {
+      root.render(
+        <AppContext.Provider
+          value={{
+            locale: 'en',
+            portalCode: 'TEST',
+            objectCode: 'HOUSE1',
+            apiUrl: 'https://api.bukazu.com/graphql'
+          }}
+        >
+          <Price
+            persons={2}
+            variables={{ starts_at: '2025-07-01', ends_at: '2025-07-08' }}
+          />
+        </AppContext.Provider>
+      );
+    });
+    await flush();
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+
+    expect(mockFetchPrice).toHaveBeenCalledTimes(2);
+    expect(mockTrackEvent).toHaveBeenCalledTimes(1);
   });
 });
