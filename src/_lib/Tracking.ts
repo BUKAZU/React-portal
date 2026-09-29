@@ -1,5 +1,5 @@
 import { http } from './http_client';
-import { windowConsent } from './consent';
+import { pageConsent } from './consent';
 
 const TRACKING_URL = 'https://api.bukazu.com/tracking';
 const SESSION_COOKIE = 'bu_portal_session';
@@ -63,7 +63,6 @@ interface Attribution {
   device_class: DeviceClass;
 }
 
-let consentFromHost = false;
 // Without consent the session lives only as long as this page load.
 let memorySessionId = '';
 let attribution: Attribution | null = null;
@@ -75,25 +74,16 @@ let attributionSent = false;
 // response arrives wait for it instead of each starting a session of their own.
 let sessionRequest: Promise<void> | null = null;
 
-export function setTrackingConsent(consented: boolean): void {
-  consentFromHost = consented;
-}
-
-/** Test hook: forget the in-memory session, attribution and host consent. */
+/** Test hook: forget the in-memory session and attribution. */
 export function resetTracking(): void {
-  consentFromHost = false;
   memorySessionId = '';
   attribution = null;
   attributionSent = false;
   sessionRequest = null;
 }
 
-function consented(): boolean {
-  return consentFromHost || windowConsent();
-}
-
 function currentSessionId(): string {
-  return (consented() && getCookie(SESSION_COOKIE)) || memorySessionId;
+  return (pageConsent() && getCookie(SESSION_COOKIE)) || memorySessionId;
 }
 
 export function isToken(value: unknown): value is string {
@@ -118,7 +108,7 @@ export async function TrackEvent(event: TrackingEvent): Promise<void> {
 }
 
 async function postEvent(event: TrackingEvent): Promise<void> {
-  const consent = consented();
+  const consent = pageConsent();
   const sessionId = currentSessionId();
   const payload: Record<string, unknown> = {
     ...event,
@@ -146,7 +136,7 @@ async function postEvent(event: TrackingEvent): Promise<void> {
   if (!newSessionId) return;
 
   memorySessionId = newSessionId;
-  if (consented()) setCookie(SESSION_COOKIE, newSessionId, SESSION_DAYS);
+  if (pageConsent()) setCookie(SESSION_COOKIE, newSessionId, SESSION_DAYS);
 }
 
 function withoutBlanks(info: object): Record<string, unknown> {

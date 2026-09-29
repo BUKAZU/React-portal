@@ -21,7 +21,9 @@
  *                              `none`) to disable reporting entirely.
  *   data-consent – optional  – `true` once the visitor consents to the tracking
  *                              session cookie; `window.bukazuConsent = true` does
- *                              the same page-wide. Without it tracking is cookieless.
+ *                              the same. Consent is page-wide (one cookie per page)
+ *                              and read on every event, so removing it withdraws
+ *                              it. Without it tracking is cookieless.
  *
  * Example:
  *   <div class="bukazu-app"
@@ -46,8 +48,7 @@ import { createRoot, Root } from 'react-dom/client';
 
 import Portal from './index';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
-import { elementConsent } from './_lib/consent';
-import { setTrackingConsent } from './_lib/Tracking';
+import { registerConsentHost } from './_lib/consent';
 
 const CLASS_NAME = 'bukazu-app';
 const ELEMENT_ID = 'bukazu-app';
@@ -143,7 +144,7 @@ function mountPortalHere(element: HTMLElement): void {
   const locale = element.getAttribute('language') ?? undefined;
   const filters = parseFilters(element.getAttribute('filters'));
   const sentryDsn = resolveSentryDsn(element);
-  if (elementConsent(element)) setTrackingConsent(true);
+  registerConsentHost(element);
 
   let root = roots.get(element);
   if (!root) {

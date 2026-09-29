@@ -7,7 +7,6 @@ import {
   houseViewEntry,
   isToken,
   resetTracking,
-  setTrackingConsent,
   type TrackingEvent
 } from '../Tracking';
 
@@ -18,6 +17,7 @@ jest.mock('../http_client', () => ({
 }));
 
 import { http } from '../http_client';
+import { registerConsentHost, resetConsentHosts } from '../consent';
 
 const mockPost = http.post as jest.Mock;
 
@@ -157,7 +157,7 @@ describe('without consent', () => {
 
 describe('with consent', () => {
   beforeEach(() => {
-    setTrackingConsent(true);
+    window.bukazuConsent = true;
   });
 
   it('stores the session in a lax, secure cookie and sends consented true', async () => {
@@ -244,7 +244,7 @@ describe('with consent', () => {
   });
 
   it('honours window.bukazuConsent set after load', async () => {
-    resetTracking();
+    delete window.bukazuConsent;
     respondWith('session-1', 'session-1');
 
     await TrackEvent(houseView);
@@ -261,7 +261,7 @@ describe('with consent', () => {
   });
 
   it('sends attribution once when events race after late consent', async () => {
-    resetTracking();
+    delete window.bukazuConsent;
     respondWith('session-1', 'session-1', 'session-1');
 
     await TrackEvent(houseView);
@@ -292,7 +292,6 @@ describe('with consent', () => {
   );
 
   it('stops using the cookie once window.bukazuConsent is cleared', async () => {
-    resetTracking();
     window.bukazuConsent = true;
     respondWith('session-1', 'session-1');
 
@@ -314,9 +313,53 @@ describe('with consent', () => {
   });
 });
 
+describe('consent from widget hosts', () => {
+  function mountedHost(consent: boolean): HTMLElement {
+    const element = document.createElement('div');
+    if (consent) element.setAttribute('data-consent', 'true');
+    document.body.appendChild(element);
+    registerConsentHost(element);
+    return element;
+  }
+
+  beforeEach(() => {
+    resetConsentHosts();
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('is consented when one of two hosts carries data-consent', async () => {
+    mountedHost(false);
+    mountedHost(true);
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].consented).toBe(true);
+    expect(cookieWrites).toHaveLength(1);
+  });
+
+  it('stops using the cookie once the attribute is removed', async () => {
+    const host = mountedHost(true);
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    host.removeAttribute('data-consent');
+    cookieWrites = [];
+    const read = jest.spyOn(document, 'cookie', 'get');
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[1].consented).toBe(false);
+    expect(read).not.toHaveBeenCalled();
+    expect(cookieWrites).toEqual([]);
+  });
+});
+
 describe('responses', () => {
   it('does not keep an empty session id from a 204', async () => {
-    setTrackingConsent(true);
+    window.bukazuConsent = true;
     respondWith('', 'session-1');
 
     await TrackEvent(houseView);

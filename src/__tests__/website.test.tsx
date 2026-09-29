@@ -29,16 +29,12 @@ jest.mock('../index', () => (props: object) => (
   <div data-testid="portal" data-props={JSON.stringify(props)} />
 ));
 
-const mockSetTrackingConsent = jest.fn();
-jest.mock('../_lib/Tracking', () => ({
-  setTrackingConsent: (consented: boolean) => mockSetTrackingConsent(consented)
-}));
-
 // ---------------------------------------------------------------------------
 // Import the module under test AFTER mocks are set up.
 // ---------------------------------------------------------------------------
 
 import { mountPortal, init, version } from '../website';
+import { pageConsent, resetConsentHosts } from '../_lib/consent';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -419,33 +415,48 @@ describe('mountPortal – double-mount prevention', () => {
 });
 
 describe('mountPortal – tracking consent', () => {
+  let host: HTMLElement;
+
+  beforeEach(() => {
+    resetConsentHosts();
+    // Not a .bukazu-app host, so only the mount registers it.
+    host = makeElement({ 'portal-code': 'X', 'data-consent': 'true' });
+    document.body.appendChild(host);
+  });
+
   afterEach(() => {
-    delete window.bukazuConsent;
+    host.remove();
   });
 
-  it('grants consent for a host with data-consent="true"', () => {
+  it('grants page consent while a mounted host has data-consent="true"', () => {
+    expect(pageConsent()).toBe(false);
+
     act(() => {
-      mountPortal(makeElement({ 'portal-code': 'X', 'data-consent': 'true' }));
+      mountPortal(host);
     });
 
-    expect(mockSetTrackingConsent).toHaveBeenCalledWith(true);
+    expect(pageConsent()).toBe(true);
   });
 
-  it('does not latch window.bukazuConsent, which is read per event', () => {
-    window.bukazuConsent = true;
+  it('withdraws consent when the attribute is removed after mount', () => {
     act(() => {
-      mountPortal(makeElement({ 'portal-code': 'X' }));
+      mountPortal(host);
     });
+    host.removeAttribute('data-consent');
 
-    expect(mockSetTrackingConsent).not.toHaveBeenCalled();
+    expect(pageConsent()).toBe(false);
   });
 
-  it('stays cookieless without consent', () => {
+  it('is not consented after a remount without the attribute', () => {
     act(() => {
-      mountPortal(makeElement({ 'portal-code': 'X' }));
+      mountPortal(host);
+    });
+    host.removeAttribute('data-consent');
+    act(() => {
+      mountPortal(host);
     });
 
-    expect(mockSetTrackingConsent).not.toHaveBeenCalled();
+    expect(pageConsent()).toBe(false);
   });
 });
 
