@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
 import { fetchPrice, PriceUnavailableError } from '../../_lib/price';
@@ -79,6 +79,28 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     currency
   ]);
 
+  const arrival = arrivalDate?.date;
+  const departure = departureDate?.date;
+  const trackedFor = useRef<string | null>(null);
+
+  // A new price reloads the house, so remember which stay was tracked to count
+  // each house and date pair once.
+  useEffect(() => {
+    if (!house || !arrival || !departure) return;
+
+    const stay = `${objectCode}:${arrival}:${departure}`;
+    if (trackedFor.current === stay) return;
+    trackedFor.current = stay;
+
+    TrackEvent({
+      house_code: objectCode,
+      portal_code: portalCode,
+      locale: locale,
+      interaction_type: 'booking_started',
+      interaction_info: { arrival_date: arrival, departure_date: departure }
+    });
+  }, [house, objectCode, portalCode, locale, arrival, departure]);
+
   if (!house && !priceError)
     return (
       <div>
@@ -94,17 +116,6 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       </div>
     );
   }
-  TrackEvent({
-    house_code: objectCode,
-    portal_code: portalCode,
-    locale: locale,
-    interaction_type: 'booking_started',
-    interaction_data: {
-      arrival_date: arrivalDate!.date,
-      departure_date: departureDate!.date
-    }
-  });
-
   return <FormCreator house={house} PortalSite={portalSite} />;
 }
 

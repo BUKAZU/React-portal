@@ -54,16 +54,27 @@ describe('getSessionIdentifier', () => {
 
 describe('TrackEvent', () => {
   it('posts to the tracking endpoint', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('s')
+    });
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'click', locale: 'en' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'click',
+      locale: 'en'
+    });
 
-    const [calledUrl] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
+    const [calledUrl] = (mockHttp.post as jest.Mock).mock.calls[0] as [
+      string,
+      PostOptions
+    ];
     expect(calledUrl).toBe(TRACKING_URL);
   });
 
   it('merges event data with url and session_identifier', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('s')
+    });
 
     await TrackEvent({
       portal_code: 'test-portal',
@@ -72,7 +83,10 @@ describe('TrackEvent', () => {
       house_code: 'house-1'
     });
 
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
+    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [
+      string,
+      PostOptions
+    ];
     expect(options.json.portal_code).toBe('test-portal');
     expect(options.json.interaction_type).toBe('click');
     expect(options.json.locale).toBe('en');
@@ -82,62 +96,175 @@ describe('TrackEvent', () => {
   });
 
   it('includes the current page URL in the posted payload', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('s')
+    });
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'test',
+      locale: 'en'
+    });
 
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
+    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [
+      string,
+      PostOptions
+    ];
     expect(options.json.url).toBe(window.location.href);
   });
 
   it('sends empty string as session_identifier when no cookie is set', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('s')
+    });
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'test',
+      locale: 'en'
+    });
 
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
+    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [
+      string,
+      PostOptions
+    ];
     expect(options.json.session_identifier).toBe('');
   });
 
   it('sends the existing session cookie as session_identifier', async () => {
     document.cookie = 'bu_portal_session=existing-session';
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('s')
+    });
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'pageview', locale: 'en' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'pageview',
+      locale: 'en'
+    });
 
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
+    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [
+      string,
+      PostOptions
+    ];
     expect(options.json.session_identifier).toBe('existing-session');
   });
 
   it('stores the returned session id in the bu_portal_session cookie', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('srv-session-42') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('srv-session-42')
+    });
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'test',
+      locale: 'en'
+    });
 
     expect(document.cookie).toContain('bu_portal_session=srv-session-42');
   });
 
   it('overwrites the previous session cookie with the value returned by the server', async () => {
     document.cookie = 'bu_portal_session=old-session';
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('refreshed-session') });
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('refreshed-session')
+    });
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
+    await TrackEvent({
+      portal_code: 'test-portal',
+      interaction_type: 'test',
+      locale: 'en'
+    });
 
     expect(document.cookie).toContain('bu_portal_session=refreshed-session');
     expect(document.cookie).not.toContain('old-session');
   });
 
-  it('does not drop interaction_data from the event data', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+  it('does not drop interaction_info from the event data', async () => {
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('s')
+    });
 
     await TrackEvent({
       portal_code: 'test-portal',
       interaction_type: 'test',
       locale: 'en',
-      interaction_data: { custom_field: 'value', count: 42 }
+      interaction_info: { custom_field: 'value', count: 42 }
     });
 
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.interaction_data).toEqual({ custom_field: 'value', count: 42 });
+    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [
+      string,
+      PostOptions
+    ];
+    expect(options.json.interaction_info).toEqual({
+      custom_field: 'value',
+      count: 42
+    });
+  });
+
+  it('lets concurrent first events share the session the server hands out', async () => {
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockResolvedValue('first-session')
+    });
+
+    await Promise.all([
+      TrackEvent({
+        portal_code: 'test-portal',
+        interaction_type: 'a',
+        locale: 'en'
+      }),
+      TrackEvent({
+        portal_code: 'test-portal',
+        interaction_type: 'b',
+        locale: 'en'
+      })
+    ]);
+
+    const identifiers = (mockHttp.post as jest.Mock).mock.calls.map(
+      ([, options]: [string, PostOptions]) => options.json.session_identifier
+    );
+    expect(identifiers).toEqual(['', 'first-session']);
+  });
+
+  it('still sends a waiting event when the first request fails', async () => {
+    (mockHttp.post as jest.Mock)
+      .mockReturnValueOnce({
+        text: jest.fn().mockRejectedValue(new Error('offline'))
+      })
+      .mockReturnValueOnce({
+        text: jest.fn().mockResolvedValue('second-session')
+      });
+
+    await Promise.all([
+      TrackEvent({
+        portal_code: 'test-portal',
+        interaction_type: 'a',
+        locale: 'en'
+      }),
+      TrackEvent({
+        portal_code: 'test-portal',
+        interaction_type: 'b',
+        locale: 'en'
+      })
+    ]);
+
+    expect(mockHttp.post).toHaveBeenCalledTimes(2);
+    expect(document.cookie).toContain('bu_portal_session=second-session');
+  });
+
+  it('swallows request errors and leaves the session cookie alone', async () => {
+    document.cookie = 'bu_portal_session=kept-session';
+    (mockHttp.post as jest.Mock).mockReturnValue({
+      text: jest.fn().mockRejectedValue(new Error('offline'))
+    });
+
+    await expect(
+      TrackEvent({
+        portal_code: 'test-portal',
+        interaction_type: 'test',
+        locale: 'en'
+      })
+    ).resolves.toBeUndefined();
+    expect(document.cookie).toContain('bu_portal_session=kept-session');
   });
 });
