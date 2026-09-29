@@ -1,4 +1,5 @@
 import { searchFilters, searchInfo } from '../search_tracking';
+import { buildSearchParams } from '../search_params';
 
 describe('searchInfo', () => {
   it('splits dates and persons from the remaining filters', () => {
@@ -77,7 +78,7 @@ describe('searchFilters', () => {
       } as never)
     ).toEqual({
       countries: 12,
-      properties: ['3', 5],
+      properties: [3, 5],
       persons_max: '6',
       bedrooms_min: '0',
       bathrooms_min: 2,
@@ -111,7 +112,7 @@ describe('searchFilters', () => {
   it('does not send unknown keys', () => {
     expect(
       searchFilters({
-        category_4: 7,
+        category_4: '',
         pets: true,
         extra_search: 'sea view',
         persons_min: '2'
@@ -119,10 +120,25 @@ describe('searchFilters', () => {
     ).toEqual({});
   });
 
+  it('merges category selections into properties as the request does', () => {
+    const filters = {
+      properties: ['7', 3],
+      category_4: '11',
+      category_5: '3',
+      category_6: ''
+    } as never;
+
+    expect(searchFilters(filters)).toEqual({ properties: [3, 7, 11] });
+    expect(buildSearchParams(filters, { limit: 10, skip: 0 }).properties).toBe(
+      '3,7,11'
+    );
+  });
+
   it('drops a list over 50 items', () => {
     const ids = Array.from({ length: 51 }, (_, i) => i + 1);
 
     expect(searchFilters({ properties: ids })).toEqual({});
+    expect(searchFilters({ countries: ids })).toEqual({});
     expect(searchFilters({ properties: ids.slice(0, 50) })).toEqual({
       properties: ids.slice(0, 50)
     });

@@ -1,5 +1,6 @@
 import type { FiltersType } from '../components/SearchPage/filters/filter_types';
 import type { FilterValue } from './Tracking';
+import { propertyIds } from './search_params';
 
 type Scalar = string | number;
 type Format = (value: unknown) => value is Scalar;
@@ -31,7 +32,6 @@ function matching(pattern: RegExp): Format {
 // event, so anything that does not fit is dropped here.
 const FORMATS: Record<string, { format: Format; list: boolean }> = {
   countries: { format: isCount, list: true },
-  properties: { format: isCount, list: true },
   regions: { format: matching(REGION), list: true },
   cities: { format: matching(CITY), list: true },
   persons_max: { format: isCount, list: false },
@@ -60,6 +60,9 @@ export function searchFilters(
     const value = filterValue(filters[key as keyof FiltersType], spec);
     if (value !== undefined) result[key] = value;
   }
+  // The same list the search request sends, category_<id> selects included.
+  const ids = propertyIds(filters).filter(isCount);
+  if (ids.length > 0 && ids.length <= MAX_LIST) result.properties = ids;
   return result;
 }
 
