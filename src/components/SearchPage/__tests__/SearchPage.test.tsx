@@ -3,6 +3,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import SearchPage from '../SearchPage';
 import { PortalOptions, PortalSiteType } from '../../../types';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 // Mock child components so we don't need Apollo and other heavy deps
 jest.mock('../Filters', () => (props: { filters: object }) => (
@@ -58,7 +59,14 @@ const mockPortalSite: PortalSiteType = {
     children_from_age: 0,
     children_till_age: 12,
     language_selector_visible: false,
-    redirect_urls: { nl: null, en: null, de: null, fr: null, es: null, it: null },
+    redirect_urls: {
+      nl: null,
+      en: null,
+      de: null,
+      fr: null,
+      es: null,
+      it: null
+    },
     show_discount_code: false,
     show_months_amount: 2,
     show_months_in_a_row_amount: 2
@@ -232,10 +240,7 @@ describe('SearchPage', () => {
   });
 
   it('should ignore URL query params when prefill_filters_from_url is false', () => {
-    localStorage.setItem(
-      'bukazuFilters',
-      JSON.stringify({ countries: 'NL' })
-    );
+    localStorage.setItem('bukazuFilters', JSON.stringify({ countries: 'NL' }));
     window.history.replaceState({}, '', '/?persons_min=6');
 
     const optionsWithoutPrefill: PortalOptions = {
@@ -293,5 +298,29 @@ describe('SearchPage', () => {
     });
 
     expect(container.querySelector('#search-page')).not.toBeNull();
+  });
+
+  it('tracks search_view once per mount, not per render', () => {
+    (TrackEvent as jest.Mock).mockClear();
+    const renderPage = (locale: string) =>
+      act(() => {
+        root.render(
+          <SearchPage
+            options={mockOptions}
+            PortalSite={mockPortalSite}
+            locale={locale}
+          />
+        );
+      });
+
+    renderPage('en');
+    renderPage('nl');
+
+    expect(TrackEvent).toHaveBeenCalledTimes(1);
+    expect(TrackEvent).toHaveBeenCalledWith({
+      portal_code: mockPortalSite.portal_code,
+      interaction_type: 'search_view',
+      locale: 'en'
+    });
   });
 });

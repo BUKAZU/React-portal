@@ -5,25 +5,47 @@ interface TrackEventData {
   interaction_type: string;
   locale: string;
   house_code?: string;
-  interaction_data?: Record<string, unknown>;
+  interaction_info?: Record<string, unknown>;
 }
 
-export async function TrackEvent(data: TrackEventData) {
-  const cookie = getCookie('bu_portal_session');
+const SESSION_COOKIE = 'bu_portal_session';
+
+// The server hands out the session id, so events fired before the first
+// response arrives wait for it instead of each starting a session of their own.
+let sessionRequest: Promise<void> | null = null;
+
+export async function TrackEvent(data: TrackEventData): Promise<void> {
+  try {
+    if (!getCookie(SESSION_COOKIE) && sessionRequest) await sessionRequest;
+
+    const request = postEvent(data);
+    if (!getCookie(SESSION_COOKIE) && !sessionRequest) {
+      const clear = () => {
+        sessionRequest = null;
+      };
+      sessionRequest = request.then(clear, clear);
+    }
+    await request;
+  } catch {
+    // Tracking must never break the portal.
+  }
+}
+
+async function postEvent(data: TrackEventData) {
   const all_data = {
     ...data,
     url: window.location.href,
-    session_identifier: cookie
+    session_identifier: getCookie(SESSION_COOKIE)
   };
 
   const sessionId = await http
     .post('https://api.bukazu.com/tracking', { json: all_data })
     .text();
-  setCookie('bu_portal_session', sessionId, 14);
+  setCookie(SESSION_COOKIE, sessionId, 14);
 }
 
 export function getSessionIdentifier() {
-  const sessionIdentifier = getCookie('bu_portal_session');
+  const sessionIdentifier = getCookie(SESSION_COOKIE);
   if (sessionIdentifier === '') {
     return null;
   } else {

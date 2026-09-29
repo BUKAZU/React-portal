@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Loading from '../icons/loading.svg';
 import FormCreator from './FormCreator';
 import { fetchPrice, PriceUnavailableError } from '../../_lib/price';
@@ -21,11 +21,31 @@ function BookingForm({ portalSite }: Props): JSX.Element {
 
   const [house, setHouse] = useState<HouseType | null>(null);
   const [priceError, setPriceError] = useState<Error | null>(null);
+  const trackedStays = useRef(new Set<string>());
 
   useEffect(() => {
     let cancelled = false;
     setHouse(null);
     setPriceError(null);
+
+    // Tracked from the price response: a re-fetch for another currency, or a
+    // return to earlier dates, is the same stay and counts once.
+    const trackBookingStarted = () => {
+      const stay = `${objectCode}:${arrivalDate!.date}:${departureDate!.date}`;
+      if (trackedStays.current.has(stay)) return;
+      trackedStays.current.add(stay);
+
+      TrackEvent({
+        house_code: objectCode,
+        portal_code: portalCode,
+        locale: locale,
+        interaction_type: 'booking_started',
+        interaction_info: {
+          arrival_date: arrivalDate!.date,
+          departure_date: departureDate!.date
+        }
+      });
+    };
 
     fetchPrice({
       apiUrl,
@@ -43,6 +63,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           setPriceError(new Error('Price response lacks the accommodation'));
           return;
         }
+        trackBookingStarted();
         setHouse({
           ...price.accommodation,
           booking_price: {
@@ -94,17 +115,6 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       </div>
     );
   }
-  TrackEvent({
-    house_code: objectCode,
-    portal_code: portalCode,
-    locale: locale,
-    interaction_type: 'booking_started',
-    interaction_data: {
-      arrival_date: arrivalDate!.date,
-      departure_date: departureDate!.date
-    }
-  });
-
   return <FormCreator house={house} PortalSite={portalSite} />;
 }
 
