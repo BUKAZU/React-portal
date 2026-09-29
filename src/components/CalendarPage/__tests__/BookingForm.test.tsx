@@ -5,6 +5,8 @@ import BookingForm from '../BookingForm';
 import { AppContext } from '../../AppContext';
 import { CalendarContext } from '../CalendarParts/CalendarContext';
 import { TrackEvent } from '../../../_lib/Tracking';
+import type { AppPortalSite } from '../../loadPortalSite';
+import type { BuDate } from '../../../types';
 
 const mockFetchPrice = jest.fn();
 jest.mock('../../../_lib/price', () => ({
@@ -27,9 +29,22 @@ jest.mock('../../icons/loading.svg', () => () => (
   <div data-testid="loading-icon" />
 ));
 
-(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+(
+  globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 const mockTrackEvent = TrackEvent as jest.Mock;
+
+function day(date: string): BuDate {
+  return {
+    date,
+    arrival: true,
+    departure: true,
+    min_nights: 1,
+    max_nights: 14,
+    special_offer: 0
+  };
+}
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
@@ -48,13 +63,13 @@ function renderForm(arrival: string, departure: string) {
         <CalendarContext.Provider
           value={{
             selectedDate: null,
-            arrivalDate: { date: arrival } as any,
-            departureDate: { date: departure } as any,
+            arrivalDate: day(arrival),
+            departureDate: day(departure),
             bookingStarted: true,
             persons: 2
           }}
         >
-          <BookingForm portalSite={{} as any} />
+          <BookingForm portalSite={{} as AppPortalSite} />
         </CalendarContext.Provider>
       </AppContext.Provider>
     );
@@ -140,5 +155,36 @@ describe('BookingForm tracking', () => {
         }
       })
     );
+  });
+
+  it('does not track new dates until their price has loaded', async () => {
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+    mockFetchPrice.mockReturnValue(new Promise(() => {}));
+
+    renderForm('2025-07-08', '2025-07-15');
+    await flush();
+
+    expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not track when the price request fails', async () => {
+    mockFetchPrice.mockRejectedValue(new Error('unavailable'));
+
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+
+    expect(mockTrackEvent).not.toHaveBeenCalled();
+  });
+
+  it('tracks a stay once when returning to earlier dates', async () => {
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+    renderForm('2025-07-08', '2025-07-15');
+    await flush();
+    renderForm('2025-07-01', '2025-07-08');
+    await flush();
+
+    expect(mockTrackEvent).toHaveBeenCalledTimes(2);
   });
 });

@@ -21,11 +21,31 @@ function BookingForm({ portalSite }: Props): JSX.Element {
 
   const [house, setHouse] = useState<HouseType | null>(null);
   const [priceError, setPriceError] = useState<Error | null>(null);
+  const trackedStays = useRef(new Set<string>());
 
   useEffect(() => {
     let cancelled = false;
     setHouse(null);
     setPriceError(null);
+
+    // Tracked from the price response: a re-fetch for another currency, or a
+    // return to earlier dates, is the same stay and counts once.
+    const trackBookingStarted = () => {
+      const stay = `${objectCode}:${arrivalDate!.date}:${departureDate!.date}`;
+      if (trackedStays.current.has(stay)) return;
+      trackedStays.current.add(stay);
+
+      TrackEvent({
+        house_code: objectCode,
+        portal_code: portalCode,
+        locale: locale,
+        interaction_type: 'booking_started',
+        interaction_info: {
+          arrival_date: arrivalDate!.date,
+          departure_date: departureDate!.date
+        }
+      });
+    };
 
     fetchPrice({
       apiUrl,
@@ -43,6 +63,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           setPriceError(new Error('Price response lacks the accommodation'));
           return;
         }
+        trackBookingStarted();
         setHouse({
           ...price.accommodation,
           booking_price: {
@@ -78,28 +99,6 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     departureDate,
     currency
   ]);
-
-  const arrival = arrivalDate?.date;
-  const departure = departureDate?.date;
-  const trackedFor = useRef<string | null>(null);
-
-  // A new price reloads the house, so remember which stay was tracked to count
-  // each house and date pair once.
-  useEffect(() => {
-    if (!house || !arrival || !departure) return;
-
-    const stay = `${objectCode}:${arrival}:${departure}`;
-    if (trackedFor.current === stay) return;
-    trackedFor.current = stay;
-
-    TrackEvent({
-      house_code: objectCode,
-      portal_code: portalCode,
-      locale: locale,
-      interaction_type: 'booking_started',
-      interaction_info: { arrival_date: arrival, departure_date: departure }
-    });
-  }, [house, objectCode, portalCode, locale, arrival, departure]);
 
   if (!house && !priceError)
     return (
