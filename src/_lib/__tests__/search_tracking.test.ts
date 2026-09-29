@@ -8,6 +8,7 @@ describe('searchInfo', () => {
           arrival_date: '2026-07-01',
           departure_date: '2026-07-08',
           persons_min: '4',
+          persons_max: '6',
           bedrooms_min: '2',
           countries: '12',
           properties: [3, 5],

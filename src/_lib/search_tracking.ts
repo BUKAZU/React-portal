@@ -6,6 +6,7 @@ const NOT_FILTERS = [
   'arrival_date',
   'departure_date',
   'persons_min',
+  'persons_max',
   'extra_search'
 ];
 

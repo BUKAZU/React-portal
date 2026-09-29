@@ -46,7 +46,7 @@ import { createRoot, Root } from 'react-dom/client';
 
 import Portal from './index';
 import { FiltersType } from './components/SearchPage/filters/filter_types';
-import { hostConsent } from './_lib/consent';
+import { elementConsent } from './_lib/consent';
 import { setTrackingConsent } from './_lib/Tracking';
 
 const CLASS_NAME = 'bukazu-app';
@@ -143,7 +143,7 @@ function mountPortalHere(element: HTMLElement): void {
   const locale = element.getAttribute('language') ?? undefined;
   const filters = parseFilters(element.getAttribute('filters'));
   const sentryDsn = resolveSentryDsn(element);
-  if (hostConsent(element)) setTrackingConsent(true);
+  if (elementConsent(element)) setTrackingConsent(true);
 
   let root = roots.get(element);
   if (!root) {

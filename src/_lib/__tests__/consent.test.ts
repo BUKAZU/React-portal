@@ -1,4 +1,4 @@
-import { hostConsent, windowConsent } from '../consent';
+import { elementConsent, windowConsent } from '../consent';
 
 function host(attrs: Record<string, string> = {}): HTMLElement {
   const element = document.createElement('div');
@@ -17,16 +17,22 @@ describe('consent', () => {
     window.bukazuConsent = true;
 
     expect(windowConsent()).toBe(true);
-    expect(hostConsent(host())).toBe(true);
   });
 
   it('is given by data-consent="true" on the host element', () => {
     expect(windowConsent()).toBe(false);
-    expect(hostConsent(host({ 'data-consent': 'true' }))).toBe(true);
+    expect(elementConsent(host({ 'data-consent': 'true' }))).toBe(true);
+  });
+
+  it('leaves the window flag out of the element consent', () => {
+    window.bukazuConsent = true;
+
+    expect(elementConsent(host())).toBe(false);
   });
 
   it('is not given without either', () => {
-    expect(hostConsent(host())).toBe(false);
-    expect(hostConsent(host({ 'data-consent': 'false' }))).toBe(false);
+    expect(windowConsent()).toBe(false);
+    expect(elementConsent(host())).toBe(false);
+    expect(elementConsent(host({ 'data-consent': 'false' }))).toBe(false);
   });
 });

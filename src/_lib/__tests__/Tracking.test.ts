@@ -259,6 +259,59 @@ describe('with consent', () => {
     });
     expect(cookieWrites).toHaveLength(1);
   });
+
+  it('sends attribution once when events race after late consent', async () => {
+    resetTracking();
+    respondWith('session-1', 'session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    window.bukazuConsent = true;
+    await Promise.all([TrackEvent(houseView), TrackEvent(houseView)]);
+
+    const withAttribution = sentPayloads().filter(
+      (payload) => 'attribution' in payload
+    );
+    expect(withAttribution).toHaveLength(1);
+  });
+
+  it.each([
+    ['fails', new Error('offline')],
+    ['is dropped with a 204', '']
+  ])(
+    'retries the attribution when its request %s',
+    async (_label, firstResponse) => {
+      respondWith(firstResponse, 'session-1');
+
+      await TrackEvent(houseView);
+      await TrackEvent(houseView);
+
+      const [first, second] = sentPayloads();
+      expect(first).toHaveProperty('attribution');
+      expect(second).toHaveProperty('attribution');
+    }
+  );
+
+  it('stops using the cookie once window.bukazuConsent is cleared', async () => {
+    resetTracking();
+    window.bukazuConsent = true;
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    expect(sentPayloads()[0].consented).toBe(true);
+    expect(cookieWrites).toHaveLength(1);
+
+    delete window.bukazuConsent;
+    cookieWrites = [];
+    const read = jest.spyOn(document, 'cookie', 'get');
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[1]).toMatchObject({
+      consented: false,
+      session_identifier: 'session-1'
+    });
+    expect(read).not.toHaveBeenCalled();
+    expect(cookieWrites).toEqual([]);
+  });
 });
 
 describe('responses', () => {

@@ -443,6 +443,53 @@ describe('Results', () => {
       expect(mockTrackEvent).toHaveBeenCalledTimes(1);
     });
 
+    it('keeps the debounce running while paging', async () => {
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
+      mockFetch.mockResolvedValue({
+        items: [mockHouse],
+        meta: { total_count: 43, limit: 10, skip: 10 }
+      });
+      await renderResultsAndSettle({
+        ...defaultProps,
+        filters: { ...searched },
+        skip: 10,
+        activePage: 2
+      });
+      act(() => {
+        jest.advanceTimersByTime(400);
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(
+        mockTrackEvent.mock.calls[0][0].interaction_info.result_count
+      ).toBe(43);
+    });
+
+    it('tracks a settled search once its response arrives', async () => {
+      let resolve: (value: unknown) => void = () => {};
+      mockFetch.mockReturnValue(new Promise((r) => (resolve = r)));
+
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+
+      await act(async () => {
+        resolve({
+          items: [mockHouse],
+          meta: { total_count: 7, limit: 10, skip: 0 }
+        });
+      });
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(
+        mockTrackEvent.mock.calls[0][0].interaction_info.result_count
+      ).toBe(7);
+    });
+
     it('does not track a failed search', async () => {
       mockFetch.mockRejectedValue(new Error('Search request failed (500)'));
 

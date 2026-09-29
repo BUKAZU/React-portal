@@ -55,13 +55,45 @@ function Results({
     () => JSON.parse(paramsKey) as Record<string, string>,
     [paramsKey]
   );
+  const filtersKey = JSON.stringify(filters);
   const latestFilters = useRef(filters);
   latestFilters.current = filters;
   const trackedFilters = useRef<string | null>(null);
+  // Filters that settled for a second and wait for their result count; the
+  // count is null while a request is in flight.
+  const settledFilters = useRef<string | null>(null);
+  const resultCount = useRef<number | null>(null);
+
+  const trackSettledSearch = () => {
+    const key = settledFilters.current;
+    if (key === null || resultCount.current === null) return;
+    settledFilters.current = null;
+    trackedFilters.current = key;
+    TrackEvent({
+      portal_code: portalCode,
+      locale,
+      interaction_type: 'search',
+      interaction_info: searchInfo(latestFilters.current, resultCount.current)
+    });
+  };
+
+  // Keyed on the filters alone: paging or switching currency is the same
+  // search and must not restart or cancel the debounce.
+  useEffect(() => {
+    if (trackedFilters.current === filtersKey) return;
+    const timer = setTimeout(() => {
+      settledFilters.current = filtersKey;
+      trackSettledSearch();
+    }, SEARCH_TRACKING_DELAY);
+    return () => {
+      clearTimeout(timer);
+      settledFilters.current = null;
+    };
+  }, [filtersKey, portalCode, locale]);
 
   useEffect(() => {
     const controller = new AbortController();
-    let trackTimer: ReturnType<typeof setTimeout> | undefined;
+    resultCount.current = null;
     setState({ status: 'loading' });
 
     fetchAccommodations({
@@ -76,21 +108,8 @@ function Results({
           return;
         }
         setState({ status: 'ready', response });
-
-        // Paging or switching currency is the same search; only a changed
-        // filter that settles for a second counts as a new one.
-        const searched = latestFilters.current;
-        const searchedKey = JSON.stringify(searched);
-        if (trackedFilters.current === searchedKey) return;
-        trackTimer = setTimeout(() => {
-          trackedFilters.current = searchedKey;
-          TrackEvent({
-            portal_code: portalCode,
-            locale,
-            interaction_type: 'search',
-            interaction_info: searchInfo(searched, response.meta.total_count)
-          });
-        }, SEARCH_TRACKING_DELAY);
+        resultCount.current = response.meta.total_count;
+        trackSettledSearch();
       })
       .catch((error: unknown) => {
         // An aborted request was superseded by a newer one; its result is stale.
@@ -108,7 +127,6 @@ function Results({
 
     return () => {
       controller.abort();
-      clearTimeout(trackTimer);
     };
   }, [apiUrl, locale, portalCode, params]);
 

@@ -431,13 +431,13 @@ describe('mountPortal – tracking consent', () => {
     expect(mockSetTrackingConsent).toHaveBeenCalledWith(true);
   });
 
-  it('grants consent when the page set window.bukazuConsent', () => {
+  it('does not latch window.bukazuConsent, which is read per event', () => {
     window.bukazuConsent = true;
     act(() => {
       mountPortal(makeElement({ 'portal-code': 'X' }));
     });
 
-    expect(mockSetTrackingConsent).toHaveBeenCalledWith(true);
+    expect(mockSetTrackingConsent).not.toHaveBeenCalled();
   });
 
   it('stays cookieless without consent', () => {

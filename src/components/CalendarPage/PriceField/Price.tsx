@@ -9,9 +9,7 @@ import {
   PriceUnavailableError
 } from '../../../_lib/price';
 import { TrackEvent } from '../../../_lib/Tracking';
-
-// Module-wide so going back to the calendar does not count the same quote again.
-const trackedQuotes = new Set<string>();
+import { firstPriceUnavailable, firstQuote } from '../../../_lib/track_once';
 
 interface Props {
   persons: number;
@@ -34,12 +32,6 @@ function Price({ persons, variables }: Props) {
     setError(null);
 
     const stay = { arrival: variables.starts_at, departure: variables.ends_at };
-    const firstTime = (kind: string) => {
-      const key = `${kind}:${objectCode}:${stay.arrival}:${stay.departure}:${persons}`;
-      if (trackedQuotes.has(key)) return false;
-      trackedQuotes.add(key);
-      return true;
-    };
 
     fetchPrice({
       apiUrl,
@@ -55,7 +47,7 @@ function Price({ persons, variables }: Props) {
         if (cancelled) return;
         setResult(price);
         setLoading(false);
-        if (firstTime('quote')) {
+        if (firstQuote(objectCode, stay, persons)) {
           TrackEvent({
             house_code: objectCode,
             portal_code: portalCode,
@@ -74,7 +66,10 @@ function Price({ persons, variables }: Props) {
         if (cancelled) return;
         setError(err);
         setLoading(false);
-        if (err instanceof PriceUnavailableError && firstTime('unavailable')) {
+        if (
+          err instanceof PriceUnavailableError &&
+          firstPriceUnavailable(objectCode, stay)
+        ) {
           TrackEvent({
             house_code: objectCode,
             portal_code: portalCode,

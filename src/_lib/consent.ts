@@ -3,7 +3,10 @@ export function windowConsent(): boolean {
   return typeof window !== 'undefined' && window.bukazuConsent === true;
 }
 
-/** Consent for a widget host: the page-wide flag or `data-consent="true"`. */
-export function hostConsent(element: HTMLElement): boolean {
-  return windowConsent() || element.getAttribute('data-consent') === 'true';
+/**
+ * Consent the host element grants with `data-consent="true"`. The window flag
+ * is left out: a consent manager may clear it later, so it is read per event.
+ */
+export function elementConsent(element: HTMLElement): boolean {
+  return element.getAttribute('data-consent') === 'true';
 }

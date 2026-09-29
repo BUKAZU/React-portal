@@ -7,6 +7,7 @@ import { AppContext } from '../AppContext';
 import { useCurrency } from '../CurrencyContext';
 import { CalendarContext } from './CalendarParts/CalendarContext';
 import { TrackEvent } from '../../_lib/Tracking';
+import { firstPriceUnavailable } from '../../_lib/track_once';
 import type { AppPortalSite } from '../loadPortalSite';
 import type { HouseType } from '../../types';
 
@@ -21,7 +22,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
 
   const [house, setHouse] = useState<HouseType | null>(null);
   const [priceError, setPriceError] = useState<Error | null>(null);
-  const trackedStays = useRef(new Set<string>());
+  const trackedStarts = useRef(new Set<string>());
 
   useEffect(() => {
     let cancelled = false;
@@ -31,10 +32,10 @@ function BookingForm({ portalSite }: Props): JSX.Element {
     const stay = { arrival: arrivalDate!.date, departure: departureDate!.date };
     // Tracked from the price response: a re-fetch for another currency, or a
     // return to earlier dates, is the same stay and counts once.
-    const firstTime = (kind: string) => {
-      const key = `${kind}:${objectCode}:${stay.arrival}:${stay.departure}`;
-      if (trackedStays.current.has(key)) return false;
-      trackedStays.current.add(key);
+    const firstStart = () => {
+      const key = `${objectCode}:${stay.arrival}:${stay.departure}`;
+      if (trackedStarts.current.has(key)) return false;
+      trackedStarts.current.add(key);
       return true;
     };
     const where = { house_code: objectCode, portal_code: portalCode, locale };
@@ -55,7 +56,7 @@ function BookingForm({ portalSite }: Props): JSX.Element {
           setPriceError(new Error('Price response lacks the accommodation'));
           return;
         }
-        if (firstTime('started')) {
+        if (firstStart()) {
           TrackEvent({
             ...where,
             interaction_type: 'booking_started',
@@ -82,7 +83,10 @@ function BookingForm({ portalSite }: Props): JSX.Element {
       .catch((err: unknown) => {
         if (cancelled) return;
         setPriceError(err instanceof Error ? err : new Error(String(err)));
-        if (err instanceof PriceUnavailableError && firstTime('unavailable')) {
+        if (
+          err instanceof PriceUnavailableError &&
+          firstPriceUnavailable(objectCode, stay)
+        ) {
           TrackEvent({
             ...where,
             interaction_type: 'price_unavailable',

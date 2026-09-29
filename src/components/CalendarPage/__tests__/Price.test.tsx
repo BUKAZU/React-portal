@@ -5,6 +5,7 @@ import Price from '../PriceField/Price';
 import { AppContext } from '../../AppContext';
 import { TrackEvent } from '../../../_lib/Tracking';
 import { PriceUnavailableError } from '../../../_lib/price';
+import { resetTrackOnce } from '../../../_lib/track_once';
 
 const mockFetchPrice = jest.fn();
 jest.mock('../../../_lib/price', () => ({
@@ -63,6 +64,7 @@ function remount() {
 beforeEach(() => {
   (window as any).__localeId__ = 'en';
   jest.clearAllMocks();
+  resetTrackOnce();
   mockFetchPrice.mockResolvedValue({
     total_price: 1234.565,
     currency: 'EUR',
@@ -129,6 +131,17 @@ describe('Price tracking', () => {
       interaction_type: 'price_unavailable',
       interaction_info: { arrival: '2026-09-01', departure: '2026-09-08' }
     });
+  });
+
+  it('tracks price_unavailable once per stay whatever the persons', async () => {
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2026-09-01', '2026-09-08')
+    );
+
+    await renderPrice('2026-09-01', '2026-09-08', 2);
+    await renderPrice('2026-09-01', '2026-09-08', 4);
+
+    expect(mockTrackEvent).toHaveBeenCalledTimes(1);
   });
 
   it('does not track other price errors', async () => {

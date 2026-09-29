@@ -5,6 +5,7 @@ import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
 import { CalendarContextDispatch } from '../CalendarParts/CalendarContext';
 import { TrackEvent } from '../../../_lib/Tracking';
+import { resetTrackOnce } from '../../../_lib/track_once';
 import type { AppPortalSite } from '../../loadPortalSite';
 
 jest.mock('../../../_lib/Tracking', () => ({
@@ -54,6 +55,7 @@ function click() {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  resetTrackOnce();
   Object.defineProperty(document, 'referrer', {
     value: 'https://www.google.com/',
     configurable: true
@@ -98,5 +100,13 @@ describe('CalendarWrapper tracking', () => {
     expect(mockTrackEvent).toHaveBeenLastCalledWith(
       expect.objectContaining({ house_code: 'HOUSE2' })
     );
+  });
+
+  it('does not track a house again after viewing another one', () => {
+    renderHouse('HOUSE1');
+    renderHouse('HOUSE2');
+    renderHouse('HOUSE1');
+
+    expect(mockTrackEvent).toHaveBeenCalledTimes(2);
   });
 });

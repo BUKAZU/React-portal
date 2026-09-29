@@ -67,6 +67,9 @@ let consentFromHost = false;
 // Without consent the session lives only as long as this page load.
 let memorySessionId = '';
 let attribution: Attribution | null = null;
+// The cookie is written only once a response arrives, so it cannot tell
+// concurrent events that one of them already carries the attribution.
+let attributionSent = false;
 
 // The server hands out the session id, so events fired before the first
 // response arrives wait for it instead of each starting a session of their own.
@@ -81,6 +84,7 @@ export function resetTracking(): void {
   consentFromHost = false;
   memorySessionId = '';
   attribution = null;
+  attributionSent = false;
   sessionRequest = null;
 }
 
@@ -123,13 +127,22 @@ async function postEvent(event: TrackingEvent): Promise<void> {
     consented: consent
   };
   if (sessionId) payload.session_identifier = sessionId;
-  if (consent && !getCookie(SESSION_COOKIE)) {
+  const withAttribution =
+    consent && !attributionSent && !getCookie(SESSION_COOKIE);
+  if (withAttribution) {
     payload.attribution = currentAttribution();
+    attributionSent = true;
   }
 
-  const response = await http.post(TRACKING_URL, { json: payload }).text();
-  // A 204 means the server dropped the request; there is no session to keep.
-  const newSessionId = response.trim();
+  let newSessionId = '';
+  try {
+    const response = await http.post(TRACKING_URL, { json: payload }).text();
+    newSessionId = response.trim();
+  } finally {
+    // A failed request or a 204 (dropped by the server) recorded nothing, so a
+    // later event retries the attribution.
+    if (!newSessionId && withAttribution) attributionSent = false;
+  }
   if (!newSessionId) return;
 
   memorySessionId = newSessionId;
