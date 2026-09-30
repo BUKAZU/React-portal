@@ -80,6 +80,39 @@ describe('SingleResult', () => {
     expect(img?.getAttribute('alt')).toBe(mockResult.name);
   });
 
+  it('should lazy-load a plain src when image_urls is missing', () => {
+    renderSingleResult();
+
+    const img = container.querySelector('.image-holder img');
+    expect(img?.hasAttribute('srcset')).toBe(false);
+    expect(img?.hasAttribute('sizes')).toBe(false);
+    expect(img?.getAttribute('loading')).toBe('lazy');
+    expect(img?.getAttribute('decoding')).toBe('async');
+  });
+
+  it('should render a srcset of the sized variants when image_urls is given', () => {
+    renderSingleResult({
+      ...mockResult,
+      image_urls: {
+        small: 'https://example.com/image?variant=small&a="b"',
+        medium: 'https://example.com/image?variant=medium',
+        large: 'https://example.com/image?variant=large',
+        original: 'https://example.com/image.jpg'
+      }
+    });
+
+    const img = container.querySelector('.image-holder img');
+    expect(img?.getAttribute('src')).toBe(
+      'https://example.com/image?variant=large'
+    );
+    expect(img?.getAttribute('srcset')).toBe(
+      'https://example.com/image?variant=small&a="b" 480w, https://example.com/image?variant=medium 960w, https://example.com/image?variant=large 1600w'
+    );
+    expect(img?.getAttribute('sizes')).toBe('(min-width: 992px) 400px, 300px');
+    expect(img?.getAttribute('loading')).toBe('lazy');
+    expect(img?.getAttribute('decoding')).toBe('async');
+  });
+
   it('should omit href and src attributes when urls are undefined', () => {
     renderSingleResult({
       ...mockResult,

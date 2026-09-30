@@ -6,6 +6,7 @@ import {
 import { HouseType } from '../../../types';
 import { PossibleValues } from '../formParts/form_types';
 import { useLocale } from '../../../intl';
+import { responsiveImage } from '../../../_lib/responsive_image';
 
 export default class ObjectDetails {
   private house: HouseType;
@@ -41,11 +42,19 @@ export default class ObjectDetails {
     nameElement.textContent = this.house.name;
     houseDetails.appendChild(nameElement);
 
-    // Add house image
-    if (this.house.image_url) {
+    // 200px tall in the summary sidebar, full width once the container drops below 992px.
+    const image = responsiveImage(
+      this.house.image_url,
+      this.house.image_urls,
+      '(min-width: 992px) 300px, 100vw'
+    );
+    if (image) {
       const img = document.createElement('img');
-      img.src = this.house.image_url;
+      img.src = image.src;
+      if (image.srcset) img.srcset = image.srcset;
+      if (image.sizes) img.sizes = image.sizes;
       img.alt = '';
+      img.setAttribute('decoding', 'async');
       houseDetails.appendChild(img);
     }
 
