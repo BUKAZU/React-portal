@@ -116,6 +116,40 @@ describe('ObjectDetails', () => {
     });
   });
 
+  it('should render a plain src without image_urls', () => {
+    const img = objectDetails.render().querySelector('img');
+
+    expect(img?.hasAttribute('srcset')).toBe(false);
+    expect(img?.hasAttribute('sizes')).toBe(false);
+    expect(img?.getAttribute('decoding')).toBe('async');
+    expect(img?.hasAttribute('loading')).toBe(false);
+  });
+
+  it('should render a srcset of the sized variants when image_urls is given', () => {
+    const house = {
+      ...mockHouse,
+      image_urls: {
+        small: 'https://example.com/house?variant=small',
+        medium: 'https://example.com/house?variant=medium',
+        large: 'https://example.com/house?variant=large',
+        original: 'https://example.com/house.jpg'
+      }
+    };
+    const img = new ObjectDetails(house as any, mockValues as any)
+      .render()
+      .querySelector('img');
+
+    expect(img?.getAttribute('src')).toBe(
+      'https://example.com/house?variant=large'
+    );
+    expect(img?.getAttribute('srcset')).toBe(
+      'https://example.com/house?variant=small 480w, https://example.com/house?variant=medium 960w, https://example.com/house?variant=large 1600w'
+    );
+    expect(img?.getAttribute('sizes')).toBe('(min-width: 992px) 300px, 100vw');
+    expect(img?.getAttribute('decoding')).toBe('async');
+    expect(img?.hasAttribute('loading')).toBe(false);
+  });
+
   it('should handle missing image URL', () => {
     // Arrange
     const houseWithoutImage = { ...mockHouse, image_url: undefined };
