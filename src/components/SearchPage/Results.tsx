@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '../../intl';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
@@ -17,6 +17,10 @@ import {
 } from '../../_lib/accommodations';
 import { buildSearchParams } from '../../_lib/search_params';
 import type { ViewMode } from '../../_lib/view_mode';
+import { searchInfo } from '../../_lib/search_tracking';
+import { TrackEvent } from '../../_lib/Tracking';
+
+const SEARCH_TRACKING_DELAY = 1000;
 
 interface Props {
   filters: FiltersType;
@@ -58,9 +62,45 @@ function Results({
     () => JSON.parse(paramsKey) as Record<string, string>,
     [paramsKey]
   );
+  const filtersKey = JSON.stringify(filters);
+  const latestFilters = useRef(filters);
+  latestFilters.current = filters;
+  const trackedFilters = useRef<string | null>(null);
+  // Filters that settled for a second and wait for their result count; the
+  // count is null while a request is in flight.
+  const settledFilters = useRef<string | null>(null);
+  const resultCount = useRef<number | null>(null);
+
+  const trackSettledSearch = () => {
+    const key = settledFilters.current;
+    if (key === null || resultCount.current === null) return;
+    settledFilters.current = null;
+    trackedFilters.current = key;
+    TrackEvent({
+      portal_code: portalCode,
+      locale,
+      interaction_type: 'search',
+      interaction_info: searchInfo(latestFilters.current, resultCount.current)
+    });
+  };
+
+  // Keyed on the filters alone: paging or switching currency is the same
+  // search and must not restart or cancel the debounce.
+  useEffect(() => {
+    if (trackedFilters.current === filtersKey) return;
+    const timer = setTimeout(() => {
+      settledFilters.current = filtersKey;
+      trackSettledSearch();
+    }, SEARCH_TRACKING_DELAY);
+    return () => {
+      clearTimeout(timer);
+      settledFilters.current = null;
+    };
+  }, [filtersKey, portalCode, locale]);
 
   useEffect(() => {
     const controller = new AbortController();
+    resultCount.current = null;
     setState({ status: 'loading' });
 
     fetchAccommodations({
@@ -75,6 +115,8 @@ function Results({
           return;
         }
         setState({ status: 'ready', response });
+        resultCount.current = response.meta.total_count;
+        trackSettledSearch();
       })
       .catch((error: unknown) => {
         // An aborted request was superseded by a newer one; its result is stale.

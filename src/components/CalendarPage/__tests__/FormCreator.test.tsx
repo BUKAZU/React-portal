@@ -16,8 +16,15 @@ jest.mock('../../../_lib/create_booking', () => ({
   createBooking: jest.fn()
 }));
 import { createBooking } from '../../../_lib/create_booking';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 const mockCreateBooking = createBooking as jest.Mock;
+const mockTrackEvent = TrackEvent as jest.Mock;
+const trackedOrigin = {
+  house_code: 'HOUSE1',
+  portal_code: 'TEST',
+  locale: 'en'
+};
 
 const bookingResponse = {
   booking_nr: 'B2600123',
@@ -49,7 +56,9 @@ function submitForm() {
 
 // Mock Tracking to avoid cookie/fetch side-effects
 jest.mock('../../../_lib/Tracking', () => ({
-  getSessionIdentifier: jest.fn(() => 'test-session-id')
+  ...jest.requireActual('../../../_lib/Tracking'),
+  getSessionIdentifier: jest.fn(() => 'test-session-id'),
+  TrackEvent: jest.fn()
 }));
 
 // Mock child components that carry heavy dependencies
@@ -487,5 +496,75 @@ describe('FormCreator', () => {
     expect(lastOptionalBookingFieldsProps.bookingFields).toEqual([
       { id: 'phonenumber', required: false, type: 'text' }
     ]);
+  });
+
+  describe('tracking', () => {
+    it('tracks the failing field keys when client validation fails', async () => {
+      renderFormCreator(mockHouse, mockPortalSite, {
+        ...mockCalendarState,
+        persons: 0
+      });
+      await submitForm();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent).toHaveBeenCalledWith({
+        ...trackedOrigin,
+        interaction_type: 'booking_form_error',
+        interaction_info: { fields: ['adults'] }
+      });
+    });
+
+    it('tracks booking_failed and the server field keys, never their messages', async () => {
+      const { CreateBookingError } = jest.requireActual(
+        '../../../_lib/create_booking'
+      );
+      mockCreateBooking.mockRejectedValue(
+        new CreateBookingError(422, ['invalid'], {
+          first_name: ['moet opgegeven zijn'],
+          'extra_fields.date_of_birth': ['moet opgegeven zijn'],
+          'not a token': ['x']
+        })
+      );
+
+      renderFormCreator();
+      await submitForm();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(2);
+      expect(mockTrackEvent).toHaveBeenCalledWith({
+        ...trackedOrigin,
+        interaction_type: 'booking_failed',
+        interaction_info: { error_key: 'http_422' }
+      });
+      expect(mockTrackEvent).toHaveBeenCalledWith({
+        ...trackedOrigin,
+        interaction_type: 'booking_form_error',
+        interaction_info: {
+          fields: ['first_name', 'extra_fields.date_of_birth']
+        }
+      });
+    });
+
+    it('tracks a network failure as booking_failed', async () => {
+      mockCreateBooking.mockRejectedValue(new TypeError('Failed to fetch'));
+
+      renderFormCreator();
+      await submitForm();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent).toHaveBeenCalledWith({
+        ...trackedOrigin,
+        interaction_type: 'booking_failed',
+        interaction_info: { error_key: 'network' }
+      });
+    });
+
+    it('tracks nothing for a successful booking', async () => {
+      mockCreateBooking.mockResolvedValue(bookingResponse);
+
+      renderFormCreator();
+      await submitForm();
+
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+    });
   });
 });

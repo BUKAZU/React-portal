@@ -31,6 +31,29 @@ const source = resolve(root, values.source);
 const out = resolve(root, values.out);
 const previews = resolve(root, 'deploy');
 
+async function sizeOf(path) {
+  try {
+    return (await stat(path)).size;
+  } catch {
+    return 0;
+  }
+}
+
+async function previewPages() {
+  try {
+    return (await readdir(previews)).filter((name) => name.endsWith('.html'));
+  } catch {
+    return [];
+  }
+}
+
+const failures = [];
+
+const pages = (await previewPages()).sort();
+if (!pages.includes('index.html')) {
+  failures.push(`${resolve(previews, 'index.html')} is missing`);
+}
+
 const files = [
   {
     from: resolve(source, 'portal.website.js'),
@@ -40,26 +63,11 @@ const files = [
     from: resolve(source, 'portal.website.css'),
     to: resolve(out, 'static/main.css')
   },
-  ...(await readdir(previews))
-    .filter((name) => name.endsWith('.html'))
-    .sort()
-    .map((name) => ({ from: resolve(previews, name), to: resolve(out, name) }))
+  ...pages.map((name) => ({
+    from: resolve(previews, name),
+    to: resolve(out, name)
+  }))
 ];
-
-if (!files.some(({ to }) => to === resolve(out, 'index.html'))) {
-  console.error('deploy assembly failed:\n  - deploy/index.html is missing');
-  process.exit(1);
-}
-
-async function sizeOf(path) {
-  try {
-    return (await stat(path)).size;
-  } catch {
-    return 0;
-  }
-}
-
-const failures = [];
 for (const { from } of files) {
   if ((await sizeOf(from)) === 0) {
     failures.push(`${from} is missing or empty`);

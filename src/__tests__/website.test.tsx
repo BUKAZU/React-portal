@@ -34,6 +34,7 @@ jest.mock('../index', () => (props: object) => (
 // ---------------------------------------------------------------------------
 
 import { mountPortal, init, version } from '../website';
+import { pageConsent, resetConsentHosts } from '../_lib/consent';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -410,6 +411,52 @@ describe('mountPortal – double-mount prevention', () => {
 
     expect(mockCreateRoot).toHaveBeenCalledTimes(1);
     expect(mockRender).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('mountPortal – tracking consent', () => {
+  let host: HTMLElement;
+
+  beforeEach(() => {
+    resetConsentHosts();
+    // Not a .bukazu-app host, so only the mount registers it.
+    host = makeElement({ 'portal-code': 'X', 'data-consent': 'true' });
+    document.body.appendChild(host);
+  });
+
+  afterEach(() => {
+    host.remove();
+  });
+
+  it('grants page consent while a mounted host has data-consent="true"', () => {
+    expect(pageConsent()).toBe(false);
+
+    act(() => {
+      mountPortal(host);
+    });
+
+    expect(pageConsent()).toBe(true);
+  });
+
+  it('withdraws consent when the attribute is removed after mount', () => {
+    act(() => {
+      mountPortal(host);
+    });
+    host.removeAttribute('data-consent');
+
+    expect(pageConsent()).toBe(false);
+  });
+
+  it('is not consented after a remount without the attribute', () => {
+    act(() => {
+      mountPortal(host);
+    });
+    host.removeAttribute('data-consent');
+    act(() => {
+      mountPortal(host);
+    });
+
+    expect(pageConsent()).toBe(false);
   });
 });
 

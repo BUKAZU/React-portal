@@ -1,4 +1,14 @@
-import { TrackEvent, getSessionIdentifier } from '../Tracking';
+/**
+ * @jest-environment-options {"url": "https://www.example.com/zoeken"}
+ */
+import {
+  TrackEvent,
+  getSessionIdentifier,
+  houseViewEntry,
+  isToken,
+  resetTracking,
+  type TrackingEvent
+} from '../Tracking';
 
 jest.mock('../http_client', () => ({
   http: {
@@ -7,13 +17,35 @@ jest.mock('../http_client', () => ({
 }));
 
 import { http } from '../http_client';
+import { registerConsentHost, resetConsentHosts } from '../consent';
 
-const mockHttp = http as jest.Mocked<typeof http>;
+const mockPost = http.post as jest.Mock;
 
 const TRACKING_URL = 'https://api.bukazu.com/tracking';
 
-interface PostOptions {
-  json: Record<string, unknown>;
+const houseView: TrackingEvent = {
+  portal_code: 'PORTAL',
+  locale: 'en',
+  house_code: 'HOUSE1',
+  interaction_type: 'house_view',
+  interaction_info: { entry: 'direct' }
+};
+
+function respondWith(...bodies: (string | Error)[]) {
+  for (const body of bodies) {
+    mockPost.mockReturnValueOnce({
+      text:
+        body instanceof Error
+          ? jest.fn().mockRejectedValue(body)
+          : jest.fn().mockResolvedValue(body)
+    });
+  }
+}
+
+function sentPayloads(): Record<string, unknown>[] {
+  return mockPost.mock.calls.map(
+    ([, options]: [string, { json: Record<string, unknown> }]) => options.json
+  );
 }
 
 function clearCookies() {
@@ -24,120 +56,370 @@ function clearCookies() {
   });
 }
 
+function setReferrer(referrer: string) {
+  Object.defineProperty(document, 'referrer', {
+    value: referrer,
+    configurable: true
+  });
+}
+
+let cookieWrites: string[];
+
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.restoreAllMocks();
+  resetTracking();
+  delete window.bukazuConsent;
   clearCookies();
-});
+  setReferrer('');
+  window.history.replaceState({}, '', '/zoeken');
+  window.innerWidth = 1280;
 
-describe('getSessionIdentifier', () => {
-  it('returns null when bu_portal_session cookie is not set', () => {
-    expect(getSessionIdentifier()).toBeNull();
-  });
-
-  it('returns the session value when bu_portal_session cookie is set', () => {
-    document.cookie = 'bu_portal_session=abc123';
-    expect(getSessionIdentifier()).toBe('abc123');
-  });
-
-  it('returns the correct value when multiple cookies are present', () => {
-    document.cookie = 'other_cookie=foo';
-    document.cookie = 'bu_portal_session=session-xyz';
-    expect(getSessionIdentifier()).toBe('session-xyz');
-  });
-
-  it('returns null after the session cookie has been cleared', () => {
-    document.cookie = 'bu_portal_session=temp';
-    clearCookies();
-    expect(getSessionIdentifier()).toBeNull();
+  cookieWrites = [];
+  const descriptor = Object.getOwnPropertyDescriptor(
+    Document.prototype,
+    'cookie'
+  )!;
+  jest.spyOn(document, 'cookie', 'set').mockImplementation((value) => {
+    cookieWrites.push(value);
+    descriptor.set!.call(document, value);
   });
 });
 
-describe('TrackEvent', () => {
-  it('posts to the tracking endpoint', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+describe('without consent', () => {
+  it('posts the event with consented false and no attribution', async () => {
+    respondWith('session-1');
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'click', locale: 'en' });
+    await TrackEvent(houseView);
 
-    const [calledUrl] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(calledUrl).toBe(TRACKING_URL);
+    const [url, options] = mockPost.mock.calls[0];
+    expect(url).toBe(TRACKING_URL);
+    expect(options.json).toEqual({
+      portal_code: 'PORTAL',
+      locale: 'en',
+      house_code: 'HOUSE1',
+      interaction_type: 'house_view',
+      interaction_info: { entry: 'direct' },
+      url: 'https://www.example.com/zoeken',
+      consented: false
+    });
   });
 
-  it('merges event data with url and session_identifier', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+  it('never reads or writes the session cookie', async () => {
+    const read = jest.spyOn(document, 'cookie', 'get');
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    await TrackEvent(houseView);
+
+    expect(read).not.toHaveBeenCalled();
+    expect(cookieWrites).toEqual([]);
+  });
+
+  it('ignores an existing session cookie', async () => {
+    document.cookie = 'bu_portal_session=from-cookie;path=/;Secure';
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0]).not.toHaveProperty('session_identifier');
+  });
+
+  it('reuses the in-memory session id for later events', async () => {
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[1].session_identifier).toBe('session-1');
+    expect(getSessionIdentifier()).toBe('session-1');
+  });
+
+  it('lets parallel first events share the session the server hands out', async () => {
+    respondWith('session-1', 'session-1');
+
+    await Promise.all([TrackEvent(houseView), TrackEvent(houseView)]);
+
+    expect(sentPayloads().map((payload) => payload.session_identifier)).toEqual(
+      [undefined, 'session-1']
+    );
+  });
+
+  it('still sends a waiting event when the first request fails', async () => {
+    respondWith(new Error('offline'), 'session-2');
+
+    await Promise.all([TrackEvent(houseView), TrackEvent(houseView)]);
+
+    expect(mockPost).toHaveBeenCalledTimes(2);
+    expect(getSessionIdentifier()).toBe('session-2');
+  });
+});
+
+describe('with consent', () => {
+  beforeEach(() => {
+    window.bukazuConsent = true;
+  });
+
+  it('stores the session in a lax, secure cookie and sends consented true', async () => {
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].consented).toBe(true);
+    expect(cookieWrites).toHaveLength(1);
+    expect(cookieWrites[0]).toMatch(
+      /^bu_portal_session=session-1;expires=.+;path=\/;SameSite=Lax;Secure$/
+    );
+    expect(getSessionIdentifier()).toBe('session-1');
+  });
+
+  it('sends the session cookie as session_identifier', async () => {
+    document.cookie = 'bu_portal_session=existing;path=/;Secure';
+    respondWith('existing');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].session_identifier).toBe('existing');
+  });
+
+  it('sends attribution on the first event of a session only', async () => {
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    await TrackEvent(houseView);
+
+    const [first, second] = sentPayloads();
+    expect(first.attribution).toEqual({
+      landing_path: '/zoeken',
+      device_class: 'desktop'
+    });
+    expect(second).not.toHaveProperty('attribution');
+  });
+
+  it('parses the referrer host and utm parameters', async () => {
+    setReferrer('https://www.google.com/search?q=cottage');
+    window.history.replaceState(
+      {},
+      '',
+      '/huis?utm_source=newsletter&utm_medium=email&utm_campaign=spring_2026&other=1'
+    );
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].attribution).toEqual({
+      referrer_host: 'www.google.com',
+      utm_source: 'newsletter',
+      utm_medium: 'email',
+      utm_campaign: 'spring_2026',
+      landing_path: '/huis',
+      device_class: 'desktop'
+    });
+  });
+
+  it('omits a referrer from the portal site itself', async () => {
+    setReferrer('https://www.example.com/');
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].attribution).not.toHaveProperty('referrer_host');
+  });
+
+  it.each([
+    [375, 'mobile'],
+    [767, 'mobile'],
+    [768, 'tablet'],
+    [1023, 'tablet'],
+    [1024, 'desktop']
+  ])('classes a %ipx wide window as %s', async (width, deviceClass) => {
+    window.innerWidth = width;
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].attribution).toMatchObject({
+      device_class: deviceClass
+    });
+  });
+
+  it('honours window.bukazuConsent set after load', async () => {
+    delete window.bukazuConsent;
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    window.bukazuConsent = true;
+    await TrackEvent(houseView);
+
+    const [before, after] = sentPayloads();
+    expect(before.consented).toBe(false);
+    expect(after).toMatchObject({
+      consented: true,
+      session_identifier: 'session-1'
+    });
+    expect(cookieWrites).toHaveLength(1);
+  });
+
+  it('sends attribution once when events race after late consent', async () => {
+    delete window.bukazuConsent;
+    respondWith('session-1', 'session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    window.bukazuConsent = true;
+    await Promise.all([TrackEvent(houseView), TrackEvent(houseView)]);
+
+    const withAttribution = sentPayloads().filter(
+      (payload) => 'attribution' in payload
+    );
+    expect(withAttribution).toHaveLength(1);
+  });
+
+  it.each([
+    ['fails', new Error('offline')],
+    ['is dropped with a 204', '']
+  ])(
+    'retries the attribution when its request %s',
+    async (_label, firstResponse) => {
+      respondWith(firstResponse, 'session-1');
+
+      await TrackEvent(houseView);
+      await TrackEvent(houseView);
+
+      const [first, second] = sentPayloads();
+      expect(first).toHaveProperty('attribution');
+      expect(second).toHaveProperty('attribution');
+    }
+  );
+
+  it('stops using the cookie once window.bukazuConsent is cleared', async () => {
+    window.bukazuConsent = true;
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    expect(sentPayloads()[0].consented).toBe(true);
+    expect(cookieWrites).toHaveLength(1);
+
+    delete window.bukazuConsent;
+    cookieWrites = [];
+    const read = jest.spyOn(document, 'cookie', 'get');
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[1]).toMatchObject({
+      consented: false,
+      session_identifier: 'session-1'
+    });
+    expect(read).not.toHaveBeenCalled();
+    expect(cookieWrites).toEqual([]);
+  });
+});
+
+describe('consent from widget hosts', () => {
+  function mountedHost(consent: boolean): HTMLElement {
+    const element = document.createElement('div');
+    if (consent) element.setAttribute('data-consent', 'true');
+    document.body.appendChild(element);
+    registerConsentHost(element);
+    return element;
+  }
+
+  beforeEach(() => {
+    resetConsentHosts();
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('is consented when one of two hosts carries data-consent', async () => {
+    mountedHost(false);
+    mountedHost(true);
+    respondWith('session-1');
+
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[0].consented).toBe(true);
+    expect(cookieWrites).toHaveLength(1);
+  });
+
+  it('stops using the cookie once the attribute is removed', async () => {
+    const host = mountedHost(true);
+    respondWith('session-1', 'session-1');
+
+    await TrackEvent(houseView);
+    host.removeAttribute('data-consent');
+    cookieWrites = [];
+    const read = jest.spyOn(document, 'cookie', 'get');
+    await TrackEvent(houseView);
+
+    expect(sentPayloads()[1].consented).toBe(false);
+    expect(read).not.toHaveBeenCalled();
+    expect(cookieWrites).toEqual([]);
+  });
+});
+
+describe('responses', () => {
+  it('does not keep an empty session id from a 204', async () => {
+    window.bukazuConsent = true;
+    respondWith('', 'session-1');
+
+    await TrackEvent(houseView);
+    expect(cookieWrites).toEqual([]);
+    expect(getSessionIdentifier()).toBeNull();
+
+    await TrackEvent(houseView);
+    expect(sentPayloads()[1]).not.toHaveProperty('session_identifier');
+  });
+
+  it('swallows request errors and keeps the session', async () => {
+    respondWith('session-1', new Error('422 Unprocessable Entity'));
+
+    await TrackEvent(houseView);
+    await expect(TrackEvent(houseView)).resolves.toBeUndefined();
+
+    expect(getSessionIdentifier()).toBe('session-1');
+  });
+
+  it('drops blank interaction_info values', async () => {
+    respondWith('session-1');
 
     await TrackEvent({
-      portal_code: 'test-portal',
-      interaction_type: 'click',
+      portal_code: 'PORTAL',
       locale: 'en',
-      house_code: 'house-1'
+      interaction_type: 'search',
+      interaction_info: {
+        arrival: undefined,
+        departure: '',
+        result_count: 0
+      }
     });
 
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.portal_code).toBe('test-portal');
-    expect(options.json.interaction_type).toBe('click');
-    expect(options.json.locale).toBe('en');
-    expect(options.json.house_code).toBe('house-1');
-    expect(options.json.url).toBe(window.location.href);
-    expect('session_identifier' in options.json).toBe(true);
+    expect(sentPayloads()[0].interaction_info).toEqual({ result_count: 0 });
   });
+});
 
-  it('includes the current page URL in the posted payload', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
+describe('houseViewEntry', () => {
+  it.each([
+    ['', 'direct'],
+    ['https://www.example.com/zoeken', 'search'],
+    ['https://www.google.com/', 'external'],
+    ['not a url', 'direct']
+  ])('reads referrer %p as %s', (referrer, entry) => {
+    setReferrer(referrer);
 
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
-
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.url).toBe(window.location.href);
+    expect(houseViewEntry()).toBe(entry);
   });
+});
 
-  it('sends empty string as session_identifier when no cookie is set', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
-
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
-
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.session_identifier).toBe('');
-  });
-
-  it('sends the existing session cookie as session_identifier', async () => {
-    document.cookie = 'bu_portal_session=existing-session';
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
-
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'pageview', locale: 'en' });
-
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.session_identifier).toBe('existing-session');
-  });
-
-  it('stores the returned session id in the bu_portal_session cookie', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('srv-session-42') });
-
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
-
-    expect(document.cookie).toContain('bu_portal_session=srv-session-42');
-  });
-
-  it('overwrites the previous session cookie with the value returned by the server', async () => {
-    document.cookie = 'bu_portal_session=old-session';
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('refreshed-session') });
-
-    await TrackEvent({ portal_code: 'test-portal', interaction_type: 'test', locale: 'en' });
-
-    expect(document.cookie).toContain('bu_portal_session=refreshed-session');
-    expect(document.cookie).not.toContain('old-session');
-  });
-
-  it('does not drop interaction_data from the event data', async () => {
-    (mockHttp.post as jest.Mock).mockReturnValue({ text: jest.fn().mockResolvedValue('s') });
-
-    await TrackEvent({
-      portal_code: 'test-portal',
-      interaction_type: 'test',
-      locale: 'en',
-      interaction_data: { custom_field: 'value', count: 42 }
-    });
-
-    const [, options] = (mockHttp.post as jest.Mock).mock.calls[0] as [string, PostOptions];
-    expect(options.json.interaction_data).toEqual({ custom_field: 'value', count: 42 });
+describe('isToken', () => {
+  it.each([
+    ['cancel_insurance', true],
+    ['extra_fields.date_of_birth', true],
+    ['12', true],
+    ['', false],
+    ['free text', false],
+    ['a'.repeat(65), false],
+    [12, false]
+  ])('%p is a token: %p', (value, expected) => {
+    expect(isToken(value)).toBe(expected);
   });
 });

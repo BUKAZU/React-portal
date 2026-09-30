@@ -3,6 +3,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import SearchPage from '../SearchPage';
 import { PortalOptions, PortalSiteType } from '../../../types';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 // Mock child components so we don't need Apollo and other heavy deps
 jest.mock(
@@ -443,5 +444,30 @@ describe('SearchPage', () => {
     });
 
     expect(container.querySelector('#search-page')).not.toBeNull();
+  });
+
+  it('tracks search_view once per mount, not per render', () => {
+    (TrackEvent as jest.Mock).mockClear();
+    const renderPage = (locale: string) =>
+      act(() => {
+        root.render(
+          <SearchPage
+            options={mockOptions}
+            PortalSite={mockPortalSite}
+            locale={locale}
+          />
+        );
+      });
+
+    renderPage('en');
+    renderPage('nl');
+
+    expect(TrackEvent).toHaveBeenCalledTimes(1);
+    expect(TrackEvent).toHaveBeenCalledWith({
+      portal_code: mockPortalSite.portal_code,
+      interaction_type: 'search_view',
+      locale: 'en',
+      interaction_info: {}
+    });
   });
 });

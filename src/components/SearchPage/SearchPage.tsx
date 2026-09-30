@@ -55,6 +55,13 @@ class SearchPage extends Component<MyProps, MyState> {
   }
 
   componentDidMount() {
+    TrackEvent({
+      portal_code: this.props.PortalSite.portal_code,
+      interaction_type: 'search_view',
+      locale: this.props.locale,
+      interaction_info: {}
+    });
+
     // Filters on the URL are an explicit deep link and beat any state
     // remembered from a previous visit.
     if (this.hasUrlFilters) {
@@ -102,13 +109,7 @@ class SearchPage extends Component<MyProps, MyState> {
 
   render() {
     const { filters, activePage, limit, skip, viewMode } = this.state;
-    const { options, PortalSite, locale } = this.props;
-
-    TrackEvent({
-      portal_code: PortalSite.portal_code,
-      interaction_type: 'search_view',
-      locale: locale
-    });
+    const { options, PortalSite } = this.props;
 
     return (
       <div
