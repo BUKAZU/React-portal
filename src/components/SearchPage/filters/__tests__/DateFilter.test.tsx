@@ -71,59 +71,105 @@ describe('DateFilter', () => {
     expect((input as HTMLInputElement).value).toBe('');
   });
 
-  it('should call onChange with date string when date is selected', () => {
-    const onChange = jest.fn();
+  function renderFilter(value: string, onChange = jest.fn()) {
     act(() => {
       root.render(
         <DateFilter
           field={{ id: 'arrival_date', type: 'date' }}
-          value=""
+          value={value}
           onChange={onChange}
         />
       );
     });
+    return {
+      onChange,
+      input: container.querySelector('input[type="date"]') as HTMLInputElement
+    };
+  }
 
-    const input = container.querySelector('input[type="date"]');
-    expect(input).not.toBeNull();
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+  function typeDate(input: HTMLInputElement, date: string) {
+    const setter = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
       'value'
     )!.set!;
     act(() => {
-      nativeInputValueSetter.call(input as HTMLInputElement, '2025-06-15');
-      (input as HTMLInputElement).dispatchEvent(
-        new Event('change', { bubbles: true })
-      );
+      setter.call(input, date);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     });
+  }
+
+  function blur(input: HTMLInputElement) {
+    act(() => {
+      input.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+    });
+  }
+
+  function pressKey(input: HTMLInputElement, key: string) {
+    act(() => {
+      input.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+    });
+  }
+
+  it('should not commit while the picker changes the value', () => {
+    const { input, onChange } = renderFilter('');
+
+    typeDate(input, '2025-07-15');
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(input.value).toBe('2025-07-15');
+  });
+
+  it('should commit the date on blur', () => {
+    const { input, onChange } = renderFilter('');
+
+    typeDate(input, '2025-06-15');
+    typeDate(input, '2025-07-15');
+    blur(input);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith('arrival_date', '2025-07-15');
+  });
+
+  it('should commit the date on Enter', () => {
+    const { input, onChange } = renderFilter('');
+
+    typeDate(input, '2025-06-15');
+    pressKey(input, 'Enter');
 
     expect(onChange).toHaveBeenCalledWith('arrival_date', '2025-06-15');
   });
 
-  it('should call onChange with empty string when date is cleared', () => {
-    const onChange = jest.fn();
-    act(() => {
-      root.render(
-        <DateFilter
-          field={{ id: 'departure_date', type: 'date' }}
-          value="2025-06-20"
-          onChange={onChange}
-        />
-      );
-    });
+  it('should ignore other keys', () => {
+    const { input, onChange } = renderFilter('');
 
-    const input = container.querySelector('input[type="date"]');
-    expect(input).not.toBeNull();
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      'value'
-    )!.set!;
-    act(() => {
-      nativeInputValueSetter.call(input as HTMLInputElement, '');
-      (input as HTMLInputElement).dispatchEvent(
-        new Event('change', { bubbles: true })
-      );
-    });
+    typeDate(input, '2025-06-15');
+    pressKey(input, 'Tab');
 
-    expect(onChange).toHaveBeenCalledWith('departure_date', '');
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('should not commit on blur when the value is unchanged', () => {
+    const { input, onChange } = renderFilter('2025-06-20');
+
+    blur(input);
+
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('should commit an empty string when the date is cleared', () => {
+    const { input, onChange } = renderFilter('2025-06-20');
+
+    typeDate(input, '');
+    blur(input);
+
+    expect(onChange).toHaveBeenCalledWith('arrival_date', '');
+  });
+
+  it('should follow a new value from the parent', () => {
+    const { input } = renderFilter('2025-06-20');
+
+    renderFilter('2025-08-01');
+
+    expect(input.value).toBe('2025-08-01');
   });
 });
