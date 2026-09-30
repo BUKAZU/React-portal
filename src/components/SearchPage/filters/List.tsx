@@ -7,74 +7,58 @@ interface Props {
   filters: FiltersType;
   value: string;
   onChange: Function;
+  /** Id of the element naming this group of chips (the field's visible label). */
+  labelledBy?: string;
 }
 
+/**
+ * A `list` filter field rendered as single-select chips: clicking a chip picks
+ * it, clicking the picked chip again clears the filter. City and region chips
+ * that do not belong to the chosen country are hidden.
+ */
 export default function List({
   filters,
   field,
   options,
   onChange,
-  value
+  value,
+  labelledBy
 }: Props): JSX.Element {
   const countries = filters.countries;
+  const dependsOnCountry = ['cities', 'regions'].includes(field.id);
 
-  const updateList = (e: { target: { value: string } }) => {
-    if (value === e.target.value) {
-      handleChange(null);
-    } else {
-      handleChange(e.target.value);
-    }
+  const pick = (id: string) => {
+    onChange(field.id, value === id ? null : id);
   };
 
-  const handleChange = (value: string | null) => {
-    onChange(field.id, value);
-  };
-
-  if (['cities', 'regions'].includes(field.id)) {
-    return (
-      <ul className="radioList">
-        {options.map((opt) => (
-          <li
-            key={opt.id}
-            className={`bu-list-item ${
-              countries && !countries.includes(opt.country_id)
-                ? 'bu-disabled'
-                : 'bu-open'
-            }`}
+  return (
+    <div
+      className="bu-chips"
+      role="group"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : (field.label ?? field.id)}
+    >
+      {options.map((opt) => {
+        const id = String(opt.id);
+        const hidden =
+          dependsOnCountry && countries
+            ? !countries.includes(opt.country_id)
+            : false;
+        const selected = value === id;
+        return (
+          <button
+            key={id}
+            type="button"
+            className={`bu-chip ${hidden ? 'bu-disabled' : ''}`}
+            data-value={id}
+            aria-pressed={selected}
+            disabled={hidden}
+            onClick={() => pick(id)}
           >
-            <input
-              name={field.id}
-              type="checkbox"
-              id={opt.id}
-              value={opt.id}
-              disabled={countries ? !countries.includes(opt.country_id) : false}
-              checked={value === opt.id}
-              onBlur={(e) => handleChange(e.target.value)}
-              onChange={(e) => handleChange(e.target.value)}
-            />
-            <label htmlFor={opt.id}>{opt.name}</label>
-          </li>
-        ))}
-      </ul>
-    );
-  } else {
-    return (
-      <ul className="radioList">
-        {options.map((opt) => (
-          <li key={opt.id} className={`bu-list-item bu-open`}>
-            <input
-              name={field.id}
-              type="checkbox"
-              id={String(opt.id)}
-              value={opt.id}
-              checked={value === String(opt.id)}
-              onBlur={(e) => handleChange(e.target.value)}
-              onChange={updateList}
-            />
-            <label htmlFor={String(opt.id)}>{opt.name}</label>
-          </li>
-        ))}
-      </ul>
-    );
-  }
+            {opt.name}
+          </button>
+        );
+      })}
+    </div>
+  );
 }

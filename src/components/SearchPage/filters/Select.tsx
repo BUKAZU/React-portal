@@ -27,6 +27,7 @@ function Select({
     const typedOptions = options as OptionsType[];
     return (
       <select
+        id={field.id}
         name={field.id}
         onBlur={handleChange}
         onChange={handleChange}
@@ -63,6 +64,7 @@ function Select({
   } else {
     return (
       <select
+        id={field.id}
         name={field.id}
         onBlur={handleChange}
         onChange={handleChange}
