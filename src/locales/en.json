@@ -196,5 +196,13 @@
   "your_booking": "Your booking",
   "view_breakdown": "View breakdown",
   "returning_to_calendar": "You will return to the calendar in a moment.",
-  "done": "Done"
+  "done": "Done",
+  "score_excellent": "Excellent",
+  "score_very_good": "Very good",
+  "score_good": "Good",
+  "score_fair": "Fair",
+  "via_source": "via {source}",
+  "based_on_last_reviews": "Based on the last {count} reviews",
+  "score_only": "Score only",
+  "based_on_reviews": "Based on {count} reviews"
 }
