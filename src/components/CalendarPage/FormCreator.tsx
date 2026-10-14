@@ -13,7 +13,7 @@ import {
 } from '../../_lib/create_booking';
 import { buildBookingPayload } from '../../_lib/booking_payload';
 import { redirectTo } from '../../_lib/navigation';
-import { getSessionIdentifier } from '../../_lib/Tracking';
+import { getSessionIdentifier, isToken, TrackEvent } from '../../_lib/Tracking';
 import { ApiError } from '../Error';
 import Modal from '../Modal';
 import { AppContext } from '../AppContext';
@@ -219,11 +219,25 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
 
+      const where = {
+        house_code: objectCode,
+        portal_code: portalCode,
+        locale
+      };
+      const trackFormError = (fields: string[]) => {
+        TrackEvent({
+          ...where,
+          interaction_type: 'booking_form_error',
+          interaction_info: { fields: fields.filter(isToken) }
+        });
+      };
+
       const nextErrors = validateForm(values, house, bookingFields);
 
       setTouched(createTouchedState(bookingFields, values));
 
       if (Object.keys(nextErrors).length > 0) {
+        trackFormError(Object.keys(nextErrors));
         return;
       }
 
@@ -262,6 +276,16 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
           }, 15000);
         }
       } catch (submitError) {
+        TrackEvent({
+          ...where,
+          interaction_type: 'booking_failed',
+          interaction_info: {
+            error_key:
+              submitError instanceof CreateBookingError
+                ? `http_${submitError.status}`
+                : 'network'
+          }
+        });
         setError(
           submitError instanceof Error
             ? submitError
@@ -279,6 +303,7 @@ function FormCreator({ house, PortalSite }: Props): JSX.Element {
             fieldErrors[field] = messages.join(' ');
           }
           setServerErrors(fieldErrors);
+          trackFormError(Object.keys(submitError.fieldErrors));
         }
       } finally {
         setIsSubmitting(false);

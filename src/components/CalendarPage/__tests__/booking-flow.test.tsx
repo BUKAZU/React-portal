@@ -86,6 +86,7 @@ jest.mock('../../../_lib/price', () => ({
 // Mock Tracking to avoid cookie / fetch side-effects
 // ---------------------------------------------------------------------------
 jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
   getSessionIdentifier: jest.fn(() => 'test-session'),
   TrackEvent: jest.fn()
 }));

@@ -34,6 +34,7 @@ jest.mock('../../../_lib/price', () => ({
 }));
 
 jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
   getSessionIdentifier: jest.fn(() => 'test-session'),
   TrackEvent: jest.fn()
 }));

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import BookingForm from './BookingForm';
 import GenerateCalendar from './CalendarParts/GenerateCalendar';
 import {
@@ -6,6 +6,9 @@ import {
   CalendarProvider
 } from './CalendarParts/CalendarContext';
 import type { AppPortalSite } from '../loadPortalSite';
+import { AppContext } from '../AppContext';
+import { houseViewEntry, TrackEvent } from '../../_lib/Tracking';
+import { firstHouseView } from '../../_lib/track_once';
 
 interface Props {
   portalSite: AppPortalSite;
@@ -22,6 +25,19 @@ function CalendarPage({ portalSite }: Props): JSX.Element {
 }
 
 function CalendarWrapper({ portalSite }: Props): JSX.Element {
+  const { portalCode, objectCode, locale } = useContext(AppContext);
+
+  useEffect(() => {
+    if (!firstHouseView(objectCode)) return;
+    TrackEvent({
+      house_code: objectCode,
+      portal_code: portalCode,
+      locale,
+      interaction_type: 'house_view',
+      interaction_info: { entry: houseViewEntry() }
+    });
+  }, [objectCode, portalCode, locale]);
+
   return (
     <CalendarProvider>
       <CalendarPage portalSite={portalSite} />
