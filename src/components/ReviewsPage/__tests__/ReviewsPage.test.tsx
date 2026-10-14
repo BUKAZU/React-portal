@@ -161,7 +161,9 @@ describe('ReviewsPage', () => {
     });
 
     expect(container.querySelector('[data-testid="error"]')).not.toBeNull();
-    expect(container.textContent).toContain('something_went_wrong_please_try_again');
+    expect(container.textContent).toContain(
+      'something_went_wrong_please_try_again'
+    );
   });
 
   it('renders reviews overview with score and count', async () => {
@@ -223,12 +225,18 @@ describe('ReviewsPage', () => {
   it('shows Load More button when hasNextPage is true', async () => {
     const withNextPage = {
       ...mockResult,
-      pageInfo: { ...mockPageInfo, has_next_page: true, end_cursor: 'nextCursor' }
+      pageInfo: {
+        ...mockPageInfo,
+        has_next_page: true,
+        end_cursor: 'nextCursor'
+      }
     };
     mockedLoadReviewsHouse.mockResolvedValue(withNextPage);
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     expect(container.querySelector('.bu_load_more')).not.toBeNull();
     expect(container.textContent).toContain('load_more_reviews');
@@ -238,7 +246,9 @@ describe('ReviewsPage', () => {
     mockedLoadReviewsHouse.mockResolvedValue(mockResult);
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     expect(container.querySelector('.bu_load_more')).toBeNull();
   });
@@ -258,9 +268,13 @@ describe('ReviewsPage', () => {
       .mockResolvedValueOnce(secondPage);
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
-    const loadMoreButton = container.querySelector('.bu_load_more') as HTMLButtonElement;
+    const loadMoreButton = container.querySelector(
+      '.bu_load_more'
+    ) as HTMLButtonElement;
     expect(loadMoreButton).not.toBeNull();
 
     await act(async () => {
@@ -285,10 +299,18 @@ describe('ReviewsPage', () => {
   });
 
   it('passes apiUrl to the reviews loader', async () => {
-    mockedLoadReviewsHouse.mockImplementation(() => new Promise(() => undefined));
+    mockedLoadReviewsHouse.mockImplementation(
+      () => new Promise(() => undefined)
+    );
 
     await act(async () => {
-      root.render(<ReviewsPageMount objectCode="HOUSE1" portalCode="PORTAL1" apiUrl="https://api.example.com" />);
+      root.render(
+        <ReviewsPageMount
+          objectCode="HOUSE1"
+          portalCode="PORTAL1"
+          apiUrl="https://api.example.com"
+        />
+      );
     });
 
     expect(mockedLoadReviewsHouse).toHaveBeenCalledWith(
@@ -307,23 +329,37 @@ describe('ReviewsPage', () => {
       .mockReturnValueOnce(new Promise(() => undefined));
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
-    const loadMoreButton = container.querySelector('.bu_load_more') as HTMLButtonElement;
-    act(() => { loadMoreButton.click(); });
+    const loadMoreButton = container.querySelector(
+      '.bu_load_more'
+    ) as HTMLButtonElement;
+    act(() => {
+      loadMoreButton.click();
+    });
 
     expect(container.querySelector('[data-testid="loading"]')).not.toBeNull();
     expect(container.querySelector('.bu_load_more')).toBeNull();
   });
 
   it('does not update state after unmount during initial load', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     let resolveLoad!: (value: typeof mockResult) => void;
-    mockedLoadReviewsHouse.mockReturnValue(new Promise(resolve => { resolveLoad = resolve; }));
+    mockedLoadReviewsHouse.mockReturnValue(
+      new Promise((resolve) => {
+        resolveLoad = resolve;
+      })
+    );
 
     await renderPage();
-    act(() => { root.unmount(); });
+    act(() => {
+      root.unmount();
+    });
 
     await act(async () => {
       resolveLoad(mockResult);
@@ -335,7 +371,9 @@ describe('ReviewsPage', () => {
   });
 
   it('does not update state after unmount during load more', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     const firstPage = {
       house: { ...mockHouse, reviews: [mockReviews[0]] },
@@ -343,16 +381,26 @@ describe('ReviewsPage', () => {
     };
 
     let resolveSecondPage!: (value: typeof mockResult) => void;
-    mockedLoadReviewsHouse
-      .mockResolvedValueOnce(firstPage)
-      .mockReturnValueOnce(new Promise(resolve => { resolveSecondPage = resolve; }));
+    mockedLoadReviewsHouse.mockResolvedValueOnce(firstPage).mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveSecondPage = resolve;
+      })
+    );
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
-    const loadMoreButton = container.querySelector('.bu_load_more') as HTMLButtonElement;
-    act(() => { loadMoreButton.click(); });
-    act(() => { root.unmount(); });
+    const loadMoreButton = container.querySelector(
+      '.bu_load_more'
+    ) as HTMLButtonElement;
+    act(() => {
+      loadMoreButton.click();
+    });
+    act(() => {
+      root.unmount();
+    });
 
     await act(async () => {
       resolveSecondPage(mockResult);
@@ -374,9 +422,13 @@ describe('ReviewsPage', () => {
       .mockRejectedValueOnce(new Error('Network failure'));
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
-    const loadMoreButton = container.querySelector('.bu_load_more') as HTMLButtonElement;
+    const loadMoreButton = container.querySelector(
+      '.bu_load_more'
+    ) as HTMLButtonElement;
     expect(loadMoreButton).not.toBeNull();
 
     await act(async () => {
@@ -385,7 +437,9 @@ describe('ReviewsPage', () => {
     });
 
     expect(container.querySelector('[data-testid="error"]')).not.toBeNull();
-    expect(container.textContent).toContain('something_went_wrong_please_try_again');
+    expect(container.textContent).toContain(
+      'something_went_wrong_please_try_again'
+    );
   });
 
   it('wraps non-Error rejections in Error on Load More failure', async () => {
@@ -399,9 +453,13 @@ describe('ReviewsPage', () => {
       .mockRejectedValueOnce('plain string error');
 
     await renderPage();
-    await act(async () => { await Promise.resolve(); });
+    await act(async () => {
+      await Promise.resolve();
+    });
 
-    const loadMoreButton = container.querySelector('.bu_load_more') as HTMLButtonElement;
+    const loadMoreButton = container.querySelector(
+      '.bu_load_more'
+    ) as HTMLButtonElement;
     await act(async () => {
       loadMoreButton.click();
       await Promise.resolve();

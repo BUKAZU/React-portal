@@ -1,43 +1,32 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { HouseType } from '../../../types';
 
 import BookingOrOption from '../formParts/BookingOrOption';
 import { PossibleValues } from '../formParts/form_types';
 import CostSummary from './CostSummary';
-import ObjectDetails from './Object';
+import { PricesType } from './cost_types';
+import StayCard from './StayCard';
 
 interface Props {
   values: PossibleValues;
   house: HouseType;
+  /** Reopens the calendar from the stay card. */
+  onChangeDates?: () => void;
+  /** Reports the latest price calculation (null while loading or failed). */
+  onPrices?: (prices: PricesType | null) => void;
 }
 
-function Summary({ values, house }: Props): JSX.Element {
-  const objectDetailsRef = useRef<ObjectDetails | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Initialize ObjectDetails once
-  if (!objectDetailsRef.current) {
-    objectDetailsRef.current = new ObjectDetails(house, values);
-  }
-
-  // Update values when they change
-  useEffect(() => {
-    if (objectDetailsRef.current) {
-      objectDetailsRef.current.updateValues(values);
-      if (containerRef.current) {
-        while (containerRef.current.firstChild) {
-          containerRef.current.removeChild(containerRef.current.firstChild);
-        }
-        containerRef.current.appendChild(objectDetailsRef.current.render());
-      }
-    }
-  }, [values, house]);
-
+function Summary({
+  values,
+  house,
+  onChangeDates,
+  onPrices
+}: Props): JSX.Element {
   return (
-    <div>
-      <div ref={containerRef} />
+    <div className="bu-summary">
+      <StayCard house={house} values={values} onChangeDates={onChangeDates} />
       <BookingOrOption house={house} />
-      <CostSummary values={values} house={house} />
+      <CostSummary values={values} house={house} onPrices={onPrices} />
     </div>
   );
 }

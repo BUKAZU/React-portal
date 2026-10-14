@@ -253,24 +253,36 @@ describe('startOfMonth / endOfMonth', () => {
 });
 
 describe('startOfWeek / endOfWeek', () => {
-  it('startOfWeek returns the preceding Sunday', () => {
-    // 2024-01-15 is a Monday → preceding Sunday is 2024-01-14
-    const result = startOfWeek(new Date(2024, 0, 15));
-    expect(result.getDay()).toBe(0); // Sunday
-    expect(result.getDate()).toBe(14);
+  it('startOfWeek returns the preceding Monday', () => {
+    // 2024-01-17 is a Wednesday → the week started on Monday 2024-01-15
+    const result = startOfWeek(new Date(2024, 0, 17));
+    expect(result.getDay()).toBe(1); // Monday
+    expect(result.getDate()).toBe(15);
   });
 
-  it('startOfWeek on a Sunday returns the same day', () => {
-    const sunday = new Date(2024, 0, 14); // 14 Jan 2024 is a Sunday
+  it('startOfWeek on a Monday returns the same day', () => {
+    const monday = new Date(2024, 0, 15);
+    const result = startOfWeek(monday);
+    expect(result.getDate()).toBe(15);
+    expect(result.getDay()).toBe(1);
+  });
+
+  it('startOfWeek on a Sunday returns the Monday six days earlier', () => {
+    const sunday = new Date(2024, 0, 14);
     const result = startOfWeek(sunday);
-    expect(result.getDate()).toBe(14);
-    expect(result.getDay()).toBe(0);
+    expect(result.getDay()).toBe(1);
+    expect(result.getDate()).toBe(8);
   });
 
-  it('endOfWeek returns the following Saturday', () => {
+  it('endOfWeek returns the following Sunday', () => {
     const result = endOfWeek(new Date(2024, 0, 15));
-    expect(result.getDay()).toBe(6); // Saturday
-    expect(result.getDate()).toBe(20);
+    expect(result.getDay()).toBe(0); // Sunday
+    expect(result.getDate()).toBe(21);
+  });
+
+  it('endOfWeek on a Sunday returns the same day', () => {
+    const result = endOfWeek(new Date(2024, 0, 21));
+    expect(result.getDate()).toBe(21);
   });
 });
 

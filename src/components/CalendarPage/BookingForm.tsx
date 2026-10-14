@@ -24,9 +24,10 @@ function BookingForm({ portalSite }: Props): JSX.Element {
   const [priceError, setPriceError] = useState<Error | null>(null);
   const trackedStarts = useRef(new Set<string>());
 
+  // The previous house stays mounted while the dates change from the form, so
+  // what the visitor typed survives the refetch.
   useEffect(() => {
     let cancelled = false;
-    setHouse(null);
     setPriceError(null);
 
     const stay = { arrival: arrivalDate!.date, departure: departureDate!.date };

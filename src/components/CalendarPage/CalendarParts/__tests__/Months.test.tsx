@@ -112,8 +112,8 @@ describe('Months', () => {
       locale: 'nl',
       portalCode: 'portal',
       objectCode: 'house',
-      startsDate: new Date(2024, 11, 29),
-      endDate: new Date(2025, 2, 1)
+      startsDate: new Date(2024, 11, 30),
+      endDate: new Date(2025, 2, 2)
     });
     expect(
       container.querySelector('[data-testid="single-month-0"]')

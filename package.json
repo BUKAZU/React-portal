@@ -17,7 +17,8 @@
     "dev": "vite",
     "build:website": "vite build --config vite.website.config.ts",
     "verify:website": "node ./scripts/verify-website-bundle.mjs",
-    "deploy:assemble": "node ./scripts/assemble-deploy.mjs"
+    "deploy:assemble": "node ./scripts/assemble-deploy.mjs",
+    "locales:pack": "node ./scripts/pack-locales.mjs"
   },
   "author": "Bob van Oorschot",
   "license": "MIT",

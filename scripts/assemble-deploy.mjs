@@ -48,7 +48,6 @@ async function previewPages() {
 }
 
 const failures = [];
-
 const pages = (await previewPages()).sort();
 if (!pages.includes('index.html')) {
   failures.push(`${resolve(previews, 'index.html')} is missing`);

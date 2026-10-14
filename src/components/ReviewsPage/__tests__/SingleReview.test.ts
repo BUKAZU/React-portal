@@ -7,10 +7,12 @@ const mockReview: Review = {
   createdAt: '2024-01-15',
   review: 'Great place!',
   sourceName: 'Booking.com',
-  reviewResponses: [{ created_at: '2024-01-16', sender: 'landlord', message: 'Thank you!' }],
+  reviewResponses: [
+    { created_at: '2024-01-16', sender: 'landlord', message: 'Thank you!' }
+  ],
   reviewCriteria: [
     { id: 1, name: 'Cleanliness', score: 9 },
-    { id: 2, name: 'Location', score: 5 }
+    { id: 2, name: 'Location', score: 6 }
   ]
 };
 
@@ -50,9 +52,9 @@ describe('processReview', () => {
     expect(result.criteria[1]).toEqual({
       id: 2,
       name: 'Location',
-      score: 5,
+      score: 6,
       color: 'medium',
-      formatted: '5'
+      formatted: '6'
     });
   });
 
