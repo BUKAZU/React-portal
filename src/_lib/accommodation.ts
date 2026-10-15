@@ -1,5 +1,6 @@
 import { http } from './http_client';
 import { HTTPError } from 'ky';
+import type { ImageUrls } from './responsive_image';
 
 /**
  * The accommodation metadata shared by the detail endpoint and by the price
@@ -12,6 +13,8 @@ export interface Accommodation {
   allow_option: boolean;
   persons: number;
   image_url: string | null;
+  /** Null without a main image; absent on backends that predate sized variants. */
+  image_urls?: ImageUrls | null;
   discounts: string | null;
   discounts_info: string | null;
   house_type: string;

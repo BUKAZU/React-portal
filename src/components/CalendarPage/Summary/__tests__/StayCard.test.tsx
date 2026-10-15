@@ -54,6 +54,12 @@ describe('StayCard', () => {
     expect(container.querySelector('img')?.getAttribute('src')).toBe(
       'https://example.com/chalet.jpg'
     );
+    expect(container.querySelector('img')?.hasAttribute('srcset')).toBe(false);
+    expect(container.querySelector('img')?.hasAttribute('sizes')).toBe(false);
+    expect(container.querySelector('img')?.getAttribute('decoding')).toBe(
+      'async'
+    );
+    expect(container.querySelector('img')?.hasAttribute('loading')).toBe(false);
     expect(container.querySelector('.bu-stay-card-range')?.textContent).toBe(
       'Mon 3 Jun → Mon 10 Jun'
     );
@@ -61,6 +67,34 @@ describe('StayCard', () => {
     expect(meta[0].textContent).toBe('7 nights4 persons');
     expect(meta[1].textContent).toBe('Arrival 15:00 - 18:00Departure 10:00');
     expect(container.querySelector('.bu-link-button')).toBeNull();
+  });
+
+  it('uses responsive variants even without a fallback URL', () => {
+    const responsiveHouse: HouseType = {
+      ...house,
+      image_url: null,
+      image_urls: {
+        small: 'https://example.com/chalet?size=small&name="chalet"',
+        medium: 'https://example.com/chalet?size=medium',
+        large: 'https://example.com/chalet?size=large',
+        original: 'https://example.com/chalet.jpg'
+      }
+    };
+    act(() => {
+      root.render(<StayCard house={responsiveHouse} values={values} />);
+    });
+    const img = container.querySelector('img');
+    expect(img?.getAttribute('src')).toBe(
+      'https://example.com/chalet?size=large'
+    );
+    expect(img?.getAttribute('srcset')).toBe(
+      'https://example.com/chalet?size=small&name="chalet" 480w, https://example.com/chalet?size=medium 960w, https://example.com/chalet?size=large 1600w'
+    );
+    expect(img?.getAttribute('sizes')).toBe('72px');
+    expect(img?.getAttribute('decoding')).toBe('async');
+    expect(img?.hasAttribute('loading')).toBe(false);
+    expect(img?.hasAttribute('name')).toBe(false);
+    expect(container.querySelector('.bu-stay-card-placeholder')).toBeNull();
   });
 
   it('falls back to a placeholder without a photo and hides unknown times', () => {
