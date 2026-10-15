@@ -13,14 +13,16 @@ export default function Guests({
   house
 }: Props): JSX.Element {
   return (
-    <>
+    <div className="bu-guests">
       <NumberSelect
         name="adults"
         label="adults"
         count={house.persons}
         description={
           <div className="age-description">
-            {t('adults_from', { age: bookingFormConfiguration.adults_from_age })}
+            {t('adults_from', {
+              age: bookingFormConfiguration.adults_from_age
+            })}
           </div>
         }
       />
@@ -53,6 +55,6 @@ export default function Guests({
           }
         />
       )}
-    </>
+    </div>
   );
 }

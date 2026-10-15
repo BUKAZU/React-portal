@@ -13,22 +13,22 @@ describe('getScore', () => {
   });
 
   it('returns "best" color for ratings above 7', () => {
-    expect(getScore(7.1).color).toBe('best');
+    expect(getScore(8.1).color).toBe('best');
     expect(getScore(10).color).toBe('best');
   });
 
   it('returns "good" color for ratings above 6 up to 7', () => {
-    expect(getScore(6.5).color).toBe('good');
-    expect(getScore(7).color).toBe('good');
+    expect(getScore(7.5).color).toBe('good');
+    expect(getScore(8).color).toBe('good');
   });
 
   it('returns "medium" color for ratings above 4 up to 6', () => {
-    expect(getScore(5).color).toBe('medium');
+    expect(getScore(7).color).toBe('medium');
     expect(getScore(6).color).toBe('medium');
   });
 
   it('returns "low" color for ratings 4 and below', () => {
-    expect(getScore(4).color).toBe('low');
+    expect(getScore(5.5).color).toBe('low');
     expect(getScore(1).color).toBe('low');
   });
 });

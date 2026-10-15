@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import CalendarHeader from './CalendarParts/CalendarHeader';
 import AssistanceMessage from './formParts/AssistanceMessage';
 import Legend from './CalendarParts/Legend';
 import Months from './CalendarParts/Months';
@@ -12,6 +11,11 @@ interface Props {
   house: HouseType;
 }
 
+/**
+ * The availability calendar with the stay bar pinned under it. The bar is
+ * sticky inside the portal (never fixed on the host page), so it shows as soon
+ * as the calendar block is in view and rests at its end when scrolled past.
+ */
 function Calendar({
   numberOfMonths,
   house,
@@ -20,23 +24,19 @@ function Calendar({
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   return (
-    <div className="calendar-container ">
-      <StartBooking house={house} />
-      <div className="calendar-section">
-        <CalendarHeader
-          changeMonth={setCurrentMonth}
-          currentMonth={currentMonth}
-          numberOfMonths={numberOfMonths}
-        />
+    <div className="calendar-container bu-calendar-page">
+      <div className="calendar-section bu-calendar-main">
+        <AssistanceMessage house={house} />
         <Months
           house={house}
           numberOfMonths={numberOfMonths}
           numberOfMonthsInARow={numberOfMonthsInARow}
           currentMonth={currentMonth}
+          changeMonth={setCurrentMonth}
         />
         <Legend house={house} />
-        <AssistanceMessage house={house} />
       </div>
+      <StartBooking house={house} />
     </div>
   );
 }

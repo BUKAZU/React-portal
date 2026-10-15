@@ -1,6 +1,6 @@
 {
   "name": "bukazu-portal-react",
-  "version": "4.1.0",
+  "version": "4.3.0",
   "engines": {
     "node": ">=22"
   },
@@ -17,7 +17,8 @@
     "dev": "vite",
     "build:website": "vite build --config vite.website.config.ts",
     "verify:website": "node ./scripts/verify-website-bundle.mjs",
-    "deploy:assemble": "node ./scripts/assemble-deploy.mjs"
+    "deploy:assemble": "node ./scripts/assemble-deploy.mjs",
+    "locales:pack": "node ./scripts/pack-locales.mjs"
   },
   "author": "Bob van Oorschot",
   "license": "MIT",
@@ -38,7 +39,7 @@
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.13",
-    "chalk": "6.0.0",
+    "chalk": "6.0.1",
     "cross-env": "^10.1.0",
     "eslint": "^8.49.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",

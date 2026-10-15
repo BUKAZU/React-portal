@@ -4,23 +4,40 @@ import { BuDate, HouseType } from '../../../types';
 import { Parse_EN_US } from '../../../_lib/date_helper';
 import { BookingType } from '../calender_types';
 
-const initialBooking: BookingType = {
+export const initialBooking: BookingType = {
   selectedDate: null,
   arrivalDate: null,
   departureDate: null,
   bookingStarted: false,
-  persons: 0
+  persons: 0,
+  hoverDate: null,
+  hoverValid: false
 };
+
+export type CalendarAction =
+  | { type: 'clicked'; house: HouseType; day: BuDate }
+  | { type: 'hover'; date: Date; valid: boolean }
+  | { type: 'unhover' }
+  | { type: 'reset' }
+  | { type: 'start'; persons: number }
+  | { type: 'return' }
+  | { type: 'set_dates'; arrivalDate: BuDate; departureDate: BuDate };
 
 export const CalendarContext = createContext<BookingType>(initialBooking);
 export const CalendarContextDispatch = createContext<Function>(calendarReducer);
 
 export function CalendarProvider({
-  children
+  children,
+  initialState
 }: {
   children: React.ReactNode;
+  /** Seed the calendar with dates, e.g. when re-picking from the form. */
+  initialState?: Partial<BookingType>;
 }): JSX.Element {
-  const [booking_state, dispatch] = useReducer(calendarReducer, initialBooking);
+  const [booking_state, dispatch] = useReducer(calendarReducer, {
+    ...initialBooking,
+    ...initialState
+  });
   return (
     <CalendarContext.Provider value={booking_state}>
       <CalendarContextDispatch.Provider value={dispatch}>
@@ -32,7 +49,7 @@ export function CalendarProvider({
 
 export function calendarReducer(
   bookingState: BookingType,
-  action: { type: string; house: HouseType; day: BuDate; persons: number }
+  action: CalendarAction
 ): BookingType {
   switch (action.type) {
     case 'clicked': {
@@ -53,18 +70,45 @@ export function calendarReducer(
       ) {
         return {
           ...bookingState,
-          departureDate: day
+          departureDate: day,
+          hoverDate: null,
+          hoverValid: false
         };
       } else if (day.arrival) {
         return {
-          bookingStarted: false,
+          ...bookingState,
           selectedDate: date,
           arrivalDate: day,
           departureDate: null,
-          persons: defaultMaxPersons
+          persons: bookingState.bookingStarted
+            ? bookingState.persons
+            : defaultMaxPersons,
+          hoverDate: null,
+          hoverValid: false
         };
       }
       return bookingState;
+    }
+    case 'hover': {
+      return {
+        ...bookingState,
+        hoverDate: action.date,
+        hoverValid: action.valid
+      };
+    }
+    case 'unhover': {
+      if (!bookingState.hoverDate) return bookingState;
+      return { ...bookingState, hoverDate: null, hoverValid: false };
+    }
+    case 'set_dates': {
+      return {
+        ...bookingState,
+        selectedDate: Parse_EN_US(action.arrivalDate.date),
+        arrivalDate: action.arrivalDate,
+        departureDate: action.departureDate,
+        hoverDate: null,
+        hoverValid: false
+      };
     }
     case 'reset': {
       return initialBooking;
@@ -83,7 +127,7 @@ export function calendarReducer(
       };
     }
     default: {
-      throw Error('Unknown action: ' + action.type);
+      throw Error('Unknown action: ' + (action as { type: string }).type);
     }
   }
 }

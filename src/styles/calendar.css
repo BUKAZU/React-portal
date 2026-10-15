@@ -1,288 +1,480 @@
+/*
+ * Availability calendar. The portal colours (--bukazu-arrival, -booked,
+ * -departure, -discount) show as soft tints with a 3px bar; the chosen stay
+ * paints over them in the primary colour: solid ends, 8% band between.
+ */
 #bukazu-app {
-  @container (min-width: 1400px) {
-    div.calendar-container {
-      display: flex;
-      align-items: flex-start;
-      .calendar-section {
-        width: 75%;
-        order: 1;
-      }
-      .price-overview {
-        width: 25%;
-        order: 2;
-        .calendar--picker {
-          flex-direction: column;
-          &--date,
-          .button {
-            width: auto;
-          }
-          .button {
-            padding: 12px;
-          }
-        }
-      }
-    }
-  }
-  @container (max-width: 993px) {
-    .price-overview {
-      .calendar--picker {
-        flex-direction: column;
-        &--date,
-        .button {
-          width: auto;
-        }
-        .button {
-          padding: 12px;
-        }
-      }
-    }
-  }
-  .calendars-header {
+  .bu-calendar-page {
+    position: relative;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    @container (max-width: 992px) {
-      /* flex-direction: column; */
-      .col,
-      .bu-calendar-col {
-        margin: 4px 8px;
-      }
-    }
-    .col,
-    .bu-calendar-col {
-      .icon {
-        padding: 8px 40px;
-        background: var(--bukazu-button);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        svg {
-          height: 18px;
-        }
-        &:hover {
-          box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
-        }
-      }
-    }
+    flex-direction: column;
+    gap: 16px;
   }
-  .calendars-row {
+  .bu-calendar-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 8px 16px 0;
+  }
+
+  /* "Choose an arrival date" line above the months */
+  .bu-assistance {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    align-items: baseline;
+    gap: 4px 10px;
+    min-height: 20px;
+    &-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: rgba(26, 25, 25, 1);
+    }
+    &-hint {
+      font-size: 13px;
+      color: rgba(26, 25, 25, 0.62);
+    }
   }
-  @container (max-width: 875px) {
-    .calendar {
-      width: 100%;
-    }
-    .calendar .col,
-    .calendar .bu-calendar-col {
-      padding: 16px 4px;
-    }
+
+  /* Months wrap after the configured number per row */
+  .bu-months {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    max-width: calc(
+      var(--bu-months-per-row, 2) * 308px + (var(--bu-months-per-row, 2) - 1) *
+        24px
+    );
   }
   .bu-calendar,
   .calendar {
-    min-width: 48%;
-    padding: 16px 1%;
-    box-sizing: border-box;
-    background: var(--month_background);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 308px;
+    flex: 0 0 auto;
+  }
 
-    .col,
-    .bu-calendar-col {
-      width: 100%;
-      padding: 4px;
-      text-transform: capitalize;
-      text-align: center;
-      transition: all 0.5s ease;
-      &-center {
-        text-align: center;
-      }
-      &-start {
-        text-align: left;
-      }
-      &-end {
-        text-align: right;
-      }
+  .bu-month-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+  }
+  .bu-month-title {
+    flex: 1 1 auto;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: rgba(26, 25, 25, 1);
+  }
+  .bu-month-nav {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(26, 25, 25, 1);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    &:hover {
+      background: #f2f3f5;
     }
-
-    .cell {
-      background: #6eeb83;
-      background: var(--bukazu-cell);
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--bukazu-button, #0055a5) 25%, transparent);
     }
-    .disabled {
-      opacity: 0;
-    }
-    .arrival {
-      background: #6eeb83;
-      background: var(--bukazu-arrival);
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: underline;
-    }
-    .discount {
-      background: orange;
-      background: var(--bukazu-discount);
-    }
-    /* .discount.arrival {
-      background: linear-gradient(
-        45deg,
-        var(--bukazu-discount) 50%,
-        var(--bukazu-arrival) 50%
-      ); 
-    } */
-    .booked-departure {
-      background: linear-gradient(
-        45deg,
-        var(--bukazu-cell) 50%,
-        var(--bukazu-booked) 50%
-      );
-    }
-    .discount.booked-departure {
-      background: linear-gradient(
-        45deg,
-        var(--bukazu-discount) 50%,
-        var(--bukazu-booked) 50%
-      );
-    }
-    .departure.discount.booked-departure,
-    .departure.booked-departure,
-    .departure.booked {
-      background: linear-gradient(
-        45deg,
-        var(--bukazu-departure) 50%,
-        var(--bukazu-booked) 50%
-      );
-    }
-    .departure-arrival {
-      background: linear-gradient(
-        45deg,
-        var(--bukazu-booked) 50%,
-        var(--bukazu-arrival) 50%
-      ) !important;
-      cursor: pointer;
-    }
-    .discount.departure-arrival {
-      background: linear-gradient(
-        45deg,
-        var(--bukazu-booked) 50%,
-        var(--bukazu-discount) 50%
-      ) !important;
-    }
-    .icon {
-      cursor: pointer;
-    }
-    .discount.arrival.departure,
-    .departure {
-      font-weight: bold;
-      background: yellow;
-      background: var(--bukazu-departure);
-      cursor: pointer;
-    }
-    .selected {
-      background: var(--bukazu-button) !important;
-    }
-    .booked {
-      background: #ea2b1f;
-      background: var(--bukazu-booked);
-      color: #000;
-      /* filter: invert(100%) */
+    &:disabled {
+      color: rgba(26, 25, 25, 0.3);
+      cursor: default;
+      background: transparent;
     }
   }
-  .legend {
+  .bu-month-nav-spacer {
+    cursor: default;
+  }
+
+  .bu-weekdays .bu-calendar-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(26, 25, 25, 0.62);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .bu-days {
+    row-gap: 2px;
+  }
+
+  /* ---- cells: a 44px wrapper (the band lives here) around a 40px cell ---- */
+  .bu-day {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(26, 25, 25, 0.62);
+    user-select: none;
+    & > span {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+    }
+    /* the coloured bar under the number */
+    & > span::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      right: 6px;
+      bottom: 3px;
+      height: 3px;
+      border-radius: 999px;
+      background: transparent;
+    }
+    /* the stay band behind the cell */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: transparent;
+      pointer-events: none;
+    }
+    &:focus-visible {
+      outline: none;
+      & > span {
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--bukazu-button, #0055a5) 25%, transparent);
+      }
+    }
+  }
+  .bu-day.disabled {
+    visibility: hidden;
+  }
+  .bu-day.bu-past {
+    color: rgba(26, 25, 25, 0.3);
+    & > span {
+      opacity: 0.6;
+    }
+  }
+  .bu-day.bu-today > span {
+    box-shadow: inset 0 0 0 2px var(--bukazu-button, #0055a5);
+  }
+
+  /* availability tints */
+  .bu-day.arrival,
+  .bu-day.departure-arrival,
+  .bu-day.departure {
+    color: rgba(26, 25, 25, 1);
+    font-weight: 500;
+    cursor: pointer;
+    &:hover > span {
+      filter: brightness(0.96);
+    }
+  }
+  .bu-day.arrival > span {
+    background: color-mix(in srgb, var(--bukazu-arrival, #2fb35a) 16%, #fff);
+    &::after {
+      background: var(--bukazu-arrival, #2fb35a);
+    }
+  }
+  .bu-day.departure > span {
+    background: color-mix(in srgb, var(--bukazu-departure, #e3b800) 22%, #fff);
+    &::after {
+      background: var(--bukazu-departure, #e3b800);
+    }
+  }
+  .bu-day.booked {
+    color: rgba(26, 25, 25, 0.38);
+    cursor: not-allowed;
+    & > span {
+      background: color-mix(in srgb, var(--bukazu-booked, #d9342b) 16%, #fff);
+      &::after {
+        background: var(--bukazu-booked, #d9342b);
+      }
+    }
+  }
+  /* free night before, booked from here: a departure is still possible */
+  .bu-day.booked-departure {
+    color: rgba(26, 25, 25, 0.38);
+    & > span {
+      background: linear-gradient(
+        135deg,
+        #fff 50%,
+        color-mix(in srgb, var(--bukazu-booked, #d9342b) 16%, #fff) 50%
+      );
+      &::after {
+        background: var(--bukazu-booked, #d9342b);
+      }
+    }
+    &.departure {
+      color: rgba(26, 25, 25, 1);
+      & > span {
+        background: linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--bukazu-departure, #e3b800) 22%, #fff) 50%,
+          color-mix(in srgb, var(--bukazu-booked, #d9342b) 16%, #fff) 50%
+        );
+        &::after {
+          background: var(--bukazu-departure, #e3b800);
+        }
+      }
+    }
+  }
+  /* booked until here, free again from here: an arrival is possible */
+  .bu-day.departure-arrival > span {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--bukazu-booked, #d9342b) 16%, #fff) 50%,
+      color-mix(in srgb, var(--bukazu-arrival, #2fb35a) 18%, #fff) 50%
+    );
+    &::after {
+      background: var(--bukazu-arrival, #2fb35a);
+    }
+  }
+  .bu-day.discount > span {
+    background: color-mix(in srgb, var(--bukazu-discount, #e08a00) 18%, #fff);
+    &::after {
+      background: var(--bukazu-discount, #e08a00);
+    }
+  }
+  .bu-day.discount.arrival > span {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--bukazu-arrival, #2fb35a) 18%, #fff) 50%,
+      color-mix(in srgb, var(--bukazu-discount, #e08a00) 18%, #fff) 50%
+    );
+    &::after {
+      background: var(--bukazu-arrival, #2fb35a);
+    }
+  }
+  .bu-day.discount.departure > span {
+    background: color-mix(in srgb, var(--bukazu-departure, #e3b800) 22%, #fff);
+    &::after {
+      background: var(--bukazu-departure, #e3b800);
+    }
+  }
+  .bu-day.discount.booked > span {
+    background: color-mix(in srgb, var(--bukazu-booked, #d9342b) 16%, #fff);
+    &::after {
+      background: var(--bukazu-booked, #d9342b);
+    }
+  }
+
+  /* ---- the stay paints over the availability colours ---- */
+  .bu-day.selected.bu-stay-start,
+  .bu-day.selected.bu-stay-end {
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    & > span {
+      background: var(--bukazu-button, #0055a5);
+      &::after {
+        display: none;
+      }
+    }
+    &:hover > span {
+      filter: none;
+    }
+  }
+  .bu-day.selected.bu-stay-in {
+    color: rgba(26, 25, 25, 1);
+    font-weight: 500;
+    & > span {
+      background: transparent;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  .bu-day.bu-stay-in::before,
+  .bu-day.bu-stay-start.bu-stay-has-end::before,
+  .bu-day.bu-stay-end::before {
+    background: color-mix(in srgb, var(--bukazu-button, #0055a5) 8%, #fff);
+  }
+  .bu-day.bu-stay-start.bu-stay-has-end::before {
+    left: 50%;
+  }
+  .bu-day.bu-stay-end::before {
+    right: 50%;
+  }
+
+  /* ---- hover preview: the same band, dashed ---- */
+  .bu-day.bu-preview-in,
+  .bu-day.bu-preview-end,
+  .bu-day.bu-stay-start.bu-preview-start {
+    &::before {
+      background: color-mix(in srgb, var(--bukazu-button, #0055a5) 4%, #fff);
+      border-top: 1px dashed
+        color-mix(in srgb, var(--bukazu-button, #0055a5) 30%, transparent);
+      border-bottom: 1px dashed
+        color-mix(in srgb, var(--bukazu-button, #0055a5) 30%, transparent);
+    }
+  }
+  .bu-day.bu-stay-start.bu-preview-start::before {
+    left: 50%;
+  }
+  .bu-day.bu-preview-end::before {
+    right: 50%;
+  }
+  .bu-day.bu-preview.bu-preview-in {
+    color: rgba(26, 25, 25, 1);
+    & > span {
+      background: transparent;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  .bu-day.bu-preview.bu-preview-end {
+    color: var(--bukazu-button, #0055a5);
+    font-weight: 600;
+    & > span {
+      background: #fff;
+      box-shadow: inset 0 0 0 1px var(--bukazu-button, #0055a5);
+      &::after {
+        display: none;
+      }
+    }
+  }
+  .bu-day.bu-preview.bu-preview-invalid {
+    color: rgba(26, 25, 25, 0.38);
+    cursor: not-allowed;
+    & > span {
+      background: #f2f3f5;
+      box-shadow: inset 0 0 0 1px rgba(69, 74, 83, 0.45);
+      &::after {
+        display: none;
+      }
+    }
+  }
+  .bu-day[data-bu-tip]::after {
+    content: attr(data-bu-tip);
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(26, 25, 25, 1);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ---- legend as pills ---- */
+  .legend,
+  .bu-legend {
     display: flex;
     flex-wrap: wrap;
-    padding: 8px 16px;
-    @container (max-width: 992px) {
-      flex-direction: column;
+    gap: 8px;
+    padding: 0;
+  }
+  .bu-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0 10px 0 8px;
+    border: 1px solid rgba(69, 74, 83, 0.2);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    color: rgba(26, 25, 25, 1);
+    white-space: nowrap;
+  }
+  .bu-legend-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    border-radius: 4px;
+    &.arrival {
+      background: color-mix(in srgb, var(--bukazu-arrival, #2fb35a) 16%, #fff);
+      box-shadow: inset 0 -3px 0 var(--bukazu-arrival, #2fb35a);
     }
-    & > div {
-      display: flex;
-      padding: 0 16px;
-      @container (max-width: 992px) {
-        padding: 4px 8px;
-      }
+    &.booked {
+      background: color-mix(in srgb, var(--bukazu-booked, #d9342b) 16%, #fff);
+      box-shadow: inset 0 -3px 0 var(--bukazu-booked, #d9342b);
     }
-    &-field {
-      display: block;
-      width: 16px;
-      height: 16px;
-      margin: 0 8px 0 0;
-      &.booked {
-        background: #ea2b1f;
-        background: var(--bukazu-booked);
-      }
-      &.arrival {
-        background: #6eeb83;
-        background: var(--bukazu-arrival);
-      }
-      &.departure {
-        background: yellow;
-        background: var(--bukazu-departure);
-      }
-      &.last_minute_discount {
-        background: orange;
-        background: var(--bukazu-discount);
-      }
+    &.departure {
+      background: color-mix(
+        in srgb,
+        var(--bukazu-departure, #e3b800) 22%,
+        #fff
+      );
+      box-shadow: inset 0 -3px 0 var(--bukazu-departure, #e3b800);
+    }
+    &.last_minute_discount {
+      background: color-mix(in srgb, var(--bukazu-discount, #e08a00) 18%, #fff);
+      box-shadow: inset 0 -3px 0 var(--bukazu-discount, #e08a00);
     }
   }
-  .calendar--picker {
-    padding: 8px;
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    &--date {
-      width: 20%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 8px 16px;
-      span.name {
-        font-size: 18px;
-        border-bottom: 1px solid #ccc;
-        padding: 4px 0;
-        @container (max-width: 1200px) {
-          font-size: 16px;
-        }
-      }
-      span.detail {
-        display: flex;
-        padding: 4px 0;
-        opacity: 0.9;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        @container (max-width: 1200px) {
-          font-size: 14px;
-        }
-      }
-    }
-    &--persons {
-      border: 1px solid #ccc;
-      width: 100%;
-      appearance: none;
-      font-size: 16px;
-    }
-    .button,
-    .bu-calendar-button {
-      width: 20%;
-      background: var(--bukazu-button_cta);
-      color: #fff;
-      padding: 4px 16px;
-      margin: 8px 0;
-      font-weight: bold;
-      text-align: center;
-      border: 0;
-      font-size: 18px;
-      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.25);
-      cursor: pointer;
-      &:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-      }
-      &:hover {
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
-      }
+
+  .bu-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* shared pill (also used by the date strip in the form) */
+  .bu-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid
+      color-mix(in srgb, var(--bukazu-button, #0055a5) 30%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bukazu-button, #0055a5) 8%, #fff);
+    color: var(--bukazu-button, #0055a5);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .bu-link-button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--bukazu-button, #0055a5);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover {
+      text-decoration: underline;
     }
   }
 }

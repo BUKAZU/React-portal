@@ -7,23 +7,24 @@ interface Props {
   };
 }
 
+/** The four portal colours as pills: arrival, booked, departure, discount. */
 function Legend({ house }: Props): JSX.Element {
   return (
-    <div className="legend">
-      <div>
-        <span className="legend-field arrival" />
+    <div className="legend bu-legend">
+      <div className="bu-legend-item">
+        <span className="legend-field bu-legend-swatch arrival" />
         {t(`${house.house_type}.arrival_date`)}
       </div>
-      <div>
-        <span className="legend-field booked" />
+      <div className="bu-legend-item">
+        <span className="legend-field bu-legend-swatch booked" />
         {t('booked')}
       </div>
-      <div>
-        <span className="legend-field departure" />
+      <div className="bu-legend-item">
+        <span className="legend-field bu-legend-swatch departure" />
         {t(`${house.house_type}.departure_date`)}
       </div>
-      <div>
-        <span className="legend-field last_minute_discount" />
+      <div className="bu-legend-item">
+        <span className="legend-field bu-legend-swatch last_minute_discount" />
         {t('discount')}
       </div>
     </div>
