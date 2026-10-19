@@ -340,4 +340,30 @@ describe('Booking summary cost sections', () => {
     });
     container.remove();
   });
+
+  it.each([
+    [{ amount_due: 160 }, 'formatted_160'],
+    [{}, 'formatted_60']
+  ])('shows the final total for %j', (extra, expected) => {
+    const prices = {
+      ...extra,
+      total_costs: {
+        sub_total: 50,
+        total_price: 60,
+        required_costs: { on_site: [], not_on_site: [] },
+        optional_costs: { on_site: [], not_on_site: [] }
+      },
+      required_house_costs: [],
+      optional_house_costs: []
+    } as any;
+
+    const { root, container } = render(<Totals prices={prices} />);
+
+    expect(container.querySelector('td.price')?.textContent).toBe(expected);
+
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+  });
 });
