@@ -30,6 +30,8 @@ export type PricesType = {
   rent_price: number;
   discount: number;
   discounted_price: number;
+  /** Total_price plus the costs left out of it (e.g. a deposit). Absent on older backends. */
+  amount_due?: number;
   /** ISO 4217 currency code, e.g. "EUR". Returned by the REST price endpoint. */
   currency: string;
 };
