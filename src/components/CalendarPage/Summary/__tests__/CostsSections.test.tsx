@@ -345,17 +345,22 @@ describe('Booking summary cost sections', () => {
     [{ amount_due: 160 }, 'formatted_160'],
     [{}, 'formatted_60']
   ])('shows the final total for %j', (extra, expected) => {
-    const prices = {
+    const prices: import('../cost_types').PricesType = {
       ...extra,
+      currency: 'EUR',
+      rent_price: 50,
+      discount: 0,
+      discounted_price: 50,
       total_costs: {
         sub_total: 50,
         total_price: 60,
+        insurances: { cancel_insurance: 0, insurance_costs: 0 },
         required_costs: { on_site: [], not_on_site: [] },
         optional_costs: { on_site: [], not_on_site: [] }
       },
       required_house_costs: [],
       optional_house_costs: []
-    } as any;
+    };
 
     const { root, container } = render(<Totals prices={prices} />);
 
