@@ -9,6 +9,7 @@ import Calendar from '../../icons/Calendar.svg';
 import Image from '../../icons/Image.svg';
 import { HouseType } from '../../../types';
 import { PossibleValues } from '../formParts/form_types';
+import { responsiveImage } from '../../../_lib/responsive_image';
 
 const SHORT_DATE_FORMAT: Intl.DateTimeFormatOptions = {
   weekday: 'short',
@@ -25,6 +26,7 @@ interface Props {
 
 /** The accommodation and the chosen stay at the top of the summary column. */
 function StayCard({ house, values, onChangeDates }: Props): JSX.Element {
+  const image = responsiveImage(house.image_url, house.image_urls, '72px');
   const { arrivalDate, departureDate } = values;
   const arrival = Parse_EN_US(arrivalDate.date);
   const departure = Parse_EN_US(departureDate.date);
@@ -42,8 +44,15 @@ function StayCard({ house, values, onChangeDates }: Props): JSX.Element {
     <div className="house-details bu-stay-card">
       <h2 className="bu-visually-hidden">{t('booking_details')}</h2>
       <div className="bu-stay-card-house">
-        {house.image_url ? (
-          <img src={house.image_url} alt="" className="bu-stay-card-image" />
+        {image ? (
+          <img
+            src={image.src}
+            srcSet={image.srcset}
+            sizes={image.sizes}
+            decoding="async"
+            alt=""
+            className="bu-stay-card-image"
+          />
         ) : (
           <div className="bu-stay-card-image bu-stay-card-placeholder">
             <Image />
