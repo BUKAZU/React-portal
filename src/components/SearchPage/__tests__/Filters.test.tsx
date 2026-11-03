@@ -5,10 +5,19 @@ import Filters from '../Filters';
 import { PortalOptions, PortalSiteType } from '../../../types';
 
 // Mock SVG and child components
-jest.mock('../../icons/Reload.svg', () => () => (
-  <svg data-testid="reload-icon" />
+jest.mock('../../icons/Close.svg', () => () => (
+  <svg data-testid="close-icon" />
 ));
-jest.mock('../Field', () => () => <div data-testid="field" />);
+jest.mock('../Field', () => jest.fn());
+
+import Field from '../Field';
+
+type FieldProps = {
+  field: { id: string };
+  onFilterChange: (key: string, value: unknown) => void;
+};
+const FieldMock = Field as unknown as jest.Mock;
+let lastFieldHandler: FieldProps['onFilterChange'] | undefined;
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -47,6 +56,9 @@ const mockPortalSite: PortalSiteType = {
       redirectUrl_it: null
     }
   },
+  countries: [{ id: '12', name: 'Spain', country_id: '12' }],
+  regions: [{ id: '5', name: 'Andalucía', country_id: '12' }],
+  cities: [{ id: 'NER', name: 'Nerja', country_id: '12', region: '5' }],
   max_persons: 10,
   name: 'Test Portal',
   max_bedrooms: 5,
@@ -58,6 +70,13 @@ const mockOptions: PortalOptions = mockPortalSite.options as any;
 
 const defaultSearchFields = [
   { id: 'countries', type: 'select', label: 'Country' },
+  { id: 'cities', type: 'list', label: 'City' },
+  { id: 'persons_min', type: 'select', label: 'Persons', max: 6 }
+];
+
+const locationSearchFields = [
+  { id: 'countries', type: 'select', label: 'Country' },
+  { id: 'regions', type: 'select', label: 'Region' },
   { id: 'cities', type: 'list', label: 'City' }
 ];
 
@@ -80,8 +99,19 @@ function renderFilters(
   });
 }
 
+function renderedFieldIds(): string[] {
+  return Array.from(container.querySelectorAll('[data-testid="field"]')).map(
+    (el) => el.getAttribute('data-field') as string
+  );
+}
+
 beforeEach(() => {
   (window as any).__localeId__ = 'en';
+  lastFieldHandler = undefined;
+  FieldMock.mockImplementation((props: FieldProps) => {
+    lastFieldHandler = props.onFilterChange;
+    return <div data-testid="field" data-field={props.field.id} />;
+  });
   container = document.createElement('div');
   document.body.appendChild(container);
   act(() => {
@@ -102,27 +132,52 @@ describe('Filters', () => {
 
     const button = container.querySelector('.filters-button');
     expect(button).not.toBeNull();
+    expect(button?.querySelector('.bu-badge')).toBeNull();
   });
 
-  it('should render the filters container', () => {
+  it('should render the filters container with a header', () => {
     renderFilters();
 
-    const filtersDiv = container.querySelector('.filters');
-    expect(filtersDiv).not.toBeNull();
-  });
-
-  it('should render a reload button', () => {
-    renderFilters();
-
-    const reload = container.querySelector('.filters-reload');
-    expect(reload).not.toBeNull();
+    expect(container.querySelector('.filters')).not.toBeNull();
+    expect(container.querySelector('.filters-title')?.textContent).toBe(
+      'Filters'
+    );
   });
 
   it('should render a Field for each searchField', () => {
     renderFilters();
 
-    const fields = container.querySelectorAll('[data-testid="field"]');
-    expect(fields.length).toBe(defaultSearchFields.length);
+    expect(renderedFieldIds()).toEqual(['countries', 'cities', 'persons_min']);
+  });
+
+  it('should point the label at the control only when one exists', () => {
+    renderFilters();
+
+    const labels = Array.from(container.querySelectorAll('.bu-field label'));
+    expect(labels.map((l) => l.id)).toEqual([
+      'countries-label',
+      'cities-label',
+      'persons_min-label'
+    ]);
+    // select and select: labelable; list (chips): named via aria-labelledby
+    expect(labels.map((l) => l.getAttribute('for'))).toEqual([
+      'countries',
+      null,
+      'persons_min'
+    ]);
+    expect(FieldMock.mock.calls[1][0].labelId).toBe('cities-label');
+  });
+
+  it('should render no fields when searchFields is missing', () => {
+    renderFilters({ options: mockOptions });
+
+    expect(renderedFieldIds()).toEqual([]);
+  });
+
+  it('should show no active-filters block without filters', () => {
+    renderFilters();
+
+    expect(container.querySelector('.bu-active-filters')).toBeNull();
   });
 
   it('should toggle showOnMobile class when filters button is clicked', () => {
@@ -131,34 +186,191 @@ describe('Filters', () => {
     const filtersButton = container.querySelector(
       '.filters-button'
     ) as HTMLElement;
-    const filtersDiv = container.querySelector(
-      '[class*="filters"]'
-    ) as HTMLElement;
+    const filtersDiv = container.querySelector('.filters') as HTMLElement;
 
-    // Initially not showing on mobile
     expect(filtersDiv.className).not.toContain('showOnMobile');
+    expect(filtersButton.getAttribute('aria-expanded')).toBe('false');
 
     act(() => {
       filtersButton.click();
     });
 
-    // After click, should contain showOnMobile
-    const filtersDivAfter = container.querySelector('[class*="showOnMobile"]');
-    expect(filtersDivAfter).not.toBeNull();
+    expect(filtersDiv.className).toContain('showOnMobile');
+    expect(filtersButton.getAttribute('aria-expanded')).toBe('true');
   });
 
-  it('should call onFilterChange when reload button is clicked', () => {
-    const onFilterChange = jest.fn();
-    renderFilters({ onFilterChange });
+  it('should close the panel with the close button', () => {
+    renderFilters();
 
-    const reloadButton = container.querySelector(
-      '.filters-reload'
-    ) as HTMLElement;
     act(() => {
-      reloadButton.click();
+      (container.querySelector('.filters-button') as HTMLElement).click();
+    });
+    act(() => {
+      (container.querySelector('.filters-close') as HTMLElement).click();
     });
 
-    expect(onFilterChange).toHaveBeenCalledTimes(1);
+    expect(container.querySelector('.filters')?.className).not.toContain(
+      'showOnMobile'
+    );
+  });
+
+  describe('with active filters', () => {
+    const filters = { countries: '12', persons_min: '4' };
+
+    it('should show a pill per active filter and hide their fields', () => {
+      renderFilters({ filters });
+
+      const pills = Array.from(container.querySelectorAll('.bu-pill')).map(
+        (pill) => pill.textContent
+      );
+      expect(pills).toEqual(['Country: Spain', 'Persons: 4']);
+      expect(renderedFieldIds()).toEqual(['cities']);
+    });
+
+    it('should show the active count on the mobile filters button', () => {
+      renderFilters({ filters });
+
+      expect(
+        container.querySelector('.filters-button .bu-badge')?.textContent
+      ).toBe('2');
+    });
+
+    it('should drop only the clicked filter when its pill is removed', () => {
+      const onFilterChange = jest.fn();
+      renderFilters({ filters, onFilterChange });
+
+      act(() => {
+        (
+          container.querySelector(
+            '[data-filter-key="countries"]'
+          ) as HTMLElement
+        ).click();
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({ persons_min: '4' });
+      expect('countries' in onFilterChange.mock.calls[0][0]).toBe(false);
+    });
+
+    it('should clear every filter with "Clear all"', () => {
+      const onFilterChange = jest.fn();
+      renderFilters({ filters, onFilterChange });
+
+      act(() => {
+        (container.querySelector('.bu-link-button') as HTMLElement).click();
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({});
+    });
+  });
+
+  describe('saving a field value', () => {
+    // Field is mocked; call the handler it receives directly.
+    it('should add the value to the filters', () => {
+      const onFilterChange = jest.fn();
+      renderFilters({ filters: { countries: '12' }, onFilterChange });
+
+      act(() => {
+        lastFieldHandler?.('persons_min', '4');
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({
+        countries: '12',
+        persons_min: '4'
+      });
+    });
+
+    it('should remove the key when the value is cleared', () => {
+      const onFilterChange = jest.fn();
+      renderFilters({
+        filters: { countries: '12', cities: 'NER' },
+        onFilterChange
+      });
+
+      act(() => {
+        lastFieldHandler?.('cities', null);
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({ countries: '12' });
+    });
+  });
+
+  describe('country > region > city chain', () => {
+    function renderLocationFilters(
+      filters: Record<string, string>,
+      onFilterChange: jest.Mock
+    ) {
+      renderFilters({
+        filters,
+        onFilterChange,
+        options: { ...mockOptions, searchFields: locationSearchFields } as any
+      });
+    }
+
+    it('should pick the country along with a city', () => {
+      const onFilterChange = jest.fn();
+      renderLocationFilters({}, onFilterChange);
+
+      act(() => {
+        lastFieldHandler?.('cities', 'NER');
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({
+        cities: 'NER',
+        regions: '5',
+        countries: '12'
+      });
+    });
+
+    it('should show pills for the inferred parents and hide their fields', () => {
+      renderLocationFilters(
+        { cities: 'NER', regions: '5', countries: '12' },
+        jest.fn()
+      );
+
+      const pills = Array.from(container.querySelectorAll('.bu-pill')).map(
+        (pill) => pill.textContent
+      );
+      expect(pills).toEqual([
+        'Country: Spain',
+        'Region: Andalucía',
+        'City: Nerja'
+      ]);
+      expect(renderedFieldIds()).toEqual([]);
+    });
+
+    it('should clear region and city when the country pill is removed', () => {
+      const onFilterChange = jest.fn();
+      renderLocationFilters(
+        { cities: 'NER', regions: '5', countries: '12' },
+        onFilterChange
+      );
+
+      act(() => {
+        (
+          container.querySelector(
+            '[data-filter-key="countries"]'
+          ) as HTMLElement
+        ).click();
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({});
+    });
+
+    it('should clear only the city when the region pill is removed', () => {
+      const onFilterChange = jest.fn();
+      renderLocationFilters(
+        { cities: 'NER', regions: '5', countries: '12' },
+        onFilterChange
+      );
+
+      act(() => {
+        (
+          container.querySelector('[data-filter-key="regions"]') as HTMLElement
+        ).click();
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith({ countries: '12' });
+    });
   });
 
   it('should apply filters-hidden class when filtersForm.show is false', () => {
@@ -195,17 +407,122 @@ describe('Filters', () => {
     expect(fields.length).toBe(defaultSearchFields.length);
   });
 
-  it('should apply fixed-mobile class when fixedMobile is true', () => {
-    const fixedOptions: PortalOptions = {
+  it('should render no sheet chrome when fixed_mobile is off', () => {
+    renderFilters({ filters: { countries: '12' } });
+
+    expect(container.querySelector('.bu-filters-fab')).toBeNull();
+    expect(container.querySelector('.bu-filters-sheet')).toBeNull();
+    expect(container.querySelector('.bu-filters-apply')).toBeNull();
+    expect(container.querySelector('.filters-button .bu-badge')).not.toBeNull();
+  });
+
+  describe('with fixed_mobile', () => {
+    const fixedOptions = {
       ...mockOptions,
-      filtersForm: { ...mockOptions.filtersForm, fixed_mobile: true }
+      filtersForm: { ...mockOptions.filtersForm, fixed_mobile: true },
+      searchFields: defaultSearchFields
     } as any;
 
-    renderFilters({
-      options: { ...fixedOptions, searchFields: defaultSearchFields } as any
+    function renderFixed(filters: Record<string, string> = {}) {
+      renderFilters({ options: fixedOptions, filters });
+    }
+
+    function panel(): HTMLElement {
+      return container.querySelector('#bu-filters-panel') as HTMLElement;
+    }
+
+    it('should render a floating pill button with the active count', () => {
+      renderFixed({ countries: '12', persons_min: '4' });
+
+      const fab = container.querySelector('.bu-filters-fab') as HTMLElement;
+      expect(fab).not.toBeNull();
+      expect(container.querySelector('.filters-button')).toBeNull();
+      expect(fab.textContent).toContain('Filters');
+      expect(fab.querySelector('.bu-badge')?.textContent).toBe('2');
+      expect(fab.getAttribute('aria-controls')).toBe('bu-filters-panel');
+      expect(fab.getAttribute('aria-expanded')).toBe('false');
     });
 
-    const fixedEl = container.querySelector('.fixed-mobile');
-    expect(fixedEl).not.toBeNull();
+    it('should keep the sheet closed until the pill is pressed', () => {
+      renderFixed();
+
+      expect(panel().className).toContain('bu-filters-sheet');
+      expect(panel().className).not.toContain('showOnMobile');
+      expect(
+        container.querySelector('[data-testid="filters-backdrop"]')
+      ).toBeNull();
+
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      expect(panel().className).toContain('showOnMobile');
+      expect(
+        container.querySelector('[data-testid="filters-backdrop"]')
+      ).not.toBeNull();
+      expect(
+        container
+          .querySelector('.bu-filters-fab')
+          ?.getAttribute('aria-expanded')
+      ).toBe('true');
+    });
+
+    it.each([
+      ['the backdrop', '[data-testid="filters-backdrop"]'],
+      ['the close button', '.filters-close'],
+      ['the show-results button', '.bu-filters-apply']
+    ])('should close the sheet from %s', (_what, selector) => {
+      renderFixed();
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      act(() => {
+        (container.querySelector(selector) as HTMLElement).click();
+      });
+
+      expect(panel().className).not.toContain('showOnMobile');
+      expect(
+        container.querySelector('[data-testid="filters-backdrop"]')
+      ).toBeNull();
+    });
+
+    it('should close the sheet on Escape', () => {
+      renderFixed();
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      act(() => {
+        panel().dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })
+        );
+      });
+
+      expect(panel().className).not.toContain('showOnMobile');
+    });
+
+    it('should ignore other keys', () => {
+      renderFixed();
+      act(() => {
+        (container.querySelector('.bu-filters-fab') as HTMLElement).click();
+      });
+
+      act(() => {
+        panel().dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })
+        );
+      });
+
+      expect(panel().className).toContain('showOnMobile');
+    });
+
+    it('should label the footer button', () => {
+      renderFixed();
+
+      expect(container.querySelector('.bu-filters-apply')?.textContent).toBe(
+        'Show results'
+      );
+    });
   });
 });

@@ -37,6 +37,8 @@ interface FetchDiscountCodeParams {
   objectCode: string;
   /** The discount code entered by the visitor. */
   code: string;
+  /** ISO 4217 currency code to express the fixed price in; omitted when not selected. */
+  currency?: string;
 }
 
 const DISCOUNT_CODE_PATH = '/portal_api/v1/accommodations/discount-code';
@@ -49,15 +51,19 @@ export function buildDiscountCodeUrl({
   apiUrl,
   portalCode,
   objectCode,
-  code
+  code,
+  currency
 }: Omit<FetchDiscountCodeParams, 'locale'>): string {
   const url = new URL(DISCOUNT_CODE_PATH, new URL(apiUrl).origin);
 
-  url.search = new URLSearchParams({
+  const params = new URLSearchParams({
     portal_code: portalCode,
     object_code: objectCode,
     code
-  }).toString();
+  });
+  if (currency) params.set('currency', currency);
+
+  url.search = params.toString();
 
   return url.toString();
 }

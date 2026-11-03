@@ -65,13 +65,15 @@
         right: 8px;
         top: 8px;
         &-inner {
-          background: var(--bukazu-button);
+          background: #fff;
           position: relative;
-          color: #000;
+          color: rgba(26, 25, 25, 1);
           font-weight: bold;
           padding: 6px 10px;
-          font-size: 14px;
-          line-height: 14px;          
+          font-size: 13px;
+          line-height: 14px;
+          border-radius: 6px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
         }
       }
       &-price {
@@ -89,8 +91,12 @@
       }
       &-button {
         background: var(--bukazu-button_cta);
+        color: #fff;
         text-align: center;
-        padding: 8px;
+        padding: 10px 8px;
+        margin: 0 8px 8px;
+        border-radius: 8px;
+        overflow: hidden;
         position: relative;
         display:flex;
         align-items: center;

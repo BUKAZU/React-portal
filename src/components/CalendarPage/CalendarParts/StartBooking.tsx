@@ -6,9 +6,10 @@ interface Props {
   house: HouseType;
 }
 
+/** Sticky wrapper for the stay bar; `position: sticky` lives on this element. */
 function StartBooking({ house }: Props): JSX.Element {
   return (
-    <div className="price-overview bup-16">
+    <div className="price-overview bu-stay-bar-wrap">
       <PriceField house={house} />
     </div>
   );

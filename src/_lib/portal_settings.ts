@@ -9,6 +9,7 @@
 import { HTTPError } from 'ky';
 
 import { http } from './http_client';
+import type { SettingsCurrencies } from './currencies';
 
 /** Colour configuration as returned by the settings endpoint. */
 export type SettingsColors = {
@@ -41,7 +42,10 @@ export type SettingsFiltersForm = {
   show: boolean;
   location: string;
   mode: 'grid' | 'list';
-  no_results: number;
+  /** Results shown per page. */
+  results_amount?: number;
+  /** @deprecated Pre-June-2026 name of `results_amount`; kept for older backends. */
+  no_results?: number;
   fixed_mobile: boolean;
   show_price: boolean;
   show_persons: boolean;
@@ -64,6 +68,8 @@ export type SettingsResponse = {
   colors: SettingsColors;
   booking_form: SettingsBookingForm;
   filters_form: SettingsFiltersForm;
+  /** Currency configuration; absent on older backends (treat as single-currency). */
+  currencies?: SettingsCurrencies;
   /** Flat map of "<attribute>_<locale>" => localized value, for every locale. */
   labels: Record<string, string>;
 };

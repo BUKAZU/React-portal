@@ -3,8 +3,10 @@ import {
   endOfMonth,
   endOfWeek,
   formatDateKey,
+  isAfter,
   startOfMonth,
-  startOfWeek
+  startOfWeek,
+  subMonths
 } from '../../../_lib/date_helper';
 import React, { useContext, useEffect, useState } from 'react';
 import { HouseType } from '../../../types';
@@ -21,13 +23,16 @@ interface Props {
   numberOfMonths: number;
   numberOfMonthsInARow: number;
   currentMonth: Date;
+  /** Pages the visible range; omitted when the calendar is not navigable. */
+  changeMonth?: (month: Date) => void;
 }
 
 function Months({
   numberOfMonthsInARow,
   currentMonth,
   numberOfMonths,
-  house
+  house,
+  changeMonth
 }: Props): JSX.Element {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
 
@@ -83,6 +88,18 @@ function Months({
     return <div>Error</div>;
   }
 
+  // Nothing before the current month can be booked, so that is the floor.
+  const prevDisabled = !isAfter(
+    startOfMonth(currentMonth),
+    startOfMonth(new Date())
+  );
+  const onPrev = changeMonth
+    ? () => changeMonth(subMonths(currentMonth, numberOfMonths))
+    : undefined;
+  const onNext = changeMonth
+    ? () => changeMonth(addMonths(currentMonth, numberOfMonths))
+    : undefined;
+
   let template: JSX.Element[] = [];
 
   for (let i = 0; i < numberOfMonths; i++) {
@@ -94,13 +111,21 @@ function Months({
         count={i}
         availabilities={data.availabilities}
         discounts={data.discounts}
+        onPrev={i === 0 ? onPrev : undefined}
+        onNext={i === numberOfMonths - 1 ? onNext : undefined}
+        prevDisabled={prevDisabled}
       />
     );
   }
 
   return (
     <div
-      className={`bu-grid bu-grid-cols-${numberOfMonthsInARow || 2} bu-gap-16`}
+      className="bu-months"
+      style={
+        {
+          '--bu-months-per-row': numberOfMonthsInARow || 2
+        } as React.CSSProperties
+      }
     >
       {template}
     </div>

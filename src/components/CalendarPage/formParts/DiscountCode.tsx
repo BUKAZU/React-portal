@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
+import { useCurrency } from '../../CurrencyContext';
 import {
   DiscountCodeError,
   DiscountCodeResponse,
@@ -11,6 +12,7 @@ import { useBookingField } from '../BookingFormContext';
 
 function DiscountCode({ house }: { house: HouseType }): JSX.Element {
   const { apiUrl, locale, portalCode } = useContext(AppContext);
+  const { currency } = useCurrency();
   const field = useBookingField('discount_code');
   const [result, setResult] = useState<DiscountCodeResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +40,8 @@ function DiscountCode({ house }: { house: HouseType }): JSX.Element {
       locale,
       portalCode,
       objectCode: house.code,
-      code
+      code,
+      currency
     })
       .then((discountCode) => {
         if (currentRequest !== requestId.current) return;
@@ -84,18 +87,16 @@ function DiscountCode({ house }: { house: HouseType }): JSX.Element {
       {!loading && result && (
         <div className="bu_discount_code">
           <div>{result.name}</div>
-          {result.use_price ? (
-            result.price != null && (
-              <div>
-                {formatNumber(result.price, {
-                  style: 'currency',
-                  currency: result.currency
-                })}
-              </div>
-            )
-          ) : (
-            result.percentage != null && <div>{result.percentage}%</div>
-          )}
+          {result.use_price
+            ? result.price != null && (
+                <div>
+                  {formatNumber(result.price, {
+                    style: 'currency',
+                    currency: result.currency
+                  })}
+                </div>
+              )
+            : result.percentage != null && <div>{result.percentage}%</div>}
         </div>
       )}
     </div>

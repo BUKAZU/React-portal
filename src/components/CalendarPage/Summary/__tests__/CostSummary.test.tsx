@@ -90,7 +90,7 @@ const house = {
   babies_extra: 1
 } as any;
 
-function renderComponent(values = baseValues) {
+function renderComponent(values = baseValues, onPrices?: (p: unknown) => void) {
   const container = document.createElement('div');
   document.body.appendChild(container);
   let root: ReturnType<typeof createRoot> | null = null;
@@ -108,7 +108,7 @@ function renderComponent(values = baseValues) {
           apiUrl: 'https://api.bukazu.com/graphql'
         }}
       >
-        <CostSummary values={values} house={house} />
+        <CostSummary values={values} house={house} onPrices={onPrices} />
       </AppContext.Provider>
     );
   });
@@ -215,12 +215,49 @@ describe('CostSummary', () => {
   });
 });
 
-async function renderComponentAsync(values = baseValues) {
+async function renderComponentAsync(
+  values = baseValues,
+  onPrices?: (p: unknown) => void
+) {
   let result!: ReturnType<typeof renderComponent>;
   await act(async () => {
-    result = renderComponent(values);
+    result = renderComponent(values, onPrices);
     await Promise.resolve();
     await Promise.resolve();
   });
   return result;
 }
+
+describe('CostSummary – reporting upward', () => {
+  it('reports the calculated prices to the parent', async () => {
+    const prices = {
+      total_costs: { sub_total: 10, total_price: 10 },
+      currency: 'EUR'
+    };
+    mockFetchPrice.mockResolvedValue(prices);
+    const onPrices = jest.fn();
+    const { container, root } = await renderComponentAsync(
+      baseValues,
+      onPrices
+    );
+    expect(onPrices).toHaveBeenCalledWith(prices);
+    act(() => {
+      root?.unmount();
+    });
+    container.remove();
+  });
+
+  it('reports null when the price request fails', async () => {
+    mockFetchPrice.mockRejectedValue(new Error('down'));
+    const onPrices = jest.fn();
+    const { container, root } = await renderComponentAsync(
+      baseValues,
+      onPrices
+    );
+    expect(onPrices).toHaveBeenCalledWith(null);
+    act(() => {
+      root?.unmount();
+    });
+    container.remove();
+  });
+});

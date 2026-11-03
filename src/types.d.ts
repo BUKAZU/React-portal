@@ -127,6 +127,8 @@ export type OptionalHouseCostType = {
 export type HouseType = AccommodationDetail & {
   booking_price?: {
     total_price: number;
+    /** ISO 4217 currency code the price is expressed in. */
+    currency?: string;
     optional_house_costs: OptionalHouseCostType[];
   };
 };

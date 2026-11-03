@@ -51,6 +51,24 @@ describe('buildBookingPayload', () => {
     });
   });
 
+  it('sends the currency the booking was started in', () => {
+    const payload = buildBookingPayload({
+      ...baseParams,
+      values: buildValues({ currency: 'USD' })
+    });
+
+    expect(payload.currency).toBe('USD');
+  });
+
+  it('omits the currency on a single-currency portal (empty string)', () => {
+    const payload = buildBookingPayload({
+      ...baseParams,
+      values: buildValues({ currency: '' })
+    });
+
+    expect(payload).not.toHaveProperty('currency');
+  });
+
   it('does not leak internal form state', () => {
     const payload = buildBookingPayload({
       ...baseParams,

@@ -3,6 +3,8 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import Results from '../Results';
 import { AppContext } from '../../AppContext';
+import { CurrencyProvider } from '../../CurrencyContext';
+import type { SettingsCurrencies } from '../../../_lib/currencies';
 import { PortalSiteType } from '../../../types';
 import { FiltersType } from '../filters/filter_types';
 import type {
@@ -14,11 +16,20 @@ jest.mock('../../../_lib/accommodations', () => ({
   fetchAccommodations: jest.fn()
 }));
 
+jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
+  TrackEvent: jest.fn()
+}));
+
 jest.mock(
   '../SingleResult',
   () => () => '<div data-testid="single-result"></div>'
 );
 jest.mock('../Paginator', () => () => <div data-testid="paginator" />);
+jest.mock('../../icons/Grid.svg', () => () => <svg data-testid="grid-icon" />);
+jest.mock('../../icons/ViewList.svg', () => () => (
+  <svg data-testid="list-icon" />
+));
 jest.mock('../../icons/loading.svg', () => () => <svg data-testid="loading" />);
 jest.mock('../../Error', () => ({
   ApiError: () => <div data-testid="api-error" />
@@ -27,8 +38,10 @@ jest.mock('../../Error', () => ({
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
 import { fetchAccommodations } from '../../../_lib/accommodations';
+import { TrackEvent } from '../../../_lib/Tracking';
 
 const mockFetch = fetchAccommodations as jest.Mock;
+const mockTrackEvent = TrackEvent as jest.Mock;
 
 const mockPortalSite: PortalSiteType = {
   options: {
@@ -119,7 +132,7 @@ function responseWith(items: AccommodationResult[]): AccommodationsResponse {
   };
 }
 
-const defaultProps = {
+const defaultProps: React.ComponentProps<typeof Results> = {
   filters: baseFilters,
   PortalSite: mockPortalSite,
   limit: 10,
@@ -187,6 +200,54 @@ describe('Results', () => {
     await renderResultsAndSettle();
 
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+  });
+
+  it('should wrap a non-Error rejection in an Error', async () => {
+    mockFetch.mockRejectedValue('boom');
+
+    await renderResultsAndSettle();
+
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+  });
+
+  it('should ignore a response or failure that lands after unmount', async () => {
+    let resolveFirst: (value: AccommodationsResponse) => void = () => {};
+    let rejectSecond: (reason: Error) => void = () => {};
+    mockFetch
+      .mockImplementationOnce(
+        () => new Promise((resolve) => (resolveFirst = resolve))
+      )
+      .mockImplementationOnce(
+        () => new Promise((_, reject) => (rejectSecond = reject))
+      );
+
+    renderResults();
+    act(() => {
+      root.unmount();
+    });
+    await act(async () => {
+      resolveFirst(responseWith([mockHouse]));
+      await Promise.resolve();
+    });
+
+    act(() => {
+      root = createRoot(container);
+    });
+    renderResults();
+    act(() => {
+      root.unmount();
+    });
+    await act(async () => {
+      rejectSecond(new Error('late'));
+      await Promise.resolve();
+    });
+
+    // Nothing rendered into an unmounted root; recreate for afterEach.
+    expect(container.querySelector('[data-testid="single-result"]')).toBeNull();
+    expect(container.querySelector('[data-testid="api-error"]')).toBeNull();
+    act(() => {
+      root = createRoot(container);
+    });
   });
 
   it('should show no-results message when no accommodation matches', async () => {
@@ -271,6 +332,101 @@ describe('Results', () => {
     expect(paginators).toHaveLength(2);
   });
 
+  describe('with a multi-currency portal', () => {
+    const currencies: SettingsCurrencies = {
+      multi_currency: true,
+      default: 'EUR',
+      allowed: ['EUR', 'USD']
+    };
+
+    async function renderWithCurrencies(props = defaultProps) {
+      act(() => {
+        root.render(
+          <AppContext.Provider
+            value={{
+              locale: 'en',
+              portalCode: 'TEST',
+              objectCode: '',
+              apiUrl: 'https://api.bukazu.com/graphql'
+            }}
+          >
+            <CurrencyProvider currencies={currencies}>
+              <Results {...props} />
+            </CurrencyProvider>
+          </AppContext.Provider>
+        );
+      });
+      await act(async () => {
+        await Promise.resolve();
+      });
+    }
+
+    afterEach(() => {
+      window.localStorage.clear();
+    });
+
+    it('renders the currency selector', async () => {
+      await renderWithCurrencies();
+
+      expect(container.querySelector('.bu-currency-selector')).not.toBeNull();
+    });
+
+    it('requests the search with the selected currency and refetches on change', async () => {
+      await renderWithCurrencies();
+
+      expect(mockFetch.mock.calls[0][0].params).toMatchObject({
+        currency: 'EUR'
+      });
+
+      await act(async () => {
+        const select = container.querySelector('select')!;
+        select.value = 'USD';
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        await Promise.resolve();
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch.mock.calls[1][0].params).toMatchObject({
+        currency: 'USD'
+      });
+    });
+  });
+
+  it('should not send a currency on a single-currency portal', async () => {
+    await renderResultsAndSettle();
+
+    expect(mockFetch.mock.calls[0][0].params).not.toHaveProperty('currency');
+    expect(container.querySelector('.bu-currency-selector')).toBeNull();
+  });
+
+  it('should prefer the viewMode prop and render the toggle when it can change', async () => {
+    const onViewModeChange = jest.fn();
+    await renderResultsAndSettle({
+      ...defaultProps,
+      viewMode: 'list',
+      onViewModeChange
+    });
+
+    expect(container.querySelector('#results')?.className).toBe('list');
+
+    const gridButton = container.querySelector(
+      '.bu-view-toggle button[aria-label="Grid view"]'
+    ) as HTMLButtonElement;
+    expect(gridButton.getAttribute('aria-pressed')).toBe('false');
+
+    act(() => {
+      gridButton.click();
+    });
+
+    expect(onViewModeChange).toHaveBeenCalledWith('grid');
+  });
+
+  it('should render no toggle when the mode cannot change', async () => {
+    await renderResultsAndSettle();
+
+    expect(container.querySelector('.bu-view-toggle')).toBeNull();
+  });
+
   it('should apply the mode from PortalSite options as a CSS class on #results', async () => {
     const listPortalSite = {
       ...mockPortalSite,
@@ -290,5 +446,137 @@ describe('Results', () => {
 
     const resultsDiv = container.querySelector('#results');
     expect(resultsDiv?.className).toBe('list');
+  });
+
+  describe('search tracking', () => {
+    const searched: FiltersType = {
+      arrival_date: '2026-07-01',
+      departure_date: '2026-07-08',
+      persons_min: '4',
+      bedrooms_min: '2',
+      extra_search: 'sea view'
+    };
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      mockFetch.mockResolvedValue({
+        items: [mockHouse],
+        meta: { total_count: 42, limit: 10, skip: 0 }
+      });
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    function waitForDebounce() {
+      act(() => {
+        jest.advanceTimersByTime(1000);
+      });
+    }
+
+    it('tracks a search once its filters have settled for a second', async () => {
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+
+      waitForDebounce();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent).toHaveBeenCalledWith({
+        portal_code: 'TEST',
+        locale: 'en',
+        interaction_type: 'search',
+        interaction_info: {
+          arrival: '2026-07-01',
+          departure: '2026-07-08',
+          persons: 4,
+          filters: { bedrooms_min: '2' },
+          result_count: 42
+        }
+      });
+    });
+
+    it('only tracks the last of quickly changing filters', async () => {
+      await renderResultsAndSettle({
+        ...defaultProps,
+        filters: { persons_min: '2' }
+      });
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(mockTrackEvent.mock.calls[0][0].interaction_info.persons).toBe(4);
+    });
+
+    it('does not track paging through the same search again', async () => {
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+      await renderResultsAndSettle({
+        ...defaultProps,
+        filters: searched,
+        skip: 10,
+        activePage: 2
+      });
+      waitForDebounce();
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps the debounce running while paging', async () => {
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      act(() => {
+        jest.advanceTimersByTime(600);
+      });
+      mockFetch.mockResolvedValue({
+        items: [mockHouse],
+        meta: { total_count: 43, limit: 10, skip: 10 }
+      });
+      await renderResultsAndSettle({
+        ...defaultProps,
+        filters: { ...searched },
+        skip: 10,
+        activePage: 2
+      });
+      act(() => {
+        jest.advanceTimersByTime(400);
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(
+        mockTrackEvent.mock.calls[0][0].interaction_info.result_count
+      ).toBe(43);
+    });
+
+    it('tracks a settled search once its response arrives', async () => {
+      let resolve: (value: unknown) => void = () => {};
+      mockFetch.mockReturnValue(new Promise((r) => (resolve = r)));
+
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+
+      await act(async () => {
+        resolve({
+          items: [mockHouse],
+          meta: { total_count: 7, limit: 10, skip: 0 }
+        });
+      });
+
+      expect(mockTrackEvent).toHaveBeenCalledTimes(1);
+      expect(
+        mockTrackEvent.mock.calls[0][0].interaction_info.result_count
+      ).toBe(7);
+    });
+
+    it('does not track a failed search', async () => {
+      mockFetch.mockRejectedValue(new Error('Search request failed (500)'));
+
+      await renderResultsAndSettle({ ...defaultProps, filters: searched });
+      waitForDebounce();
+
+      expect(mockTrackEvent).not.toHaveBeenCalled();
+    });
   });
 });

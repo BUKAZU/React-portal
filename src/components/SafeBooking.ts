@@ -9,23 +9,23 @@ const trans: Record<LocaleType, { url: string; label: string }> = {
     label: 'Beveiligd en mogelijk gemaakt door BUKAZU'
   },
   en: {
-    url: 'http://bukazu.com/en/security',
+    url: 'http://bukazu.co.uk/security',
     label: 'Secured and made possible by BUKAZU'
   },
   de: {
-    url: 'http://bukazu.com/de/sicherheit',
+    url: 'http://bukazu.com/sicherheit',
     label: 'Gesichert und ermöglicht durch BUKAZU'
   },
   fr: {
-    url: 'http://bukazu.com/fr/securite',
+    url: 'http://bukazu.com/securite',
     label: 'Sécurisé et rendu possible par BUKAZU'
   },
   es: {
-    url: 'http://bukazu.com/es/seguridad',
+    url: 'http://bukazu.com/seguridad',
     label: 'Asegurado y hecho posible por BUKAZU'
   },
   it: {
-    url: 'http://bukazu.com/it/sicurezza',
+    url: 'http://bukazu.com/sicurezza',
     label: 'Protetto e reso possibile da BUKAZU'
   }
 };

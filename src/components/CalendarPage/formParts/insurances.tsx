@@ -3,9 +3,8 @@ import { t } from '../../../intl';
 import Modal from '../../Modal';
 import Icon from '../../icons/info.svg';
 import { DateField } from '../FormItems';
-import { useBookingField } from '../BookingFormContext';
+import { useBookingField, useBookingFormContext } from '../BookingFormContext';
 import CancelInsuranceText from './CancelInsuranceText';
-import { translatedOption } from './BookingHelpers';
 import { PossibleValues } from './form_types';
 import { HouseType } from '../../../types';
 
@@ -14,31 +13,40 @@ type Props = {
   values: PossibleValues;
 };
 
-function CancelInsurance({ house }: { house: HouseType }) {
+/** None / Standard as two chips; the value still travels as cancel_insurance. */
+function CancelInsurance() {
   const field = useBookingField('cancel_insurance');
+  const { setFieldValue } = useBookingFormContext();
 
-  if (!house.cancel_insurance) {
-    return null;
-  }
+  const value = String(field.value);
+  const option = (optionValue: string, label: string) => (
+    <button
+      type="button"
+      className="bu-chip"
+      aria-pressed={value === optionValue}
+      onClick={() => setFieldValue('cancel_insurance', optionValue)}
+    >
+      {t(label)}
+    </button>
+  );
 
   return (
-    <div className="form-row inline">
-      <label htmlFor="cancel_insurance">{t('cancel_insurance')}</label>
-      <select
-        id="cancel_insurance"
-        name="cancel_insurance"
-        value={String(field.value)}
-        onChange={field.onChange}
-        onBlur={field.onBlur}
-        required={true}
+    <div className="form-row bu-insurance">
+      <div className="bu-field-label" id="cancel_insurance_label">
+        {t('cancel_insurance')}
+        <Modal buttonText={<Icon />}>
+          <CancelInsuranceText />
+        </Modal>
+      </div>
+      <div
+        className="bu-chips"
+        role="group"
+        aria-labelledby="cancel_insurance_label"
       >
-        {translatedOption('choose', '')}
-        {translatedOption('cancel_insurance_normal', '1')}
-        {translatedOption('none', '0')}
-      </select>
-      <Modal buttonText={<Icon />}>
-        <CancelInsuranceText />
-      </Modal>
+        {option('0', 'none')}
+        {option('1', 'cancel_insurance_normal')}
+      </div>
+      <input type="hidden" name="cancel_insurance" value={value} />
     </div>
   );
 }
@@ -48,7 +56,7 @@ export const Insurances = ({ house, values }: Props) => {
     return (
       <div className="form-section bup-16" id="insurances">
         <h2>{t('insurances')}</h2>
-        <CancelInsurance house={house} />
+        <CancelInsurance />
         {values.cancel_insurance && values.cancel_insurance !== '0' && (
           <DateField
             label="extra_fields.date_of_birth"

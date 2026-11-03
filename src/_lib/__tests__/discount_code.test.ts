@@ -58,6 +58,20 @@ describe('discount code REST client', () => {
 
       expect(url.searchParams.get('code')).toBe('SUMMER 20&X');
     });
+
+    it('sends the selected currency', () => {
+      const url = new URL(
+        buildDiscountCodeUrl({ ...baseParams, currency: 'USD' })
+      );
+
+      expect(url.searchParams.get('currency')).toBe('USD');
+    });
+
+    it('omits the currency when none is selected', () => {
+      const url = new URL(buildDiscountCodeUrl(baseParams));
+
+      expect(url.searchParams.has('currency')).toBe(false);
+    });
   });
 
   describe('fetchDiscountCode', () => {

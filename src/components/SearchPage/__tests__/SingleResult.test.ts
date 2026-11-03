@@ -39,9 +39,10 @@ let container: HTMLDivElement;
 
 function renderSingleResult(
   result: AccommodationResult = mockResult,
-  options: FiltersFormType = mockOptions
+  options: FiltersFormType = mockOptions,
+  currency?: string
 ) {
-  container.innerHTML = SingleResult({ result, options });
+  container.innerHTML = SingleResult({ result, options, currency });
 }
 
 beforeEach(() => {
@@ -77,6 +78,39 @@ describe('SingleResult', () => {
     expect(img).not.toBeNull();
     expect(img?.getAttribute('src')).toBe(mockResult.image_url);
     expect(img?.getAttribute('alt')).toBe(mockResult.name);
+  });
+
+  it('should lazy-load a plain src when image_urls is missing', () => {
+    renderSingleResult();
+
+    const img = container.querySelector('.image-holder img');
+    expect(img?.hasAttribute('srcset')).toBe(false);
+    expect(img?.hasAttribute('sizes')).toBe(false);
+    expect(img?.getAttribute('loading')).toBe('lazy');
+    expect(img?.getAttribute('decoding')).toBe('async');
+  });
+
+  it('should render a srcset of the sized variants when image_urls is given', () => {
+    renderSingleResult({
+      ...mockResult,
+      image_urls: {
+        small: 'https://example.com/image?variant=small&a="b"',
+        medium: 'https://example.com/image?variant=medium',
+        large: 'https://example.com/image?variant=large',
+        original: 'https://example.com/image.jpg'
+      }
+    });
+
+    const img = container.querySelector('.image-holder img');
+    expect(img?.getAttribute('src')).toBe(
+      'https://example.com/image?variant=large'
+    );
+    expect(img?.getAttribute('srcset')).toBe(
+      'https://example.com/image?variant=small&a="b" 480w, https://example.com/image?variant=medium 960w, https://example.com/image?variant=large 1600w'
+    );
+    expect(img?.getAttribute('sizes')).toBe('(min-width: 992px) 400px, 300px');
+    expect(img?.getAttribute('loading')).toBe('lazy');
+    expect(img?.getAttribute('decoding')).toBe('async');
   });
 
   it('should omit href and src attributes when urls are undefined', () => {
@@ -158,23 +192,30 @@ describe('SingleResult', () => {
     expect(rating).toBeNull();
   });
 
-  it('should display minimum_week_price when no booking_price', () => {
+  it('should display minimum_week_price in euros when no currency is known', () => {
     renderSingleResult();
 
     const price = container.querySelector('.result-price');
     expect(price).not.toBeNull();
-    expect(price?.textContent).toContain('1,000');
+    expect(price?.textContent).toContain('€1,000');
   });
 
-  it('should display booking_price when available', () => {
+  it('should display minimum_week_price in the given currency', () => {
+    renderSingleResult(mockResult, mockOptions, 'USD');
+
+    const price = container.querySelector('.result-price');
+    expect(price?.textContent).toContain('$1,000');
+  });
+
+  it('should display booking_price in the currency of the price', () => {
     const resultWithBookingPrice = {
       ...mockResult,
-      booking_price: { total_price: 750 }
+      booking_price: { total_price: 750, currency: 'USD' }
     };
     renderSingleResult(resultWithBookingPrice);
 
     const price = container.querySelector('.result-price');
-    expect(price?.textContent).toContain('750');
+    expect(price?.textContent).toContain('$750');
   });
 
   it('should render view_details button text', () => {

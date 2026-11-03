@@ -4,6 +4,8 @@ import type { FiltersType } from '../components/SearchPage/filters/filter_types'
 interface Pagination {
   limit: number;
   skip: number;
+  /** ISO 4217 currency code to express prices in; omitted when not selected. */
+  currency?: string;
 }
 
 /**
@@ -11,7 +13,7 @@ interface Pagination {
  * `category_<id>` filter that has a value, which the filter panel renders as a
  * separate select per property category.
  */
-function propertyIds(filters: FiltersType): number[] {
+export function propertyIds(filters: FiltersType): number[] {
   const categoryIds = Object.entries(filters as Record<string, unknown>)
     .filter(([key, value]) => /^category_\d+$/.test(key) && value)
     .map(([, value]) => Number(value));
@@ -48,12 +50,14 @@ function setNumber(
  */
 export function buildSearchParams(
   filters: FiltersType,
-  { limit, skip }: Pagination
+  { limit, skip, currency }: Pagination
 ): Record<string, string> {
   const params: Record<string, string> = {
     limit: String(limit),
     skip: String(skip)
   };
+
+  if (currency) params.currency = currency;
 
   if (filters.countries) params.country_id = String(filters.countries);
   if (filters.regions) params.region_id = String(filters.regions);

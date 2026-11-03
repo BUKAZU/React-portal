@@ -8,6 +8,7 @@ import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
 import { AppContext } from './AppContext';
+import { CurrencyProvider } from './CurrencyContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
@@ -123,7 +124,11 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     );
   }
 
-  return <>{page}</>;
+  return (
+    <CurrencyProvider currencies={portalSite.currencies}>
+      {page}
+    </CurrencyProvider>
+  );
 }
 
 export default App;
