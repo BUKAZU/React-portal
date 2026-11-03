@@ -13,7 +13,7 @@ interface Pagination {
  * `category_<id>` filter that has a value, which the filter panel renders as a
  * separate select per property category.
  */
-function propertyIds(filters: FiltersType): number[] {
+export function propertyIds(filters: FiltersType): number[] {
   const categoryIds = Object.entries(filters as Record<string, unknown>)
     .filter(([key, value]) => /^category_\d+$/.test(key) && value)
     .map(([, value]) => Number(value));

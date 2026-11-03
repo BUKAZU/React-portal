@@ -63,7 +63,7 @@ function Totals({ prices }: Props): JSX.Element {
             {t('total')}
           </th>
           <td className="price">
-            {formatNumber(prices.total_costs.total_price, {
+            {formatNumber(prices.amount_due ?? prices.total_costs.total_price, {
               style: 'currency',
               currency
             })}

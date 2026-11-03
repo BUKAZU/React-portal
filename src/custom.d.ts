@@ -1,5 +1,7 @@
 interface Window {
   __localeId__?: string;
+  /** Set to `true` by the host page once the visitor consents to tracking cookies. */
+  bukazuConsent?: boolean;
 }
 
 /**

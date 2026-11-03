@@ -1,92 +1,198 @@
-.price-overview {
-  display: flex;
-  flex-wrap: wrap;
-  background-color: #fff;
-  @container (max-width: 992px) {
+/*
+ * The stay bar under the calendar: arrival · departure · nights · persons ·
+ * price · Next. Sticky inside the portal so it shows while the calendar block
+ * is in view and never covers the host page.
+ */
+#bukazu-app {
+  .bu-stay-bar-wrap,
+  .price-overview {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    background: #fff;
+  }
+  .bu-stay-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 14px 24px;
+    border-top: 1px solid rgba(69, 74, 83, 0.2);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  }
+  .bu-stay-bar-dates {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    min-width: 0;
+  }
+  .bu-stay-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .bu-stay-slot {
+    display: flex;
     flex-direction: column;
+    gap: 2px;
+    min-width: 150px;
   }
-  table {
-    width: 100%;
+  .bu-stay-slot-label {
+    font-size: 13px;
+    color: rgba(26, 25, 25, 0.62);
   }
-  th {
-    text-align: left;
-  }
-  tr {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-    &.hidden {
-      display: none;
+  .bu-stay-slot-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(26, 25, 25, 1);
+    white-space: nowrap;
+    &.bu-empty {
+      font-weight: 400;
+      color: rgba(26, 25, 25, 0.38);
     }
   }
-  td {
-    padding: 4px;
-    width: 50%;
-    &.price {
-      text-align: right;
+  .bu-stay-arrow {
+    display: inline-flex;
+    color: rgba(26, 25, 25, 0.62);
+  }
+  .bu-stay-nights-empty {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px dashed rgba(69, 74, 83, 0.2);
+    border-radius: 999px;
+    font-size: 14px;
+    color: rgba(26, 25, 25, 0.38);
+    white-space: nowrap;
+  }
+  .bu-stay-persons {
+    display: block;
+    width: 160px;
+    select {
+      width: 100%;
     }
   }
-  td.column {
-    width: 30%;
+  .bu-stay-bar .bu-currency-selector {
+    margin: 0;
   }
-  .price-list {
-    list-style: none;
-    padding: 0;
+
+  .bu-stay-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    min-width: 120px;
+    &.bu-empty .bu-stay-price-value {
+      color: rgba(26, 25, 25, 0.38);
+    }
+  }
+  .bu-stay-price-value {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: rgba(26, 25, 25, 1);
+  }
+  .bu-stay-price-hint {
+    font-size: 13px;
+    color: rgba(26, 25, 25, 0.62);
     text-align: right;
   }
-  ul {
-    padding: 0;
-    list-style: none;
-    li {
-      padding: 4px 0;
-    }
+  .bu-stay-price-loading svg {
+    height: 24px;
   }
-  &--build {
-    display: flex;
-    flex-direction: row;
-    /* width: 30%; */
-    /* min-height: 200px; */
-    flex: 1 1 auto;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    @container (max-width: 992px) {
-      padding: 16px 0;
-      min-height: 0px;
-    }
+  .bu-stay-price-error {
+    font-size: 13px;
+    color: rgba(26, 25, 25, 0.62);
+    max-width: 22ch;
+    text-align: right;
   }
-  &--book {
-    flex: 1 1 auto;
-    /* width: 30%; */
-    padding: 4px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+
+  .bu-stay-next,
+  .calendar--picker .button {
+    display: inline-flex;
     align-items: center;
-    @container (max-width: 992px) {
-      padding: 16px 0;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+    width: auto;
+    margin: 0;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--bukazu-button_cta, #e94e1b);
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    &:hover {
+      box-shadow: none;
+      filter: brightness(0.95);
     }
-
-    & > div {
-      padding: 4px 0;
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--bukazu-button_cta, #e94e1b) 35%, #fff);
     }
-    .price {
-      font-size: 28px;
-      @container (min-width: 1200px) {
-        font-size: 32px;
-      }
-      font-weight: bold;
-    }
-    i {
-      font-size: 14px;
-      @container (min-width: 1200px) {
-        font-size: 16px;
-      }
+    &:disabled {
+      background: #d5d8dc;
+      color: #fff;
+      filter: none;
+      cursor: not-allowed;
     }
   }
-}
 
-@container (max-width: 875px) {
-  .price-overview {
-    width: 100%;
-    flex-direction: column;
+  /* phones: two rows, controls 44px */
+  @container (max-width: 825px) {
+    .bu-stay-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      padding: 12px 16px 16px;
+      border-radius: 16px 16px 0 0;
+    }
+    .bu-stay-bar-dates {
+      gap: 8px 12px;
+    }
+    .bu-stay-slot {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .bu-stay-slot-value {
+      font-size: 14px;
+      white-space: normal;
+    }
+    .bu-stay-arrow {
+      display: none;
+    }
+    .bu-stay-persons {
+      flex: 1 1 100%;
+      width: auto;
+      select {
+        height: 44px;
+      }
+    }
+    .bu-stay-bar-actions {
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .bu-stay-price {
+      align-items: flex-start;
+      flex: 1 1 auto;
+    }
+    .bu-stay-price-hint {
+      text-align: left;
+    }
+    .bu-stay-next,
+    .calendar--picker .button {
+      height: 44px;
+      padding: 0 20px;
+    }
   }
 }

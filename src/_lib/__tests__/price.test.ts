@@ -1,4 +1,9 @@
-import { buildPriceUrl, fetchPrice, PriceResponse } from '../price';
+import {
+  buildPriceUrl,
+  fetchPrice,
+  PriceResponse,
+  PriceUnavailableError
+} from '../price';
 import { HTTPError } from 'ky';
 
 // Explicit factory mock for the shared HTTP client so tests do not perform real HTTP requests.
@@ -155,6 +160,50 @@ describe('price REST client', () => {
       expect(
         (calledOptions as { headers: Record<string, string> }).headers.locale
       ).toBe('nl');
+    });
+
+    it('rejects with PriceUnavailableError when the API returns the empty stub without a currency', async () => {
+      // Shape returned by Houses::RequestBookingPrice#empty_json when night
+      // prices do not cover the requested period.
+      const emptyStub = {
+        arrival_date: '2026-10-27',
+        departure_date: '2026-11-17',
+        arrival_time: '',
+        departure_time: '',
+        nights: 0,
+        rent_price: 0,
+        base_price: 0,
+        total_price: 0
+      };
+      (mockHttp.get as jest.Mock).mockReturnValue({
+        json: jest.fn().mockResolvedValue(emptyStub)
+      });
+
+      await expect(
+        fetchPrice({
+          ...baseParams,
+          startsAt: '2026-10-27',
+          endsAt: '2026-11-17',
+          locale: 'nl'
+        })
+      ).rejects.toBeInstanceOf(PriceUnavailableError);
+    });
+
+    it('rejects with PriceUnavailableError when the API answers 422 (no prices for the period)', async () => {
+      const fakeResponse = { status: 422 } as Response;
+      const fakeRequest = {
+        method: 'GET',
+        url: 'https://example.com'
+      } as Request;
+      const httpError = new HTTPError(fakeResponse, fakeRequest, {} as never);
+
+      (mockHttp.get as jest.Mock).mockReturnValue({
+        json: jest.fn().mockRejectedValue(httpError)
+      });
+
+      await expect(
+        fetchPrice({ ...baseParams, locale: 'nl' })
+      ).rejects.toBeInstanceOf(PriceUnavailableError);
     });
 
     it('re-throws an HTTPError as a plain Error containing the status code', async () => {

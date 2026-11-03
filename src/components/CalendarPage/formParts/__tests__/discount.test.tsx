@@ -60,13 +60,15 @@ const baseValues = {
 function DiscountHarness({
   house,
   bookingFormConfiguration,
-  errors
+  errors,
+  initialValues = baseValues
 }: {
   house: typeof baseHouse;
   bookingFormConfiguration: BookingFormConfigurationType;
   errors: Record<string, string | undefined>;
+  initialValues?: typeof baseValues;
 }) {
-  const [values, setValues] = useState(baseValues);
+  const [values, setValues] = useState(initialValues);
   const [touched, setTouched] = useState({});
 
   return (
@@ -119,21 +121,82 @@ afterEach(() => {
 function renderDiscount(
   housePatch: Partial<typeof baseHouse> = {},
   configPatch: Partial<BookingFormConfigurationType> = {},
-  errors: Record<string, string | undefined> = {}
+  errors: Record<string, string | undefined> = {},
+  { open = true, initialValues = baseValues } = {}
 ) {
   const house = { ...baseHouse, ...housePatch };
   const bookingFormConfiguration = { ...baseConfig, ...configPatch };
-
   act(() => {
     root.render(
       <DiscountHarness
         house={house}
         bookingFormConfiguration={bookingFormConfiguration}
         errors={errors}
+        initialValues={initialValues}
       />
     );
   });
+  // The fields are folded away behind "Have a discount code?" by default.
+  const toggle = container.querySelector('.bu-discount-toggle');
+  if (open && toggle && toggle.getAttribute('aria-expanded') === 'false') {
+    act(() => {
+      (toggle as HTMLElement).click();
+    });
+  }
 }
+
+describe('Discount – folded by default', () => {
+  it('shows only the heading and the "Have a discount code?" link', () => {
+    renderDiscount({ discounts: '10,20' }, {}, {}, { open: false });
+    const toggle = container.querySelector('.bu-discount-toggle');
+    expect(toggle?.textContent).toBe('Have a discount code?');
+    expect(toggle?.getAttribute('aria-expanded')).toBe('false');
+    expect(container.querySelector('select')).toBeNull();
+    expect(container.querySelector('h2')?.textContent).toBe('Discount');
+  });
+
+  it('opens and folds again from the link', () => {
+    renderDiscount({ discounts: '10,20' });
+    const toggle = container.querySelector(
+      '.bu-discount-toggle'
+    ) as HTMLElement;
+    expect(toggle.textContent).toBe('Hide');
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(container.querySelector('select')).not.toBeNull();
+    act(() => {
+      toggle.click();
+    });
+    expect(container.querySelector('select')).toBeNull();
+  });
+
+  it('starts open when a discount is already chosen', () => {
+    renderDiscount(
+      { discounts: '10,20' },
+      {},
+      {},
+      {
+        open: false,
+        initialValues: { ...baseValues, discount: 10 }
+      }
+    );
+    expect(container.querySelector('select')).not.toBeNull();
+  });
+
+  it('starts open when a discount code is already entered', () => {
+    renderDiscount(
+      { discounts: undefined },
+      { show_discount_code: true },
+      {},
+      {
+        open: false,
+        initialValues: { ...baseValues, discount_code: 'SUMMER' }
+      }
+    );
+    expect(
+      container.querySelector('[data-testid="discount-code"]')
+    ).not.toBeNull();
+  });
+});
 
 describe('Discount – renders nothing', () => {
   it('returns null when house has no discounts and showDiscountCode is false', () => {

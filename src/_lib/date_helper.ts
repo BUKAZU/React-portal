@@ -163,18 +163,19 @@ function endOfMonth(date: Date): Date {
 }
 
 /**
- * Returns the Sunday that starts the calendar week containing `date`.
- * Matches date-fns default (weekStartsOn: 0).
+ * Returns the Monday that starts the calendar week containing `date`
+ * (weekStartsOn: 1, the ISO week used across Europe).
  */
 function startOfWeek(date: Date): Date {
   const d = startOfDay(date);
-  d.setDate(d.getDate() - d.getDay());
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
   return d;
 }
 
+/** Returns the Sunday that ends the calendar week containing `date`. */
 function endOfWeek(date: Date): Date {
   const d = startOfDay(date);
-  d.setDate(d.getDate() + (6 - d.getDay()));
+  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
   return d;
 }
 

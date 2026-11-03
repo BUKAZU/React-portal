@@ -1,5 +1,6 @@
 import { http } from './http_client';
 import { HTTPError } from 'ky';
+import type { ImageUrls } from './responsive_image';
 
 /** Price for the requested period, only present when the search carried a period. */
 export interface AccommodationBookingPrice {
@@ -14,6 +15,8 @@ export interface AccommodationResult {
   name: string;
   description: string;
   image_url: string | null;
+  /** Null without a main image; absent on backends that predate sized variants. */
+  image_urls?: ImageUrls | null;
   house_url: string | null;
   persons: number;
   bedrooms: number;

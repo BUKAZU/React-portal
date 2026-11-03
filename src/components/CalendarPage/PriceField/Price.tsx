@@ -3,7 +3,13 @@ import { t, formatNumber } from '../../../intl';
 import { AppContext } from '../../AppContext';
 import { useCurrency } from '../../CurrencyContext';
 import Loading from '../../icons/loading.svg';
-import { fetchPrice, PriceResponse } from '../../../_lib/price';
+import {
+  fetchPrice,
+  PriceResponse,
+  PriceUnavailableError
+} from '../../../_lib/price';
+import { TrackEvent } from '../../../_lib/Tracking';
+import { firstPriceUnavailable, firstQuote } from '../../../_lib/track_once';
 
 interface Props {
   persons: number;
@@ -13,6 +19,7 @@ interface Props {
   };
 }
 
+/** Total price for the chosen stay, shown in the stay bar. */
 function Price({ persons, variables }: Props) {
   const { portalCode, objectCode, locale, apiUrl } = useContext(AppContext);
   const { currency } = useCurrency();
@@ -25,6 +32,8 @@ function Price({ persons, variables }: Props) {
     setLoading(true);
     setError(null);
 
+    const stay = { arrival: variables.starts_at, departure: variables.ends_at };
+
     fetchPrice({
       apiUrl,
       locale,
@@ -36,15 +45,39 @@ function Price({ persons, variables }: Props) {
       currency
     })
       .then((price) => {
-        if (!cancelled) {
-          setResult(price);
-          setLoading(false);
+        if (cancelled) return;
+        setResult(price);
+        setLoading(false);
+        if (firstQuote(objectCode, stay, persons)) {
+          TrackEvent({
+            house_code: objectCode,
+            portal_code: portalCode,
+            locale,
+            interaction_type: 'quote_shown',
+            interaction_info: {
+              ...stay,
+              persons,
+              total_cents: Math.round(price.total_price * 100),
+              currency: price.currency.toUpperCase()
+            }
+          });
         }
       })
       .catch((err) => {
-        if (!cancelled) {
-          setError(err);
-          setLoading(false);
+        if (cancelled) return;
+        setError(err);
+        setLoading(false);
+        if (
+          err instanceof PriceUnavailableError &&
+          firstPriceUnavailable(objectCode, stay)
+        ) {
+          TrackEvent({
+            house_code: objectCode,
+            portal_code: portalCode,
+            locale,
+            interaction_type: 'price_unavailable',
+            interaction_info: stay
+          });
         }
       });
 
@@ -64,31 +97,31 @@ function Price({ persons, variables }: Props) {
 
   if (loading)
     return (
-      <div className="price-overview--build bup-16">
+      <div className="price-overview--build bu-stay-price bu-stay-price-loading">
         <Loading />
       </div>
     );
   if (error || !result) {
     return (
-      <div className="price-overview--build bup-16">
-        {t('something_went_wrong_please_try_again')}
+      <div className="price-overview--build bu-stay-price bu-stay-price-error">
+        {error instanceof PriceUnavailableError
+          ? t('no_prices_available_for_period')
+          : t('something_went_wrong_please_try_again')}
       </div>
     );
   }
   return (
-    <>
-      <div className="price-overview--book">
-        <div className="price">
-          {formatNumber(Math.round(result.total_price), {
-            style: 'currency',
-            currency: result.currency
-          })}
-        </div>
-        <div>
-          <i>{t('based_on_one_person', { persons })}</i>
-        </div>
+    <div className="price-overview--book bu-stay-price">
+      <div className="price bu-stay-price-value">
+        {formatNumber(Math.round(result.total_price), {
+          style: 'currency',
+          currency: result.currency
+        })}
       </div>
-    </>
+      <div className="bu-stay-price-hint">
+        {t('based_on_one_person', { persons })}
+      </div>
+    </div>
   );
 }
 
