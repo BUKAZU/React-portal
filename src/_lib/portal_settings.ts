@@ -3,12 +3,13 @@
  * (GET /portal_api/v1/config/*). Replaces the legacy GraphQL PortalSite settings
  * reads (PORTAL_BASE_QUERY / PORTAL_SEARCH_QUERY and the settings portions of the
  * booking queries). Mirrors the availability client in `availability.ts`: shared ky
- * http client, REST origin derived from the configured GraphQL api_url, locale header.
+ * http client, REST origin derived from the configured api_url, locale header.
  */
 
 import { HTTPError } from 'ky';
 
 import { http } from './http_client';
+import type { SettingsCurrencies } from './currencies';
 
 /** Colour configuration as returned by the settings endpoint. */
 export type SettingsColors = {
@@ -41,7 +42,10 @@ export type SettingsFiltersForm = {
   show: boolean;
   location: string;
   mode: 'grid' | 'list';
-  no_results: number;
+  /** Results shown per page. */
+  results_amount?: number;
+  /** @deprecated Pre-June-2026 name of `results_amount`; kept for older backends. */
+  no_results?: number;
   fixed_mobile: boolean;
   show_price: boolean;
   show_persons: boolean;
@@ -50,6 +54,8 @@ export type SettingsFiltersForm = {
   show_country: boolean;
   show_region: boolean;
   show_city: boolean;
+  /** Prefill filters from URL query params; absent on older backends (treat as true). */
+  prefill_filters_from_url?: boolean;
 };
 
 /** Full response of GET /portal_api/v1/config/settings. */
@@ -62,6 +68,8 @@ export type SettingsResponse = {
   colors: SettingsColors;
   booking_form: SettingsBookingForm;
   filters_form: SettingsFiltersForm;
+  /** Currency configuration; absent on older backends (treat as single-currency). */
+  currencies?: SettingsCurrencies;
   /** Flat map of "<attribute>_<locale>" => localized value, for every locale. */
   labels: Record<string, string>;
 };
@@ -88,7 +96,7 @@ export type FilterFieldResponse = {
 };
 
 interface ConfigRequestParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -97,7 +105,7 @@ interface ConfigRequestParams {
 const CONFIG_BASE = '/portal_api/v1/config';
 
 /**
- * Build a config URL by reusing the origin of the configured GraphQL api_url, so
+ * Build a config URL by reusing the origin of the configured api_url, so
  * staging/local overrides keep working.
  */
 function buildConfigUrl(
@@ -136,7 +144,9 @@ async function fetchConfig<T>(url: string, locale: string): Promise<T> {
     return await http.get(url, { headers: { locale } }).json<T>();
   } catch (error) {
     if (error instanceof HTTPError) {
-      throw new Error(`Portal settings request failed (${error.response.status})`);
+      throw new Error(
+        `Portal settings request failed (${error.response.status})`
+      );
     }
     throw error;
   }

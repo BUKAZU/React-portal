@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { FiltersType } from '../SearchPage/filters/filter_types';
+import { normalizeLocale } from '../../_lib/locale';
 import { reportMessage } from '../../_lib/sentry';
 
 interface Props {
@@ -30,10 +31,14 @@ export default function IntegrationError({
   }
 
   if (!locale) {
-    console.warn('No locale is set default to English');
+    console.warn('No locale is set; defaulting to English.');
   } else {
-    if (!['nl', 'de', 'en', 'fr', 'it', 'es'].includes(locale)) {
-      errors.push('Invalid locale');
+    const normalized = normalizeLocale(locale);
+    const originalLanguage = locale.toLowerCase().split(/[-_]/)[0];
+    if (normalized === 'en' && originalLanguage !== 'en') {
+      console.warn(
+        `Locale '${locale}' is not supported, defaulting to English`
+      );
     }
   }
 

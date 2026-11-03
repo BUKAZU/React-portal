@@ -31,10 +31,11 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build --if-present
+      - run: npm run verify:website
       - run: npm test
       - name: Coverage comment
         if: github.event_name == 'pull_request' && matrix.node-version == '26.x'
-        uses: MishaKav/jest-coverage-comment@v1.0.34
+        uses: MishaKav/jest-coverage-comment@v1.0.38
         with:
           coverage-summary-path: ./coverage/coverage-summary.json
           report-only-changed-files: true
@@ -42,7 +43,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.61.1-noble
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
 
     permissions:
       contents: read
@@ -58,6 +59,9 @@ jobs:
           node-version: 26.x
           cache: 'npm'
       - run: npm ci
+      - name: Build the bundles the website e2e spec loads
+        run: npm run build
+      - run: npm run verify:website
       - name: Run Playwright e2e tests
         run: npm run test:e2e
       - name: Upload Playwright report
@@ -90,5 +94,5 @@ jobs:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           install-script: 'npm ci'
           build-script: 'npm run build'
-          pattern: './build/portal.{es,umd}.js'
+          pattern: './build/portal.{es,website}.js'
           strip-hash: '\.[a-f0-9]{8}\.'

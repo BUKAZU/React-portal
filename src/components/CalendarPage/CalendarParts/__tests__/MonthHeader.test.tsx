@@ -7,16 +7,13 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import MonthHeader from '../MonthHeader';
 
-// Required for act() to work correctly in the jsdom test environment
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
-
-// Set locale for FormatIntl
-(global as any).window.__localeId__ = 'en';
 
 let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 
 beforeEach(() => {
+  (window as any).__localeId__ = 'en';
   container = document.createElement('div');
   document.body.appendChild(container);
   act(() => {
@@ -31,53 +28,68 @@ afterEach(() => {
   container.remove();
 });
 
+const january = new Date(2025, 0, 1);
+
 describe('MonthHeader', () => {
-  it('should render a bold header container', () => {
-    const month = new Date(2025, 0, 1); // January 2025
+  it('shows the month and year', () => {
     act(() => {
-      root.render(<MonthHeader month={month} />);
+      root.render(<MonthHeader month={january} />);
     });
-
-    const header = container.querySelector('.bu-bold');
-    expect(header).not.toBeNull();
+    const title = container.querySelector('.bu-month-title span');
+    expect(title?.textContent).toBe('January 2025');
   });
 
-  it('should render month name and year inside a span', () => {
-    const month = new Date(2025, 0, 1); // January 2025
+  it('formats another month', () => {
     act(() => {
-      root.render(<MonthHeader month={month} />);
+      root.render(<MonthHeader month={new Date(2025, 5, 1)} />);
     });
-
-    const span = container.querySelector('span');
-    expect(span).not.toBeNull();
-    expect(span?.textContent).toBeTruthy();
-    // Should contain the year
-    expect(span?.textContent).toContain('2025');
+    expect(container.querySelector('.bu-month-title')?.textContent).toBe(
+      'June 2025'
+    );
   });
 
-  it('should render center-aligned column', () => {
-    const month = new Date(2025, 5, 1); // June 2025
+  it('renders spacers instead of buttons when it cannot navigate', () => {
     act(() => {
-      root.render(<MonthHeader month={month} />);
+      root.render(<MonthHeader month={january} />);
     });
-
-    const col = container.querySelector('.bu-text-center');
-    expect(col).not.toBeNull();
+    expect(container.querySelectorAll('button')).toHaveLength(0);
+    expect(container.querySelectorAll('.bu-month-nav-spacer')).toHaveLength(2);
   });
 
-  it('should update displayed month when prop changes', () => {
-    const janMonth = new Date(2025, 0, 1);
+  it('renders labelled previous and next buttons that call back', () => {
+    const onPrev = jest.fn();
+    const onNext = jest.fn();
     act(() => {
-      root.render(<MonthHeader month={janMonth} />);
+      root.render(
+        <MonthHeader month={january} onPrev={onPrev} onNext={onNext} />
+      );
     });
-    const janText = container.querySelector('span')?.textContent;
-
-    const junMonth = new Date(2025, 5, 1);
+    const prev = container.querySelector(
+      'button[aria-label="Previous month"]'
+    ) as HTMLButtonElement;
+    const next = container.querySelector(
+      'button[aria-label="Next month"]'
+    ) as HTMLButtonElement;
+    expect(prev.disabled).toBe(false);
     act(() => {
-      root.render(<MonthHeader month={junMonth} />);
+      prev.click();
+      next.click();
     });
-    const junText = container.querySelector('span')?.textContent;
+    expect(onPrev).toHaveBeenCalledTimes(1);
+    expect(onNext).toHaveBeenCalledTimes(1);
+  });
 
-    expect(janText).not.toBe(junText);
+  it('disables the previous button at the floor', () => {
+    act(() => {
+      root.render(
+        <MonthHeader month={january} onPrev={jest.fn()} prevDisabled />
+      );
+    });
+    const prev = container.querySelector(
+      'button[aria-label="Previous month"]'
+    ) as HTMLButtonElement;
+    expect(prev.disabled).toBe(true);
+    // Only the first month pages back; the last one pages forward.
+    expect(container.querySelectorAll('.bu-month-nav-spacer')).toHaveLength(1);
   });
 });

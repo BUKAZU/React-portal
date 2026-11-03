@@ -1,17 +1,26 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '../../intl';
-import { differenceInCalendarDays } from '../../_lib/date_helper';
 import Loading from '../icons/loading.svg';
 import SingleResult from './SingleResult';
 import Paginator from './Paginator';
+import ViewToggle from './ViewToggle';
 
-import { HOUSES_PRICE_QUERY, HOUSES_QUERY } from '../../_lib/gql';
 import { ApiError } from '../Error';
-import { useQuery } from '@apollo/client';
 import { FiltersType } from './filters/filter_types';
-import { Parse_EN_US } from '../../_lib/date_helper';
 import { AppContext } from '../AppContext';
-import { HouseType, PortalSiteType } from '../../types';
+import { useCurrency } from '../CurrencyContext';
+import CurrencySelector from '../CurrencySelector';
+import { PortalSiteType } from '../../types';
+import {
+  fetchAccommodations,
+  type AccommodationsResponse
+} from '../../_lib/accommodations';
+import { buildSearchParams } from '../../_lib/search_params';
+import type { ViewMode } from '../../_lib/view_mode';
+import { searchInfo } from '../../_lib/search_tracking';
+import { TrackEvent } from '../../_lib/Tracking';
+
+const SEARCH_TRACKING_DELAY = 1000;
 
 interface Props {
   filters: FiltersType;
@@ -20,7 +29,15 @@ interface Props {
   skip: number;
   onPageChange: Function;
   activePage: number;
+  /** Results layout; falls back to the portal's configured mode. */
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
+
+type ResultsState =
+  | { status: 'loading' }
+  | { status: 'error'; error: Error }
+  | { status: 'ready'; response: AccommodationsResponse };
 
 function Results({
   filters,
@@ -28,100 +45,147 @@ function Results({
   limit,
   skip,
   onPageChange,
-  activePage
+  activePage,
+  viewMode,
+  onViewModeChange
 }: Props): JSX.Element {
-  const { portalCode } = useContext(AppContext);
+  const { portalCode, apiUrl, locale } = useContext(AppContext);
+  const { currency } = useCurrency();
+  const [state, setState] = useState<ResultsState>({ status: 'loading' });
 
-  let min_nights = null;
-  let requestPrices = false;
-  if (filters.departure_date && filters.arrival_date) {
-    min_nights = differenceInCalendarDays(
-      Parse_EN_US(filters.departure_date),
-      Parse_EN_US(filters.arrival_date)
-    );
-    requestPrices = true;
-  } else if (filters.arrival_date) {
-    min_nights = 1;
-  }
-  const categoryIds = Object.entries(filters as Record<string, unknown>)
-    .filter(([key, val]) => /^category_\d+$/.test(key) && val)
-    .map(([, val]) => Number(val))
-    .filter((n) => !isNaN(n));
-
-  const filterProperties = [...(filters.properties || []), ...categoryIds].map(
-    (e) => JSON.stringify(e)
+  // Serialized so the effect re-runs on a changed filter value, not on every
+  // render of the parent (which rebuilds the filters object).
+  const paramsKey = JSON.stringify(
+    buildSearchParams(filters, { limit, skip, currency })
   );
+  const params = useMemo(
+    () => JSON.parse(paramsKey) as Record<string, string>,
+    [paramsKey]
+  );
+  const filtersKey = JSON.stringify(filters);
+  const latestFilters = useRef(filters);
+  latestFilters.current = filters;
+  const trackedFilters = useRef<string | null>(null);
+  // Filters that settled for a second and wait for their result count; the
+  // count is null while a request is in flight.
+  const settledFilters = useRef<string | null>(null);
+  const resultCount = useRef<number | null>(null);
 
-  let properties = filterProperties.join(',');
-
-  let variables = {
-    id: portalCode,
-    country_id: filters.countries || null,
-    region_id: filters.regions || null,
-    city_id: filters.cities,
-    persons_min: Number(filters.persons_min) || null,
-    persons_max: Number(filters.persons_max) || null,
-    bedrooms_min: Number(filters.bedrooms_min),
-    bathrooms_min: Number(filters.bathrooms_min),
-    arrival_date: filters.arrival_date,
-    starts_at: filters.arrival_date,
-    ends_at: filters.departure_date,
-    no_nights: Number(min_nights) || null,
-    extra_search: filters.extra_search,
-    properties,
-    weekprice_max: Number(filters.weekprice_max) || null,
-    limit,
-    skip
+  const trackSettledSearch = () => {
+    const key = settledFilters.current;
+    if (key === null || resultCount.current === null) return;
+    settledFilters.current = null;
+    trackedFilters.current = key;
+    TrackEvent({
+      portal_code: portalCode,
+      locale,
+      interaction_type: 'search',
+      interaction_info: searchInfo(latestFilters.current, resultCount.current)
+    });
   };
 
-  const { loading, error, data } = useQuery(
-    requestPrices ? HOUSES_PRICE_QUERY : HOUSES_QUERY,
-    { variables }
-  );
+  // Keyed on the filters alone: paging or switching currency is the same
+  // search and must not restart or cancel the debounce.
+  useEffect(() => {
+    if (trackedFilters.current === filtersKey) return;
+    const timer = setTimeout(() => {
+      settledFilters.current = filtersKey;
+      trackSettledSearch();
+    }, SEARCH_TRACKING_DELAY);
+    return () => {
+      clearTimeout(timer);
+      settledFilters.current = null;
+    };
+  }, [filtersKey, portalCode, locale]);
 
-  if (loading)
+  useEffect(() => {
+    const controller = new AbortController();
+    resultCount.current = null;
+    setState({ status: 'loading' });
+
+    fetchAccommodations({
+      apiUrl,
+      locale,
+      portalCode,
+      params,
+      signal: controller.signal
+    })
+      .then((response) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        setState({ status: 'ready', response });
+        resultCount.current = response.meta.total_count;
+        trackSettledSearch();
+      })
+      .catch((error: unknown) => {
+        // An aborted request was superseded by a newer one; its result is stale.
+        if (controller.signal.aborted) {
+          return;
+        }
+        setState({
+          status: 'error',
+          error:
+            error instanceof Error
+              ? error
+              : new Error('A search request failed')
+        });
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [apiUrl, locale, portalCode, params]);
+
+  if (state.status === 'loading') {
     return (
       <div>
         <Loading />
       </div>
     );
-  if (error) {
+  }
+
+  if (state.status === 'error') {
     return (
       <div>
-        <ApiError errors={error}></ApiError>
+        <ApiError errors={state.error}></ApiError>
       </div>
     );
   }
 
+  const { items, meta } = state.response;
+  const mode = viewMode ?? PortalSite.options.filtersForm.mode;
+
   const Pagination = (
     <Paginator
-      variables={variables}
+      totalCount={meta.total_count}
       activePage={activePage}
       limit={limit}
       onPageChange={onPageChange}
     />
   );
-  const Results: HouseType[] = data.PortalSite.houses;
 
   return (
-    <div
-      id="results"
-      className={
-        PortalSite.options.filtersForm.mode
-      }
-    >
+    <div id="results" className={mode}>
+      <div className="bu-results-toolbar">
+        <CurrencySelector />
+        {onViewModeChange && (
+          <ViewToggle mode={mode} onChange={onViewModeChange} />
+        )}
+      </div>
       {Pagination}
-      {Results.length === 0 ? (
+      {items.length === 0 ? (
         <div className="bu-noresults">{t('no_results')}</div>
       ) : null}
-      {Results.map((result) => (
+      {items.map((result) => (
         <div
           key={result.id}
           style={{ display: 'contents' }}
           dangerouslySetInnerHTML={{
             __html: SingleResult({
               result,
-              options: PortalSite.options.filtersForm
+              options: PortalSite.options.filtersForm,
+              currency: meta.currency ?? currency
             })
           }}
         />

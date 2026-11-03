@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * E2E tests for the Bukazu Portal booking form, using Playwright route
- * interception to control GraphQL API responses.
+ * interception to control the REST portal API responses.
  *
  * These tests verify booking form interactions that cannot be exercised with
  * unit tests alone (real DOM rendering, real Formik field value propagation,
@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
  *
  * Strategy
  * ---------
- * • Every test intercepts POST requests to the Bukazu GraphQL endpoint and
+ * • Every test intercepts the /portal_api/v1 requests the portal makes and
  *   returns deterministic JSON fixtures.
  * • Three fixture variants are provided:
  *     1. houseWithoutInsurance  – cancel_insurance: false (baseline)
@@ -18,48 +18,38 @@ import { test, expect } from '@playwright/test';
  *     3. houseWithOptionalCosts – has bookable optional costs
  */
 
-const GQL_URL = 'https://api.bukazu.com/graphql';
+const DETAIL_URL =
+  'https://api.bukazu.com/portal_api/v1/accommodations/detail**';
+const BOOKINGS_URL =
+  'https://api.bukazu.com/portal_api/v1/accommodations/bookings**';
+
+/** Response of POST /portal_api/v1/accommodations/bookings. */
+function makeBookingResponse() {
+  return {
+    booking_nr: 'B2600099',
+    status: 'new',
+    is_option: false,
+    arrival_date: '2025-07-01',
+    departure_date: '2025-07-08',
+    adults: 2,
+    children: 0,
+    babies: 0,
+    language: 'nl',
+    payment_url: null,
+    redirect_to_payment: false,
+    redirect_url: null,
+    success_message: 'Bedankt voor je aanvraag',
+    portal_code: 'TEST',
+    house_code: 'HOUSE1',
+    first_name: 'Jane',
+    last_name: 'Doe',
+    email: 'jane@example.com'
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Shared fixtures
 // ---------------------------------------------------------------------------
-
-const bookingFormConfiguration = {
-  adultsFromAge: 18,
-  babiesAllowed: false,
-  babiesTillAge: 2,
-  childrenAllowed: false,
-  childrenFromAge: 3,
-  childrenTillAge: 17,
-  languageSelectorVisible: false,
-  redirectUrl: '',
-  redirectUrlNl: '',
-  redirectUrlEn: '',
-  redirectUrlDe: '',
-  redirectUrlFr: '',
-  redirectUrlEs: '',
-  redirectUrlIt: '',
-  showDiscountCode: false,
-  showMonthsAmount: 2,
-  showMonthsInARowAmount: 2
-};
-
-const bookingForm = {
-  adults_from: 18,
-  children: false,
-  children_from: 0,
-  children_til: 12,
-  babies: false,
-  babies_til: 2,
-  showDiscountCode: false,
-  redirectUrl: null,
-  redirectUrlEn: null,
-  redirectUrlNl: null,
-  redirectUrlDe: null,
-  redirectUrlFr: null,
-  redirectUrlEs: null,
-  redirectUrlIt: null
-};
 
 function makeHouse(cancelInsurance: boolean, extra: object = {}) {
   return {
@@ -85,109 +75,46 @@ function makeHouse(cancelInsurance: boolean, extra: object = {}) {
 }
 
 /**
- * Build a GraphQL response fixture.
- *
- * The Bukazu portal sends all queries as POST requests to the same endpoint.
- * We distinguish queries by the `operationName` field in the POST body and
- * return the appropriate fixture for each query.
+ * Response of GET /portal_api/v1/accommodations/detail — the flat
+ * accommodation payload, without the booking price the fixtures carry for the
+ * price endpoint.
  */
-function makeSingleHouseResponse(house: object) {
-  return {
-    data: {
-      PortalSite: {
-        id: 'E2E',
-        options: { bookingFields: [], bookingForm: {} },
-        bookingFormConfiguration,
-        houses: [house]
-      }
-    }
-  };
-}
-
-function makeBookingPriceResponse(house: object) {
-  return {
-    data: {
-      PortalSite: {
-        id: 'E2E',
-        options: { bookingFields: [], bookingForm },
-        bookingFormConfiguration,
-        max_persons: 10,
-        name: 'E2E Portal',
-        max_bedrooms: 5,
-        max_bathrooms: 3,
-        max_weekprice: 5000,
-        form_submit_text: 'By booking you agree to our',
-        form_submit_button_text: 'Book now',
-        houses: [house]
-      }
-    }
-  };
-}
-
-function makePriceFieldResponse(house: object) {
-  const houseData = house as {
-    booking_price?: { optional_house_costs?: unknown[]; total_price?: number };
+function makeAccommodationDetailResponse(house: object) {
+  const { booking_price: _ignoredBookingPrice, ...accommodation } = house as {
+    booking_price?: unknown;
     [key: string]: unknown;
   };
 
   return {
-    data: {
-      PortalSite: {
-        houses: [
-          {
-            ...houseData,
-            booking_price: {
-              ...(houseData.booking_price ?? {}),
-              total_price: houseData.booking_price?.total_price ?? 1200,
-              optional_house_costs:
-                houseData.booking_price?.optional_house_costs ?? []
-            }
-          }
-        ]
-      }
-    }
+    image_url: null,
+    damage_insurance: false,
+    damage_insurance_required: false,
+    travel_insurance: false,
+    ...accommodation
   };
 }
 
 /**
- * Intercept all GraphQL requests for the duration of a test and serve
- * deterministic fixture responses.
+ * Intercept the REST calls the booking form makes for the duration of a test
+ * and serve deterministic fixture responses.
  */
-async function interceptGraphQL(
+async function interceptApi(
   page: import('@playwright/test').Page,
   house: object
 ) {
-  await page.route(GQL_URL, async (route) => {
-    const postData = route.request().postDataJSON();
-    const query: string = postData?.query ?? '';
-    const operationName: string = postData?.operationName ?? '';
+  await page.route(BOOKINGS_URL, async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify(makeBookingResponse())
+    });
+  });
 
-    let body: object;
-
-    if (
-      operationName === 'SingleHouseQuery' ||
-      query.includes('SingleHouseQuery')
-    ) {
-      body = makeSingleHouseResponse(house);
-    } else if (
-      operationName === 'BookingPriceQuery' ||
-      query.includes('BookingPriceQuery')
-    ) {
-      body = makeBookingPriceResponse(house);
-    } else if (query.includes('booking_price')) {
-      // PriceField query
-      body = makePriceFieldResponse(house);
-    } else if (query.includes('createBooking')) {
-      body = { data: { createBooking: { id: 99 } } };
-    } else {
-      // Fallback: return the booking-price fixture so the form can render
-      body = makeBookingPriceResponse(house);
-    }
-
+  await page.route(DETAIL_URL, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(body)
+      body: JSON.stringify(makeAccommodationDetailResponse(house))
     });
   });
 }
@@ -198,7 +125,7 @@ async function interceptGraphQL(
 
 test.describe('Booking form – no cancel insurance', () => {
   test.beforeEach(async ({ page }) => {
-    await interceptGraphQL(page, makeHouse(false));
+    await interceptApi(page, makeHouse(false));
     await page.goto('/calendar.html');
   });
 
@@ -217,7 +144,7 @@ test.describe('Booking form – no cancel insurance', () => {
 
 test.describe('Booking form – with cancel insurance', () => {
   test.beforeEach(async ({ page }) => {
-    await interceptGraphQL(page, makeHouse(true));
+    await interceptApi(page, makeHouse(true));
     await page.goto('/calendar.html');
   });
 
@@ -354,7 +281,7 @@ async function interceptPrice(
   await page.route(PRICE_URL, (route) => {
     const response = makeRestPriceResponse(house);
     // The booking form requests the accommodation metadata along with the
-    // price so it no longer needs a separate GraphQL call.
+    // price, so it needs no separate detail call.
     const url = new URL(route.request().url());
     if (url.searchParams.get('include_accommodation') === 'true') {
       const { booking_price: _ignoredBookingPrice, ...accommodation } =
@@ -505,7 +432,7 @@ test.describe('Booking form – modal', () => {
     await interceptPortalConfig(page);
     await interceptAvailability(page);
     await interceptPrice(page, houseWithOptionalCostDescription);
-    await interceptGraphQL(page, houseWithOptionalCostDescription);
+    await interceptApi(page, houseWithOptionalCostDescription);
   });
 
   test('dialog is closed on load', async ({ page }) => {

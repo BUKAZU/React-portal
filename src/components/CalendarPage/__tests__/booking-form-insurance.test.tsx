@@ -20,21 +20,12 @@ import { createRoot } from 'react-dom/client';
 import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
 
-// ---------------------------------------------------------------------------
-// Mock @apollo/client
-// ---------------------------------------------------------------------------
-jest.mock('@apollo/client', () => ({
-  useQuery: jest.fn(),
-  useMutation: jest.fn(() => [
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]),
-  gql: (q: TemplateStringsArray) => q
-}));
-
-jest.mock('../../../_lib/gql', () => ({
-  SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
+// The calendar loads the accommodation through the REST detail endpoint.
+const mockFetchAccommodationDetail = jest.fn();
+jest.mock('../../../_lib/accommodation', () => ({
+  ...jest.requireActual('../../../_lib/accommodation'),
+  fetchAccommodationDetail: (...args: unknown[]) =>
+    mockFetchAccommodationDetail(...args)
 }));
 
 const mockFetchPrice = jest.fn();
@@ -43,6 +34,7 @@ jest.mock('../../../_lib/price', () => ({
 }));
 
 jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
   getSessionIdentifier: jest.fn(() => 'test-session'),
   TrackEvent: jest.fn()
 }));
@@ -196,21 +188,14 @@ function makeHouseWithInsurance(cancelInsurance: boolean) {
     discounts_info: '',
     babies_extra: 0,
     last_minute_days: 0,
+    image_url: null,
+    damage_insurance: false,
+    damage_insurance_required: false,
+    travel_insurance: false,
     rental_terms: 'https://example.com/terms',
     booking_price: {
       total_price: 1500,
       optional_house_costs: []
-    }
-  };
-}
-
-function makeSingleHouseData(house: ReturnType<typeof makeHouseWithInsurance>) {
-  return {
-    PortalSite: {
-      id: 'TEST',
-      options: { bookingFields: [], bookingForm: {} },
-      bookingFormConfiguration: mockBookingFormConfiguration,
-      houses: [house]
     }
   };
 }
@@ -244,21 +229,11 @@ let container: HTMLDivElement;
 let root: ReturnType<typeof createRoot>;
 let consoleSpy: jest.SpyInstance;
 
-function setupUseQuery(house: ReturnType<typeof makeHouseWithInsurance>) {
-  const { useQuery } = require('@apollo/client');
-  (useQuery as jest.Mock).mockImplementation((query: string) => {
-    if (query === 'SINGLE_HOUSE_QUERY') {
-      return {
-        data: makeSingleHouseData(house),
-        loading: false,
-        error: null
-      };
-    }
-    return { data: null, loading: false, error: null };
-  });
-  // The booking form now receives the accommodation metadata via the REST
-  // price response (include_accommodation) instead of a separate GraphQL query.
+function setupHouse(house: ReturnType<typeof makeHouseWithInsurance>) {
+  // The calendar reads the accommodation from the detail endpoint; the booking
+  // form gets the same payload under the price response's accommodation key.
   const { booking_price: _ignoredBookingPrice, ...accommodation } = house;
+  mockFetchAccommodationDetail.mockResolvedValue(accommodation);
   mockFetchPrice.mockResolvedValue({
     total_price: 1500,
     currency: 'EUR',
@@ -292,6 +267,8 @@ async function flush() {
 }
 
 async function selectDates() {
+  // The calendar only appears once the accommodation request resolved.
+  await flush();
   act(() => {
     (
       container.querySelector('[data-testid="select-arrival"]') as HTMLElement
@@ -326,12 +303,6 @@ beforeEach(() => {
     root = createRoot(container);
   });
   jest.clearAllMocks();
-
-  const { useMutation } = require('@apollo/client');
-  (useMutation as jest.Mock).mockReturnValue([
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]);
 });
 
 afterEach(() => {
@@ -348,7 +319,7 @@ afterEach(() => {
 
 describe('Booking form – cancel_insurance disabled on house', () => {
   it('does not render the insurances section when house.cancel_insurance is false', async () => {
-    setupUseQuery(makeHouseWithInsurance(false));
+    setupHouse(makeHouseWithInsurance(false));
     renderApp();
     await navigateToBookingForm();
 
@@ -356,7 +327,7 @@ describe('Booking form – cancel_insurance disabled on house', () => {
   });
 
   it('renders the booking form without any insurance select', async () => {
-    setupUseQuery(makeHouseWithInsurance(false));
+    setupHouse(makeHouseWithInsurance(false));
     renderApp();
     await navigateToBookingForm();
 
@@ -369,7 +340,7 @@ describe('Booking form – cancel_insurance disabled on house', () => {
 
 describe('Booking form – cancel_insurance enabled on house', () => {
   it('renders the insurances section when house.cancel_insurance is true', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -377,7 +348,7 @@ describe('Booking form – cancel_insurance enabled on house', () => {
   });
 
   it('renders the "Insurances" heading', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
@@ -385,43 +356,38 @@ describe('Booking form – cancel_insurance enabled on house', () => {
     expect(heading?.textContent).toBe('Insurances');
   });
 
-  it('renders the cancel_insurance select dropdown', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+  it('renders None and Standard as chips, None pressed', async () => {
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    const select = container.querySelector('select[name="cancel_insurance"]');
-    expect(select).not.toBeNull();
+    const chips = container.querySelectorAll('#insurances .bu-chip');
+    expect(chips).toHaveLength(2);
+    expect(chips[0].getAttribute('aria-pressed')).toBe('true');
+    expect(chips[1].getAttribute('aria-pressed')).toBe('false');
   });
 
-  it('does NOT show the date-of-birth field before any insurance is selected', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+  it('does NOT show the date-of-birth field before insurance is chosen', async () => {
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    // The default value is '' (the choose option), so DOB must be hidden
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
   });
 
-  it('shows the date-of-birth field after selecting insurance option "1"', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+  it('shows the date-of-birth field after pressing Standard', async () => {
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    const select = container.querySelector(
-      'select[name="cancel_insurance"]'
-    ) as HTMLSelectElement;
-    expect(select).not.toBeNull();
-
+    const standard = container.querySelectorAll(
+      '#insurances .bu-chip'
+    )[1] as HTMLButtonElement;
     await act(async () => {
-      const nativeSelectValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )!.set!;
-      nativeSelectValueSetter.call(select, '1');
-      select.dispatchEvent(new Event('change', { bubbles: true }));
+      standard.click();
     });
 
+    expect(standard.getAttribute('aria-pressed')).toBe('true');
     const dobField = container.querySelector('[data-testid="date-field"]');
     expect(dobField).not.toBeNull();
     expect(dobField?.getAttribute('data-name')).toBe(
@@ -429,39 +395,24 @@ describe('Booking form – cancel_insurance enabled on house', () => {
     );
   });
 
-  it('hides the date-of-birth field after switching back to "None" (value "0")', async () => {
-    setupUseQuery(makeHouseWithInsurance(true));
+  it('hides the date-of-birth field after switching back to None', async () => {
+    setupHouse(makeHouseWithInsurance(true));
     renderApp();
     await navigateToBookingForm();
 
-    const select = container.querySelector(
-      'select[name="cancel_insurance"]'
-    ) as HTMLSelectElement;
-
-    // Select insurance
+    const chips = container.querySelectorAll<HTMLButtonElement>(
+      '#insurances .bu-chip'
+    );
     await act(async () => {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )!.set!;
-      setter.call(select, '1');
-      select.dispatchEvent(new Event('change', { bubbles: true }));
+      chips[1].click();
     });
-
     expect(
       container.querySelector('[data-testid="date-field"]')
     ).not.toBeNull();
 
-    // Switch back to None
     await act(async () => {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLSelectElement.prototype,
-        'value'
-      )!.set!;
-      setter.call(select, '0');
-      select.dispatchEvent(new Event('change', { bubbles: true }));
+      chips[0].click();
     });
-
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
   });
 });

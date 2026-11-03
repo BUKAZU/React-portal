@@ -18,7 +18,7 @@ npm test
 
 - Every new module, component, utility, or helper must have a corresponding test file placed in a `__tests__` directory alongside the source file.
 - Tests should cover all exported functions and component behaviour, including edge cases.
-- Coverage is collected from `src/**/*.{ts,tsx}` and reported in `./coverage`. Aim for full coverage on every file you touch.
+- Coverage is collected from `src/**/*.{ts,tsx}` and reported in `./coverage`. **Every file you touch or add must reach 100 % coverage** (lines, statements, functions, and branches). A global `coverageThreshold` is enforced in CI — any pull request that causes overall coverage to drop will fail the build.
 
 ## Code Style
 

@@ -7,8 +7,8 @@ import ReviewsPageMount from './ReviewsPage/ReviewsPageMount';
 import SafeBooking from './SafeBooking';
 import { ApiError } from './Error';
 import ErrorBoundary from './ErrorBoundary';
-import { GraphQLError } from 'graphql';
 import { AppContext } from './AppContext';
+import { CurrencyProvider } from './CurrencyContext';
 import { FiltersType } from './SearchPage/filters/filter_types';
 import { ColorsType } from '../types';
 import { loadPortalSite, type AppPortalSite } from './loadPortalSite';
@@ -22,7 +22,7 @@ interface Props {
 
 type AppState =
   | { status: 'loading' }
-  | { status: 'error'; error: GraphQLError[] }
+  | { status: 'error'; error: Error }
   | { status: 'ready'; portalSite: AppPortalSite };
 
 function App({ pageType, locale, filters = {} }: Props): JSX.Element {
@@ -62,11 +62,11 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
         if (!isMounted) {
           return;
         }
-        const message =
+        const wrappedError =
           error instanceof Error
-            ? error.message
-            : 'A portal settings request failed';
-        setState({ status: 'error', error: [new GraphQLError(message)] });
+            ? error
+            : new Error('A portal settings request failed');
+        setState({ status: 'error', error: wrappedError });
       });
 
     return () => {
@@ -124,7 +124,11 @@ function App({ pageType, locale, filters = {} }: Props): JSX.Element {
     );
   }
 
-  return <>{page}</>;
+  return (
+    <CurrencyProvider currencies={portalSite.currencies}>
+      {page}
+    </CurrencyProvider>
+  );
 }
 
 export default App;

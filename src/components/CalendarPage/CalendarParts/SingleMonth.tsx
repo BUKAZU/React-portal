@@ -15,6 +15,9 @@ interface Props {
   house: HouseType;
   availabilities: AvailabilityEntry[];
   discounts: AvailabilityDiscount[];
+  onPrev?: () => void;
+  onNext?: () => void;
+  prevDisabled?: boolean;
 }
 
 function SingleMonth({
@@ -22,13 +25,21 @@ function SingleMonth({
   currentMonth,
   house,
   availabilities,
-  discounts
+  discounts,
+  onPrev,
+  onNext,
+  prevDisabled
 }: Props): JSX.Element {
   const month = addMonths(currentMonth, count);
 
   return (
-    <div className="bu-calendar calendar bup-16" key={month.toISOString()}>
-      <MonthHeader month={month} />
+    <div className="bu-calendar calendar" key={month.toISOString()}>
+      <MonthHeader
+        month={month}
+        onPrev={onPrev}
+        onNext={onNext}
+        prevDisabled={prevDisabled}
+      />
       <WeekDays month={month} />
       <RenderCells
         availabilities={availabilities}

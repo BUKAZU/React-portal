@@ -33,9 +33,21 @@ export default defineConfig({
     }
   ],
   /* Run local dev server before starting the tests */
-  webServer: {
-    command: 'npm run dev -- --port 5173 --strictPort',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI
-  }
+  webServer: [
+    {
+      command: 'npm run dev -- --port 5173 --strictPort',
+      url: 'http://localhost:5173',
+      reuseExistingServer: !process.env.CI
+    },
+    /*
+     * Serves the repository as static files so website-bundle.spec.ts can load
+     * the built build/portal.website.js through a plain <script> tag, the way an
+     * embedder does. Requires `npm run build:website` to have run.
+     */
+    {
+      command: 'node ./scripts/serve-static.mjs --port 4174',
+      url: 'http://localhost:4174/e2e/fixtures/website.html',
+      reuseExistingServer: !process.env.CI
+    }
+  ]
 });

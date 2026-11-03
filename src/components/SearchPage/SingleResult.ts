@@ -1,13 +1,17 @@
 import { t, formatNumber } from '../../intl';
 import { escapeHtml } from '../../_lib/utils';
-import { FiltersFormType, HouseType } from '../../types';
+import { FiltersFormType } from '../../types';
+import type { AccommodationResult } from '../../_lib/accommodations';
+import { responsiveImage } from '../../_lib/responsive_image';
 
 interface Props {
-  result: HouseType;
+  result: AccommodationResult;
   options: FiltersFormType;
+  /** ISO 4217 currency code the list prices are expressed in (EUR when unknown). */
+  currency?: string;
 }
 
-function SingleResult({ result, options }: Props): string {
+function SingleResult({ result, options, currency }: Props): string {
   const place = [
     options.show_city && `<span>${escapeHtml(result.city)}, </span>`,
     options.show_region && `<span>${escapeHtml(result.province)}, </span>`,
@@ -38,20 +42,35 @@ function SingleResult({ result, options }: Props): string {
     ? result.booking_price
       ? `<div class="result-price">${escapeHtml(
           t('price_from')
-        )}<span class="price">€ ${escapeHtml(
+        )}<span class="price">${escapeHtml(
           formatNumber(result.booking_price.total_price, {
+            style: 'currency',
+            currency: result.booking_price.currency,
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
           })
         )}</span></div>`
       : `<div class="result-price">${escapeHtml(
           t('minimum_week_price')
-        )}<span class="price">€ ${escapeHtml(
+        )}<span class="price">${escapeHtml(
           formatNumber(result.minimum_week_price, {
+            style: 'currency',
+            currency: currency ?? 'EUR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
           })
         )}</span></div>`
+    : '';
+
+  const image = responsiveImage(
+    result.image_url,
+    result.image_urls,
+    '(min-width: 992px) 400px, 300px'
+  );
+  const imageAttributes = image
+    ? Object.entries(image)
+        .map(([name, value]) => ` ${name}="${escapeHtml(value)}"`)
+        .join('')
     : '';
 
   return `
@@ -60,9 +79,9 @@ function SingleResult({ result, options }: Props): string {
     }>
       <div class="bukazu-result-inner">
         <div class="image-holder">
-          <img${
-            result.image_url ? ` src="${escapeHtml(result.image_url)}"` : ''
-          } alt="${escapeHtml(result.name)}" />
+          <img${imageAttributes} alt="${escapeHtml(
+            result.name
+          )}" loading="lazy" decoding="async" />
         </div>
         <div class="result">
           <div class="result-title">${escapeHtml(result.name)}</div>

@@ -21,3 +21,6 @@ coverage/*
 # Playwright
 playwright-report/
 test-results/
+# S3 deploy tree (scripts/assemble-deploy.mjs)
+dist-deploy
+/dist-deploy

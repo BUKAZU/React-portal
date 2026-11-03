@@ -1,9 +1,36 @@
-.success-message {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    p {
-        max-width: 75ch;
-    }
+.success-message,
+.bu-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  text-align: center;
+  h3 {
+    margin: 4px 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: rgba(26, 25, 25, 1);
+  }
+  p {
+    margin: 0;
+    max-width: 46ch;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(26, 25, 25, 0.62);
+  }
+  .bu-success-hint {
+    font-size: 13px;
+  }
+}
+
+.bu-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bukazu-button, #0055a5) 8%, #fff);
+  color: var(--bukazu-button, #0055a5);
 }

@@ -6,7 +6,7 @@ A React component library that embeds the [Bukazu](https://www.bukazu.com) booki
 
 ## What is Bukazu?
 
-[Bukazu](https://www.bukazu.com) is an online booking and property-management platform for holiday rentals. It provides a fully-managed back-end (availability calendars, pricing, booking forms, guest reviews) and exposes that data through a GraphQL API. This library is the official front-end component that lets you surface Bukazu data on your own website without building the UI from scratch.
+[Bukazu](https://www.bukazu.com) is an online booking and property-management platform for holiday rentals. It provides a fully-managed back-end (availability calendars, pricing, booking forms, guest reviews) and exposes that data through a REST API. This library is the official front-end component that lets you surface Bukazu data on your own website without building the UI from scratch.
 
 ### Modules included
 
@@ -98,6 +98,91 @@ Render the reviews page for a specific property by passing `objectCode` together
 
 ---
 
+## Direct website usage (no bundler required)
+
+If you are not using a JavaScript bundler or a React application, you can use the self-contained **website build** instead. This single file includes React, every other dependency, and the stylesheet — drop it into your page and add a `<div>` with the right attributes.
+
+### 1. Download or reference the file
+
+After installing the package, copy the file from the package (or reference it from a CDN/local path):
+
+- `node_modules/bukazu-portal-react/build/portal.website.js`
+
+The bundle injects its own `<style>` element, so no stylesheet link is required. A companion `node_modules/bukazu-portal-react/build/portal.website.css` is published as well, for pages whose Content-Security-Policy forbids inline styles (`style-src` without `'unsafe-inline'`).
+
+### 2. Add a host element
+
+Place a `<div class="bukazu-app">` with the following HTML attributes wherever you want the portal to appear:
+
+| Attribute | Required | Description |
+|-----------|----------|-------------|
+| `portal-code` | ✅ | Your Bukazu portal identifier |
+| `object-code` | — | Property code (omit for the Search module) |
+| `page` | — | Set to `"reviews"` for the Reviews module |
+| `language` | — | Locale: `en` \| `nl` \| `de` \| `fr` \| `es` \| `it`, or a full BCP-47 tag such as `nl-NL` (default: `en`) |
+| `filters` | — | JSON-encoded filters object (see filter keys in the props table below) |
+| `sentry-dsn` | — | Sentry DSN for error reporting. Defaults to the DSN baked into the bundle; pass `off` to disable reporting |
+
+The host element is found by the `bukazu-app` class. Pages that carry no such
+element fall back to a single element with `id="bukazu-app"`, which is what older
+embed snippets use.
+
+### 3. Include the script and stylesheet
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My website</title>
+  </head>
+  <body>
+
+    <!-- Calendar for a specific property -->
+    <div class="bukazu-app"
+         portal-code="YOUR_PORTAL_CODE"
+         object-code="YOUR_OBJECT_CODE"
+         language="en">
+    </div>
+
+    <!-- Property search page -->
+    <div class="bukazu-app"
+         portal-code="YOUR_PORTAL_CODE"
+         language="en">
+    </div>
+
+    <script src="portal.website.js"></script>
+  </body>
+</html>
+```
+
+The script automatically initialises every `.bukazu-app` element it finds on the page when the DOM is ready. Multiple portals on the same page are supported, and loading the bundle twice is harmless — it re-renders the existing portals rather than mounting duplicates.
+
+For advanced use the bundle exposes `BukazuPortal.init()`, `BukazuPortal.mountPortal(element)` and `BukazuPortal.version` as globals, so you can mount a portal into an element you inserted after page load.
+
+---
+
+## Deploying the website bundle
+
+The hosted copy of the website bundle that embedder sites load as `/static/main.js` is deployed to S3 from this repository by the **Deploy to S3** workflow (`.github/workflows/deploy-s3.yml`). The bucket layout is fixed and unhashed:
+
+| Bucket key | Source |
+|------------|--------|
+| `static/main.js` | `build/portal.website.js` |
+| `static/main.css` | `build/portal.website.css` |
+| `index.html`, `search.html`, `calendar.html`, `reviews.html` | `deploy/*.html` (preview pages: an index linking to one page per portal type) |
+
+`npm run deploy:assemble` builds that tree locally into `dist-deploy/` from an existing `build/` (pass `--source <dir>` to use another bundle directory).
+
+There are two ways a deploy happens:
+
+- **Production, automatic.** When a version-bump PR is merged, the *Release npm package* workflow publishes to npm and then calls *Deploy to S3* with the exact bundle it just published. Prereleases (`x.y.z-beta.n`) are never deployed automatically. Production deploys also purge the Cloudflare cache.
+- **Manual.** In the Actions tab run *Deploy to S3*, pick `staging` or `production`, and either leave *version* empty to build the selected branch (the usual way to put `master` on staging) or fill in a published npm version to redeploy or roll back.
+
+Credentials and bucket names are not in the repository. They live in the GitHub Environments `production` and `staging` as secrets: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET`, and for production additionally `CLOUDFLARE_ZONE_ID` and `CLOUDFLARE_AUTH_KEY`. The Sentry DSN comes from the repository variable `BUKAZU_SENTRY_DSN`. This replaces the former `portaldeploy` GitLab project.
+
+---
+
 ## Props
 
 | Prop | Type | Required | Default | Description |
@@ -107,7 +192,7 @@ Render the reviews page for a specific property by passing `objectCode` together
 | `pageType` | `string` | — | — | Set to `"reviews"` to render the Reviews module. |
 | `locale` | `string` | — | `"en"` | Display language. Supported values: `en`, `nl`, `de`, `fr`, `es`, `it`. |
 | `filters` | `FiltersType` | — | `{}` | Pre-set filter values for the Search module (see below). |
-| `api_url` | `string` | — | `https://api.bukazu.com/graphql` | Override the GraphQL endpoint (useful for staging environments). |
+| `api_url` | `string` | — | `https://api.bukazu.com` | Override the API origin (useful for staging environments). Only the origin is used, so an old `.../graphql` URL keeps working. |
 
 ### `filters` object
 

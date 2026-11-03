@@ -1,4 +1,5 @@
 import { PricesType } from './components/CalendarPage/Summary/cost_types';
+import type { AccommodationDetail } from './_lib/accommodation';
 
 export type FiltersFormType = {
   show_city: boolean;
@@ -14,6 +15,8 @@ export type FiltersFormType = {
   mode: 'grid' | 'list';
   show?: boolean;
   fixed_mobile?: boolean;
+  /** Prefill filters from URL query params; absent on older backends (treat as true). */
+  prefill_filters_from_url?: boolean;
 };
 
 /**
@@ -68,7 +71,13 @@ export type PortalOptions = {
   filtersForm: FiltersFormType;
   bookingFields: object[];
   /** Search-filter fields to render, mapped from the filter-fields REST endpoint. */
-  searchFields?: { id: string; type: string; label: string | null; max?: number; options?: { id: number; name: string }[] }[];
+  searchFields?: {
+    id: string;
+    type: string;
+    label: string | null;
+    max?: number;
+    options?: { id: number; name: string }[];
+  }[];
   /** @deprecated Use PortalSiteType.bookingFormConfiguration instead. */
   bookingForm: BookingFormType;
   colors?: ColorsType;
@@ -115,32 +124,11 @@ export type OptionalHouseCostType = {
   description?: string;
 };
 
-export type HouseType = {
-  id: number;
-  code: string;
-  name: string;
-  image_url?: string;
-  house_url?: string;
-  house_type: string;
-  persons: number;
-  bedrooms: number;
-  bathrooms: number;
-  minimum_week_price: number;
-  max_nights: number;
-  last_minute_days: number;
-  allow_option?: boolean;
-  cancel_insurance?: boolean;
-  discounts?: string;
-  discounts_info?: string;
-  babies_extra: number;
-  city: string;
-  province: string;
-  country_name: string;
-  description: string;
-  rental_terms?: string;
-  rating?: number;
+export type HouseType = AccommodationDetail & {
   booking_price?: {
     total_price: number;
+    /** ISO 4217 currency code the price is expressed in. */
+    currency?: string;
     optional_house_costs: OptionalHouseCostType[];
   };
 };

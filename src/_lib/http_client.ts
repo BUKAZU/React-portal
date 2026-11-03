@@ -25,7 +25,7 @@ export function clearCache(): void {
  * Features:
  * - Automatic retry (limit 3) on transient network failures and common
  *   server-error status codes (408, 429, 500, 502, 503, 504).  POST is
- *   excluded from the retry methods list, keeping GraphQL mutations safe from
+ *   excluded from the retry methods list, keeping booking creation safe from
  *   duplicate execution.
  * - ETag / Last-Modified caching via `beforeRequest` / `afterResponse` hooks.
  *   On the second request to the same URL the client sends conditional headers
@@ -37,8 +37,8 @@ export const http: KyInstance = ky.create({
   retry: {
     limit: 3,
     // Retry only idempotent methods. POST is intentionally excluded so that
-    // GraphQL mutations are never re-sent automatically, preventing duplicate
-    // side-effects.
+    // POST requests are never retried automatically, preventing duplicate
+    // side-effects (e.g. duplicate booking submissions).
     methods: ['get', 'put', 'head', 'delete', 'options', 'trace'],
     statusCodes: [408, 429, 500, 502, 503, 504]
   },

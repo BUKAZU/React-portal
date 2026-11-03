@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Insurances } from '../insurances';
+import { BookingFormContext } from '../../BookingFormContext';
+import { setByString } from '../BookingHelpers';
 import { HouseType } from '../../../../types';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
-jest.mock('../../../Modal', () => ({ children, buttonText }: any) => (
+jest.mock('../../../Modal', () => ({ children }: any) => (
   <div data-testid="modal">{children}</div>
 ));
 
@@ -31,7 +33,7 @@ const baseHouse = {
   house_type: 'house',
   persons: 4,
   max_nights: 14,
-  cancel_insurance: false,
+  cancel_insurance: true,
   babies_extra: 0
 } as unknown as HouseType;
 
@@ -55,106 +57,132 @@ afterEach(() => {
   container.remove();
 });
 
-function renderInsurances(
-  housePatch: Partial<typeof baseHouse> = {},
-  cancelInsuranceValue: string = '0'
-) {
-  const house = { ...baseHouse, ...housePatch };
-  const values = { cancel_insurance: cancelInsuranceValue };
+/** Holds the form values so the chips can change cancel_insurance for real. */
+function Harness({ house, initial }: { house: HouseType; initial: string }) {
+  const [values, setValues] = useState<Record<string, unknown>>({
+    cancel_insurance: initial
+  });
+  return (
+    <BookingFormContext.Provider
+      value={{
+        values: values as any,
+        errors: {},
+        touched: {},
+        isSubmitting: false,
+        setFieldValue: (name, value) => {
+          setValues((current) => setByString(current, name, value));
+        },
+        setFieldTouched: () => undefined
+      }}
+    >
+      <Insurances house={house} values={values as any} />
+    </BookingFormContext.Provider>
+  );
+}
 
+function renderInsurances(
+  housePatch: Partial<HouseType> = {},
+  cancelInsuranceValue = '0'
+) {
   act(() => {
     root.render(
-      <Insurances house={house as unknown as HouseType} values={values as any} />
+      <Harness
+        house={{ ...baseHouse, ...housePatch }}
+        initial={cancelInsuranceValue}
+      />
     );
   });
 }
 
+const chips = () =>
+  Array.from(container.querySelectorAll<HTMLButtonElement>('.bu-chip'));
+const pressed = () =>
+  chips()
+    .filter((chip) => chip.getAttribute('aria-pressed') === 'true')
+    .map((chip) => chip.textContent);
+const hidden = () =>
+  container.querySelector(
+    'input[type="hidden"][name="cancel_insurance"]'
+  ) as HTMLInputElement;
+
 describe('Insurances – house.cancel_insurance is false', () => {
-  it('does not render the insurances section when cancel_insurance is false', () => {
+  it('does not render the insurances section', () => {
     renderInsurances({ cancel_insurance: false });
     expect(container.querySelector('#insurances')).toBeNull();
-  });
-
-  it('renders an empty div (no visible content) when cancel_insurance is false', () => {
-    renderInsurances({ cancel_insurance: false });
     expect(container.textContent).toBe('');
   });
 });
 
 describe('Insurances – house.cancel_insurance is true', () => {
-  it('renders the insurances section with correct id', () => {
-    renderInsurances({ cancel_insurance: true });
+  it('renders the section with its heading', () => {
+    renderInsurances();
     expect(container.querySelector('#insurances')).not.toBeNull();
+    expect(container.querySelector('h2')?.textContent).toBe('Insurances');
+    expect(
+      container.querySelector('#cancel_insurance_label')?.textContent
+    ).toBe('Cancellation insurance');
   });
 
-  it('renders the "Insurances" heading', () => {
-    renderInsurances({ cancel_insurance: true });
-    const heading = container.querySelector('h2');
-    expect(heading?.textContent).toBe('Insurances');
+  it('offers None and Standard as chips, with None pressed by default', () => {
+    renderInsurances();
+    expect(chips().map((chip) => chip.textContent)).toEqual([
+      'None',
+      'Standard'
+    ]);
+    expect(pressed()).toEqual(['None']);
+    expect(hidden().value).toBe('0');
+    expect(
+      container.querySelector('.bu-chips')?.getAttribute('aria-labelledby')
+    ).toBe('cancel_insurance_label');
   });
 
-  it('renders a select element for cancel_insurance', () => {
-    renderInsurances({ cancel_insurance: true });
-    const select = container.querySelector('select[name="cancel_insurance"]');
-    expect(select).not.toBeNull();
+  it('leaves both chips unpressed while nothing is chosen', () => {
+    renderInsurances({}, '');
+    expect(pressed()).toEqual([]);
+    expect(hidden().value).toBe('');
   });
 
-  it('renders the "Standard" option with value "1"', () => {
-    renderInsurances({ cancel_insurance: true });
-    const option = container.querySelector('option[value="1"]');
-    expect(option).not.toBeNull();
-    expect(option?.textContent).toBe('Standard');
-  });
-
-  it('renders the "None" option with value "0"', () => {
-    renderInsurances({ cancel_insurance: true });
-    const option = container.querySelector('option[value="0"]');
-    expect(option).not.toBeNull();
-    expect(option?.textContent).toBe('None');
-  });
-
-  it('renders the "Choose" placeholder option with empty value', () => {
-    renderInsurances({ cancel_insurance: true });
-    const option = container.querySelector('option[value=""]');
-    expect(option).not.toBeNull();
-    expect(option?.textContent).toBe('Choose');
-  });
-
-  it('renders a modal with the cancel insurance info text', () => {
-    renderInsurances({ cancel_insurance: true });
+  it('renders the explanation behind the info button', () => {
+    renderInsurances();
     expect(container.querySelector('[data-testid="modal"]')).not.toBeNull();
     expect(
       container.querySelector('[data-testid="cancel-insurance-text"]')
     ).not.toBeNull();
   });
-});
 
-describe('Insurances – date of birth field visibility', () => {
-  it('does NOT show the date-of-birth field when cancel_insurance value is "0"', () => {
-    renderInsurances({ cancel_insurance: true }, '0');
+  it('does not ask for a date of birth without insurance', () => {
+    renderInsurances({}, '0');
+    expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
+    renderInsurances({}, '');
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
   });
 
-  it('does NOT show the date-of-birth field when cancel_insurance value is empty string', () => {
-    renderInsurances({ cancel_insurance: true }, '');
+  it('asks for the date of birth once Standard is pressed and drops it on None', () => {
+    renderInsurances();
+    act(() => {
+      chips()[1].click();
+    });
+    expect(pressed()).toEqual(['Standard']);
+    expect(hidden().value).toBe('1');
+    const dateField = container.querySelector('[data-testid="date-field"]');
+    expect(dateField?.getAttribute('data-name')).toBe(
+      'extra_fields.date_of_birth'
+    );
+    expect(dateField?.getAttribute('data-label')).toBe(
+      'extra_fields.date_of_birth'
+    );
+
+    act(() => {
+      chips()[0].click();
+    });
+    expect(pressed()).toEqual(['None']);
     expect(container.querySelector('[data-testid="date-field"]')).toBeNull();
   });
 
-  it('shows the date-of-birth field when cancel_insurance value is "1"', () => {
-    renderInsurances({ cancel_insurance: true }, '1');
-    const dateField = container.querySelector('[data-testid="date-field"]');
-    expect(dateField).not.toBeNull();
-    expect(dateField?.getAttribute('data-name')).toBe(
-      'extra_fields.date_of_birth'
-    );
-  });
-
-  it('shows the date-of-birth field when cancel_insurance value is "2"', () => {
-    renderInsurances({ cancel_insurance: true }, '2');
-    const dateField = container.querySelector('[data-testid="date-field"]');
-    expect(dateField).not.toBeNull();
-    expect(dateField?.getAttribute('data-name')).toBe(
-      'extra_fields.date_of_birth'
-    );
+  it('shows the date of birth for the second insurance option as well', () => {
+    renderInsurances({}, '2');
+    expect(
+      container.querySelector('[data-testid="date-field"]')
+    ).not.toBeNull();
   });
 });

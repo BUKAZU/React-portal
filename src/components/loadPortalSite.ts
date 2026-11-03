@@ -13,7 +13,7 @@ interface LoadPortalSiteParams {
   isSearchPage: boolean;
   /** Booking/calendar page needs the configured booking fields. */
   isBookingPage: boolean;
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
 }

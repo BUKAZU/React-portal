@@ -4,27 +4,20 @@ import {
   CostType,
   PricesType
 } from '../components/CalendarPage/Summary/cost_types';
+import type { AccommodationDetail } from './accommodation';
 
-/** Accommodation metadata returned when requested with includeAccommodation. */
-export interface PriceAccommodation {
-  id: number;
-  name: string;
-  code: string;
-  allow_option: boolean;
-  persons: number;
-  image_url: string | null;
-  discounts: string | null;
-  discounts_info: string | null;
-  house_type: string;
-  rental_terms: string | null;
-  cancel_insurance: boolean;
-  damage_insurance: boolean;
-  damage_insurance_required: boolean;
-  travel_insurance: boolean;
-  babies_extra: number;
-}
+/**
+ * The REST price endpoint returns optional-cost objects with all CostType
+ * fields plus the extra fields consumed by the booking form.
+ */
+export type RestOptionalCostType = CostType & {
+  max_available: number;
+  method_name: string;
+  description?: string;
+};
+
 /** Full response of GET /portal_api/v1/accommodations/price. */
-export type PriceResponse = PricesType & {
+export type PriceResponse = Omit<PricesType, 'optional_house_costs'> & {
   arrival_date: string;
   departure_date: string;
   arrival_time: string | null;
@@ -37,12 +30,14 @@ export type PriceResponse = PricesType & {
   on_site_house_costs: CostType[];
   person_percentages: unknown;
   night_percentages: unknown;
+  /** Overrides PricesType: REST returns richer items with max_available, method_name, description. */
+  optional_house_costs: RestOptionalCostType[];
   /** Only present when requested with includeAccommodation. */
-  accommodation?: PriceAccommodation;
+  accommodation?: AccommodationDetail;
 };
 
 interface FetchPriceParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -65,7 +60,22 @@ interface FetchPriceParams {
 const PRICE_PATH = '/portal_api/v1/accommodations/price';
 
 /**
- * Build the REST price URL by reusing the origin of the configured GraphQL
+ * Thrown when the API answers 200 but has no price for the requested period.
+ * The backend then returns a stub without `currency` and with `nights: 0`
+ * (e.g. the night prices do not cover the whole stay).
+ */
+export class PriceUnavailableError extends Error {
+  constructor(startsAt: string, endsAt: string) {
+    super(`No prices available for ${startsAt} - ${endsAt}`);
+    this.name = 'PriceUnavailableError';
+  }
+}
+
+/** The backend answers 422 when the night prices do not cover the period. */
+const NO_PRICES_STATUS = 422;
+
+/**
+ * Build the REST price URL by reusing the origin of the configured
  * api_url, so staging/local overrides keep working.
  */
 export function buildPriceUrl({
@@ -116,14 +126,27 @@ export async function fetchPrice(
 ): Promise<PriceResponse> {
   const url = buildPriceUrl(params);
 
+  let price: PriceResponse;
   try {
-    return await http
+    price = await http
       .get(url, { headers: { locale: params.locale } })
       .json<PriceResponse>();
   } catch (error) {
     if (error instanceof HTTPError) {
+      if (error.response.status === NO_PRICES_STATUS) {
+        throw new PriceUnavailableError(params.startsAt, params.endsAt);
+      }
       throw new Error(`Price request failed (${error.response.status})`);
     }
     throw error;
   }
+
+  // Older backends answer 200 with an empty stub instead of 422. Guard against
+  // it so callers never feed an undefined currency into Intl.NumberFormat
+  // ("Currency code is required with currency style").
+  if (!price.currency) {
+    throw new PriceUnavailableError(params.startsAt, params.endsAt);
+  }
+
+  return price;
 }

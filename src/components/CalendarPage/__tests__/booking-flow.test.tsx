@@ -8,9 +8,8 @@
  * --------
  * • Real components: CalendarWrapper, CalendarPage, GenerateCalendar,
  *   BookingForm, FormCreator, PriceField, Modal, SuccessMessage, CalendarProvider.
- * • Mocked external dependencies: @apollo/client (useQuery / useMutation),
- *   _lib/gql (returns string constants so useQuery mock can branch on them),
- *   _lib/Tracking, loading SVG icon.
+ * • Mocked external dependencies: _lib/accommodation, _lib/create_booking,
+ *   _lib/price, _lib/Tracking, loading SVG icon.
  * • Mocked heavy sub-components that are already covered by their own unit
  *   tests: Calendar (replaced with simple arrival/departure buttons that drive
  *   the CalendarContext), Guests, Summary, Discount, Insurances, OptionalCosts,
@@ -22,32 +21,64 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import CalendarWrapper from '../CalendarPage';
 import { AppContext } from '../../AppContext';
+import { AccommodationDetailError } from '../../../_lib/accommodation';
+import { PriceUnavailableError } from '../../../_lib/price';
 
 // ---------------------------------------------------------------------------
-// Mock @apollo/client – provide controllable useQuery / useMutation stubs
+// Mock the REST accommodation client (replaces the legacy SINGLE_HOUSE_QUERY).
+// requireActual keeps AccommodationDetailError real, so GenerateCalendar's
+// instanceof check still works.
 // ---------------------------------------------------------------------------
-jest.mock('@apollo/client', () => ({
-  useQuery: jest.fn(),
-  useMutation: jest.fn(() => [
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]),
-  gql: (q: TemplateStringsArray) => q
+const mockFetchAccommodationDetail = jest.fn();
+jest.mock('../../../_lib/accommodation', () => ({
+  ...jest.requireActual('../../../_lib/accommodation'),
+  fetchAccommodationDetail: (...args: unknown[]) =>
+    mockFetchAccommodationDetail(...args)
 }));
 
 // ---------------------------------------------------------------------------
-// Mock gql module with opaque string constants so useQuery mock can branch
+// Mock the REST bookings client (replaces the legacy GraphQL createBooking)
 // ---------------------------------------------------------------------------
-jest.mock('../../../_lib/gql', () => ({
-  SINGLE_HOUSE_QUERY: 'SINGLE_HOUSE_QUERY',
-  CREATE_BOOKING_MUTATION: 'CREATE_BOOKING_MUTATION'
+const mockCreateBooking = jest.fn();
+jest.mock('../../../_lib/create_booking', () => ({
+  ...jest.requireActual('../../../_lib/create_booking'),
+  createBooking: (...args: unknown[]) => mockCreateBooking(...args)
 }));
+
+// ---------------------------------------------------------------------------
+// Mock navigation — jsdom's window.location cannot navigate
+// ---------------------------------------------------------------------------
+const mockRedirectTo = jest.fn();
+jest.mock('../../../_lib/navigation', () => ({
+  redirectTo: (...args: unknown[]) => mockRedirectTo(...args)
+}));
+
+const bookingResponse = {
+  booking_nr: 'B2600123',
+  status: 'new',
+  is_option: false,
+  arrival_date: '2025-07-01',
+  departure_date: '2025-07-08',
+  adults: 2,
+  children: 0,
+  babies: 0,
+  language: 'en',
+  payment_url: null,
+  redirect_url: null,
+  success_message: 'Thanks',
+  portal_code: 'TEST',
+  house_code: 'HOUSE1',
+  first_name: null,
+  last_name: null,
+  email: null
+};
 
 // ---------------------------------------------------------------------------
 // Mock the REST price client (replaces the legacy GraphQL price queries)
 // ---------------------------------------------------------------------------
 const mockFetchPrice = jest.fn();
 jest.mock('../../../_lib/price', () => ({
+  ...jest.requireActual('../../../_lib/price'),
   fetchPrice: (...args: unknown[]) => mockFetchPrice(...args)
 }));
 
@@ -55,6 +86,7 @@ jest.mock('../../../_lib/price', () => ({
 // Mock Tracking to avoid cookie / fetch side-effects
 // ---------------------------------------------------------------------------
 jest.mock('../../../_lib/Tracking', () => ({
+  ...jest.requireActual('../../../_lib/Tracking'),
   getSessionIdentifier: jest.fn(() => 'test-session'),
   TrackEvent: jest.fn()
 }));
@@ -172,6 +204,10 @@ const mockHouse = {
   discounts_info: '',
   babies_extra: 0,
   last_minute_days: 0,
+  image_url: null,
+  damage_insurance: false,
+  damage_insurance_required: false,
+  travel_insurance: false,
   rental_terms: 'https://example.com/terms',
   booking_price: {
     total_price: 1500,
@@ -223,15 +259,8 @@ const mockPortalSite = {
   form_submit_button_text: 'Book now'
 } as any;
 
-/** Data returned by SINGLE_HOUSE_QUERY (GenerateCalendar) — house data only. */
-const singleHouseData = {
-  PortalSite: {
-    id: 'TEST',
-    houses: [mockHouse]
-  }
-};
-
-/** Metadata under the `accommodation` key of the REST price response. */
+/** Accommodation metadata as returned by the detail endpoint and under the
+ * `accommodation` key of the price response. */
 const { booking_price: _ignoredBookingPrice, ...mockAccommodation } = mockHouse;
 
 /** Price returned by the REST price endpoint (fetchPrice), used by both
@@ -277,6 +306,8 @@ async function flush() {
 
 /** Simulate clicking on an arrival date then a departure date */
 async function selectDates() {
+  // The calendar only appears once the accommodation request resolved.
+  await flush();
   act(() => {
     (
       container.querySelector('[data-testid="select-arrival"]') as HTMLElement
@@ -300,6 +331,14 @@ async function clickCalculate() {
   await flush();
 }
 
+/** Submit the booking form and let the request settle */
+async function submitBookingForm() {
+  await act(async () => {
+    (container.querySelector('button[type="submit"]') as HTMLElement).click();
+  });
+  await flush();
+}
+
 /** Navigate from the calendar view to the booking form */
 async function navigateToBookingForm() {
   await selectDates();
@@ -315,23 +354,8 @@ beforeEach(() => {
   });
   jest.clearAllMocks();
 
-  const { useQuery, useMutation } = require('@apollo/client');
-
-  // Re-apply default useMutation implementation after clearAllMocks so that
-  // per-test overrides from mockReturnValue don't leak into later tests.
-  (useMutation as jest.Mock).mockReturnValue([
-    jest.fn().mockResolvedValue({}),
-    { loading: false, error: null, data: null, reset: jest.fn() }
-  ]);
-
-  // Default useQuery behaviour: return appropriate fixture data per query
-  (useQuery as jest.Mock).mockImplementation((query: string) => {
-    if (query === 'SINGLE_HOUSE_QUERY') {
-      return { data: singleHouseData, loading: false, error: null };
-    }
-    return { data: null, loading: false, error: null };
-  });
-
+  mockCreateBooking.mockResolvedValue(bookingResponse);
+  mockFetchAccommodationDetail.mockResolvedValue(mockAccommodation);
   mockFetchPrice.mockResolvedValue(mockPriceResponse);
 });
 
@@ -347,8 +371,9 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('Booking flow – integration', () => {
-  it('renders the calendar view (GenerateCalendar) on initial load', () => {
+  it('renders the calendar view (GenerateCalendar) on initial load', async () => {
     renderApp();
+    await flush();
 
     expect(
       container.querySelector('[data-testid="mock-calendar"]')
@@ -357,20 +382,120 @@ describe('Booking flow – integration', () => {
     expect(container.querySelector('form.form')).toBeNull();
   });
 
-  it('displays the house name in the calendar view', () => {
+  it('displays the house name in the calendar view', async () => {
     renderApp();
+    await flush();
 
     expect(container.textContent).toContain('Test House');
   });
 
-  it('disables the Calculate button before any date is selected', () => {
+  it('disables the Calculate button before any date is selected', async () => {
     renderApp();
+    await flush();
 
     const calcButton = container.querySelector(
       'button.button'
     ) as HTMLButtonElement | null;
     expect(calcButton).not.toBeNull();
     expect(calcButton!.disabled).toBe(true);
+  });
+
+  it('fetches the accommodation through the REST detail endpoint', async () => {
+    renderApp();
+    await flush();
+
+    expect(mockFetchAccommodationDetail).toHaveBeenCalledWith({
+      apiUrl: 'https://api.bukazu.com/graphql',
+      locale: 'en',
+      portalCode: 'TEST',
+      objectCode: 'HOUSE1'
+    });
+  });
+
+  it('shows the loading indicator until the accommodation resolves', async () => {
+    renderApp();
+
+    expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
+    expect(container.textContent).not.toContain('Test House');
+
+    // Settle the request so the state update stays inside act().
+    await flush();
+  });
+
+  it('shows the api error when the request rejects with a non-Error', async () => {
+    mockFetchAccommodationDetail.mockRejectedValue('boom');
+
+    renderApp();
+    await flush();
+
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+  });
+
+  it('shows "no house found" when the accommodation is not on the portal site', async () => {
+    mockFetchAccommodationDetail.mockRejectedValue(
+      new AccommodationDetailError(404)
+    );
+
+    renderApp();
+    await flush();
+
+    expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
+    expect(container.querySelector('[data-testid="api-error"]')).toBeNull();
+    expect(container.textContent).toContain(
+      'No object found for this combination of PortalCode and ObjectCode'
+    );
+  });
+
+  it('shows the api error when the accommodation request fails', async () => {
+    mockFetchAccommodationDetail.mockRejectedValue(
+      new AccommodationDetailError(500)
+    );
+
+    renderApp();
+    await flush();
+
+    expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
+    expect(container.querySelector('[data-testid="mock-calendar"]')).toBeNull();
+  });
+
+  it('shows "no prices available" in the price preview when the period has no prices', async () => {
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    renderApp();
+    await selectDates();
+
+    expect(container.textContent).toContain(
+      'No prices are available for the selected period.'
+    );
+    expect(container.textContent).not.toContain('Oops, something went wrong');
+  });
+
+  it('shows the generic error in the price preview when the price request fails', async () => {
+    mockFetchPrice.mockRejectedValue(new Error('Price request failed (500)'));
+
+    renderApp();
+    await selectDates();
+
+    expect(container.textContent).toContain(
+      'Oops, something went wrong, please try again later.'
+    );
+  });
+
+  it('shows "no prices available" instead of the booking form when the period has no prices', async () => {
+    renderApp();
+    await selectDates();
+    mockFetchPrice.mockRejectedValue(
+      new PriceUnavailableError('2025-07-01', '2025-07-08')
+    );
+
+    await clickCalculate();
+
+    expect(container.querySelector('form.form')).toBeNull();
+    expect(container.textContent).toContain(
+      'No prices are available for the selected period.'
+    );
   });
 
   it('enables the Calculate button once arrival and departure dates are selected', async () => {
@@ -415,49 +540,29 @@ describe('Booking flow – integration', () => {
     expect(submitButton!.textContent).toBe('Book now');
   });
 
-  it('calls createBooking with the correct variables when the form is submitted', async () => {
-    const mockCreateBooking = jest.fn().mockResolvedValue({});
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      mockCreateBooking,
-      { loading: false, error: null, data: null, reset: jest.fn() }
-    ]);
-
+  it('posts the booking payload when the form is submitted', async () => {
     renderApp();
     await navigateToBookingForm();
 
-    // Submit the form and wait for Formik's async validation + onSubmit to settle
-    await act(async () => {
-      (container.querySelector('button[type="submit"]') as HTMLElement).click();
-    });
+    await submitBookingForm();
 
-    // The mutate function must have been called with the expected booking variables
     expect(mockCreateBooking).toHaveBeenCalledWith(
       expect.objectContaining({
-        variables: expect.objectContaining({
-          arrival_date: '2025-07-01',
-          departure_date: '2025-07-08',
-          house_code: 'HOUSE1',
+        payload: expect.objectContaining({
+          starts_at: '2025-07-01',
+          ends_at: '2025-07-08',
+          object_code: 'HOUSE1',
           portal_code: 'TEST'
         })
       })
     );
   });
 
-  it('shows the success modal when the mutation returns booking data', async () => {
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      jest.fn().mockResolvedValue({}),
-      {
-        loading: false,
-        error: null,
-        data: { createBooking: { id: 42 } },
-        reset: jest.fn()
-      }
-    ]);
-
+  it('shows the success modal when the booking is created', async () => {
     renderApp();
     await navigateToBookingForm();
+
+    await submitBookingForm();
 
     // The success modal container and SuccessMessage component must be rendered
     const modalContainer = container.querySelector('.bukazu-modal');
@@ -465,35 +570,97 @@ describe('Booking flow – integration', () => {
     expect(modalContainer!.querySelector('.success-message')).not.toBeNull();
   });
 
-  it('shows "Creating booking..." loading text while the mutation is in flight', async () => {
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      jest.fn().mockResolvedValue({}),
-      { loading: true, error: null, data: null, reset: jest.fn() }
-    ]);
+  describe('post-booking redirects', () => {
+    it('redirects to the payment page when the backend asks for it', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        payment_url: 'https://payments.bukazu.com/psp/token',
+        redirect_to_payment: true
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith(
+        'https://payments.bukazu.com/psp/token'
+      );
+    });
+
+    it('prefers the payment page over a configured thank-you page', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        payment_url: 'https://payments.bukazu.com/psp/token',
+        redirect_to_payment: true,
+        redirect_url: 'https://example.com/thanks'
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith(
+        'https://payments.bukazu.com/psp/token'
+      );
+    });
+
+    it('falls back to the thank-you page when the payment url is missing', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        payment_url: null,
+        redirect_to_payment: true,
+        redirect_url: 'https://example.com/thanks'
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith('https://example.com/thanks');
+    });
+
+    it('redirects to the response redirect_url when no payment redirect is requested', async () => {
+      mockCreateBooking.mockResolvedValue({
+        ...bookingResponse,
+        redirect_url: 'https://example.com/thanks'
+      });
+
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).toHaveBeenCalledWith('https://example.com/thanks');
+    });
+
+    it('does not navigate when neither a payment nor a thank-you redirect applies', async () => {
+      renderApp();
+      await navigateToBookingForm();
+      await submitBookingForm();
+
+      expect(mockRedirectTo).not.toHaveBeenCalled();
+    });
+  });
+
+  it('shows "Creating booking..." loading text while the request is in flight', async () => {
+    mockCreateBooking.mockReturnValue(new Promise(() => undefined));
 
     renderApp();
     await navigateToBookingForm();
+
+    await submitBookingForm();
 
     const loadingMsg = container.querySelector('.return-message');
     expect(loadingMsg).not.toBeNull();
     expect(loadingMsg!.textContent).toBe('Creating booking...');
   });
 
-  it('shows an error modal when the booking mutation returns an error', async () => {
-    const { useMutation } = require('@apollo/client');
-    (useMutation as jest.Mock).mockReturnValue([
-      jest.fn().mockResolvedValue({}),
-      {
-        loading: false,
-        error: { message: 'Network error', graphQLErrors: [] },
-        data: null,
-        reset: jest.fn()
-      }
-    ]);
+  it('shows an error modal when the booking request fails', async () => {
+    mockCreateBooking.mockRejectedValue(new Error('Network error'));
 
     renderApp();
     await navigateToBookingForm();
+
+    await submitBookingForm();
 
     expect(container.querySelector('[data-testid="api-error"]')).not.toBeNull();
   });
@@ -510,6 +677,8 @@ describe('Booking flow – integration', () => {
     act(() => {
       (container.querySelector('.return-link') as HTMLElement)?.click();
     });
+    // GenerateCalendar remounts and refetches the accommodation.
+    await flush();
 
     // Calendar should be restored, booking form gone
     expect(

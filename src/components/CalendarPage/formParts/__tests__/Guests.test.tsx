@@ -22,15 +22,18 @@ const baseHouse: HouseType = {
   name: 'Test House',
   house_type: 'house',
   persons: 4,
-  bedrooms: 2,
-  bathrooms: 1,
-  minimum_week_price: 500,
   max_nights: 14,
   babies_extra: 0,
-  city: 'Amsterdam',
-  province: 'NH',
-  country_name: 'Netherlands',
-  description: ''
+  allow_option: false,
+  cancel_insurance: false,
+  discounts: '',
+  discounts_info: '',
+  image_url: null,
+  damage_insurance: false,
+  damage_insurance_required: false,
+  travel_insurance: false,
+  last_minute_days: 0,
+  rental_terms: null
 } as any;
 
 const baseConfig: BookingFormConfigurationType = {

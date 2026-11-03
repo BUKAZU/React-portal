@@ -35,15 +35,18 @@ const house: HouseType = {
   name: 'Test House',
   house_type: 'house',
   persons: 4,
-  bedrooms: 2,
-  bathrooms: 1,
-  minimum_week_price: 1000,
   max_nights: 14,
   babies_extra: 0,
-  city: 'Test City',
-  province: 'Test Province',
-  country_name: 'Test Country',
-  description: 'Test description'
+  allow_option: false,
+  cancel_insurance: false,
+  discounts: '',
+  discounts_info: '',
+  image_url: null,
+  damage_insurance: false,
+  damage_insurance_required: false,
+  travel_insurance: false,
+  last_minute_days: 0,
+  rental_terms: null
 };
 
 function flushPromises(): Promise<void> {
@@ -109,8 +112,8 @@ describe('Months', () => {
       locale: 'nl',
       portalCode: 'portal',
       objectCode: 'house',
-      startsDate: new Date(2024, 11, 29),
-      endDate: new Date(2025, 2, 1)
+      startsDate: new Date(2024, 11, 30),
+      endDate: new Date(2025, 2, 2)
     });
     expect(
       container.querySelector('[data-testid="single-month-0"]')

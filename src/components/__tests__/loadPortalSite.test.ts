@@ -43,7 +43,7 @@ const settings = {
     show: true,
     location: 'top',
     mode: 'grid',
-    no_results: 9,
+    results_amount: 9,
     fixed_mobile: true,
     show_price: true,
     show_persons: true,

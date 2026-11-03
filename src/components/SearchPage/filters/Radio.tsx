@@ -6,9 +6,17 @@ interface Props {
   filters: FiltersType;
   onChange: Function;
   field: Field;
+  /** Id of the element naming this group of radios (the field's visible label). */
+  labelledBy?: string;
 }
 
-function Radio({ options, filters, onChange, field }: Props): JSX.Element {
+function Radio({
+  options,
+  filters,
+  onChange,
+  field,
+  labelledBy
+}: Props): JSX.Element {
   const countries = filters.countries;
 
   const handleChange = (event: SyntheticEvent<any>) => {
@@ -16,14 +24,18 @@ function Radio({ options, filters, onChange, field }: Props): JSX.Element {
   };
 
   return (
-    <ul className="radioList">
+    <ul
+      className="radioList"
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+      aria-label={labelledBy ? undefined : (field.label ?? field.id)}
+    >
       {options.map((opt) => {
         const id = typeof opt === 'string' ? opt : opt.id;
         const name = typeof opt === 'string' ? opt : opt.name;
         const countryId = typeof opt === 'string' ? undefined : opt.country_id;
-        const isDisabled = countries && countryId
-          ? !countries.includes(countryId)
-          : false;
+        const isDisabled =
+          countries && countryId ? !countries.includes(countryId) : false;
         return (
           <li
             key={id}

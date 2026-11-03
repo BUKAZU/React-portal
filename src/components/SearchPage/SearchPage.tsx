@@ -3,7 +3,13 @@ import Filters from './Filters';
 import Results from './Results';
 import { PortalOptions } from '../../types';
 import { FiltersType } from './filters/filter_types';
+import { parseFiltersFromUrl } from '../../_lib/url_filters';
 import { TrackEvent } from '../../_lib/Tracking';
+import {
+  readStoredViewMode,
+  storeViewMode,
+  type ViewMode
+} from '../../_lib/view_mode';
 import type { AppPortalSite } from '../loadPortalSite';
 
 type MyProps = {
@@ -18,23 +24,50 @@ type MyState = {
   activePage: number;
   limit: number;
   skip: number;
+  viewMode: ViewMode;
 };
 
 class SearchPage extends Component<MyProps, MyState> {
+  private readonly hasUrlFilters: boolean;
+
   constructor(props: MyProps) {
     super(props);
     let limit = Number(this.props.options.filtersForm.no_results);
+    const prefillFromUrl =
+      this.props.options.filtersForm.prefill_filters_from_url ?? true;
+    const urlFilters =
+      prefillFromUrl && typeof window !== 'undefined'
+        ? parseFiltersFromUrl(window.location.search)
+        : {};
+    this.hasUrlFilters = Object.keys(urlFilters).length > 0;
     this.state = {
-      filters: this.props.filters || {},
+      filters: { ...(this.props.filters || {}), ...urlFilters },
       activePage: 1,
       limit,
-      skip: 0
+      skip: 0,
+      // The visitor's remembered layout beats the portal's configured default.
+      viewMode:
+        readStoredViewMode() ?? this.props.options.filtersForm.mode ?? 'grid'
     };
     this.onFilterChange = this.onFilterChange.bind(this);
+    this.onViewModeChange = this.onViewModeChange.bind(this);
     this.pageChange = this.pageChange.bind(this);
   }
 
   componentDidMount() {
+    TrackEvent({
+      portal_code: this.props.PortalSite.portal_code,
+      interaction_type: 'search_view',
+      locale: this.props.locale,
+      interaction_info: {}
+    });
+
+    // Filters on the URL are an explicit deep link and beat any state
+    // remembered from a previous visit.
+    if (this.hasUrlFilters) {
+      return;
+    }
+
     let filters = localStorage.getItem('bukazuFilters');
     let activePage = localStorage.getItem('bukazuActivePage');
 
@@ -58,6 +91,11 @@ class SearchPage extends Component<MyProps, MyState> {
     this.pageChange(0);
   }
 
+  onViewModeChange(viewMode: ViewMode) {
+    this.setState({ viewMode });
+    storeViewMode(viewMode);
+  }
+
   pageChange(pageNumber: number) {
     const { limit } = this.state;
     let newSkip = pageNumber * limit;
@@ -70,14 +108,8 @@ class SearchPage extends Component<MyProps, MyState> {
   }
 
   render() {
-    const { filters, activePage, limit, skip } = this.state;
-    const { options, PortalSite, locale } = this.props;
-
-    TrackEvent({
-      portal_code: PortalSite.portal_code,
-      interaction_type: 'search_view',
-      locale: locale
-    });
+    const { filters, activePage, limit, skip, viewMode } = this.state;
+    const { options, PortalSite } = this.props;
 
     return (
       <div
@@ -86,8 +118,8 @@ class SearchPage extends Component<MyProps, MyState> {
           options.filtersForm.location === 'right'
             ? 'bu-reverse'
             : options.filtersForm.location === 'top'
-            ? 'bu-column'
-            : ''
+              ? 'bu-column'
+              : ''
         }
       >
         <Filters
@@ -103,6 +135,8 @@ class SearchPage extends Component<MyProps, MyState> {
           onPageChange={this.pageChange}
           skip={skip}
           limit={limit}
+          viewMode={viewMode}
+          onViewModeChange={this.onViewModeChange}
         />
       </div>
     );

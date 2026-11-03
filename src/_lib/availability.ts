@@ -31,7 +31,7 @@ export type AvailabilityResponse = {
 };
 
 interface FetchAvailabilityParams {
-  /** The GraphQL api_url; only its origin is used to reach the REST API. */
+  /** The configured api_url; only its origin is used to reach the REST API. */
   apiUrl: string;
   locale: string;
   portalCode: string;
@@ -46,7 +46,7 @@ const AVAILABILITY_PATH = '/portal_api/v1/accommodations/availability';
 
 /**
  * Build the REST availability URL by reusing the origin of the configured
- * GraphQL api_url, so staging/local overrides keep working.
+ * api_url, so staging/local overrides keep working.
  */
 export function buildAvailabilityUrl({
   apiUrl,

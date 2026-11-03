@@ -1,12 +1,10 @@
 import React from 'react';
 import { t } from '../../intl';
-import { HOUSE_COUNT_QUERY } from '../../_lib/gql';
-import Loading from '../icons/loading.svg';
-import { useQuery } from '@apollo/client';
 
 interface Props {
   onPageChange: Function;
-  variables: object;
+  /** Number of matching accommodations, from the search response meta. */
+  totalCount: number;
   activePage: number;
   limit: number;
 }
@@ -51,36 +49,17 @@ export function buildPageRange(
 
 function Paginator({
   onPageChange,
-  variables,
+  totalCount,
   activePage,
   limit
 }: Props): JSX.Element {
-  const { loading, error, data } = useQuery(HOUSE_COUNT_QUERY, { variables });
-
-  if (loading)
-    return (
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center'
-        }}
-      >
-        <Loading />
-      </div>
-    );
-  if (error) {
-    return <div>Error</div>;
-  }
-
-  const results = data.PortalSite.houses;
-  const pageCount = limit > 0 ? Math.ceil(results.length / limit) : 0;
+  const pageCount = limit > 0 ? Math.ceil(totalCount / limit) : 0;
   const pages = buildPageRange(activePage, pageCount);
 
   return (
     <div className="bu-paginator">
       <div>
-        {results.length} {t('results')}
+        {totalCount} {t('results')}
       </div>
       {pageCount > 1 && (
         <ul className="bu-pagination">
