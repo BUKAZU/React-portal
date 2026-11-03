@@ -25,9 +25,17 @@ describe('SafeBooking', () => {
     expect(SafeBooking('it')).toContain('Protetto e reso possibile da BUKAZU');
   });
 
+  it('links to the locale-less security page for each locale', () => {
+    expect(SafeBooking('en')).toContain('href="http://bukazu.co.uk/security"');
+    expect(SafeBooking('de')).toContain('href="http://bukazu.com/sicherheit"');
+    expect(SafeBooking('fr')).toContain('href="http://bukazu.com/securite"');
+    expect(SafeBooking('es')).toContain('href="http://bukazu.com/seguridad"');
+    expect(SafeBooking('it')).toContain('href="http://bukazu.com/sicurezza"');
+  });
+
   it('falls back to English for an unknown locale', () => {
     const result = SafeBooking('ja');
-    expect(result).toContain('href="http://bukazu.com/en/security"');
+    expect(result).toContain('href="http://bukazu.co.uk/security"');
     expect(result).toContain('Secured and made possible by BUKAZU');
   });
 
